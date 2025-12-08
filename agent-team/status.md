@@ -3,7 +3,27 @@
 > Team Leader 认知入口之一。只记录"现在在哪里"的快照指标，不记录待办事项（见 `todo.md`）。
 > 每次 runSubAgent 完成或里程碑变化时更新。
 
-## Test Baseline
+## 工作区架构 (2025-12-08 重组)
+
+**`/repos/focus/`** 是 agent-team 仓库根目录，同时作为跨项目聚焦视野：
+
+```
+/repos/focus/                    # agent-team repo 根目录
+├── .github/agents/              # 9 个 CustomAgent 定义
+├── agent-team/                  # AI Team 认知文件
+│
+├── PieceTreeSharp/              # 文本建模 (独立 git, .gitignore)
+├── DocUI/                       # LLM TUI 框架 (独立 git)
+├── PipeMux/                     # 进程编排 (独立 git)
+├── atelia-copilot-chat/         # Copilot Chat fork (独立 git)
+├── atelia/                      # 实验项目 (独立 git)
+├── vscode/                      # TS 原版参考 (独立 git)
+└── copilot-chat-deepwiki/       # 架构文档 (只读参考)
+```
+
+**设计原则**：各子项目保持独立 git 仓库，通过 `.gitignore` 排除，避免 submodule 复杂性。
+
+## Test Baseline (PieceTreeSharp)
 - **Total:** 1158 passed, 9 skipped 🚀
 - **Command:** `export PIECETREE_DEBUG=0 && dotnet test tests/TextBuffer.Tests/TextBuffer.Tests.csproj --nologo`
 - **Last Verified:** 2025-12-05 16:45
