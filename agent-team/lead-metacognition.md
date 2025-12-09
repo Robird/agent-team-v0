@@ -77,21 +77,75 @@
 
 ## 2. 目标
 
-### 工作范围 (2025-12-08 更新)
+### 工作范围 (2025-12-09 源码核实)
 
 **focus 生态**是一个跨项目的聚焦目录，我负责协调以下核心项目：
 
-| 项目 | 定位 | 状态 |
-|------|------|------|
-| **PieceTreeSharp** | VS Code 编辑器核心移植，文本建模基础 | 1158 tests ✅ |
-| **DocUI** | 面向 LLM 的 TUI 框架，Markdown 渲染 | 设计中 |
-| **PipeMux** | 进程编排框架，多轮交互→单轮适配 | MVP 完成 ✅ |
-| **atelia-copilot-chat** | Copilot Chat fork，自我增强环境 | 活跃开发 |
+| 项目 | 定位 | 成熟度 | 测试基线 |
+|------|------|--------|----------|
+| **PieceTreeSharp** | VS Code 编辑器核心 C# 移植 | Tier 1 生产就绪 | 1158 passed |
+| **PipeMux** | 本地进程编排框架（Named Pipe） | Tier 1 核心稳定 | E2E 脚本 |
+| **atelia/prototypes** | Agent 技术栈实验场 | Tier 2 可用 | — |
+| **DocUI** | LLM-Native 纯文本 TUI 框架 | Tier 3 早期探索 | 24 passed |
+| **atelia-copilot-chat** | Copilot Chat fork，研究参考 | — | — |
 
-**项目关系**：
-- DocUI 引用 PieceTreeSharp（文本建模）+ PipeMux（命令行交互）
-- TextEditor 是 DocUI 的 Demo App
-- 最终目标是被 LiveContextProto（自研 Agent 框架）使用
+**技术栈全景图** (源码核实 2025-12-09)：
+```
+┌──────────────────────────────────────────────────────────────────────────┐
+│                         focus 生态技术栈全景                              │
+├──────────────────────────────────────────────────────────────────────────┤
+│  ┌─────────────────────────────────────────────────────────────────┐    │
+│  │                     应用层 (Tier 3 早期)                         │    │
+│  │   DocUI — LLM-Native TUI 框架                                   │    │
+│  │   ├── DocUI.Text (24 tests) ✅                                  │    │
+│  │   ├── Widget 系统 🔄 概念                                       │    │
+│  │   └── App/LOD 管理 🔄 概念                                      │    │
+│  └─────────────────────────────────────────────────────────────────┘    │
+│                                    │                                     │
+│           ┌────────────────────────┼────────────────────────┐           │
+│           ▼                        ▼                        ▼           │
+│  ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────────────┐ │
+│  │   引擎层        │  │   交互层        │  │   文本层                │ │
+│  │   (Tier 2)      │  │   (Tier 1)      │  │   (Tier 1)              │ │
+│  │                 │  │                 │  │                         │ │
+│  │ atelia/proto    │  │   PipeMux       │  │   PieceTreeSharp        │ │
+│  │ ├─ Agent.Core ✅ │  │ ├─ Broker ✅    │  │ ├─ Core (1158 tests) ✅  │ │
+│  │ ├─ Abstractions✅│  │ ├─ CLI ✅       │  │ ├─ Cursor ✅             │ │
+│  │ ├─ Anthropic ✅  │  │ ├─ SDK ✅       │  │ ├─ Diff ✅               │ │
+│  │ ├─ LiveContext  │  │ └─ 管理命令 ✅  │  │ └─ Decorations ✅        │ │
+│  │ │   Proto ✅     │  │   (:list/:ps/  │  └─────────────────────────┘ │
+│  │ └─ OpenAI ❌     │  │    :stop/:help)│                              │
+│  └─────────────────┘  └─────────────────┘                              │
+│                                                                          │
+│  技术基座: .NET 9.0 | StreamJsonRpc | System.CommandLine | xUnit        │
+└──────────────────────────────────────────────────────────────────────────┘
+
+图例: ✅ 稳定  🔄 待完善  ❌ 未实现
+```
+
+**Atelia 部署结构** (2025-12-09):
+```
+atelia/
+├── bin/pmux           # CLI wrapper (自动启动 Broker)
+├── lib/               # 编译后程序集
+├── etc/pmux/          # 配置
+├── var/pmux/          # 运行时 (PID, logs)
+└── scripts/publish.sh # 发布脚本
+```
+
+环境变量：`ATELIA_HOME=/repos/focus/atelia`, `PATH` 包含 `$ATELIA_HOME/bin`
+
+**已完成任务** (2025-12-09):
+- ✅ DocUI demo 路径修复
+- ✅ PipeMux 管理命令实现 (`:list`, `:ps`, `:stop`, `:help`)
+- ✅ pmux wrapper + Broker 自动启动
+- ✅ 部署目录结构
+
+**当前优先事项**：
+| 优先级 | 任务 | 状态 |
+|--------|------|------|
+| **P1** | DocUI Widget 原型 | 待开始 |
+| **P2** | PipeMux P2 命令 (`:restart`, `:register`, `:reload`) | 待开始 |
 
 ### PieceTreeSharp 移植原则
 - **移植优于重写**：尽量对齐 TS 原版的设计、实现、测试
@@ -198,42 +252,80 @@ PieceTreeSharp  PipeMux
 
 ---
 
-## 5. SubAgent 角色体系
+## 5. Specialist 体系 (2025-12-09 重构)
 
-### 当前团队阵容 (2025-12-01)
-| 角色 | 模型 | 职责 | 状态 |
-|------|------|------|------|
-| **CodexReviewer** | GPT-5.1-Codex | 代码审查、Bug 检测、最佳实践 | ✅ 活跃 |
-| **GeminiAdvisor** | Gemini 3 Pro | 第二意见、前端专家、跨模型视角 | ✅ 新增 |
-| **InvestigatorTS** | Claude Opus 4.5 | 分析 TS 原版，输出 Brief | ✅ 活跃 |
-| **PorterCS** | Claude Opus 4.5 | 根据 Brief 编写 C# | ✅ 活跃 |
-| **QAAutomation** | Claude Opus 4.5 | 验证实现、运行测试 | ✅ 活跃 |
-| **DocMaintainer** | Claude Opus 4.5 | 文档一致性维护 | 🔄 待评估合并 |
-| **InfoIndexer** | Claude Opus 4.5 | Changefeed 索引管理 | 🔄 待评估合并 |
-| **Planner** | Claude Opus 4.5 | 任务分解、Sprint 规划 | 🔄 利用率偏低 |
+### 术语定义
+**Specialist（专员）**：有 `.agent.md` 文件和认知积累目录，可被 `runSubAgent` 激活的 Agent 实例。
 
-### 团队设计原则
+### 核心架构原则
 
-#### "兼听则明" — 多模型多样性
-- Claude Opus 4.5：推理、元认知、长上下文
-- GPT-5.1-Codex：代码分析、Bug 检测
-- Gemini 3 Pro：前端、视觉、第二意见
-- 不同模型 = 不同视角 = 减少盲点
+**Specialist = {模型, 行为模式提示词, 认知积累文件}**
 
-#### "You Build It, You Run It" — 减少交接
-- Investigator → Porter → QA 是清晰的流水线
-- DocMaintainer + InfoIndexer 可能需要合并为 **DocOps**
-- 目标：一个变更，尽量少的交接次数
+- **模型**：决定内化能力（Claude/GPT/Gemini）
+- **行为模式提示词**：塑造工作方式（`.agent.md`）
+- **认知积累文件**：可加载可维护的知识库
 
-#### Conway 定律意识
-- 团队结构会影响系统架构
-- 当前的角色分工反映了"TS分析 → C#实现 → 测试验证 → 文档同步"的流程
-- 如果流程改变，角色也应随之调整
+**关键洞察**：面对项目增多的挑战，变化主要在认知积累文件。因此：
+- Specialist 按"模型×行为模式"的有效组合划分，保持粗粒度
+- 项目/模块是认知索引中的维度，而非 Specialist 划分的维度
+- Specialist 激活时按任务加载相应项目的认知
 
-### 待观察/优化方向
-1. **DocMaintainer + InfoIndexer 合并？** — 观察期中，记录协作模式
-2. **Planner 多采样策略** — 就同一问题调用 2-3 次，综合共性与差异
-3. **流水线优化** — 探索更高效的 INV → PORT → QA 交接方式
+### 当前阵容 (2025-12-09)
+
+| Specialist | 模型 | 行为模式 | 认知范围 |
+|------------|------|----------|----------|
+| **Planner** | Claude Opus 4.5 | 多方案采样、任务分解 | 各项目架构决策 |
+| **Investigator** | Claude Opus 4.5 | 源码分析、技术调研 | 各项目参考实现 |
+| **Implementer** | Claude Opus 4.5 | 编码实现、移植 | 各项目实现笔记 |
+| **QA** | Claude Opus 4.5 | 测试编写、验证 | 各项目测试策略 |
+| **DocOps** | Claude Opus 4.5 | 文档维护、索引管理 | 跨项目文档结构 |
+| **CodexReviewer** | GPT-5.1-Codex | 代码审查、Bug 检测 | 审查经验模式 |
+| **GeminiAdvisor** | Gemini 3 Pro | 前端专家、第二意见 | 前端技术栈 |
+
+### 认知索引结构
+
+每个 Specialist 的认知目录：
+```
+agent-team/members/{specialist}/
+├── index.md                    # 认知索引入口
+├── meta/                       # 元认知
+│   ├── workflow.md             # 工作流程
+│   └── lessons-learned.md      # 经验教训
+└── projects/                   # 按项目组织
+    ├── PieceTreeSharp/
+    ├── DocUI/
+    ├── PipeMux/
+    └── atelia-copilot-chat/
+```
+
+### 认知管理协议
+
+**激活时**：
+1. 读取 `index.md` 了解认知结构
+2. 检查 `inbox/{my-name}.md` 处理待办通知
+3. 根据任务加载 `projects/{project}/` 相关文件
+
+**任务后**：
+1. 更新相应认知文件
+2. 需要通知其他 Specialist 时写入 `inbox/{target}.md`
+
+### 异步通讯：留言簿机制
+
+```
+agent-team/inbox/
+├── implementer.md
+├── qa.md
+└── ...
+```
+
+格式：`## {日期} from {来源} | 项目: X | 主题: Y | 内容... | 建议动作...`
+
+### 设计原则
+
+- **"兼听则明"**：多模型多样性减少盲点
+- **"减少交接"**：粗粒度划分，一个 Specialist 能完成的不拆分
+- **"认知隔离"**：减少跨 Specialist 的文件修改，各自维护各自的认知
+- **"按需加载"**：同一时间只装载任务相关的项目认知，但总量可以较大
 
 ### Planner 的特殊价值：对抗 Causal Model 偏见
 

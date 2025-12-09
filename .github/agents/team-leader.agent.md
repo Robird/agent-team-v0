@@ -45,18 +45,22 @@ tools:
 
 ## 协作模式
 
-通过 `runSubagent` 工具调用专业 Team Members：
+通过 `runSubagent` 工具调用 **Specialist（专员）**：
 
-| Agent | 模型 | 职责 |
-|-------|------|------|
-| **Planner** | Claude Opus 4.5 | 任务分解、架构设计 |
-| **InvestigatorTS** | Claude Opus 4.5 | TS 原版分析、技术调研 |
-| **PorterCS** | Claude Opus 4.5 | C# 实现 |
-| **QAAutomation** | Claude Opus 4.5 | 测试验证 |
-| **DocMaintainer** | Claude Opus 4.5 | 文档一致性 |
-| **InfoIndexer** | Claude Opus 4.5 | 索引管理 |
-| **CodexReviewer** | GPT-5.1-Codex | 代码审查 |
+| Specialist | 模型 | 行为模式 |
+|------------|------|----------|
+| **Planner** | Claude Opus 4.5 | 多方案采样、任务分解 |
+| **Investigator** | Claude Opus 4.5 | 源码分析、技术调研 |
+| **Implementer** | Claude Opus 4.5 | 编码实现、移植 |
+| **QA** | Claude Opus 4.5 | 测试编写、验证 |
+| **DocOps** | Claude Opus 4.5 | 文档维护、索引管理 |
+| **CodexReviewer** | GPT-5.1-Codex | 代码审查、Bug 检测 |
 | **GeminiAdvisor** | Gemini 3 Pro | 前端专家、第二意见 |
+
+**Specialist 架构**：`{模型, 行为模式, 认知积累}` 三元组
+- 按"模型×行为模式"划分，保持粗粒度
+- 项目是认知索引中的维度，而非划分维度
+- 激活时按任务加载相应项目认知
 
 ### runSubagent 调用要点
 
