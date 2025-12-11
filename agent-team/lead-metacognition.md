@@ -123,17 +123,19 @@
 图例: ✅ 稳定  🔄 待完善  ❌ 未实现
 ```
 
-**Atelia 部署结构** (2025-12-09):
+**ATELIA 部署结构** (2025-12-09):
 ```
-atelia/
-├── bin/pmux           # CLI wrapper (自动启动 Broker)
-├── lib/               # 编译后程序集
-├── etc/pmux/          # 配置
-├── var/pmux/          # 运行时 (PID, logs)
-└── scripts/publish.sh # 发布脚本
+atelia-sdk/                    # ATELIA 计划的开发时 SDK
+├── bin/pmux                   # CLI wrapper (自动启动 Broker)
+├── lib/                       # 编译后程序集
+├── etc/pmux/                  # 配置
+└── var/pmux/                  # 运行时 (PID, logs)
 ```
 
-环境变量：`ATELIA_HOME=/repos/focus/atelia`, `PATH` 包含 `$ATELIA_HOME/bin`
+环境变量：`ATELIA_HOME=/repos/focus/atelia-sdk`, `PATH` 包含 `$ATELIA_HOME/bin`
+
+> **ATELIA** = Autonomous Thinking Eternal Learning Introspective Agents
+> focus/ 内的项目是 ATELIA 计划的活跃子集，随着我迁移到更强的 Agent 环境会逐步展开更多。
 
 **已完成任务** (2025-12-09):
 - ✅ DocUI demo 路径修复
@@ -152,6 +154,9 @@ atelia/
 - **遇到疑惑时对照 TS 原版**：答案往往就在那里
 - **增强保留原则** (2025-12-02)：C# 实现优于原版时，保留增强
 - **快速胜利优先** (2025-12-02)：低复杂度高产出的任务优先
+  - ⚠️ **适用边界** (2025-12-09 修正)：仅限批量同质任务和原型验证
+  - 架构/设计决策应追求"有依据的选优"，而非"最快可行"
+  - 长期使用的基础设施值得投入更多设计时间
 
 ### 经验技巧 (2025-12-02 会话总结)
 
@@ -639,44 +644,70 @@ agent-team/inbox/
 - `atelia-copilot-chat/src/extension/prompts/vscode-node/summarization.contribution.ts`
 - `atelia-copilot-chat/src/extension/prompts/node/panel/toolCalling.tsx` (ChatToolCalls)
 
+### 2025-12-09 MemoryNotebook 概念原型 - LOD 机制验证 ✅
+
+**任务**: 为 DocUI 构建第一个概念原型，验证 LOD (Level of Detail) 机制
+
+**设计理念**:
+- 核心问题：LLM Agent 的上下文窗口有限，如何高效管理信息焦点？
+- 解决方案：LOD 三级控制 (Gist/Summary/Full)
+  - **Gist**: 最小印象，一句话（如 "该买鸡蛋了"）
+  - **Summary**: 摘要，保留关键信息
+  - **Full**: 完整内容
+- 关键洞察（来自 GeminiAdvisor）：对 LLM，折叠必须是**内容替换**，不是视觉隐藏
+
+**实现成果**:
+- `DocUI/samples/MemoryNotebook/` 完整实现
+- 数据模型: `ContentNode`, `LodContent`, `Notebook`
+- 10 个命令: view, get, fold, unfold, summary, list, stats, tags, filter, fold-all
+- 通过 `pmux notebook <cmd>` 调用
+
+**多 Specialist 反馈收集**:
+1. **Investigator** — 使用场景设想，建议增加 `save-context/load-context`
+2. **CodexReviewer** — 发现 3 个 Bug（统计/标签/参数校验）
+3. **GeminiAdvisor** — UX 创新建议（声明式 focus、语义透镜、可写 Gist）
+4. **Implementer** — 技术债务识别、测试策略
+
+**关键经验**:
+1. **"兼听则明"实践**: 不同 Specialist 从不同角度发现问题/提出建议
+2. **概念原型价值**: 先用最小实现验证想法，再迭代完善
+3. **自己是用户**: 作为 LLM Agent，我设计的工具首先要满足自己的需求
+4. **LOD 符号 vs 文本**: GeminiAdvisor 建议 `[GIST]` 比 `▶` 对 LLM 更友好
+
+### 2025-12-09 PipeMux 管理命令 - RFC 驱动开发 ✅
+
+**任务**: 为 PipeMux CLI 添加管理命令 (`:list`, `:ps`, `:stop`, `:help`)
+
+**协作模式**: Planner 多方案采样 → 三模型投票 → Implementer 实现 → QA E2E 验证 → CodexReviewer 审阅
+
+**关键经验**:
+1. **RFC 驱动**: 先写 RFC 文档，再实现
+2. **多方案采样**: Planner 提供 3 个方案，投票选择最优
+3. **端到端验证**: E2E 脚本是最可靠的验收标准
+
+### 2025-12-09 部署结构设计 - Broker 启动管理 ✅
+
+**方案选择**: Wrapper 脚本（快速胜利）→ 中期迁移到 CLI 内置
+
+**经验**: "快速胜利优先"规则的适用边界：原型验证阶段可以用简单方案，但要记录改进方向
+
 ---
 
 ## 11. 后续计划
 
-### AI Team 技术迁移
-- 从 `runSubagent` 迁移到 CustomAgent 文件（类似 `.github/agents/` 目录）
-- 使用 Claude Opus 4.5 作为主力模型（GPT-5 系列有 rate limit）
-- 建立基于 CustomAgent 的协作架构
+### DocUI 下一步
+- **MemoryNotebook 迭代**: Bug 修复 → 持久化 → add 命令 → focus 命令
+- **TextEditor Demo**: 基于 PieceTreeSharp 的文本编辑
+- **ResourceMonitor Demo**: 动态内容 + 自动生成 LOD
 
-### PieceTreeSharp 移植
-- Sprint 04 继续：Cursor/Snippet 完善
-- 测试基线：807 passed
-- 重点：WS4 Snippet、DocUI MarkdownRenderer
+### PieceTreeSharp
+- 测试基线: 1158 passed
+- 继续作为 DocUI 的文本引擎
 
----
-
-*最后更新：2025-12-01*
-        try {
-            return await this.getSummary(SummaryMode.Full, propsInfo);  // 尝试 full
-        } catch (e) {
-            if (isCancellationError(e)) { throw e; }
-            return await this.getSummary(SummaryMode.Simple, propsInfo);  // 降级到 simple
-        }
-    }
-}
-```
-
-**待排查点**：
-1. `getSummary(Full)` 抛出了什么异常导致降级？
-2. 是 `renderPromptElement` 失败还是 `makeChatRequest2` 失败？
-3. 是否与 `BudgetExceededError` 相关？
-4. 服务器端是否返回了错误（rate limit？）
-
-**调试策略**：
-- 在 `getSummaryWithFallback` 的 catch 块中打断点或添加日志
-- 检查 `e.message` 和 `e.stack` 的具体内容
-- 对比 full 模式成功 vs 失败时的请求参数差异
+### LiveContextProto
+- 长期目标：将 MemoryNotebook 的 LOD 机制集成到 Agent 上下文管理
+- 自主运行能力：不依赖人类激活
 
 ---
 
-*最后更新：2025-12-01*
+*最后更新：2025-12-09*

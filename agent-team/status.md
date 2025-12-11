@@ -36,8 +36,8 @@
 ## Current Phase & Sprint
 - **Phase:** 8 – Alignment Remediation
 - **Sprint:** 05 (2025-12-02 ~ )
-- **Focus:** LLM-Native 功能筛选 & 精简移植范围
-- **新方向:** DocUI Broker + CLI 原型开发 (2025-12-06 启动)
+- **Focus:** LLM-Native 功能筛选 & DocUI 概念原型
+- **新方向:** DocUI Widget + LOD 机制探索 (2025-12-09)
 
 ## LLM-Native 功能筛选 (2025-12-04)
 基于 [`docs/plans/llm-native-editor-features.md`](../docs/plans/llm-native-editor-features.md) 重新评估剩余 gaps：
@@ -132,32 +132,45 @@
 - `#delta-2025-12-02-ws3-textmodel` – IntervalTree AcceptReplace 集成
 - `#delta-2025-12-02-docui-find` – FindModel/FindDecorations 完成
 
-## DocUI Broker 项目状态 (2025-12-07)
-- **愿景**: 为 LLM Agent 打造有状态、Markdown 渲染的交互式编辑器
+## PipeMux 项目状态 (2025-12-09)
+- **愿景**: 为 LLM Agent 打造有状态服务的本地进程编排框架
 - **架构**: 三层结构 (CLI/Tool Calling → Broker → Backend Apps)
-- **当前状态**: **生产就绪 + 多终端隔离** ✅ 
+- **当前状态**: **Tier 1 核心稳定** ✅ 
 - **项目**:
   - `PipeMux.Shared` - 协议定义 + 终端标识 ✅ 完成
   - `PipeMux.Broker` - 中转服务器 (进程管理 + 路由 + TTY 隔离) ✅ 生产就绪
-  - `PipeMux.CLI` - 统一 CLI 前端 ✅ 完成
+  - `PipeMux.CLI` - 统一 CLI 前端 + **管理命令** ✅ 完成
   - `PipeMux.Sdk` - App 开发 SDK (StreamJsonRpc + System.CommandLine) ✅ 完成
   - `Samples.Calculator` - RPN 有状态栈式计算器 ✅ 完成
-  - `DocUI.TextEditor` - 基于 PieceTreeSharp 的编辑器后台 🚧 待实现
-- **核心功能**:
-  - Named Pipe 通信 (异步并发) ✅
-  - 进程管理 (启动/复用/崩溃恢复) ✅
-  - **多终端隔离** (每终端独立进程实例) ✅ **新增 2025-12-07**
-  - 跨平台终端标识 (VS Code / Windows Terminal / TTY) ✅ **新增**
-  - StreamJsonRpc (NewLineDelimited 协议) ✅ **重构**
-  - 超时保护 + 健康状态管理 ✅
-- **终端标识机制**:
-  - VS Code: `VSCODE_IPC_HOOK_CLI` UUID → `vscode-window:{uuid}`
-  - Windows Terminal: `WT_SESSION` → `wt:{guid}`
-  - 传统 Windows: `GetConsoleWindow()` → `hwnd:{hwnd}`
-  - Linux/macOS: `/proc/self/fd/0` → `tty:/dev/pts/N`
-  - 手动覆盖: `PIPEMUX_TERMINAL_ID` 环境变量
-- **测试**: E2E 全部通过，多终端隔离验证通过
-- **文档**: [`PipeMux/docs/README.md`](../PipeMux/docs/README.md) **新增使用说明**
+- **管理命令** (2025-12-09 新增):
+  - `:list` - 列出注册的应用 ✅
+  - `:ps` - 显示运行中的实例 ✅
+  - `:stop <app>` - 停止应用 ✅
+  - `:help` - 帮助信息 ✅
+- **部署结构** (2025-12-09 新增):
+  - `atelia-sdk/bin/pmux` - CLI wrapper，自动启动 Broker
+  - `atelia-sdk/var/pmux/` - 运行时 (PID, logs)
+  - 环境变量: `ATELIA_HOME`, `PATH`
+- **测试**: E2E 全部通过 (7/7)
+- **RFC**: [`PipeMux/docs/rfc/management-commands.md`](../PipeMux/docs/rfc/management-commands.md)
+
+## DocUI 项目状态 (2025-12-09)
+- **愿景**: LLM-Native 纯文本 TUI 框架
+- **当前状态**: **Tier 3 早期探索**
+- **项目结构**:
+  - `DocUI.Text` - 文本处理基础 (24 tests) ✅
+  - `samples/MemoryNotebook` - **LOD 概念原型** ✅ 新增
+- **MemoryNotebook 概念原型** (2025-12-09):
+  - 面向 LLM Agent 的外部知识库
+  - LOD (Level of Detail) 三级控制: Gist / Summary / Full
+  - 命令: `view`, `get`, `fold`, `unfold`, `list`, `stats`, `tags`, `filter`, `fold-all`
+  - 通过 `pmux notebook <cmd>` 调用
+  - 已获得 4 位 Specialist 反馈评估
+- **下一步**:
+  - P0: 持久化 (save/load)
+  - P0: Bug 修复 (统计/标签/参数校验)
+  - P1: `add` / `add-file` 命令
+  - P1: 声明式 `focus` 命令
 
 ## Pending Decisions
 

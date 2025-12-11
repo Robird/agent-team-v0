@@ -78,6 +78,48 @@
 ## Open Investigations
 （无）
 
+### 2025-12-11: DocUI 文档术语修订搜索
+**任务**: 搜索需要修订的 DocUI 相关文档，识别三类术语
+**搜索范围**: `/repos/focus` 全目录
+**发现**:
+1. **DDOC- 前缀**：3 个文件，~50+ 处出现
+   - DocUI/docs/Proposals/ 目录（3 文件）是主要修订目标
+   - agent-team/meeting/ 研讨会记录（2 文件）
+   - agent-team/members/ 认知文件（2 文件）
+2. **Machine Accessibility / MA**：2 个文件，9 处出现
+   - 主要在研讨会记录中定义和引用
+3. **[action:...] 锚点格式**：4 个文件，29 处出现
+   - 研讨会记录中讨论格式选择
+   - 需要决定是否改为 Button/Form 分类
+
+**交付**: 搜索汇报（当前任务）
+
+### 2025-12-10: DocUI Proposal 体系规划研讨会发言
+**任务**: 参加第二次 DocUI 研讨会，从技术参考和已有实现角度发言
+**调研范围**:
+1. copilot-chat deepwiki 文档（Overview, Agent Prompt System, Tool Calling Loop）
+2. DocUI wiki 和 rendering-framework.md 设计文档
+**贡献**:
+1. 验证 Planner 依赖图的技术合理性（基于 copilot-chat 的 IBuildPromptContext 和 IToolCallRound）
+2. 提出"冻结内容"机制作为 Context 模型的参考实现
+3. 分析锚点格式选项，建议 `[action:cmd]` + 正规文法约束 + 位置约束
+4. 识别三个核心技术约束：工具调用轮次累积、Cache Breakpoints 位置、限制与确认机制
+5. 建议 Proposal 应包含的技术规范内容（Data Structures, Invariants, Error Handling, Test Vectors）
+6. 补充"历史摘要"作为高优先级遗漏主题
+
+**发言位置**: agent-team/meeting/seminar-docui-proposals-2025-12-10.md（发言 2）
+
+### 2025-12-10: DocUI 研讨会发言
+**任务**: 参加"LLM Context 作为面向 LLM Agent 的 UI"研讨会，从技术实现角度发言
+**贡献**:
+1. 引入 copilot-chat Tool Calling Loop 的"轮次累积"模式作为 DocUI 可借鉴的参考实现
+2. 分析"Context 累积与冻结"机制（FrozenContent、Cache Breakpoints）
+3. 提出"双向契约"视角：Context 既是 UI 也是协议
+4. 回应 Planner（锚点格式）和 GeminiAdvisor（屏幕阅读器类比）的观点
+5. 识别 PipeMux 集成的技术边界问题
+
+**Handoff**: agent-team/handoffs/seminar-docui-as-llm-ui-2025-12-10.md（发言已追加）
+
 ### 2025-12-09: DocUI 项目现状核实
 **任务**: Team Leader 需要核实 DocUI 的实际状态
 **发现**:

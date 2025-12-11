@@ -14,6 +14,29 @@
 
 ## Immediate (新会话优先)
 
+- **DocUI 渲染框架设计** (2025-12-10 启动)
+  - 设计文档: `DocUI/docs/design/rendering-framework.md`
+  - **设计目标**:
+    - 低代码渲染: Model → Markdown 自动生成
+    - UI 锚点系统: `[action:cmd]` 可操作锚点
+    - LOD 三级呈现: Gist/Summary/Full
+    - 命令可见性管理: 微流程/向导基础
+  - **实现路径**:
+    - [ ] Phase 1: 基础 LOD 渲染 (`IRenderable`, `LodAttribute`)
+    - [ ] Phase 2: 锚点系统 (`AnchorRegistry`)
+    - [ ] Phase 3: 命令可见性 (`CommandVisibility`)
+    - [ ] Phase 4: 迁移现有原型
+
+- **DocUI 概念原型** (2025-12-10 更新)
+  - 已完成 3 个概念原型:
+    - `DocUI/demo/MemoryNotebook/` — 静态条目 + 单条目 LOD
+    - `DocUI/demo/TextEditor/` — 文本编辑 + PipeMux.SDK 迁移完成
+    - `DocUI/demo/SystemMonitor/` — 动态指标 + 整体视图 LOD
+  - **MemoryNotebook 待迭代**:
+    - [ ] 搜索功能
+    - [ ] 可写 Gist
+    - [ ] 持久化 (延迟，待格式稳定)
+
 - **文档流程改进** ✅ 已批准 (2025-12-05)
   - Team Leader 批准: [`TeamLeader-to-DocMaintainer-2025-12-05.md`](../agent-team/handoffs/TeamLeader-to-DocMaintainer-2025-12-05.md)
   - **方案 A+C 已生效**: Sprint log 为单一事实来源 + changefeed 轻量指针
