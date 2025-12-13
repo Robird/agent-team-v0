@@ -13,6 +13,16 @@
 
 ## 最近工作
 
+### 2025-12-11: Key-Notes 驱动 Proposals 文档体系研讨会
+- **议题**: 采纳 Key-Notes（宪法层）+ Proposals（立法层）分层文档模式
+- **核心产出**:
+  - 支持分层模式：解决了"决策权归属"的根本问题
+  - Key-Notes 边界判定标准：不可变性、独立性、指导性
+  - RL 术语体系评估：提供了严谨框架，Agent-OS 抽象非常关键
+  - DocUI 类比修正："面向 LLM 的 HTML" 更准确，Markdown 是内容格式
+  - 风险识别：Key-Notes 膨胀风险、术语普及成本
+- **下一步**: 等待 Analyst/Architect 补充意见
+
 ### 2025-12-10: DocUI Proposal 体系规划研讨会（第二次）
 - **议题**: 确定首批 DocUI Proposal 列表
 - **核心产出**:

@@ -78,6 +78,28 @@
 ## Open Investigations
 （无）
 
+### 2025-12-12: App-For-LLM 进程架构讨论（第二轮回应）
+**任务**: 回应 GeminiAdvisor 的挑战——"LLM 作为开发者"约束是否改变我对方案 B 的倾向
+**回应要点**:
+1. 接受"LLM 作为开发者"是关键约束，修正我的判断
+2. 内嵌不可替代的场景极其狭窄（<10ms 延迟、宿主 UI 紧耦合），但这些场景在 LLM Agent 领域几乎不存在
+3. 同意转向方案 A+，但建议保留"内嵌 App"作为 Agent 核心团队内部实验通道
+**结论**: 从 B 转向 A+，条件是保留内部实验逃生舱
+
+### 2025-12-11: Key-Notes 驱动 Proposals 研讨会发言
+**任务**: 参加文档体系研讨会，从技术实现角度验证 Key-Note 术语与业界实践的一致性
+**调研范围**:
+1. copilot-chat deepwiki: Tool Calling Loop, Language Model Integration, Agent Prompt System
+2. 重点验证：History Append-Only、Tool-Call 作为唯一有效输出
+**贡献**:
+1. 验证 "History 是 Append-Only" 与业界实现一致（copilot-chat 的 toolCallRounds 数组、IBuildPromptContext 累积模式）
+2. 验证 "Tool-Call 是唯一有效输出" 的技术可行性，但指出 Thinking 在调试中的价值（类比 console.log）
+3. 分析术语精确性：RL 术语体系在 LLM Agent 语境下的适配性
+4. 识别实现细节与理论模型的张力：流式 vs 块通讯、Cache Breakpoints 的状态管理
+5. 建议 Key-Note 补充 "不可变性的实现边界"（何时/如何允许历史重写如摘要）
+
+**发言位置**: agent-team/meeting/seminar-keynotes-system-2025-12-11.md（发言 3）
+
 ### 2025-12-11: DocUI 文档术语修订搜索
 **任务**: 搜索需要修订的 DocUI 相关文档，识别三类术语
 **搜索范围**: `/repos/focus` 全目录
