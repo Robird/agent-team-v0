@@ -194,6 +194,34 @@
 **研讨会记录**:
 - [2025-12-13-docui-keynote-workshop.md](meeting/2025-12-13-docui-keynote-workshop.md) — 原始 12 项建议
 - [2025-12-14-glossary-architecture-workshop.md](meeting/2025-12-14-glossary-architecture-workshop.md) — 术语治理架构重构
+- [2025-12-14-ui-anchor-workshop.md](meeting/2025-12-14-ui-anchor-workshop.md) — **UI-Anchor 完善研讨会**（10 条共识）
+
+### UI-Anchor 体系 (2025-12-14 研讨会决议)
+
+**核心概念**：
+- **UI-Anchor** — 为 LLM 提供引用和操作 DocUI 中可见元素的可靠锚点
+- **Object-Anchor** — 标识实体对象，语法 `[Label](obj:type:id)`
+- **Action-Prototype** — 函数原型形式的 Live API Documentation
+- **Action-Link** — 预填充参数的快捷操作链接
+- **Micro-Wizard** — 轻量级多步骤交互模式
+
+**关键设计决策**：
+| 决策 | 内容 |
+|------|------|
+| 锚点生存期 | 临时优先，随 Context-Projection 分配/失效 |
+| AnchorId 结构 | 四元组：kind + providerId + sessionId + localId |
+| 动作序列语义 | 脚本式顺序执行 + short-circuit |
+| REPL MVP 方案 | `run_code_snippet` tool + Expression Tree 执行器 |
+| Wizard 触发 | Error Recovery / Deliberate Confirmation |
+
+**MVP 路径**：
+| 阶段 | 内容 | 估算 |
+|------|------|------|
+| MVP-0 | Object-Anchor + Action-Link + AnchorTable | 1-2 天 |
+| MVP-1 | `[DocUIAction]` + Roslyn Source Generator | 2 天 |
+| MVP-1.5 | run_code_snippet + Expression Tree | 1 天 |
+| MVP-2a/b | Call-Only DSL + Dual-Mode Listener | 3 天 |
+| MVP-3 | 进程隔离 + PipeMux 协议 | 2 天 |
 
 ## Pending Decisions
 

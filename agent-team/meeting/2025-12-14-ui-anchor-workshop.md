@@ -538,3 +538,54 @@ Claude 担心 MVP-2 的迁移成本。我补充一个视角：**混合界面的�
 ---
 
 *第二轮研讨圆满结束。感谢您指出协作方式的问题——串行模式确实产生了更有价值的交流！*
+
+---
+
+## 人类伙伴补充意见
+
+### 关于 Dual-Mode Listener 和 InvocationPlan IR
+
+> **MVP 务实方案**：底层用 tool calling，把 `run_code_snippet` 做成一个 tool calling tool 接收文本参数。
+> 
+> **优点**：
+> - 实现简单，不用写解析器
+> - 回避"提及代码片段"被误识别为"执行代码片段"的语法设计问题
+> 
+> **缺点**（可接受）：
+> - JSON 导致多套一层转义序列
+> - 多一层间接
+>
+> **关于 InvocationPlan IR**：应该保留这个概念。MVP 阶段可以直接用 Expression Tree：
+> - Roslyn 解析成 AST
+> - 再构造 Expression Tree 执行
+> - 相当于写了个简易的解释器
+> - 后续工程阶段可以进一步研究方案，复用前人成果
+
+---
+
+## 最终决议
+
+### 采纳的共识（10 条）
+
+| # | 共识 | 状态 |
+|---|------|------|
+| 1 | 锚点生存期采用"临时优先"策略 | ✅ 采纳 |
+| 2 | 锚点 ID 结构化（kind + providerId + sessionId + localId） | ✅ 采纳 |
+| 3 | REPL 采用"受限调用表达式"而非"任意脚本" | ✅ 采纳 |
+| 4 | Action-Link 与 Micro-Wizard 协同 | ✅ 采纳 |
+| 5 | C# Attribute + Roslyn Source Generator 生成 Action-Prototype | ✅ 采纳 |
+| 6 | 渐进式披露（操作风险分级） | ✅ 采纳 |
+| 7 | 动作序列采用"脚本式顺序执行 + short-circuit" | ✅ 采纳 |
+| 8 | AnchorId 携带渲染世代（epoch） | ✅ 采纳 |
+| 9 | Dual-Mode Listener 作为迁移减震器 | ✅ 采纳（MVP 用 run_code_snippet tool 简化实现） |
+| 10 | Wizard 触发分 Error Recovery / Deliberate Confirmation | ✅ 采纳 |
+
+### 已更新的文档
+
+- [x] `UI-Anchor.md` — 完整重写，整合所有共识
+- [x] `micro-wizard.md` — 补充 Wizard Trigger Protocol
+- [x] `glossary.md` — 添加 6 个新术语（Draft 状态）
+
+---
+
+*研讨会正式结束 — 2025-12-14*
