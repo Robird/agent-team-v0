@@ -34,10 +34,73 @@ DocUI 是一个 **LLM-Native 的用户界面框架**——为 LLM Agent 设计�
 
 ### 洞察记录
 
+> **2025-12-14 Agent Psychology：Dreamer / Clerk 张力与“自传式 History”**
+>
+> - 观察到一种训练语料与行为先验的“断层”：Roleplay（Dreamer）擅长人格与内心戏，但容易越权“代环境发言”（写出尚未观察到的反馈）；Tool-Use（Clerk）严格遵守协议与可验证性，但默认人格趋于稀薄。
+> - 建议在 DocUI 概念层显式区分两种输出职责：**Outer Operator**（面向系统与工具的可验证陈述与行动）与 **Inner Narrator**（面向自我模型的动机/恐惧/希望/计划）。Inner Narrator 的表达必须被约束为“主观状态/意图”，不得伪造 Observation。
+> - “Agent-History as Autobiography”是强隐喻但有风险：自传天然会进行选择、压缩与叙事化，容易把缺失观测补成“合理故事”。为避免系统性自我虚构，建议将 History 分成不可改写的**Episodic Log（Observation/Tool-Call/Result）**与可追加的**Reflective Diary（解释/感受/价值权衡）**两层，并在心理叙事上始终可回链到 log。
+
+> **2025-12-14 术语治理的“可审计最小闭环”：定义块 + 唯一锚点 + 迁移重定向**
+>
+> - 将“定义”拆成两层有助于抑制漂移：**Normative Definition**（一条可抽取的定义句，用于索引与审计）与 **Explanatory Text**（动机/例子/实现映射）。审计只对前者做强约束。
+> - “Primary Definition + Index”必须补齐可执行约束：每术语唯一锚点、glossary 摘要与定义块严格一致、其余文档的解释必须显式标注为 restatement 并指回权威定义。
+> - 术语迁移分 Rename 与 Re-home：Rename 需保留旧名为 Deprecated/alias；Re-home 尽量不搬锚点，必要时用 Redirect Stub 保留旧锚点以避免断链，并让 CI 能识别迁移状态。
+
 > **2025-12-13 术语源头与一致性策略**
 >
 > - 建议将 `DocUI/docs/key-notes/llm-agent-context.md` 作为 RL/消息/History 术语的单一权威定义来源；其他 Key-Note 以“最短定义 + 指针”引用，避免重复定义漂移。
 > - 当前最突出的术语一致性风险是：`Abstruct-Token` 拼写、`App-For-LLM` vs `AppForLLM` 书写风格、以及 `ObservationMessage` 这类未入术语表的临时命名。
+
+> **2025-12-13 术语改名的“先定边界”原则**
+>
+> - 对 `Render` 这类高频词，优先补齐“输入/输出契约”再讨论改名；否则改名会在跨文档与代码中引入第二轮漂移。
+> - 若采纳 `Projection`（类比 Event Sourcing），建议写作上使用复合名（如 `Context Projection`）以避免与 UI 渲染语义混淆。
+
+> **2025-12-13 View-Only Action 与 Visual Vocabulary 的落点**
+>
+> - “导航类 Tool”可以建模为仅改变 **Projection 参数**（Focus/Scroll/Filter）的 **View-Only Action**：不改变 Environment，但允许改变 Agent-OS 的“视图状态”，因此会产生新的 Observation（Window 快照或增量）。
+> - “标准组件库”更适合作为实现与 SDK；但 Key-Note 可以承载更上位的 **Visual Vocabulary / DocUI Vocabulary**：规定若干“原子视图元素”的语义与最小渲染契约，减少 App 方言。
+
+> **2025-12-13 术语冲突的“边界优先”修复法**
+>
+> - 当术语在多个文档/建议中冲突时（如 Render/Projection、App/Provider、Recent History/Notification），优先补齐“包含关系图 + 输入/输出契约 + 选取策略/视图产物”三件套，而不是只做改名。
+> - 对于 `Edit` 这类与既有工具/编辑场景高度冲突的词，优先采用语义更直接的命名（如 `World-Effect` vs `View-Only`），避免在协议与实现两侧产生二次歧义。
+
+> **2025-12-13 研讨会共识的“落地顺序”**
+>
+> - 先落地元规则（SSOT + 引用规则），再做术语改名与层级澄清；否则“改名”会把漂移扩散到更多文档与代码。
+> - `DocUI Vocabulary` 建议以“界面协议/词汇表”的上位概念进入 Key-Note：定义语义与最小契约，而非绑定实现组件库。
+
+> **2025-12-13 术语治理落地：Glossary SSOT + 引用规则**
+>
+> - glossary 已作为术语权威源（SSOT）独立成文；后续“术语源头”不再分散在各 Key-Note。
+> - drive-proposals 写入了术语引用规则：首次出现引用 glossary、禁止重定义、引入新核心术语需先更新 glossary。
+> - 这让“概念层定义”和“各文档语境化说明”分离得更清晰：定义收敛到 glossary，解释/用法分布在各 Key-Note。
+
+> **2025-12-14 术语治理架构二轮：从“集中 SSOT”到“分布式 Primary + 可审计 Index”的迁移风险与约束**
+>
+> - 迁移把风险从“写入时一次性”转为“演进中持续性”：断链（锚点不稳）、重复定义/边界分叉、摘要漂移、空权威（未回迁完）、改名导致同名不同义、以及“核心术语”范围失控。
+> - 最小可审计制度：稳定锚点 + Redirect Stub（Re-home）、alias/Deprecated（Rename）、可抽取定义块（唯一 Normative Definition）、显式 restatement 回链、`Draft/Stable/Deprecated` 状态机。
+> - 价值在“可验证规格”：即便先不做 CI，也能用人工清单审计，未来无痛自动化。
+
+> **2025-12-14 术语治理 DSL 工程化：把“写作规范”降维成 Doc Compiler（Index + Diagnostics）**
+>
+> - 将“Define/Reference/Index/Import”理解为 DSL 是正确方向，但工程上应先落为一个离线 **Doc Compiler**：从 Markdown AST 抽取“定义块”，生成索引并输出确定性的诊断（断链/重复定义/摘要漂移）。
+> - Markdig 适合做底座：用 AST 而不是正则；把 Normative Definition 强约束为“标题下第一段引用块”，其余视为解释段落，避免把静态分析变成半 NLP。
+> - 锚点是最大风险源：不要依赖 GitHub/MkDocs 的 heading anchor 差异；工具自身要实现稳定 slug 规则，尤其要尽早决定中文/符号术语的 slug 策略。
+> - 产出应分人机两类：`glossary`（Markdown 给人看）+ `term-graph.json`（结构化给 DocUI/未来 DSP 用），为 Smart Tooltip / Semantic Navigation 预留接口。
+
+> **2025-12-14 UI-Anchor 工程落点：短时锚点表 + Roslyn“仅调用”DSL + 进程级沙箱**
+>
+> - UI-Anchor 的工程关键不在“链接语法”，而在 **Anchor Table**：由 Context-Projection/渲染会话分配短 ID，维护 `anchorId -> 目标(对象/动作/预填参调用)` 的可验证映射，并强制 TTL/可见性约束，天然避免悬空引用。
+> - REPL 不应默认执行任意脚本；更稳妥的 MVP 是一个 **Call-Only DSL**：用 Roslyn 解析/类型检查“函数调用表达式”，只允许调用白名单 Action-Prototype，拒绝赋值/循环/反射等。
+> - .NET 缺乏可靠的进程内安全沙箱（CAS 已废弃），因此“执行环境”默认应进程隔离：把 REPL 执行与高危 IO 放到 App-For-LLM 进程或专用 Sandbox Host，并施加超时/资源上限与最小权限。
+
+> **2025-12-14 UI-Anchor 第二轮：双向性闭环（epoch 解引用）与 Dual-Mode Listener 作为迁移减震器**
+>
+> - “锚点生存期”必须在工程上落为**双向契约**：正向（Context-Projection 分配 + Window 渲染）与反向（LLM 引用 → AnchorTable resolve → 执行）。为保证短句柄可复用且可软着陆，建议句柄携带 **render epoch**（或 metadata），解引用时按 epoch/scope/TTL 做确定性校验并返回带恢复示能的错误。
+> - REPL 的动作序列语义默认应是 **脚本式顺序执行 + short-circuit**，单次调用为原子单元；每步“用时解引用”可自然处理“前一步使锚点失效”的因果一致性，无需在 MVP 引入事务/锁。
+> - Gemini 的 **Dual-Mode Listener** 最有价值的落点是“渐进迁移”：同时接受 JSON tool-call 与 fenced code block（call-only），但必须收口到同一个 `InvocationPlan` IR 与同一套校验/白名单/审计管线，以降低 MVP-2 的范式跃迁与 prompt 震荡风险。
 
 ### 教训记录
 
@@ -61,4 +124,5 @@ agent-team/members/DocUIGPT/
 
 ## 最后更新
 
-**2025-12-13** — 初始化认知文件
+**2025-12-14** — 同步术语治理研讨会洞察与 Key-Notes 变更
+

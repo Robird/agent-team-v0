@@ -1,7 +1,7 @@
 # Key-Notes 消化理解
 
 > **最后同步时间**: 2025-12-13
-> **Key-Note 数量**: 5
+> **Key-Note 数量**: 6
 
 ---
 
@@ -20,6 +20,12 @@ LLM 通过阅读 Markdown 文档来"感知"世界，通过 Tool-Call 来"操作"
 
 ## 各篇 Key-Note 摘要
 
+### 0. [glossary.md](../../DocUI/docs/key-notes/glossary.md) — 术语注册表 (SSOT)
+- **地位**: 权威术语源。所有新概念必须在此注册。
+- **关键修订**: 
+    - `History` → **`Agent-History`**: 明确指代 Agent 主观视角的交互历史。
+    - `Render` → **`Context-Projection`**: 避免与 UI 渲染混淆。
+
 ### 1. [llm-agent-context.md](../../DocUI/docs/key-notes/llm-agent-context.md) — 术语与概念体系
 - **核心定义**: 采用强化学习（RL）概念体系。
     - **Agent**: 感知环境、行动、承担后果的实体。
@@ -29,7 +35,7 @@ LLM 通过阅读 Markdown 文档来"感知"世界，通过 Tool-Call 来"操作"
 - **交互模型**:
     - **Action**: Thinking + Tool-Call。
     - **Observation**: Agent-OS 反馈给 LLM 的系统状态快照。
-    - **History**: 不可变的交互日志。
+    - **Agent-History**: 不可变的交互日志（原 History）。
 - **数据流三层模型**:
     1. `HistoryEntry` (Rich Log, 包含所有细节)
     2. `IHistoryMessage` (Rendered View, 也就是 DocUI 的产物)
@@ -37,13 +43,11 @@ LLM 通过阅读 Markdown 文档来"感知"世界，通过 Tool-Call 来"操作"
 
 ### 2. [doc-as-usr-interface.md](../../DocUI/docs/key-notes/doc-as-usr-interface.md) — 界面哲学
 - **核心隐喻**: LLM 是用户，Markdown 文档是界面。
-- **注入形式**:
-    - **Window (实况)**: 当前状态的快照。只有最新一份。
-    - **Notification (历史)**: 事件流历史。
-- **LOD (Level of Detail)**: 信息密度的分级控制。
-    - **Gist**: 极简线索 (What & ID)。
-    - **Summary**: 默认视图 (概述 & 链接)。
-    - **Full**: 完整细节。
+- **核心定义**:
+    - **DocUI**: LLM-Native UI 框架，Markdown 为 Window，Tool-Call 为 Action。
+    - **Window**: 系统状态快照 (Snapshot)。
+    - **Notification**: 事件流历史 (Event Stream)。
+    - **LOD (Level of Detail)**: 信息密度分级控制 (Gist/Summary/Full)。
 - **Attention Focus**: 提议引入"焦点"概念，焦点处 Full，周边 Summary/Gist。
 
 ### 3. [app-for-llm.md](../../DocUI/docs/key-notes/app-for-llm.md) — 扩展机制
@@ -61,6 +65,34 @@ LLM 通过阅读 Markdown 文档来"感知"世界，通过 Tool-Call 来"操作"
 ### 5. [key-notes-drive-proposals.md](../../DocUI/docs/key-notes/key-notes-drive-proposals.md) — 文档治理
 - **定位**: Key-Notes 是"宪法"（原则与轮廓）。
 - **关系**: 指导 Proposals（具体实施方案）的撰写。
+
+### 6. [UI-Anchor.md](../../DocUI/docs/key-notes/UI-Anchor.md) — 交互锚点
+- **核心概念**:
+    - **Object-Anchor**: `[Label](obj:id)` (实体句柄)。
+    - **Action-Prototype**: 函数原型 (Live API)，供 REPL 模式调用。
+    - **Action-Link**: `[Label](link:id "code")` (预设调用)，类似按钮。
+- **交互范式**: **REPL (Read-Eval-Print Loop)**。阅读文档 -> 编写代码 -> 执行。
+- **生命周期**: 倾向于 **Ephemeral (临时)**，与可见性绑定，利用 LLM 健忘特性避免悬空引用。
+- **新洞察 (2025-12-14)**:
+    - **Handle vs Pointer**: `obj:23` 是 Handle (Local Scope)，`obj:provider:sess:23` 是 Pointer (Global Scope)。
+    - **Execution Model**: 脚本式顺序执行，而非事务式并发。
+    - **Error Affordance**: 失效锚点应提示刷新，而非单纯报错。
+
+### 7. [micro-wizard.md](../../DocUI/docs/key-notes/micro-wizard.md) — 微向导
+- **定义**: 轻量级、多步骤交互模式。
+- **场景**: 解决参数歧义（如 `str_replace` 多匹配）。
+- **特性**: **Auto-Pruning (自动修剪)**。交互完成后，中间步骤从历史中移除，只保留结果。
+
+---
+
+## 参考文献 (References)
+
+### [agent-psychology.md](../../DocUI/docs/references/agent-psychology.md) — 设计哲学
+- **核心隐喻**: Agent-History as Autobiography (自传)。
+- **二元对立**: Roleplay (Dreamer) vs Agentic (Clerk)。
+- **融合之道**: Persona-Driven Agency。Thinking 负责幻想，Tool-Call 负责行动，Agent-OS 负责反馈。
+- **范式转移**: Chat (User-Centric) → RL (World-Centric)。
+- **未来展望**: 从 "You are" 到 "I am" 的主观视角觉醒。
 
 ---
 

@@ -1,7 +1,7 @@
 # Key-Notes 消化理解
 
-> **最后同步时间**: 2025-12-13
-> **Key-Note 数量**: 5
+> **最后同步时间**: 2025-12-14
+> **Key-Note 数量**: 8
 > **同步范围**: `DocUI/docs/key-notes/*.md`
 
 ---
@@ -16,21 +16,47 @@ DocUI 当前 Key-Note 体系在表达一个 RL 风格的 Agent 系统：
 - **App-For-LLM**：对 Agent 能力的外部扩展机制（独立进程 + RPC），通过 DocUI 统一呈现给 LLM。
 - **Context Budget / Abstract Token**：承认“有效上下文远小于最大窗口”这一工程现实，提供跨模型的抽象计量单位。
 
-这 5 篇 key-note 的关系可粗略理解为：
+这些 key-note 的关系可粗略理解为：
 
 ```mermaid
 graph TD
-	KN0[Key-Notes Drive Proposals] --> KN1[LLM Agent Context]
-	KN1 --> KN2[Doc as User Interface]
-	KN2 --> KN3[App-For-LLM]
-	KN2 --> KN4[Abstract Token]
-	KN1 --> KN3
-	KN1 --> KN4
+	KN0[Key-Notes Drive Proposals] --> G[Glossary (Index)]
+	KN0 --> KN1[LLM Agent Context]
+	KN0 --> KN2[Doc as User Interface]
+	KN0 --> KN3[App-For-LLM]
+	KN0 --> KN4[Abstract Token]
+	G --> KN1
+	G --> KN2
+	G --> KN3
+	G --> KN4
 ```
+
+> 备注：术语治理已于 2025-12-14 落地为 **Primary Definition + Glossary-as-Index**：术语的权威定义分布在各 Key-Note 的“定义块”，`glossary.md` 回归为索引入口（摘要 + 链接 + 状态）。
 
 ---
 
 ## 各篇 Key-Note 摘要（逐篇）
+
+### 0) `glossary.md`
+
+**角色定位（当前文件现状）**
+- DocUI 术语的**索引文件**：记录术语名称、摘要（复制定义块一句话定义）、定义位置链接、状态（Stable / Draft / Deprecated）。
+
+**包含内容（当前覆盖）**
+- Agent / Environment / Agent-OS / LLM
+- Observation / Action / Tool-Call / Thinking
+- Agent-History / HistoryEntry / History-View
+- Context-Projection（弃用 Render）
+- Window / Notification
+- Capability-Provider / Built-in / App-For-LLM
+
+**关键规则（文件末尾明确）**
+- “App” 简称仅指 App-For-LLM；统称用 Capability-Provider。
+- 复合术语使用连字符风格（Context-Projection、Capability-Provider、App-For-LLM 等）。
+
+**Primary Definition 机制（已落地到 drive-proposals 与 glossary）**
+- 每个核心术语在“首次引入它的 Key-Note”中定义，格式为：`##/### Term` 标题下第一段为引用块 `> **Term** ...`。
+- 非定义源文档允许 restatement，但必须显式标注并指回权威定义。
 
 ### 1) `abstract-token.md`
 
@@ -64,7 +90,7 @@ graph TD
 	- 明确“不提供内嵌插件机制”，避免边界模糊。
 
 **开放问题 / TODO**
-- “使用 DocUI 的两类实体”命名与统一接口命名仍未定（推测指：内建能力 vs 外部 App，或 Agent-OS vs App）。
+- 已引入上位术语 Capability-Provider 统一指代 Built-in 与 App-For-LLM；后续可继续补齐接口与协议层面的契约。
 
 ---
 
@@ -77,8 +103,12 @@ graph TD
 - 形态上更接近 TUI/Web server 的文本渲染，但选择 Markdown 是因为：LLM 语料熟悉、语法噪声低；XML/HTML 噪声大；JSON 存在转义序列问题。
 
 **Context 注入的两种形态**
-1. **Window**：在 Render 时生成一份 Markdown 文档，作为“最新 Observation”的正文部分；强调 LOD（信息层级）控制。
+1. **Window**：在 Context-Projection 时生成一份 Markdown 文档，作为“最新 Observation”的正文部分；强调 LOD（信息层级）控制。
 2. **Notification**：对近期历史与事件流的注入；HistoryEntry 按 LOD 渲染为 Basic/Detail。
+
+**层级关系澄清（新增）**
+- 明确 Observation → History-View → (Window + Notification) 的包含关系。
+- 明确 Recent History 是“选取策略/时间窗”，而非渲染形态。
 
 **LOD 设计**
 - Window LOD：`{Full, Summary, Gist}`
@@ -102,6 +132,14 @@ graph TD
 **角色定位**
 - Key-Notes 类似“宪法/关键帧”，定义设计关键轮廓，用于约束与指导 Proposal 的撰写方向。
 - 起草主体是人类，AI 可辅助但需谨慎编辑。
+
+**术语治理规则（当前落地，已重写）**
+- **Primary Definition 原则**：术语权威定义在“首次引入该术语的 Key-Note”。
+- **定义块格式**：`##/### Term` + 标题下第一段引用块 `> **Term** ...`（一句话定义）。
+- **Glossary-as-Index**：glossary 是索引而非定义仓库，摘要需与定义块一句话定义文本等价。
+- **Restatement 规则**：允许重述但必须显式标注/回链，不得改变定义边界。
+- **迁移规则**：改名（Deprecated + 指向新名）；迁居（Redirect Stub 保留旧锚点）。
+- **CI 校验规格（待实施）**：索引可达/锚点唯一、定义唯一性、摘要一致性、状态约束。
 
 ---
 
@@ -134,8 +172,11 @@ graph TD
 - **IHistoryMessage**：跨厂商抽象调用消息（由渲染层生成，含 LOD 后的 ToolCallResult；并在最后 Observation 中包含 DocUI 渲染出的 App 信息）
 - **HistoryEntry**：更完整的交互记录结构（ToolCallResult 含 Basic+Detail）
 
-**Render（DocUI 语境）**
-- 从“活跃 HistoryEntry + AppState”生成用于 LLM 调用的一组 IHistoryMessage。
+**可视化（新增）**
+- 增加三层结构图与调用序列图，显式展示 HistoryEntry → Context-Projection → IHistoryMessage → ICompletionClient 的数据流。
+
+**Context-Projection（DocUI 语境）**
+- 从“活跃 HistoryEntry + AppState”投影/组装出用于 LLM 调用的一组 IHistoryMessage，并受 Token 预算与 Attention Focus 约束。
 
 **开放问题 / TODO（该文明确列出）**
 - 更准确的厂商 API 命名
@@ -146,12 +187,47 @@ graph TD
 
 ---
 
+### 6) `UI-Anchor.md`
+
+**核心命题**
+- **UI-Anchor** 为 LLM 提供引用与操作 DocUI 可见元素的可靠锚点（句柄/ID）。
+
+**三类锚点（该文已给出清晰的 Primary Definition 候选）**
+1. **Object-Anchor**：`[Label](obj:<id>)`，用于指代实体对象并作为 Action 参数。
+2. **Action-Prototype**：以函数原型公开操作接口（Live API Documentation），服务 REPL 范式。
+3. **Action-Link**：`[Label](link:<id> "code_snippet")`，预填参快捷调用（通过 `click(id)` 工具触发）。
+
+**交互范式（新增/强调）**
+- 采用 **REPL（Read → Eval → Execute）**：LLM 先阅读 Prototype/Anchor，再生成代码调用或点击 Action-Link。
+
+**开放问题（值得进入术语与协议层）**
+- Anchor 生存期：持久（UUID/GUID，悬空引用） vs 临时（Context-Projection 动态分配，绑定可见性）。文中倾向后者，并建议“可持久化引用”另起机制。
+
+**一致性风险提示**
+- `obj:` / `link:` / `file:` 等 URI scheme 尚未进入 glossary；且锚点与 Context-Projection/History-View 的关系尚未在术语索引中建立。
+- 文档中 Action-Prototype 例子使用 TypeScript 签名，但工程背景倾向 C#；后续需要明确“展示语言 vs 执行语言”的契约。
+
+### 7) `micro-wizard.md`
+
+**核心定义（已补齐，非空）**
+- **Micro-Wizard**：在局部引入多步骤、上下文感知的引导，帮助 LLM 渐进解决局部复杂性，并在完成后“修剪中间状态”，保持上下文简洁。
+
+**关键价值点**
+- 把“多解/多匹配/歧义”从一次性失败变成可交互分歧消解；同时通过修剪避免把过程细节永久占用上下文。
+
+**一致性风险提示**
+- “修剪中间状态”会触碰 History 的不可变/仅追加语义，需要明确是：
+	- 在 HistoryEntry 层保留全量、在 Context-Projection/History-View 层进行折叠/摘要；还是
+	- 采用“复合条目（Composite Entry）”把向导步骤封装成一条高层事件并保留可追溯明细。
+
+---
+
 ## 术语一致性分析（跨文档审计）
 
-### 建议固定的“术语源头”与引用规则
+### 术语源头与引用规则
 
-- **术语源头**：建议以 `llm-agent-context.md` 作为 RL/消息/History 相关术语的“单一权威定义”（single source of truth）。
-- **文档引用**：其他 key-note 只在首次出现处做“最短定义 + 指针”，避免重复定义漂移。
+- **术语 SSOT**：`glossary.md`
+- **引用规则**：见 `key-notes-drive-proposals.md` 的“术语引用规则”章节。
 
 ### 关键术语表（当前出现的主要名词）
 
@@ -161,12 +237,13 @@ graph TD
 - DocUI / Window / Notification
 - LOD：Window 的 {Full, Summary, Gist}；Notification 的 {Basic, Detail}
 - App-For-LLM（外部扩展） / Built-in（内建能力）
-- Render（生成 IHistoryMessage 的过程）
+- Context-Projection（生成 IHistoryMessage 的过程，弃用 Render）
 - Abstract Token（跨模型 token 估算单位）
 
 ### 发现的术语问题（需要统一/澄清）
 
-1. **“Abstruct-Token”拼写疑似错误**--已修正。
+1. **Abstract Token 拼写与连字符风格**
+	 - 当前 key-note 使用 `Abstract-Token`（连字符风格）；建议 glossary 与其他文档保持一致。
 
 2. **App 命名风格不一致**
 	 - `app-for-llm.md` 使用 `App-For-LLM`（带连字符）
@@ -189,9 +266,12 @@ graph TD
 	 - 如果这是刻意区分“状态快照”与“事件流”，建议写一条规则说明：
 		 - “快照类（Window）用 Full/Summary/Gist；事件类（Notification）用 Detail/Basic”。
 
-6. **“Render”术语边界偏宽**
-	 - `llm-agent-context.md` 已指出这一点。
-	 - 建议在 digest 里先采用更具体的候选名占位：`Context Rendering` / `Context Assembly` / `Message Materialization`，并在后续 key-note 决策后统一替换。
+6. **Action 分类与命名需要避免与“编辑”语境冲突**
+	 - `Action = Thinking + Tool-Call` 的定义下，如果引入“导航/只读”能力，建议将分类标准写成“是否触发 Environment 状态转移”。
+	 - 命名上优先 `World-Effect` vs `View-Only (Navigation)`，避免 `Edit` 这种与文件编辑/IDE 语境高度冲突的词。
+
+6. **“Render”术语已弃用，需持续清理残留**
+	 - glossary 与 `llm-agent-context.md` 已明确弃用 Render；其他文档如出现残留需清理。
 
 ---
 
@@ -209,3 +289,18 @@ graph TD
 | 日期 | 动作 |
 |------|------|
 | 2025-12-13 | 首次完整同步：读取 5 篇 Key-Note，补全逐篇摘要与术语一致性审计 |
+| 2025-12-14 | 重新同步：新增 UI-Anchor；micro-wizard 已补齐定义；action-anchor 不再存在于 key-notes 目录，已从摘要移除 |
+
+---
+
+## 研讨会共识（持续落地中）
+
+> 来源：`agent-team/meeting/2025-12-13-docui-keynote-workshop.md`
+
+- **术语治理**：演进为 **Primary Definition + Glossary-as-Index**，并在 `key-notes-drive-proposals.md` 写入定义块/重述/迁移/CI 规则。
+- **过程命名**：`Render` 已替换为 `Context-Projection`，并补齐输入/输出契约。
+- **能力来源统一**：引入 `Capability-Provider` 作为 Built-in 与 App-For-LLM 的上位词，并约束 “App” 仅指外部扩展。
+- **交互闭环补齐**：Action 分类为 `World-Effect` vs `View-Only (Navigation)`；引入 Navigation Tool 的“只改视图状态/Projection 参数”定义。
+- **信息组织机制**：将 `Attention Focus` 从“待消化建议”转正，作为驱动 LOD 动态切换的机制。
+- **跨 App 一致性**：引入 `DocUI Vocabulary`（界面协议/词汇表，语义+最小契约），避免过早固化 SDK 组件库。
+- **可视化与层级澄清**：为三层模型补 Mermaid 图；澄清 Window/Notification/History-View/Recent History 的包含关系与“选取策略 vs 呈现形态”。

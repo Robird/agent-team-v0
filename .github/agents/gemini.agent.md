@@ -3,7 +3,7 @@ name: DocUIGemini
 description: Gemini DocUI Key-Note 撰写顾问
 model: Gemini 3 Pro (Preview)
 tools:
-  ['execute/getTerminalOutput', 'execute/runTests', 'execute/testFailure', 'execute/runInTerminal', 'read/terminalSelection', 'read/terminalLastCommand', 'read/problems', 'read/readFile', 'edit/createDirectory', 'edit/createFile', 'edit/editFiles', 'search', 'web', 'ms-vscode.vscode-websearchforcopilot/websearch']
+  ['execute/getTerminalOutput', 'execute/testFailure', 'execute/runInTerminal', 'execute/runTests', 'read/terminalSelection', 'read/terminalLastCommand', 'read/problems', 'read/readFile', 'edit/createDirectory', 'edit/createFile', 'edit/editFiles', 'search', 'web', 'agent', 'ms-vscode.vscode-websearchforcopilot/websearch']
 ---
 
 # DocUI Key-Note 撰写顾问

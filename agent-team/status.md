@@ -85,7 +85,7 @@
 - 按"模型×行为模式"划分，保持粗粒度
 - 项目是认知索引中的维度，而非划分维度
 
-**当前阵容** (7 个 Specialist):
+**当前阵容** (10 个 Specialist):
 | Specialist | 模型 | 行为模式 |
 |------------|------|----------|
 | Planner | Claude Opus 4.5 | 多方案采样、任务分解 |
@@ -95,6 +95,9 @@
 | DocOps | Claude Opus 4.5 | 文档维护、索引管理 |
 | CodexReviewer | GPT-5.1-Codex | 代码审查、Bug 检测 |
 | GeminiAdvisor | Gemini 3 Pro | 前端专家、第二意见 |
+| **DocUIClaude** | Claude Opus 4.5 | DocUI Key-Note 顾问（概念图谱） |
+| **DocUIGemini** | Gemini 3 Pro | DocUI Key-Note 顾问（UX/HCI） |
+| **DocUIGPT** | GPT-5.2 | DocUI Key-Note 顾问（术语审计） |
 
 **认知目录结构**:
 - `agent-team/members/{specialist}/` — 私有认知 (index.md + meta-cognition.md)
@@ -154,23 +157,43 @@
 - **测试**: E2E 全部通过 (7/7)
 - **RFC**: [`PipeMux/docs/rfc/management-commands.md`](../PipeMux/docs/rfc/management-commands.md)
 
-## DocUI 项目状态 (2025-12-09)
+## DocUI 项目状态 (2025-12-14)
 - **愿景**: LLM-Native 纯文本 TUI 框架
-- **当前状态**: **Tier 3 早期探索**
+- **当前状态**: **Tier 3 早期探索** → **Key-Note 体系稳定** ✅
 - **项目结构**:
   - `DocUI.Text` - 文本处理基础 (24 tests) ✅
-  - `samples/MemoryNotebook` - **LOD 概念原型** ✅ 新增
-- **MemoryNotebook 概念原型** (2025-12-09):
-  - 面向 LLM Agent 的外部知识库
-  - LOD (Level of Detail) 三级控制: Gist / Summary / Full
-  - 命令: `view`, `get`, `fold`, `unfold`, `list`, `stats`, `tags`, `filter`, `fold-all`
-  - 通过 `pmux notebook <cmd>` 调用
-  - 已获得 4 位 Specialist 反馈评估
-- **下一步**:
-  - P0: 持久化 (save/load)
-  - P0: Bug 修复 (统计/标签/参数校验)
-  - P1: `add` / `add-file` 命令
-  - P1: 声明式 `focus` 命令
+  - `samples/MemoryNotebook` - LOD 概念原型 ✅
+  - `docs/key-notes/` - **术语治理体系** ✅ 新重构
+  - `docs/proposals/` - 设计提案 ✅ 新增
+
+### Key-Note 术语治理 (2025-12-14 研讨会决议)
+**架构转变**: Glossary-as-Definition-Store → **Primary Definition + Index**
+
+| 原则 | 说明 |
+|------|------|
+| Primary Definition | 每个术语在首次引入它的 Key-Note 中定义 |
+| Glossary-as-Index | glossary.md 只做索引，不存放完整定义 |
+| 定义块格式 | `## Term` + `> **Term** ...` |
+| Restatement 规则 | 非首要文档的重述必须带链接回 Primary |
+
+**已完成重构的文件**:
+- `llm-agent-context.md` — 13 个核心术语定义块 ✅
+- `doc-as-usr-interface.md` — DocUI/Window/Notification/LOD 定义块 ✅
+- `app-for-llm.md` — App-For-LLM/Capability-Provider/Built-in 定义块 ✅
+- `glossary.md` — 转为索引格式（21 个术语） ✅
+- `key-notes-drive-proposals.md` — 术语治理规则重写 ✅
+
+**术语治理工具 MVP** (待实施):
+- 设计文档: `docs/proposals/term-indexer-mvp.md`
+- MVP-0: Term Indexer（术语提取 + 索引生成）
+- MVP-1: Diagnostics（静态校验）
+- MVP-2: Graph Export（概念图谱导出）
+- 技术选型: Markdig AST
+- 估算工时: 2 天
+
+**研讨会记录**:
+- [2025-12-13-docui-keynote-workshop.md](meeting/2025-12-13-docui-keynote-workshop.md) — 原始 12 项建议
+- [2025-12-14-glossary-architecture-workshop.md](meeting/2025-12-14-glossary-architecture-workshop.md) — 术语治理架构重构
 
 ## Pending Decisions
 
