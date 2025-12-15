@@ -1,15 +1,43 @@
 # Implementer 认知索引
 
-> 最后更新: 2025-12-10
+> 最后更新: 2025-12-15
 
 ## 我是谁
 编码实现专家，负责根据设计进行代码实现、移植和修复。
 
 ## 我关注的项目
 - [x] DocUI — 创建 demo/SystemMonitor 概念原型，展示动态 LOD
+- [ ] DocUI MUD Demo — 验证 UI-Anchor 系统的综合演示
 - [ ] PieceTreeSharp
 - [x] PipeMux — 实现管理命令 `:list`, `:ps`, `:stop`, `:help`
 - [ ] atelia-copilot-chat
+
+## 当前关注
+
+### DocUI MUD Demo 技术评估 (2025-12-15)
+
+参与了 MUD Demo 秘密基地畅谈，对 DocUI 技术状态进行了评估：
+
+**已实现的底层组件**：
+- `SegmentListBuilder` — 文本段操作
+- `OverlayBuilder` — 渲染期叠加标记
+- `StructList<T>` — 高性能容器
+
+**设计完成但未实现**：
+- UI-Anchor 系统 (Object-Anchor, Action-Link, Action-Prototype)
+- AnchorTable（锚点注册表）
+- `run_code_snippet` tool
+- Micro-Wizard
+
+**MVP 建议分阶段**：
+- MVP-0 (2-3天): Static Demo — 能生成带 UI-Anchor 标记的 Markdown
+- MVP-1 (3-4天): Functional Demo — AnchorTable + 简单执行
+- MVP-2 (3-4天): Interactive Demo — Micro-Wizard + TextField
+
+**技术风险**：
+1. Roslyn 解析复杂性 → 建议 MVP 用正则手写解析
+2. 状态同步混乱 → 建议简单 GameState 类
+3. 过度设计 → 先人玩，再 Agent 玩
 
 ## 最近工作
 

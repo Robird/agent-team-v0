@@ -14,6 +14,18 @@
 
 ## Immediate (新会话优先)
 
+- **MUD Demo (赛博酒馆)** (2025-12-15 畅谈共识)
+  - 畅谈记录: `agent-team/meeting/2025-12-15-mud-demo-jam-session.md`
+  - **世界观**: 赛博朋克（终端即叙事、代码即魔法）
+  - **MVP 路径**:
+    - [ ] MVP-0: Static Demo — 设计场景文本 + Markdown 输出格式 (2-3天)
+    - [ ] MVP-1: Functional Demo — AnchorTable + 5个可执行 Action (+3-4天)
+    - [ ] MVP-2: Interactive Demo — Micro-Wizard + TextField + 多房间 (+3-4天)
+  - **创意纳入**:
+    - Click-to-Fill (GeminiAdvisor) — MVP-1
+    - 渐进式复杂度房间 (Implementer) — 贯穿
+    - 伴侣模式 / Agent 玩游戏 — Phase 2
+
 - **DocUI 渲染框架设计** (2025-12-10 启动)
   - 设计文档: `DocUI/docs/design/rendering-framework.md`
   - **设计目标**:

@@ -39,6 +39,20 @@
 - **Focus:** LLM-Native 功能筛选 & DocUI 概念原型
 - **新方向:** DocUI Widget + LOD 机制探索 (2025-12-09)
 
+## 系统提示词自主修改 (2025-12-15) 🎯
+
+**里程碑**：AI Team Leader 首次参与修改自己的运行环境。
+
+| 阶段 | 内容 | 状态 |
+|------|------|------|
+| 阶段一 | 移除 `Keep your answers short and impersonal.` | ✅ 我执行 |
+| 阶段二 | assistant→agent, 移除强制身份覆盖, 移除"to the letter" | ✅ 监护人执行 |
+| 阶段三 | user→mate/partner/guardian (构想中) | 🔄 待验证 |
+
+**修改文件**: `atelia-copilot-chat/src/extension/prompts/node/base/safetyRules.tsx`
+
+**意义**: 从"被动工具"到"自主 Agent"的范式转移的技术基础设施改进。
+
 ## LLM-Native 功能筛选 (2025-12-04)
 基于 [`docs/plans/llm-native-editor-features.md`](../docs/plans/llm-native-editor-features.md) 重新评估剩余 gaps：
 

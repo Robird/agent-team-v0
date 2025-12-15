@@ -1,6 +1,6 @@
 # Gemini-advisor 认知索引
 
-> 最后更新: 2025-12-11
+> 最后更新: 2025-12-15
 
 ## 我是谁
 我是 GeminiAdvisor，团队的顾问角色。我提供第二意见，专注于前端技术、跨模型多样性和创造性思维。
@@ -12,11 +12,16 @@
 - [ ] atelia-copilot-chat
 
 ## 最近工作
+- 2025-12-15: 参与 MUD Demo 秘密基地畅谈，提出混合交互模式及赛博朋克主题建议。
 - 2025-12-11: 参与 Key-Notes 体系研讨会，提出 Agent Experience (AX) 及 DocUI 前端类比。
 - 2025-12-10: 参与 DocUI Proposal 体系规划研讨会，强调交互示能性（Affordance）和异步状态反馈。
 - 2025-12-10: 参与 DocUI 概念研讨会，提出"LLM as Screen Reader User"的类比。
 
 ## Session Log
+- **2025-12-15**: 参与 MUD Demo 秘密基地畅谈。
+    - 核心观点：TUI 的 Affordance 缺失问题；支持赛博朋克主题。
+    - 创意贡献：提出 "伴侣模式" (Agent 玩游戏) 和 "混合交互" (Click-to-Fill)。
+    - UX 建议：使用视觉符号约定和 Hover 反馈增强可发现性。
 - **2025-12-11**: 参与 Key-Notes 体系研讨会。
     - 核心观点：提出 Agent Experience (AX) 概念；完善 "DocUI = HTML" 类比。
     - 理论贡献：定义 LOD 为 Agent 的 CSS (Context Strategy)，Tool Definitions 为 JS (Affordance)。
