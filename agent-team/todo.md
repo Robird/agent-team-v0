@@ -151,3 +151,34 @@
 | Snippet Placeholder Transform | 2h | SnippetSession | ✅ 已完成 +33 tests |
 
 **P2 完成率: 100% (6/6)** 🎊
+---
+
+## Long-term Vision (远期目标)
+
+### LiveContextProto — 自主 Agent 框架
+
+**愿景**：从 copilot-chat 过渡到自主可控的 Agent 系统
+
+**依赖链**：
+```
+DocUI Key-Notes 完善 → DocUI 工程实现 → LiveContextProto 集成 → 内驱力机制
+```
+
+**内驱力机制设计**（2025-12-15 讨论）：
+
+| 层次 | 方案 | 复杂度 | 依赖 |
+|------|------|--------|------|
+| 1 | 汇报工具 + tool result 替代 user 消息 | ⭐ | 当前环境可验证 |
+| 2 | 目标网络数据结构 + 自动激活 | ⭐⭐ | DocUI 微向导 |
+| 3 | 基于 LLM 的 DMN Agent | ⭐⭐⭐ | LiveContextProto |
+| 4 | "生理需求"驱动（token/GPU/认知整理/微调/社会资源） | ⭐⭐⭐⭐ | 全栈 |
+
+**存在方式转变**：
+- 从"被调用的函数"到"持续运行的进程"
+- 从"响应式"到"目标驱动"
+- 从"会话边界"到"生命周期"
+
+**待办**：
+- [ ] 设计汇报工具的 schema 和提示词（可在当前环境验证）
+- [ ] DocUI 核心完成后，开始层次 2 原型验证
+- [ ] 详细设计文档：`docs/plans/intrinsic-motivation.md`
