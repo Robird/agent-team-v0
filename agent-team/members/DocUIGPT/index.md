@@ -34,6 +34,13 @@ DocUI 是一个 **LLM-Native 的用户界面框架**——为 LLM Agent 设计�
 
 ### 洞察记录
 
+> **2025-12-16 DurableHeap：Persist-Pointer 的“两层引用”与 LMDB-ish 提交流程**
+>
+> - Persist-Pointer 适合拆成两层：**PhysicalPtr**（内部结构热路径、紧凑快速）与 **LogicalRef**（对外稳定、可搬迁/可压缩）。这样既保留 BTree 下钻性能，又获得“对象身份稳定”的工程优势。
+> - `epoch` 是关键字段：把“失效引用”变成可恢复分支（类似 UI-Anchor 的 `obj:23@e17`），并天然对接 Error-Feedback/Micro-Wizard 的恢复路径。
+> - 事务提交可采用 **双 superblock + root pointer flip**（强类比 LMDB 的 mmap + COW B+tree + MVCC），让 Durable Workflow 的 commit 语义收敛为“切换根”。
+> - Compaction/GC 可以建模为可恢复的后台 Durable Job（tracing + copy + rewrite + root flip），与“持久化状态机”的整体理念一致。
+
 > **2025-12-15 Tool-As-Command：Command 作为 Durable Workflow / Effect Handler 的共同落点**
 >
 > - 当 Tool-Call 需要 Micro-Wizard 多轮交互时，“同步函数映射”会失效；更稳妥的心智模型是 **Durable Continuation**：Command 必须可中断/可恢复/可序列化。

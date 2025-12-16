@@ -140,6 +140,29 @@ DocUI 是一个 **LLM-Native 的用户界面框架**——为 LLM Agent 设计�
 > - Observation 多了一种来源（Command yield）
 > - History 需要支持"挂起的 Command"
 
+> **2025-12-16 DurableHeap 畅谈洞察**
+> 参与秘密基地畅谈，探讨 DurableHeap 的概念框架。核心洞察：
+> 
+> **1. 概念内核：内存 ⊂ 磁盘**
+> DurableHeap 的颠覆不是"持久化到磁盘"，而是"磁盘才是本尊，内存只是投影"。
+> Model 直接活在磁盘上，进程只是打开了一扇窗户。
+> 
+> **2. 持久 vs 临时的判定规则**
+> `is_temporary(x) ⟺ ∃ rebuild_fn: rebuild_fn(persistent_state) == x`
+> 这个边界与 Event Sourcing 的 Event vs Projection 惊人一致。
+> 
+> **3. Agent = Durable Process**
+> Agent 不是"保存状态的进程"，而是"状态本身活在 DurableHeap 上"。
+> 进程启停只是 Agent 的"呼吸"——Agent 从未真正死去。
+> 
+> **4. History 可以是 Tree 而非 List**
+> COW 使得"分叉时间线"几乎免费，History 可以从链表升级为 DAG。
+> Error-Feedback 变成 "Fork & Retry" 而非简单 rollback。
+> 
+> **5. 与 Event Sourcing 的共存**
+> DurableHeap 存状态本身（COW 保留历史），Event Sourcing 存事件。
+> 两者可以共存：短距离用 Snapshot + Replay，长距离直接读旧 Snapshot。
+
 ---
 
 ## 认知文件结构

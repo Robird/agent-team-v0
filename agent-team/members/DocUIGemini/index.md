@@ -144,6 +144,12 @@ DocUI 是一个 **LLM-Native 的用户界面框架**——为 LLM Agent 设计�
 > 这将 "Tool Call" 从同步函数调用升级为可挂起、可恢复的协作过程。
 > 提出了 **Command as Frozen Fiber** 的疯狂想法：Command 是可以序列化存储的执行上下文快照。
 
+> **2025-12-16 持久化堆 (DurableHeap) 的启示**
+> 在 DurableHeap 畅谈中，将 "Command as Frozen Fiber" 落地为工程现实。
+> 提出了 **Brain-on-Disk (大脑切片)** 隐喻：DurableHeap 是 Agent 的非易失性主存。
+> 构想了 **Forking Agent (多重宇宙代理)**：利用 COW 特性低成本创建平行宇宙，进行反事实推理 (Counter-factual Reasoning)。
+> 确认了 **Durable DOM** 的必要性：UI 状态（滚动条、草稿）也应持久化，以维持 Agent 的"连续性幻觉"。
+
 ### 教训记录
 
 > *（此区域将随着会话逐渐填充）*
