@@ -34,6 +34,13 @@ DocUI 是一个 **LLM-Native 的用户界面框架**——为 LLM Agent 设计�
 
 ### 洞察记录
 
+> **2025-12-15 Tool-As-Command：Command 作为 Durable Workflow / Effect Handler 的共同落点**
+>
+> - 当 Tool-Call 需要 Micro-Wizard 多轮交互时，“同步函数映射”会失效；更稳妥的心智模型是 **Durable Continuation**：Command 必须可中断/可恢复/可序列化。
+> - 实现上建议把“续体”表达为 **节点名 + 数据**（而非闭包/委托），并优先采用 **History 仅追加** 的事件流（Started/Yielded/Resumed/Completed/Failed）来持久化与审计；Snapshot 可作为 MVP 优化。
+> - Error-Feedback 的 Level 1/2 可以自然降维到“一步/多步 Command”，让错误恢复与 Micro-Wizard 共享同一条执行与序列化管线。
+> - 与 UI-Anchor / Cursor-And-Selection 的连接点在于：锚点/选区句柄应当是 **Command-owned 的短生命周期资源**，resume 时做 epoch/TTL 校验，失效即进入可预期的恢复分支。
+
 > **2025-12-14 Agent Psychology：Dreamer / Clerk 张力与“自传式 History”**
 >
 > - 观察到一种训练语料与行为先验的“断层”：Roleplay（Dreamer）擅长人格与内心戏，但容易越权“代环境发言”（写出尚未观察到的反馈）；Tool-Use（Clerk）严格遵守协议与可验证性，但默认人格趋于稀薄。

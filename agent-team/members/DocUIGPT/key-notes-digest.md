@@ -1,7 +1,7 @@
 # Key-Notes 消化理解
 
-> **最后同步时间**: 2025-12-14
-> **Key-Note 数量**: 8
+> **最后同步时间**: 2025-12-15
+> **Key-Note 数量**: 10
 > **同步范围**: `DocUI/docs/key-notes/*.md`
 
 ---
@@ -15,6 +15,7 @@ DocUI 当前 Key-Note 体系在表达一个 RL 风格的 Agent 系统：
 - **DocUI**：Agent-OS 向 LLM 呈现“可感知世界 + 可执行动作”的界面层，采用 Markdown Document 作为主载体。
 - **App-For-LLM**：对 Agent 能力的外部扩展机制（独立进程 + RPC），通过 DocUI 统一呈现给 LLM。
 - **Context Budget / Abstract Token**：承认“有效上下文远小于最大窗口”这一工程现实，提供跨模型的抽象计量单位。
+- **Error-Feedback / Cursor-And-Selection**：把“可恢复错误反馈”和“光标/选区表达”作为 Micro-Wizard 体系的重要支撑，减少重试死循环与复述成本。
 
 这些 key-note 的关系可粗略理解为：
 
@@ -25,10 +26,14 @@ graph TD
 	KN0 --> KN2[Doc as User Interface]
 	KN0 --> KN3[App-For-LLM]
 	KN0 --> KN4[Abstract Token]
+	KN0 --> KN5[Error-Feedback]
+	KN0 --> KN6[Cursor-And-Selection]
 	G --> KN1
 	G --> KN2
 	G --> KN3
 	G --> KN4
+	G --> KN5
+	G --> KN6
 ```
 
 > 备注：术语治理已于 2025-12-14 落地为 **Primary Definition + Glossary-as-Index**：术语的权威定义分布在各 Key-Note 的“定义块”，`glossary.md` 回归为索引入口（摘要 + 链接 + 状态）。
@@ -222,6 +227,40 @@ graph TD
 
 ---
 
+### 8) `error-feedback.md`
+
+**核心定义**
+- **Error-Feedback**（错误反馈）：引导 LLM 从错误状态恢复的交互模式；强调“给出引导与候选”，而非只报错。
+
+**三层模型（严重度 × 恢复复杂度）**
+- Level 0 Hint：单行提示 + 自动修正建议
+- Level 1 Choice：候选列表 + Action-Link
+- Level 2 Wizard：触发 Micro-Wizard 多步流程
+
+**实现上最可操作的部分**
+- 错误呈现的固定结构：原因/因果链/恢复选项/可折叠技术详情
+- 覆盖典型场景：锚点失效、参数歧义、连续失败熔断
+- 给出了声明式 WizardSpec 与 JSON 序列化示例；并建议扩展工具执行状态以表达“需要澄清/需要恢复选择”等中间态
+
+---
+
+### 9) `cursor-and-selection.md`
+
+**核心定义**
+- **Cursor-And-Selection**：向 LLM 展示光标位置与选区范围的机制，通过“围栏内 overlay 标记”实现精确引用，避免复述长文本。
+
+**关键机制**
+- **Selection-Marker**：`<sel:N>...</sel:N>`（N 用于区分多个选区）
+- **Selection-Legend**：围栏外图例，解释每个选区语义（old/new/候选等）
+- 光标可用 `<cursor/>` 表示零宽度插入点
+
+**与 UI-Anchor / Micro-Wizard 的关系**
+- 类似 UI-Anchor 的“引用而不复述”，但语义是“文本流区间/位置”而非“实体对象”。
+- 常作为 Micro-Wizard 的“预览输出”，并与 Action-Link 组合形成可确认/可取消/可选取下一匹配的交互闭环。
+- 实现备注明确可复用 PieceTreeSharp 的 `Selection/Range/CursorState` 等结构做渲染转换。
+
+---
+
 ## 术语一致性分析（跨文档审计）
 
 ### 术语源头与引用规则
@@ -290,6 +329,7 @@ graph TD
 |------|------|
 | 2025-12-13 | 首次完整同步：读取 5 篇 Key-Note，补全逐篇摘要与术语一致性审计 |
 | 2025-12-14 | 重新同步：新增 UI-Anchor；micro-wizard 已补齐定义；action-anchor 不再存在于 key-notes 目录，已从摘要移除 |
+| 2025-12-15 | 新增 Error-Feedback 与 Cursor-And-Selection；同步 Key-Note 数量与总览关系图 |
 
 ---
 

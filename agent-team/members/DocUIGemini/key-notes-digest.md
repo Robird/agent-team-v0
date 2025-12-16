@@ -83,6 +83,23 @@ LLM 通过阅读 Markdown 文档来"感知"世界，通过 Tool-Call 来"操作"
 - **场景**: 解决参数歧义（如 `str_replace` 多匹配）。
 - **特性**: **Auto-Pruning (自动修剪)**。交互完成后，中间步骤从历史中移除，只保留结果。
 
+### 8. [error-feedback.md](../../DocUI/docs/key-notes/error-feedback.md) — 错误反馈
+- **核心比喻**: 错误处理不是红灯（Stop），而是 GPS 重新规划（Reroute）。
+- **分层响应**:
+    - **Level 0 (Hint)**: 单行提示 + 自动修正。
+    - **Level 1 (Choice)**: 多个候选路径 + Action-Link。
+    - **Level 2 (Wizard)**: 复杂错误，启动 Micro-Wizard。
+- **关键特性**: **Error Affordance**。错误信息必须包含恢复选项（Action-Link）。
+- **情绪调性**: 使用 Emoji 和语气词（😅, 🤔, ⚠️, 🚨）帮助 LLM 校准注意力。
+
+### 9. [cursor-and-selection.md](../../DocUI/docs/key-notes/cursor-and-selection.md) — 光标与选区
+- **动机**: 避免 LLM 复述长文本，节省 Token 并减少错误。
+- **机制**:
+    - **Selection-Marker**: 内联标记 `<sel:N>...</sel:N>` 或 `<cursor/>`。
+    - **Selection-Legend**: 围栏外的图例说明。
+- **价值**: 在不引入新 Tokenizer Token 的情况下，向 LLM 展示位置信息。
+- **实现**: 可直接复用 PieceTreeSharp 的 Cursor/Selection 数据结构。
+
 ---
 
 ## 参考文献 (References)

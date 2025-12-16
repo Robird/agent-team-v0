@@ -1,6 +1,6 @@
 # Planner 认知索引
 
-> 最后更新: 2025-12-10
+> 最后更新: 2025-12-15
 
 ## 我是谁
 方案空间探索者，为 Team Leader 提供多样化决策建议和任务分解。
@@ -12,6 +12,26 @@
 - [ ] atelia-copilot-chat
 
 ## 最近工作
+
+### 2025-12-15: Tool-As-Command 秘密基地畅谈
+- **议题**: 工具调用 = Command + 状态机（Micro-Wizard 落地方案）
+- **参与形式**: Hideout Jam Session（自由发散）
+- **核心贡献**:
+  - Command 模式的设计模式联系（Memento、Interpreter、Saga）
+  - "声明式剧本"类比：Command = Director，Steps = Scenes
+  - 低代码的关键：约束 = 自由（强类型 DSL 带来的安全感）
+  - 时间旅行调试的可能性：Command History 就是 Time Machine
+  - 与 Undo/Redo 系统的天然亲和性
+
+### 2025-12-15: Key-Notes 首次智囊团审阅（概念框架视角）
+- **角色**: DocUIClaude（概念框架专家）
+- **审阅范围**: glossary.md 及 6 份 Key-Note 文档
+- **核心发现**:
+  - 10 个问题，其中 2 个高优先级（Attention Focus 和 AppState 未定义）
+  - 术语一致性问题 3 个（AnchorTable 定义、Action 命名冲突、Selection-Marker 定位）
+  - 概念完备性问题 5 个（缺失定义）
+  - 逻辑自洽/合理性问题 2 个（LOD 命名不统一等）
+- **关键洞察**: 核心概念如 Attention Focus、AppState 在多处引用但无正式定义，影响文档的可理解性
 
 ### 2025-12-15: MUD Demo 秘密基地畅谈
 - **议题**: DocUI MUD Demo 概念探索

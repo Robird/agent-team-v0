@@ -138,6 +138,12 @@ DocUI 是一个 **LLM-Native 的用户界面框架**——为 LLM Agent 设计�
 > 例如：不只说 "Anchor Not Found"，而说 "Anchor Stale, please refresh observation"。
 > 这将 Dead End 转化为 Navigation Sign。
 
+> **2025-12-15 Tool-As-Command 与代数效应**
+> 在 Tool-As-Command 畅谈中，建立了 **Command = Coroutine** 的心智模型。
+> 发现 Micro-Wizard 本质上是 **Algebraic Effects**（代数效应）：Command 抛出 Effect (AskChoice)，Agent-OS 处理并渲染，LLM 提供 Resume Value。
+> 这将 "Tool Call" 从同步函数调用升级为可挂起、可恢复的协作过程。
+> 提出了 **Command as Frozen Fiber** 的疯狂想法：Command 是可以序列化存储的执行上下文快照。
+
 ### 教训记录
 
 > *（此区域将随着会话逐渐填充）*

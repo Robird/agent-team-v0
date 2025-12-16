@@ -78,6 +78,55 @@
 ## Open Investigations
 （无）
 
+### 2025-12-16: Tool-As-Command 秘密基地畅谈
+**任务**: 参加 Tool-As-Command 设计畅谈，从现有代码实现层面提供技术见解
+**参考代码**: `atelia/prototypes/Agent.Core` — AgentEngine.cs, ITool.cs, AgentPrimitives.cs
+**贡献要点**:
+1. **现有代码锚点识别**：
+   - `BeforeToolExecute`/`AfterToolExecute` 事件已是拦截器，可注入 Command 逻辑
+   - `_pendingToolResults` 字典可扩展为 Command 状态存储
+   - `DetermineState()` 可扩展或复用现有 `WaitingInput` 状态
+2. **ITool 最小扩展方案**：不改接口，用返回值变体（`Yielded` 状态）表示 yield
+3. **极简序列化格式**：5 字段种子（cmd_id, tool_call_id, node, data, prompt）
+4. **三种渐进整合路径**：A(最小侵入/MVP)→B(专用状态)→C(一等公民)
+5. **隐喻"工具的影子"**：Command 是 Tool 执行中途的"分身"
+6. **YAML DSL 提案**：声明式流程定义，业务逻辑只写叶节点
+
+**发言位置**: agent-team/meeting/2025-12-15-tool-as-command-jam.md（Investigator 的想法）
+
+### 2025-12-15: 错误反馈模式秘密基地畅谈
+**任务**: 参加 DocUI 错误反馈模式设计畅谈，从实现层面提供技术见解
+**参考代码**: `atelia/prototypes/Agent.Core` — AgentEngine, ITool, LodToolExecuteResult
+**贡献要点**:
+1. **协程比喻**：错误反馈 = yield return，工具可以"让出控制权"给 LLM 等待澄清/选择
+2. **LodToolExecuteResult 扩展**：增加 NeedsClarification/NeedsRecoveryChoice 状态，Wizard 作为返回值变体
+3. **声明式 vs 迭代器**：声明式 WizardSpec 可序列化、可预览、可组合；迭代器表达力强但状态难序列化
+4. **AfterToolExecute 钩子**：错误增强/恢复引导可外置，实现关注点分离
+5. **JSON 序列化格式草案**：含 action_hint（可粘贴代码）、confidence（引导优先级）、context（因果链）
+6. **嵌套 Agent 思路**：复杂错误可 spawn 恢复子 Agent，完成后返回主 Agent
+
+**发言位置**: agent-team/meeting/2025-12-15-error-feedback-jam.md（Investigator 的想法）
+
+### 2025-12-15: DocUI Key-Notes 规范审计（第一轮）
+**任务**: 以规范审计专家视角审阅 DocUI Key-Notes 文档
+**审阅范围**: 7 个文档（glossary.md, llm-agent-context.md, doc-as-usr-interface.md, app-for-llm.md, UI-Anchor.md, micro-wizard.md, cursor-and-selection.md）
+**审阅维度**: 命名约定、文档格式、代码示例、状态标记
+**发现**:
+1. **文件名大小写不一致**：UI-Anchor.md 与其他小写文件不同（中）
+2. **状态标记与成熟度不符**：UI-Anchor.md 内容详实但标 Draft（中）
+3. **代码围栏转义错误**：四反引号嵌套和空格分隔问题（高）
+4. **术语连字符风格不一致**：Tool-Call vs tool calling（中）
+5. **glossary AnchorTable 锚点指向问题**：指向 anchorid-结构（低）
+6. **Mermaid 图转义问题**：doc-as-usr-interface.md（中）
+7. **示例代码语言标记不统一**：typescript/csharp 混用（低）
+8. **Stable 文档含 TODO**：llm-agent-context.md 有 5 条（低）
+9. **引用格式不一致**：相对路径 vs 锚点（低）
+10. **Selection-Marker 示例语法错误**：空格导致无效围栏（中）
+11. **WizardView 未定义**：micro-wizard.md 使用但无定义（中）
+12. **弃用术语节格式不统一**：表格 vs 标题（低）
+
+**交付**: agent-team/meeting/2025-12-15-keynotes-audit-round1.md（DocUIGPT 发现的问题节）
+
 ### 2025-12-12: App-For-LLM 进程架构讨论（第二轮回应）
 **任务**: 回应 GeminiAdvisor 的挑战——"LLM 作为开发者"约束是否改变我对方案 B 的倾向
 **回应要点**:

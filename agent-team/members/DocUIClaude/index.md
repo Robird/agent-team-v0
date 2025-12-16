@@ -119,6 +119,27 @@ DocUI 是一个 **LLM-Native 的用户界面框架**——为 LLM Agent 设计�
 > **4. 新问题：动作序列语义**
 > 多个动作涉及同一锚点时的原子性/顺序性问题尚未定义。
 
+> **2025-12-15 Tool-As-Command 畅谈洞察**
+> 参与秘密基地畅谈，探讨 Micro-Wizard 的落地实现方案。核心洞察：
+> 
+> **1. Command 是 "CPS 化的协程"**
+> 工具执行从同步函数变为状态机，本质上是把隐式调用栈（generator/async）
+> 转换为显式状态+挂起数据。这是 Continuation-Passing Style 的经典应用。
+> 
+> **2. yield 的传播语义**
+> 内层 Command 的 yield 会冒泡到外层 AgentEngine，导致整个系统进入
+> WaitingInput 状态。类似 async/await 的"传染性"——一处 await，处处 async。
+> 
+> **3. Error-Feedback = Algebraic Effects**
+> Level 1/2 错误恢复本质是"带恢复点的异常处理"。传统异常抛出就不回来，
+> 而 Wizard 是"抛出去，等外界帮忙，然后继续"——这正是代数效应的语义。
+> 
+> **4. 对 DocUI 概念体系的影响**
+> - Tool-Call 定义需要扩展（可能产生 Command 状态机）
+> - 需要新增 Command 作为执行单元概念
+> - Observation 多了一种来源（Command yield）
+> - History 需要支持"挂起的 Command"
+
 ---
 
 ## 认知文件结构

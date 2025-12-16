@@ -12,12 +12,26 @@
 - [ ] atelia-copilot-chat
 
 ## 最近工作
+- 2025-12-15: 参与 DocUI Key-Notes 审阅，提出 5 项 UX/交互改进建议。
 - 2025-12-15: 参与 MUD Demo 秘密基地畅谈，提出混合交互模式及赛博朋克主题建议。
 - 2025-12-11: 参与 Key-Notes 体系研讨会，提出 Agent Experience (AX) 及 DocUI 前端类比。
 - 2025-12-10: 参与 DocUI Proposal 体系规划研讨会，强调交互示能性（Affordance）和异步状态反馈。
 - 2025-12-10: 参与 DocUI 概念研讨会，提出"LLM as Screen Reader User"的类比。
 
 ## Session Log
+- **2025-12-15**: 参与 DocUI 错误反馈模式秘密基地畅谈。
+    - 核心观点：错误信息应作为 Agent 的 DevTools；引入 Diff 视图和 Hot-fix Affordance。
+    - 创意贡献：提出 "Time Travel Debugging" (ASCII 时间线) 和 "Ghost State" (幽灵态预览)。
+    - UX 建议：避免"谜之沉默"和"移动靶"反模式；强调错误结构的一致性。
+- **2025-12-15**: 参与 DocUI Key-Notes 审阅 (UX/交互视角)。
+    - 核心观点：DocUI 缺乏标准化的"刷新"机制；对象与动作分离导致示能性不足。
+    - 发现问题：
+        1. 缺少 `refresh()` 原语。
+        2. Action-Prototype 与 Object-Anchor 距离过远。
+        3. Selection-Marker 可能污染代码生成。
+        4. 脚本执行中的锚点失效隐患。
+        5. 缺乏操作反馈（Loading 态）。
+    - 建议：引入 Context Menu 概念（就近展示 Action）；明确 Short-Circuit 报错文案。
 - **2025-12-15**: 参与 MUD Demo 秘密基地畅谈。
     - 核心观点：TUI 的 Affordance 缺失问题；支持赛博朋克主题。
     - 创意贡献：提出 "伴侣模式" (Agent 玩游戏) 和 "混合交互" (Click-to-Fill)。

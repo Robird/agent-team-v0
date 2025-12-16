@@ -205,6 +205,10 @@ graph TB
    - REPL 范式: LLM 读文档 → 编写代码 → Agent-OS 执行
    - 开放问题: 锚点生存期（倾向临时方案）
 6. **Micro-Wizard.md** — 骨架已建立，待完善
+7. **Tool-As-Command 架构探索中** — 2025-12-15 畅谈
+   - Command = CPS 化的协程，解决 Wizard 的多步状态和序列化问题
+   - 需要扩展 Tool-Call 定义、新增 Command 概念
+   - 可能影响 History 结构（支持挂起的 Command）
 
 ---
 
