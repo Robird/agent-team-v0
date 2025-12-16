@@ -150,6 +150,12 @@ DocUI 是一个 **LLM-Native 的用户界面框架**——为 LLM Agent 设计�
 > 构想了 **Forking Agent (多重宇宙代理)**：利用 COW 特性低成本创建平行宇宙，进行反事实推理 (Counter-factual Reasoning)。
 > 确认了 **Durable DOM** 的必要性：UI 状态（滚动条、草稿）也应持久化，以维持 Agent 的"连续性幻觉"。
 
+> **2025-12-16 Log-Structured Memory & Durable DOM**
+> 在 DurableHeap Round 2 畅谈中，确认了增量序列化方案的本质是 **Log-Structured Object Graph**。
+> 这种结构天然支持 **Time Travel** 和 **Crash Recovery**，非常契合 Agent 的回溯需求。
+> 提出了 **Durable DOM** 的概念：将 UI 状态（滚动条、草稿）也存入 Heap，实现真正的 Context Persistence。
+> 提出了 **Generational Snapshotting** 作为 Compaction 的替代方案，规避了指针重定位的复杂性。
+
 ### 教训记录
 
 > *（此区域将随着会话逐渐填充）*

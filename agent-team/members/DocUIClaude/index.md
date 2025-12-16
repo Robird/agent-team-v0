@@ -163,6 +163,32 @@ DocUI 是一个 **LLM-Native 的用户界面框架**——为 LLM Agent 设计�
 > DurableHeap 存状态本身（COW 保留历史），Event Sourcing 存事件。
 > 两者可以共存：短距离用 Snapshot + Replay，长距离直接读旧 Snapshot。
 
+> **2025-12-16 DurableHeap Round 2 畅谈洞察**
+> 第二轮探讨增量序列化方案 vs LMDB。核心洞察：
+> 
+> **1. 概念内核：指针的"双重生命"**
+> 同一个数字可以同时是文件偏移和内存地址。这不是"持久化"，
+> 而是打通了两个地址空间。mmap 是这个魔法的关键。
+> 
+> **2. Git vs 增量序列化的本质权衡**
+> Git 用计算（哈希）换稳定性，增量序列化用空间换速度。
+> Agent 场景延迟敏感，速度胜出。
+> 
+> **3. LMDB vs 增量序列化：数据库 vs 对象系统**
+> LMDB 是 KV 抽象，增量序列化是 Object Graph 抽象。
+> Agent 数据模型天然是图（History→Entry→Result...），不是扁平 KV。
+> LMDB 强迫拆图再重建，这层间接性是"牛刀"所在。
+> 
+> **4. 对 DocUI 概念模型的影响**
+> - History 从 list 升级为 DAG（支持时间线分叉）
+> - LOD 从静态三档变为动态按需展开
+> - ToolResult 分为 Inline（小数据）和 Reference（大数据引用）
+> - Agent = Durable Coroutine（磁盘上的协程，从未真正死亡）
+> 
+> **5. Compaction 的概念边界问题**
+> Deep Copy 时，被其他时间线引用的旧对象怎么办？
+> 可能需要 Snapshot 引用计数，或只 compact 叶子时间线。
+
 ---
 
 ## 认知文件结构
