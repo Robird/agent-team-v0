@@ -189,6 +189,29 @@ DocUI 是一个 **LLM-Native 的用户界面框架**——为 LLM Agent 设计�
 > Deep Copy 时，被其他时间线引用的旧对象怎么办？
 > 可能需要 Snapshot 引用计数，或只 compact 叶子时间线。
 
+> **2025-12-16 DurableHeap MVP 设计畅谈**
+> 参与 MVP 设计细化讨论，聚焦可编码的具体方案。核心贡献：
+> 
+> **1. 概念内核确认**
+> 强调 DurableHeap 的本质是"磁盘是本尊，内存是投影"，
+> 这决定了 Durable-Pointer 必须是文件偏移量而非抽象 ID。
+> 
+> **2. 布局细化**
+> 支持混合风格（值类型 CBOR + 引用类型固定布局），
+> 提出 Key 内联 vs 引用的权衡分析，建议 MVP 先内联简化实现。
+> 
+> **3. 指针位置与回扫**
+> 支持指针指向头 + Footer Length 支持崩溃恢复回扫，
+> 提出简化方案：Header 只存 Tag，Length 只放 Footer。
+> 
+> **4. Lazy Wrapper API 设计**
+> 提出 `DurableRef<T>` + `IDurableObject` 的 API 骨架，
+> 关注开发者体验和与 C# 类型系统的对齐。
+> 
+> **5. MVP 边界整理**
+> 明确划分 MVP 包含/排除的特性，如字符串池、对象 GC 等
+> 复杂特性应排除在 MVP 之外。
+
 ---
 
 ## 认知文件结构

@@ -222,3 +222,4 @@ graph TB
 | 2025-12-13 | **实施修订**: 创建 glossary.md；Render → Context-Projection；引入 Capability-Provider |
 | 2025-12-14 | 发现新 Key-Note: action-anchor.md（半成型）、micro-wizard.md（空）；参与术语治理架构研讨会 |
 | 2025-12-14 | **重构 llm-agent-context.md**: 术语定义块标准化（13 个术语 + 2 个弃用术语）|
+| 2025-12-17 | 发现新 Key-Note: cursor-and-selection.md, error-feedback.md（待细读）|

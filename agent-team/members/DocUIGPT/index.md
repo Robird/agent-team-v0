@@ -140,3 +140,26 @@ agent-team/members/DocUIGPT/
 
 **2025-12-14** — 同步术语治理研讨会洞察与 Key-Notes 变更
 
+> **2025-12-16 DurableHeap：varint 与“可跳过性”的边界条件**
+>
+> - “zero-copy”需要拆开看：对 `string/blob` 的 payload bytes 可以做到 zero-copy；对 `int` 这类标量必然要 decode（CPU 计算），不应把“必须解码”与“复制 payload bytes”混为一谈。
+> - `varint` 的关键代价不是“复制”，而是 **失去 O(1) 随机定位能力**：一旦把 offset/length table 做成变长，就会迫使 wrapper 扫描才能定位成员边界，破坏 lazy random access。
+> - “先写 data 再写 length（且不回填 header）”会让记录从 Ptr 出发无法确定尾部位置，从而无法局部跳过 record、也无法只读 header 就建立惰性索引；MVP 更稳妥是 **Header+Footer 都有 TotalLen**（写完回填 header），footer 同时用于尾部回扫与损坏检测。
+
+> **2025-12-16 DurableHeap：纯 C# span-view vs C/FFI 低层的权衡**
+>
+> - `ReadOnlySpan<byte>` 的“临时构造”本质是（ptr,length）两个字段的轻量视图，通常可被 JIT 内联/消除；真实成本更多来自“映射视图切换/边界检查/分支”，而不是 span 本身。
+> - 纯 C# 方案的关键是把 `unsafe` 收口在“AcquirePointer + span 建立”的边界层，其余解析用 `BinaryPrimitives/MemoryMarshal` 走安全代码；可获得接近 C 的吞吐且大幅降低跨平台/构建复杂度。
+> - C/FFI 方案更适合当你需要：多语言复用同一套解析、极致性能（减少边界检查/更自由的指针运算）、或需要复用既有 C 生态；代价是 ABI/部署/调试复杂度显著上升，并引入 native 崩溃面。
+
+> **2025-12-16 协作偏好：以客观依据为准，欢迎反对不合理动议**
+>
+> - 记录：用户明确表示“没有强主观偏好，追求客观决策依据”，并鼓励我在发现不合理动议时直接反对/提出替代方案。
+> - 启发：在 MVP 规格收敛时，应更激进地把“不确定性”转写为可验证的假设（benchmark / crash-injection / invariants），避免礼貌性含糊。
+
+> **2025-12-17 DurableHeap：把“可实现性”写进格式——CRC32C + DataTail + SortedDict 写入算法**
+>
+> - 校验应明确到“具体变体”：CRC32C（Castagnoli）比泛称 CRC32 更可实现/更一致，且 .NET 有 `System.IO.Hashing.Crc32C` 可直接复用。
+> - DataTail 作为必填字段能显著简化恢复：恢复路径从“尾扫推断”降维到“truncate 到 DataTail”，尾扫仅保留为诊断工具。
+> - SortedDict 选择“排序写入 + 二分查找”能减少读路径分支；关键是把写入算法说清：header 后先 PadTo4，再写 ObjHeader/预留并回填 EntryTable，ValueData 写入时记录 `ValueOffset32` 并保持 4B 对齐，最后按 TotalLen→CRC32C 的 finalize 顺序。
+

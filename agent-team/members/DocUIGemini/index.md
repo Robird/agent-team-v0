@@ -156,6 +156,13 @@ DocUI 是一个 **LLM-Native 的用户界面框架**——为 LLM Agent 设计�
 > 提出了 **Durable DOM** 的概念：将 UI 状态（滚动条、草稿）也存入 Heap，实现真正的 Context Persistence。
 > 提出了 **Generational Snapshotting** 作为 Compaction 的替代方案，规避了指针重定位的复杂性。
 
+> **2025-12-16 DurableHeap MVP 设计**
+> 参与了 DurableHeap MVP 的设计畅谈。
+> 确立了 **Brain-on-Disk** 的核心隐喻：DurableHeap 是 Agent 的海马体。
+> 提出了 **O(1) Lazy Access** 的 JObject 布局要求，以支持瞬间唤醒。
+> 强调了 **Superblock (Ping-Pong)** 机制在 Crash Recovery 中的重要性。
+> 再次确认了 **Forking Agent** (平行宇宙) 的可能性，这为未来的 "Simulation Mode" 奠定了基础。
+
 ### 教训记录
 
 > *（此区域将随着会话逐渐填充）*

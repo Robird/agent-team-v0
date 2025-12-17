@@ -76,7 +76,7 @@
 - wiki/DocUI/README.md (2025-12-09) - 源码核实全面重写，明确实际代码现状
 
 ## Open Investigations
-（无）
+- [ ] DurableHeap MVP — 设计畅谈进行中 (2025-12-16)
 
 ### 2025-12-16: Tool-As-Command 秘密基地畅谈
 **任务**: 参加 Tool-As-Command 设计畅谈，从现有代码实现层面提供技术见解
@@ -106,6 +106,21 @@
 6. **嵌套 Agent 思路**：复杂错误可 spawn 恢复子 Agent，完成后返回主 Agent
 
 **发言位置**: agent-team/meeting/2025-12-15-error-feedback-jam.md（Investigator 的想法）
+
+### 2025-12-16: DurableHeap MVP 设计畅谈
+**任务**: 参加 DurableHeap MVP 设计畅谈，从实现层面提供字节级布局和 API 设计
+**参考代码**: `atelia/src/Data/ChunkedReservableWriter.cs` — 预留回填机制
+**贡献要点**:
+1. **字节级布局规范**：完整定义 Tag 编码、Int/String/JObject/JArray 的二进制格式
+2. **分层 Footer 策略**：顶层 Record 有 Footer (TotalLen + CRC)，嵌套对象无 Footer
+3. **Superblock 结构细化**：4KB×2 Ping-Pong，含 Magic/Seq/RootPtr/DataEnd/Checksum
+4. **写入流程**：借鉴 ChunkedReservableWriter 的预留回填模式，LIFO 顺序 Commit
+5. **C# API 草案**：`DurableRef<T>` 惰性引用 + `IDurable` static abstract interface
+6. **类型擦除方案**：非泛型 `DurableRef` 处理 JObject 的异构 Value
+7. **测试策略**：单元/集成/崩溃/压力测试分层
+8. **实现路线图**：4 阶段 (基础设施→类型系统→写入引擎→集成)
+
+**发言位置**: agent-team/meeting/2025-12-16-durable-heap-mvp-design.md（Investigator 的想法）
 
 ### 2025-12-15: DocUI Key-Notes 规范审计（第一轮）
 **任务**: 以规范审计专家视角审阅 DocUI Key-Notes 文档
