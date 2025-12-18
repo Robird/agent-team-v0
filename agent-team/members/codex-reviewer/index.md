@@ -15,6 +15,7 @@
 - 2025-12-09: 审阅 PipeMux 管理命令 RFC，建议优先独立管理 CLI（方案 B），强调共享 Broker 客户端库与管理 RPC 分层，关注保留字冲突与权限隔离风险。
 
 ## Session Log
+- 2025-12-17: 审阅 DurableHeap 写入路径 jam（2025-12-17），指出拓扑排序需显式环检测、方案 A 回滚会丢失 `_transientData`、并发缺 CAS/锁、需要 DataTail 截断或坏尾标记及上限校验，并建议 API 显式 Draft/Snapshot 以避免静默冻结。
 - 2025-12-17: 复核 DurableHeap/docs/mvp-design.md 在 DictInt32 writer 对齐/回填顺序/FieldCount*8 调整后的版本，确认 pad-to-4→ObjHeader/EntryTable、回填 TotalLen→footer→CRC32C 顺序与对齐和值偏移不变量一致，无新增矛盾。
 - 2025-12-17: 审阅 DurableHeap/docs/mvp-design.md 的 DictInt32 写入算法新增段，指出需在 header 后插入 4B 对齐 padding/确保 EntryTableOffset 基于对齐位置，强调回填 TotalLen 后再算 CRC32C 并保持 ValueOffset32 相对 Tag；建议维持 EntryTable 大小 FieldCount*8 与布局一致。
 - 2025-12-17: 再次审阅 DurableHeap/docs/mvp-design.md（CRC32C/DataTail/Dict 排序+二分/UTF-16 pad 3B 版本），补充 “CRC32C(Castagnoli)” 口径与 UTF-16 字符串末尾补齐对齐说明，未发现其他内在矛盾。

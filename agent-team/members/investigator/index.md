@@ -78,6 +78,23 @@
 ## Open Investigations
 - [ ] DurableHeap MVP — 设计畅谈进行中 (2025-12-16)
 
+### 2025-12-17: DurableHeap 写入路径设计畅谈
+**任务**: 调研内存对象→持久化对象的"透明迁移"前人经验
+**调研范围**:
+1. CLR GC 对象重定位机制（Marking→Relocating→Compacting）
+2. 数据库 MemTable→SSTable 刷盘（LevelDB/RocksDB WAL）
+3. 内存映射数据库 COW 语义（LMDB/MDBX B+ Tree）
+4. ORM 脏追踪与 Identity Map（SQLAlchemy Unit of Work, Hibernate 状态机）
+5. 函数式持久化数据结构（Structural Sharing, HAMT, Path Copying）
+6. GC 前向指针技术（Cheney 算法, Shenandoah forwarding pointer）
+**核心发现**:
+- 关键抽象：Handle/Slot 间接层 + 状态机（Transient→Pending→Durable）
+- LSM-Tree 的"不可变 + 分层刷盘"思路契合 append-only 设计
+- ORM 的 Identity Map 可参考用于保证"同一 Ptr 返回同一 wrapper"
+- 前向指针技术启发：commit 时原位更新内部 Slot 指针
+
+**发言位置**: agent-team/meeting/2025-12-17-durable-heap-write-path-jam.md
+
 ### 2025-12-16: Tool-As-Command 秘密基地畅谈
 **任务**: 参加 Tool-As-Command 设计畅谈，从现有代码实现层面提供技术见解
 **参考代码**: `atelia/prototypes/Agent.Core` — AgentEngine.cs, ITool.cs, AgentPrimitives.cs
