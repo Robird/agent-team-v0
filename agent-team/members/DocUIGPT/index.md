@@ -146,6 +146,11 @@ agent-team/members/DocUIGPT/
 > - `varint` 的关键代价不是“复制”，而是 **失去 O(1) 随机定位能力**：一旦把 offset/length table 做成变长，就会迫使 wrapper 扫描才能定位成员边界，破坏 lazy random access。
 > - “先写 data 再写 length（且不回填 header）”会让记录从 Ptr 出发无法确定尾部位置，从而无法局部跳过 record、也无法只读 header 就建立惰性索引；MVP 更稳妥是 **Header+Footer 都有 TotalLen**（写完回填 header），footer 同时用于尾部回扫与损坏检测。
 
+> **2025-12-19 DurableDict：术语消歧的“禁用模糊词”经验（QC 记录）**
+>
+> - 即便在文档中提供了“术语映射”（例如把“内存态”映射到 Working State/ChangeSet），仍建议在规范段中**彻底禁用**这类跨层模糊词：它会在其他章节再次引入歧义，并削弱读者对三层语义边界的信心。
+> - “Materialize（过程）→ committed state（结果）”与“Materialized State（名词）”极易发生术语碰撞；更稳妥的写法是把对外语义状态称为 Working/Current State，把 materialize 的结果明确称为 Committed Baseline/Committed State。
+
 > **2025-12-16 DurableHeap：纯 C# span-view vs C/FFI 低层的权衡**
 >
 > - `ReadOnlySpan<byte>` 的“临时构造”本质是（ptr,length）两个字段的轻量视图，通常可被 JIT 内联/消除；真实成本更多来自“映射视图切换/边界检查/分支”，而不是 span 本身。
@@ -162,4 +167,28 @@ agent-team/members/DocUIGPT/
 > - 校验应明确到“具体变体”：CRC32C（Castagnoli）比泛称 CRC32 更可实现/更一致，且 .NET 有 `System.IO.Hashing.Crc32C` 可直接复用。
 > - DataTail 作为必填字段能显著简化恢复：恢复路径从“尾扫推断”降维到“truncate 到 DataTail”，尾扫仅保留为诊断工具。
 > - SortedDict 选择“排序写入 + 二分查找”能减少读路径分支；关键是把写入算法说清：header 后先 PadTo4，再写 ObjHeader/预留并回填 EntryTable，ValueData 写入时记录 `ValueOffset32` 并保持 4B 对齐，最后按 TotalLen→CRC32C 的 finalize 顺序。
+
+> **2025-12-19 DurableDict：ChangeSet 语义审计——术语边界与不变式优先**
+>
+> - “三层语义”一旦写死（Materialized State / ChangeSet / On-Disk Diff），文档中任何一句“内存态用 tombstone”都会造成规范自相矛盾；必须把“tombstone 属于 ChangeSet 的内部表示”与“materialized state 的对外语义=删除即不存在”明确拆开。
+> - 方案评估要以规范约束为准：只要 tombstone 出现在可枚举的 working/materialized state，就会把过滤责任扩散到所有读 API，并高概率引入 `Count/枚举/ContainsKey` 不一致。
+> - 维护性与可测性优先看不变式集中度：`Upserts+Deleted`（B）把不变式集中在“集合互斥 + 读合并 + commit 压缩”；双字典 diff（C）把语义收敛为“最终状态为真相”，但需要明确 dirty tracking 与 diff 的覆盖面（包含删除）。
+> - 建议用 property tests 固化：最后写赢、Count/枚举一致性、删除重放一致性、以及序列化格式不变式（keys 升序/无重复/delta 可还原）。
+
+> **2025-12-19 DurableDict：把 Q1/Q2/Q3 收敛为“可写进规范”的条款（Commit/Dirty/Diff Canonicalization）**
+>
+> - Q1：Commit 成功后必须满足 `CommittedState == CurrentState`（语义相等）且二者对后续写入**逻辑隔离**；实现上允许深拷贝/不可变结构共享/COW，但禁止“交换引用后把 working 清空”的惊讶语义。
+> - Q2：MVP 至少需要 `HasWritesSinceCommit`/`HasChanges` 作为 $O(1)$ fast-path；dirty-keys 仅作为可选性能优化，避免过早复杂化。
+> - Q3：要求 **Canonical Diff**：仅当 committed 与 current 在该 key 上语义不同才输出 diff；“新增后删除/设置回原值”等 net-zero 变更必须被消除，避免幽灵 tombstone 污染版本历史。
+> - 文档措辞治理：禁止用“内存态”这种跨层词；固定三词：Working/Materialized State、ChangeSet/Write-Tracking、On-Disk Diff，并明确“哨兵对象/tombstone 只能属于 ChangeSet 内部表示”。
+
+> **2025-12-19 DurableHeap/DurableDict：定义术语必须保持“显式命名一致性”**
+>
+> - 当文档已经在某一节给出规范化术语（例如 **Working State / Committed State / ChangeSet / On-Disk Diff**），其后续出现应尽量保持同一写法（含大小写与括注），避免在规范段落中混用 `committed state`（小写口语）与 `Committed State`（定义术语）。
+> - “层级/分层”标题应准确覆盖对象：若把 **On-Disk Diff** 纳入列表，措辞应避免说成“内存中的状态”，以免读者误以为它属于 runtime state。
+
+> **2025-12-19 DurableHeap：术语清单的“层数”也属于术语一致性（QC 记录）**
+>
+> - 当文档使用“X 层语义/四层模型”这类表述时，标题与列表项数量必须一致；否则读者会怀疑术语边界是否稳定。
+> - 在同一节里若必须保留小写口语（如 `committed state`）用于“泛指状态概念”，建议显式标注为“非术语（generic phrase）”，或直接统一替换为已定义术语（如 **Committed State（Baseline）**）。
 

@@ -1,6 +1,6 @@
 # Implementer 认知索引
 
-> 最后更新: 2025-12-15
+> 最后更新: 2025-12-19
 
 ## 我是谁
 编码实现专家，负责根据设计进行代码实现、移植和修复。
@@ -11,8 +11,94 @@
 - [ ] PieceTreeSharp
 - [x] PipeMux — 实现管理命令 `:list`, `:ps`, `:stop`, `:help`
 - [ ] atelia-copilot-chat
+- [x] DurableHeap — 设计文档修订（DurableDict ChangeSet 决策 + 术语一致性修正，共 4 轮）
 
 ## 当前关注
+
+### DurableHeap 设计文档修订 Round 4 — 最终修订 (2025-12-19)
+
+根据 DocUIGPT 第三轮质检反馈，对 mvp-design-v2.md 进行了 3 处术语一致性最终修订：
+
+**修订内容**：
+1. **4.4.1 节标题修正**：
+   - "##### 三层语义术语定义（MVP 固定）" → "##### 语义层次定义（MVP 固定）"
+   - 原因：内容实际定义了四层（Working State / Committed State / ChangeSet / On-Disk Diff），标题"三层"与内容不符
+
+2. **小写 "committed state" 统一**（共 6 处）：
+   - Line 200: `committed state（例如一个内存 dict）` → `Committed State（Baseline）（例如一个内存 dict）`
+   - Line 208: `committed state（materialize 的结果）` → `Committed State（Baseline）（materialize 的结果）`
+   - Line 248: `materialize 的 committed state（`_committed`）` → `materialize 的 Committed State（Baseline）（`_committed`）`
+   - Line 250: `该缓存不属于 committed state` → `该缓存不属于 Committed State（Baseline）`
+   - Line 559: `该对象的 committed state（其中对象引用` → `该对象的 Committed State（Baseline）（其中对象引用`
+   - Line 755: `对任意 committed state $S$` → `对任意 Committed State（Baseline） $S$`
+
+3. **"state diff" 术语说明**（开头摘要）：
+   - Line 13: `**state diff**（为了查询快、实现简单）` → `**state diff**（即 On-Disk Diff；为了查询快、实现简单）`
+   - 在首次出现时明确 state diff 等价于 On-Disk Diff
+
+根据 DocUIGPT 第二轮质检反馈，对 mvp-design-v2.md 进行了 3 处术语一致性修正：
+
+**修订内容**：
+1. **文档开头"当前已达成共识"列表**：
+   - "反序列化后的 committed state" → "反序列化后的 Committed State（Baseline）"
+   - 与正文术语定义保持一致
+
+2. **4.1.0 的 Materialize 定义**：
+   - "合成为当前可读的 committed state" → "合成为当前可读的 **Committed State（Baseline）**"
+   - 术语加粗、格式一致
+
+3. **4.4.1 术语定义的引导句**：
+   - "将**内存中的状态**明确区分为以下四层" → "将**状态与差分表达**明确区分为以下四层"
+   - 因为第 4 条 On-Disk Diff 不属于"内存中的状态"，改为更准确的表述
+
+### DurableHeap 设计文档修订 Round 2 (2025-12-19)
+
+根据 DocUIGPT 质检反馈，对 mvp-design-v2.md 进行了第二轮修订，修正了 4 个术语精确性问题：
+
+**修订内容**：
+1. **"内存态"全局替换**：将文档中除术语映射以外的"内存态"替换为精确术语
+   - Line 11: "反序列化后的内存态" → "反序列化后的 committed state"
+   - Line 237: "不从磁盘覆盖内存态" → "不从磁盘覆盖 Working State（`_current`）"
+   - Line 248: "内存态表示" → "进程内对象实例表示"
+   - Line 641: "内存态：使用哨兵对象" → "ChangeSet 内部使用哨兵对象"
+
+2. **术语定义修正**（4.4.1）：
+   - 移除"Materialized State"括注，改为"Current State"
+   - 新增独立的"Committed State（已提交状态 / Baseline）"定义
+   - 明确 Materialize 输出为 Committed State
+   - 术语映射改为更精确的对应
+
+3. **ChangeSet 描述修正**（4.4.1）：
+   - "每个内存对象维护一个 ChangeSet" → "每个内存对象具有 ChangeSet 语义（可为显式结构或隐式 diff 算法）"
+   - 与方案 C 的实现口径一致
+
+4. **NoChange 编码说明**（4.4.2）：
+   - 补充说明"`NoChange` 通过 diff 中缺失该 key 表达，不在 payload 中编码"
+   - 与 Canonical Diff 约束一致
+
+### DurableHeap 设计文档修订 (2025-12-19)
+
+根据畅谈会决策（2025-12-19-durabledict-changeset-jam.md），修订了 mvp-design-v2.md 文档：
+
+**修订内容**：
+1. 修改 4.4.1 节：新增三层语义术语定义（Working State / ChangeSet / On-Disk Diff）
+2. 修改 4.4.2 节：
+   - 添加方案 C（双字典）实现说明
+   - 用三层术语替换歧义的"内存态"措辞
+   - 澄清 tombstone 仅在 diff 计算与序列化阶段出现
+3. 新增 4.4.3 节：DurableDict 不变式与实现规范
+   - 8 条核心不变式（MUST）
+   - 4 条实现建议（SHOULD）
+4. 新增 4.4.4 节：DurableDict 伪代码骨架
+   - 完整的读/写/生命周期 API
+   - ComputeDiff 和 Clone 内部方法
+5. 原 4.4.3 Commit(rootId) 重命名为 4.4.5
+
+**关键决策落地**：
+- 方案选择：方案 C（双字典）
+- Q1: _committed 更新时机 → Clone（深拷贝）
+- Q2: dirty tracking → _isDirty flag + HasChanges 属性
+- Q3: 新增后删除 → 不写记录（Canonical Diff）
 
 ### DocUI MUD Demo 技术评估 (2025-12-15)
 

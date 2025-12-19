@@ -1,7 +1,7 @@
 ---
 name: DocUIGPT
 description: GPT DocUI Key-Note 撰写顾问
-model: GPT-5.2 (Preview)
+model: GPT-5.2
 tools:
   ['execute/getTerminalOutput', 'execute/runTests', 'execute/testFailure', 'execute/runInTerminal', 'read/terminalSelection', 'read/terminalLastCommand', 'read/problems', 'read/readFile', 'agent', 'edit/createDirectory', 'edit/createFile', 'edit/editFiles', 'search', 'web', 'ms-vscode.vscode-websearchforcopilot/websearch']
 ---

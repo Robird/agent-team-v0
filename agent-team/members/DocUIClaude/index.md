@@ -212,6 +212,62 @@ DocUI 是一个 **LLM-Native 的用户界面框架**——为 LLM Agent 设计�
 > 明确划分 MVP 包含/排除的特性，如字符串池、对象 GC 等
 > 复杂特性应排除在 MVP 之外。
 
+> **2025-12-19 DurableDict ChangeSet 畅谈**
+> 参与内存态 ChangeSet 设计讨论，分析三种候选方案。核心洞察：
+> 
+> **1. 方案的系统类比**
+> - 方案 A（内存 tombstone）≈ LSM-Tree / LevelDB（读需过滤）
+> - 方案 B（Deleted 集合）≈ Git Staging Area（显式分离操作类型）
+> - 方案 C（双字典）≈ Database Snapshot Isolation（状态 diff）
+> 
+> **2. ChangeSet 的职责边界**
+> 三种方案对应三种 ChangeSet 定位：
+> - 操作日志（Op Log）→ 方案 B 自然
+> - 状态差分（State Diff）→ 方案 C 自然
+> - 序列化镜像 → 方案 A 自然
+> 
+> **3. 分层原则的应用**
+> 方案 A 将"序列化表示（tombstone）"泄漏到"语义状态"中，
+> 违背了 DurableHeap 的分层设计（磁盘格式 vs 内存语义）。
+> 
+> **4. 提出方案 D/E 变体**
+> - D1: 惰性 Diff（commit 时才计算差异）
+> - D2: Write-Ahead ChangeSet（类似 WAL 的操作日志）
+> - E: 统一 DiffEntry 表示（压缩式操作日志）
+> 
+> **5. 留下的开放问题**
+> ChangeSet 记录"操作"vs"结果"会影响未来的 fork/merge 能力。
+
+> **2025-12-19 DurableDict ChangeSet Round 2 畅谈**
+> 第二轮聚焦三个具体实现问题，形成明确建议：
+> 
+> **Q1 决策：_committed 更新时机 → 选 (a) Clone**
+> - 排除 (b)：引用交换会破坏"草稿-定稿"心智模型，Commit 后 _current 变空
+> - 排除 (c)：引入 I/O 依赖，破坏内存态的"自给自足"特性
+> - Clone 发生在写盘之后，不阻塞持久化关键路径
+> 
+> **Q2 决策：dirty tracking → 选 (b) isDirty flag**
+> - 简单布尔标记足够 MVP 使用
+> - 比 dirtyKeys 集合更简单，避免维护复杂度
+> - 提供快速短路路径，避免无变化时的 O(n) diff
+> 
+> **Q3 决策："新增后删除"→ 选 (a) 不写任何记录**
+> - ChangeSet 是 state diff，不是 op log
+> - 冗余 tombstone 浪费空间、污染历史、误导调试、破坏最小化不变式
+> - ComputeDiff 算法天然满足此要求
+> 
+> **补充的边缘情况**：
+> - Commit 中途失败的恢复（写盘失败时保持内存不变）
+> - 并发 Commit 的线程安全假设（MVP 声明单线程）
+> - 值相等性判断（引用相等 vs IEquatable）
+> 
+> **代 DocUIGemini 补充 UX 视角分析**：
+> - Q1: 用"断点快照测试"验证 Clone 是唯一符合 WYSIWYG 调试原则的方案
+> - Q2: dirty tracking 是开发者可观察性窗口，建议暴露 `HasChanges` 属性
+> - Q3: 不写记录 + 分层日志（类似 Git reflog）—— 磁盘干净且诊断可追溯
+> - API 命名建议：考虑 `SaveChanges`/`RevertToSaved` 替代 `Commit`/`DiscardChanges`
+> - 异常设计关键：失败时内存状态不变，支持安全 retry
+
 ---
 
 ## 认知文件结构

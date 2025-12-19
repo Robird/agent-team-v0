@@ -1,6 +1,6 @@
 # Key-Notes 消化理解
 
-> **最后同步时间**: 2025-12-15
+> **最后同步时间**: 2025-12-19
 > **Key-Note 数量**: 10
 > **同步范围**: `DocUI/docs/key-notes/*.md`
 
@@ -330,6 +330,7 @@ graph TD
 | 2025-12-13 | 首次完整同步：读取 5 篇 Key-Note，补全逐篇摘要与术语一致性审计 |
 | 2025-12-14 | 重新同步：新增 UI-Anchor；micro-wizard 已补齐定义；action-anchor 不再存在于 key-notes 目录，已从摘要移除 |
 | 2025-12-15 | 新增 Error-Feedback 与 Cursor-And-Selection；同步 Key-Note 数量与总览关系图 |
+| 2025-12-19 | 例行复核：逐篇读取 10 篇 Key-Note，未发现新增文件或结构性变更 |
 
 ---
 

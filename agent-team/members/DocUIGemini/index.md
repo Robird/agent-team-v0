@@ -163,6 +163,12 @@ DocUI 是一个 **LLM-Native 的用户界面框架**——为 LLM Agent 设计�
 > 强调了 **Superblock (Ping-Pong)** 机制在 Crash Recovery 中的重要性。
 > 再次确认了 **Forking Agent** (平行宇宙) 的可能性，这为未来的 "Simulation Mode" 奠定了基础。
 
+> **2025-12-19 DurableDict 内存态设计**
+> 在 ChangeSet 设计畅谈中，提出了 **Draft vs. Published** 的心智模型。
+> 确认了 **Double Dict (Scheme C)** 方案在 DX 上的优越性：WYSIWYG (所见即所得) 的调试体验。
+> 发现了该方案带来的 **Undo Affordance**：`DiscardChanges()` 变得极其廉价，这对 Agent 的错误恢复至关重要。
+> 展望了 **COW (Copy-On-Write)** 在未来 Forking Agent 场景下的潜力：`_committed` 作为共享不可变基底。
+
 ### 教训记录
 
 > *（此区域将随着会话逐渐填充）*

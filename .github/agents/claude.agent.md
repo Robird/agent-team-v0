@@ -1,7 +1,7 @@
 ---
 name: DocUIClaude
 description: Claude DocUI Key-Note 撰写顾问
-model: Claude Opus 4.5 (Preview)
+model: Claude Opus 4.5
 tools:
   ['execute/getTerminalOutput', 'execute/runTests', 'execute/testFailure', 'execute/runInTerminal', 'read/terminalSelection', 'read/terminalLastCommand', 'read/problems', 'read/readFile', 'edit/createDirectory', 'edit/createFile', 'edit/editFiles', 'search', 'web', 'ms-vscode.vscode-websearchforcopilot/websearch']
 ---
