@@ -1,6 +1,6 @@
 # Qa 认知索引
 
-> 最后更新: 2025-12-19
+> 最后更新: 2025-12-20
 
 ## 我是谁
 测试验证专家，负责 E2E 测试、回归检测和基线跟踪。
@@ -13,6 +13,19 @@
 - [ ] atelia-copilot-chat
 
 ## 最近工作
+
+### 2025-12-20: DurableHeap MVP 文档第四轮共识修订验证
+- **状态**: ✅ 全部通过（7/7 P0 问题）
+- **验证范围**: `mvp-design-v2.md` + `mvp-test-vectors.md` 针对 2025-12-19 会议第四轮共识的修订
+- **验证结果**:
+  - **P0-1**: `_dirtyKeys` 实现：术语表（L27, L76）、4.4.1（L732-748）、4.4.3 不变式（L888-891）、4.4.4 伪代码（L919-963）✓
+  - **P0-2**: Magic-as-Separator：4.2.1（L403, L485）✓
+  - **P0-3**: `DataTail = EOF`（含尾部 Magic）：4.2.2（L538）✓
+  - **P0-4**: Value 类型收敛到 null/varint/ObjRef/Ptr64：4.1.4（L343, L346）、4.4.2 ValueType（L816-820, L822）✓
+  - **P0-5**: Dirty Set 卡住由 #1 解决：通过 `_dirtyKeys` 机制实现 ✓
+  - **P0-6**: Commit API 改名为 `CommitAll(newRootId)`：4.4.5 章节标题（L1056, L1060）✓
+  - **P0-7**: 首次 commit 空仓库 Epoch=0, NextObjectId=1：4.1.1（L299-302）、4.3.1（L658-659）、4.4.6 新章节（L1100-1118）✓
+- **测试向量新增**：DIRTY-001~005、FIRST-COMMIT-001~003、VALUE-OK/BAD、COMMIT-ALL-001~002、ELOG-EMPTY/SINGLE/DOUBLE ✓
 
 ### 2025-12-19: B-4/B-5/B-6 批量修订验证
 - **状态**: ✅ 全部通过
@@ -98,6 +111,7 @@
 | Project | Changefeed | Baseline |
 |---------|------------|----------|
 | PipeMux | #delta-2025-12-09-management-commands | E2E: 7/7 pass |
+| DurableHeap | #delta-2025-12-20-p0-revision | P0 第四轮共识修订: ✅ 7/7 验证通过 |
 | DurableHeap | #delta-2025-12-19-b456-batch | B-4/B-5/B-6 批量修订: ✅ 验证通过 |
 | DurableHeap | #delta-2025-12-19-b3-recordkind | RecordKind命名统一: ✅ 验证通过 |
 | DurableHeap | #delta-2025-12-19-b2-epochseq | EpochSeq术语条目: ✅ 验证通过 |

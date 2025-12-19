@@ -1,6 +1,6 @@
 # Implementer 认知索引
 
-> 最后更新: 2025-12-19
+> 最后更新: 2025-12-20
 
 ## 我是谁
 编码实现专家，负责根据设计进行代码实现、移植和修复。
@@ -11,9 +11,146 @@
 - [ ] PieceTreeSharp
 - [x] PipeMux — 实现管理命令 `:list`, `:ps`, `:stop`, `:help`
 - [ ] atelia-copilot-chat
-- [x] DurableHeap — 设计文档修订（DurableDict ChangeSet 决策 + 术语一致性修正，共 14 轮）
+- [x] DurableHeap — 设计文档修订（DurableDict ChangeSet 决策 + 术语一致性修正，共 18 轮）
 
 ## 当前关注
+
+### DurableHeap 设计文档修订 Round 18 — P0 问题修订 (2025-12-20)
+
+根据 P0 问题清单，完成三项关键修订：
+
+**P0-4: Value 类型收敛**
+- 4.1.4 类型约束：修改表格，MVP 仅支持 `null`, `varint`（整数）, `ObjRef(ObjectId)`, `Ptr64`
+- 移出 MVP：`float`, `double`, `bool`
+- 4.4.2 ValueType 枚举：添加 MVP 范围说明，确认只保留 5 种类型
+
+**P0-6: Commit API 命名**
+- 4.4.5 章节标题：`Commit(rootId)` → `CommitAll(newRootId)`
+- 添加命名说明：消除 Scoped Commit 误解
+
+**P0-7: 首次 commit 语义**
+- 4.1.1 ObjectId 分配：添加空仓库初始状态说明
+- 4.3.1 Open：添加空仓库边界说明
+- 新增 4.4.6 章节：首次 Commit 与新建对象语义
+
+**文件变更**：
+- `DurableHeap/docs/mvp-design-v2.md` — 6 处修改 + 1 个新章节
+
+---
+
+### DurableHeap 设计文档修订 Round 17 — Magic as Record Separator (2025-12-20)
+
+根据 2025-12-19 畅谈会第四轮共识（监护人建议采纳），将 Magic 定义为 **Record Separator**，而非 Record 的一部分。
+
+**核心变更**：
+- Magic 与 Record **并列**（不是 Record 包含 Magic）
+- 文件结构：`[Magic][Record1][Magic][Record2]...[Magic]`
+- Record 本身不包含 Magic：`[Len][Payload][Pad][Len][CRC32C]`
+
+**规则对称化**：
+1. 空文件先写 `Magic`
+2. 每写完一条 Record 后写 `Magic`
+
+**修订位置**：
+
+1. **4.2.1 Data 文件章节 — record framing 描述** (Line 393-410)：
+   - 原：`[Magic(4)][Len(u32)]...[CRC32C]`，Magic 是 Record 的开头
+   - 新：`[Len(u32)]...[CRC32C]`，Magic 是 Record 之间的分隔符
+
+2. **4.2.1 — Len 的精确定义** (Line 411-419)：
+   - 原：`HeadLen = 4(Magic) + 4(HeadLen) + PayloadLen + PadLen + 4(TailLen) + 4(CRC32C)`
+   - 新：`HeadLen = 4(HeadLen) + PayloadLen + PadLen + 4(TailLen) + 4(CRC32C)`
+   - 最小长度从 16 字节降为 12 字节（不含 Magic）
+
+3. **4.2.1 — 反向扫尾算法** (Line 420-433)：
+   - 原：从 `End = MagicPos` 开始，`End == 0` 表示空文件
+   - 新：从 `RecordEnd = MagicPos` 开始，`RecordEnd == 4` 表示空文件
+   - 新增 `PrevMagicPos = RecordStart - 4` 定位前一个分隔符
+
+4. **4.2.1 — 写入顺序步骤** (Line 467-479)：
+   - 原：步骤 1 先写 Magic，步骤 8 追加尾部哨兵 Magic
+   - 新：步骤 1 从 Magic 之后开始写 Record，步骤 7 追加分隔符 Magic
+
+5. **4.2.1 — Magic 哨兵段落** (Line 477-482)：
+   - 原标题：关于"尾部 `Magic` 哨兵"（MVP 采纳）
+   - 新标题：**Magic 作为 Record Separator 的设计收益**（MVP 采纳）
+   - 更新收益说明：概念简洁、fast-path、resync 统一
+
+6. **4.2.1 — Ptr64 约束** (Line 496)：
+   - 原：`Ptr64` 指向 `Magic` 所在 byte offset
+   - 新：`Ptr64` 指向 Record 的 `HeadLen` 字段起始位置（紧随分隔符 Magic 之后）
+
+7. **4.2.2 Meta 文件章节** (Line 517-518)：
+   - 将"哨兵"改为"分隔符"
+
+8. **4.2.2 — DataTail 定义** (Line 530)：
+   - 新增说明：`DataTail = EOF`，**包含尾部分隔符 Magic**
+
+9. **4.5 崩溃恢复** (Line 1084)：
+   - 新增说明：截断后文件仍以 Magic 分隔符结尾
+
+**设计收益**：
+- **概念简洁**：所有 Magic 语义相同（分隔符），无需区分"Record 内的 Magic"和"尾部哨兵 Magic"
+- **代码统一**：forward/reverse scan 使用相同的 Magic 边界检测逻辑
+- **空间效率**：Record 格式减少 4 字节（Magic 移到 Record 外部）
+
+**文件变更**：
+- `DurableHeap/docs/mvp-design-v2.md` — 9 处修改
+
+---
+
+### DurableHeap 设计文档修订 Round 16 — `_isDirty` → `_dirtyKeys` 重构 (2025-12-20)
+
+根据 2025-12-19 畅谈会第四轮共识（监护人反馈采纳），将 `bool _isDirty` 修改为 `ISet<ulong> _dirtyKeys` 集合。
+
+**背景问题**：
+- 原 `_isDirty` 是布尔标记，只记录"有无写操作发生"
+- 但 `_isDirty` 的语义边界不明确：是"操作标记"还是"状态差异标记"？
+- 存在"set-then-delete 回到原状态但 `_isDirty` 仍为 true"的语义困惑
+
+**修订内容**：
+
+1. **术语表 ChangeSet 行**：
+   - `方案 C: ComputeDiff() + _isDirty` → `方案 C: ComputeDiff() + _dirtyKeys`
+
+2. **术语表 OnCommitSucceeded 行**：
+   - `_isDirty = false` → `_dirtyKeys.Clear()`
+
+3. **4.4.1 ChangeSet 语义章节**：
+   - 方案 C 描述中 `_isDirty` → `_dirtyKeys`
+   - 新增 `_dirtyKeys` 维护规则说明（概念层语义 + 实现层规则）
+
+4. **4.4.3 DurableDict 不变式**：
+   - Fast Path 建议中 `_isDirty` → `_dirtyKeys`
+   - 新增 `_dirtyKeys` 不变式（第 9 条：精确性）
+
+5. **4.4.4 伪代码骨架**：
+   - `private bool _isDirty` → `private HashSet<ulong> _dirtyKeys = new()`
+   - `HasChanges` 改为 `_dirtyKeys.Count > 0`
+   - 新增 `UpdateDirtyKey(K key)` 方法，实现 dirty key 精确维护
+   - `Set()` 和 `Delete()` 调用 `UpdateDirtyKey`
+   - `ComputeDiff` 增加 `dirtyKeys` 参数，只遍历 dirty keys
+   - `OnCommitSucceeded()` 和 `DiscardChanges()` 使用 `_dirtyKeys.Clear()`
+
+6. **4.4.4 关键实现要点**：
+   - 更新二阶段安全性说明
+   - 更新值相等性判断说明（增加 `UpdateDirtyKey`）
+   - 更新线程安全说明
+   - 新增第 4 点：`_dirtyKeys` 优化收益说明
+
+7. **4.4.5 Commit 步骤**：
+   - 步骤 2 说明：`_committed`/`_isDirty` → `_committed`/`_dirtyKeys`
+   - 步骤 5：`_isDirty=false` → `清空 _dirtyKeys`
+
+**设计收益**：
+- `ComputeDiff` 复杂度从 O(n+m) 降为 O(|dirtyKeys|)
+- `HasChanges` 语义更精确
+- 消除"set-then-delete 回到原状态"的语义困惑
+
+**文件变更**：
+- `DurableHeap/docs/mvp-design-v2.md` — 11 处修改
+
+---
 
 ### DurableHeap 设计文档修订 Round 15 — B-6 新增"类型约束"章节 (2025-12-19)
 

@@ -40,8 +40,20 @@ DurableHeap 是一个崩溃可恢复的对象图持久化框架，MVP 文档已�
 - [x] 阅读本摘要
 - [x] 第一轮批准 P0 解决方案（总体赞成）
 - [x] 提出反馈（`_dirtyKeys` + Magic-as-Separator）
-- [ ] 最终批准修订后的方案
-- [ ] 授权修改 mvp-design-v2.md
+- [x] 最终批准修订后的方案
+- [x] 授权修改 mvp-design-v2.md
+- [x] **文档修订已完成**（2025-12-20）
+
+---
+
+## 修订实施状态
+
+| 文件 | 状态 | 修改点 |
+|------|------|--------|
+| `DurableHeap/docs/mvp-design-v2.md` | ✅ 已修订 | 术语表、4.2.1、4.2.2、4.4.1、4.4.3、4.4.4、4.4.5、新增 4.4.6 |
+| `DurableHeap/docs/mvp-test-vectors.md` | ✅ 已更新 | 新增 `_dirtyKeys`、首次 Commit、Value 类型、CommitAll 测试向量 |
+
+**QA 验证**：✅ 通过（2025-12-20）
 
 ---
 

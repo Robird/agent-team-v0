@@ -74,9 +74,28 @@
 - wiki/atelia-prototypes/README.md (2025-12-09) - 源码核实全面重写
 - wiki/PipeMux/README.md (2025-12-09) - 源码核实更新
 - wiki/DocUI/README.md (2025-12-09) - 源码核实全面重写，明确实际代码现状
+- **handoffs/2025-12-20-mvp-design-v2-revision-brief-INV.md (2025-12-20)** - DurableHeap MVP v2 修订清单，7 个 P0 问题的具体修改位置
 
 ## Open Investigations
-- [ ] DurableHeap MVP — 设计畅谈进行中 (2025-12-16)
+- [x] DurableHeap MVP — 修订清单已产出 (2025-12-20)
+
+### 2025-12-20: DurableHeap MVP v2 修订清单
+**任务**: 基于 2025-12-19 畅谈会第四轮共识，分析 mvp-design-v2.md 需要修改的具体位置
+**共识来源**: `agent-team/meeting/2025-12-19-durableheap-mvp-review.md`（第四轮共识）
+**发现**:
+1. **P0-1 `_isDirty` → `_dirtyKeys`**：9 个修改点，涉及术语表、实现方案描述、伪代码骨架
+2. **P0-2 Magic 结构定义**：5 个修改点，将 Magic 从 record header 改为 record separator
+3. **P0-3 `DataTail` 定义**：2 个修改点，明确 DataTail = EOF（包含尾部 Magic）
+4. **P0-4 Value 类型收敛**：2 个修改点，MVP 仅支持 null/varint/ObjRef/Ptr64
+5. **P0-5 Dirty Set 卡住**：由 P0-1 解决，无额外修改点
+6. **P0-6 Commit API 命名**：3 个修改点，改为 `CommitAll(newRootId:)`
+7. **P0-7 首次 commit 语义**：2 个修改点，明确空仓库 Epoch=0、NextObjectId=1
+**关键技术点**:
+- `_dirtyKeys` 实现：每次 Set/Delete 时比较当前值与 committed 值，维护 dirty key 集合
+- Magic-as-Separator：Record 不包含 Magic，文件结构为 `[Magic][R1][Magic][R2]...[Magic]`
+- reverse scan 算法修正：`MagicPos = RecordStart - 4` 定位前一个分隔符
+
+**交付**: [agent-team/handoffs/2025-12-20-mvp-design-v2-revision-brief-INV.md](../handoffs/2025-12-20-mvp-design-v2-revision-brief-INV.md)
 
 ### 2025-12-17: DurableHeap 写入路径设计畅谈
 **任务**: 调研内存对象→持久化对象的"透明迁移"前人经验
