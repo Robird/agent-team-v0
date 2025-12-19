@@ -192,3 +192,14 @@ agent-team/members/DocUIGPT/
 > - 当文档使用“X 层语义/四层模型”这类表述时，标题与列表项数量必须一致；否则读者会怀疑术语边界是否稳定。
 > - 在同一节里若必须保留小写口语（如 `committed state`）用于“泛指状态概念”，建议显式标注为“非术语（generic phrase）”，或直接统一替换为已定义术语（如 **Committed State（Baseline）**）。
 
+> **2025-12-19 DurableHeap：术语规范审计——“概念名”与“代码名”必须分层**
+>
+> - 在设计草稿中，建议把**概念层术语**（例如 **Working State / Committed State (Baseline) / On-Disk Diff / Snapshot / Identity Map / Dirty Set**）与**实现层标识符**（例如 `_current/_committed/_dirtySet/Ptr64/DiffPayload`）显式分层：概念层用统一的规范化词表与大小写，代码名仅在“实现映射”小节出现。
+> - 动词类阶段名（Deserialize/Materialize/Resolve/Commit）要么统一作为 API 名（PascalCase），要么统一作为过程名（小写动词短语），避免“同一段同时把它当术语又当函数名”，否则读者会混淆职责边界（例如把 `DurableDict.Commit()` 误解为“写 meta 的全局提交点”）。
+> - “Baseline/Base/Snapshot/BaseVersionPtr”是最容易漂移的词簇：Baseline 应只保留为“上次 commit 的已提交状态”；Base/Snapshot/Checkpoint 归入“版本链分段/封顶策略”，并在词表中强制单义。
+
+> **2025-12-19 DurableHeap：FlushToWriter 的两阶段语义（避免“假提交”）**
+>
+> - 若将 `FlushToWriter` 定义为“对象级：计算 diff 并写入 writer（非提交）”，它就不应在成功写入后立刻更新 `_committed` 或清空 dirty；否则当 heap 级 commit 在后续步骤（例如写 meta commit record / fsync）失败时，内存会出现“看似已提交但磁盘未提交”的假提交状态，违反“Commit 失败不改内存”。
+> - 更稳妥的落点是两阶段：`FlushToWriter` 仅产生/写出 DiffPayload（可视为 prepare），heap 级 commit point 成功后再统一回调 `OnCommitSucceeded()`（或批量 `FinalizeCommit()`）来更新 `_committed`、清空 ChangeSet/Dirty Set；失败则不触碰内存状态并允许 retry。
+

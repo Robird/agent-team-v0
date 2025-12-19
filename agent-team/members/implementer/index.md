@@ -11,11 +11,69 @@
 - [ ] PieceTreeSharp
 - [x] PipeMux — 实现管理命令 `:list`, `:ps`, `:stop`, `:help`
 - [ ] atelia-copilot-chat
-- [x] DurableHeap — 设计文档修订（DurableDict ChangeSet 决策 + 术语一致性修正，共 4 轮）
+- [x] DurableHeap — 设计文档修订（DurableDict ChangeSet 决策 + 术语一致性修正，共 5 轮）
 
 ## 当前关注
 
-### DurableHeap 设计文档修订 Round 4 — 最终修订 (2025-12-19)
+### DurableHeap 设计文档修订 Round 5 — 术语畅谈会共识落地 (2025-12-19)
+
+根据 2025-12-19 秘密基地畅谈会（DurableHeap MVP v2 术语与命名审阅）达成的共识，对 mvp-design-v2.md 进行了全面术语统一修订：
+
+**修订内容**：
+
+1. **添加术语表（Glossary）**：在文档开头（第 1 节之前）添加了规范化术语表 (SSOT)，包含：
+   - 状态与差分（Working State / Committed State / ChangeSet / DiffPayload）
+   - 版本链（Version Chain / Checkpoint Version / VersionIndex）
+   - 标识与指针（ObjectId / Address64 / ObjectVersionPtr）
+   - 提交与 HEAD（Commit / HEAD / Commit Record）
+   - 载入与缓存（Identity Map / Dirty Set / LoadObject）
+   - 对象级 API（FlushToWriter）
+
+2. **状态术语统一**：
+   - `Baseline`（单独使用）→ `Committed State`
+   - `Current State`（作为概念名）→ `Working State`
+
+3. **版本索引术语**：
+   - `EpochMap` → `VersionIndex`（全文 15+ 处）
+   - `EpochMapVersionPtr` → `VersionIndexPtr`
+
+4. **快照术语**：
+   - `snapshot`（版本链语境）→ `Checkpoint Version`
+   - `DictSnapshotEveryNVersions` → `DictCheckpointEveryNVersions`
+
+5. **指针术语**：
+   - `Ptr64`（概念层）→ `Address64`
+
+6. **加载 API**：
+   - `Resolve`（外部 API 总称）→ `LoadObject`
+   - 章节标题 `4.3.2 Resolve(ObjectId)` → `4.3.2 LoadObject(ObjectId)`
+   - 章节标题 `4.1.2 Resolve 语义` → `4.1.2 LoadObject 语义`
+
+7. **差分术语**：
+   - `On-Disk Diff` → `DiffPayload`
+   - 章节标题 `4.4.2 Dict 的 state diff` → `4.4.2 Dict 的 DiffPayload`
+   - 章节标题 `4.2.5 ObjectVersionRecord（对象版本，增量 state diff）` → `4.2.5 ObjectVersionRecord（对象版本，增量 DiffPayload）`
+
+8. **提交相关**：
+   - `EpochRecord` → `Commit Record`（逻辑概念）
+   - 章节标题 `4.2.3 EpochRecord（逻辑概念）` → `4.2.3 Commit Record（逻辑概念）`
+   - `head` / `Head` → `HEAD`（全文统一大写）
+
+9. **对象级方法**：
+   - 伪代码 `Commit()` → `FlushToWriter(writer)`
+   - 关键实现要点从 `Commit 中途失败` → `FlushToWriter 中途失败`
+
+10. **缓存术语**：
+    - `identity map` → `Identity Map`（Title Case）
+    - `_dirtySet` → `Dirty Set`（概念层）
+    - `epoch map lookups` → `VersionIndex lookups`
+
+11. **补充定义**：
+    - 在 4.1.0 新增 Identity Map 正式定义块
+    - 在 4.1.0 新增 Dirty Set 正式定义块
+
+**文件变更**：
+- `DurableHeap/docs/mvp-design-v2.md` — 60+ 处术语替换
 
 根据 DocUIGPT 第三轮质检反馈，对 mvp-design-v2.md 进行了 3 处术语一致性最终修订：
 

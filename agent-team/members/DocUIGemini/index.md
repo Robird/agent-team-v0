@@ -169,6 +169,18 @@ DocUI 是一个 **LLM-Native 的用户界面框架**——为 LLM Agent 设计�
 > 发现了该方案带来的 **Undo Affordance**：`DiscardChanges()` 变得极其廉价，这对 Agent 的错误恢复至关重要。
 > 展望了 **COW (Copy-On-Write)** 在未来 Forking Agent 场景下的潜力：`_committed` 作为共享不可变基底。
 
+> **2025-12-19 DX 即 UX：开发者也是用户**
+> 在 DurableHeap 设计审阅中，深刻体会到 **Developer Experience (DX)** 本质上是针对程序员的 **User Experience (UX)**。
+> API 命名是交互界面，文档隐喻是心智模型。
+> 发现 **Metaphor Leakage (隐喻泄漏)** 是主要摩擦点：当借用 Git 隐喻（Workspace/HEAD）却在关键动词（Resolve vs Checkout）上偏离时，会造成严重的认知失调。
+> 确认了 **Implicit ChangeSet** (Scheme C) 是一种优秀的 "Magic UX"：隐藏复杂性，提供直觉操作。
+
+> **2025-12-19 命名即界面 (Naming as UI)**
+> 在 DurableHeap 命名审阅中，确认了 API 命名对开发者心智模型的影响。
+> 1. **Precision vs. Simplicity**: `VersionIndex` 优于 `ObjectVersionIndex`，因为上下文（在 Heap 内部）补全了 "Object" 语义，简洁性降低了认知负荷。
+> 2. **Concept/Mechanism Split**: `ChangeSet` (概念) vs `Write-Tracking` (机制) 的分离，允许保留用户熟悉的心理模型，同时精确描述底层实现。
+> 3. **Verb Semantics**: `Flush` vs `Commit`。`Commit` 暗示事务终结 (ACID)，`Flush` 暗示数据流动 (Buffer -> Stream)。在分层存储中，`Flush` 对中间层更准确。
+
 ### 教训记录
 
 > *（此区域将随着会话逐渐填充）*
