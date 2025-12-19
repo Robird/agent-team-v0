@@ -11,9 +11,203 @@
 - [ ] PieceTreeSharp
 - [x] PipeMux — 实现管理命令 `:list`, `:ps`, `:stop`, `:help`
 - [ ] atelia-copilot-chat
-- [x] DurableHeap — 设计文档修订（DurableDict ChangeSet 决策 + 术语一致性修正，共 5 轮）
+- [x] DurableHeap — 设计文档修订（DurableDict ChangeSet 决策 + 术语一致性修正，共 14 轮）
 
 ## 当前关注
+
+### DurableHeap 设计文档修订 Round 15 — B-6 新增"类型约束"章节 (2025-12-19)
+
+根据监护人批示（B-6 任务），在 4.1 概念模型章节中新增 4.1.4 类型约束（Type Constraints）子节。
+
+**背景**：
+- DurableHeap 不是通用序列化库，应显式声明类型边界
+- 这是设计约束，不是用户需要小心的"陷阱"
+
+**修订内容**：
+- 在 4.1.3 节末尾（Line 327）之后插入新的 4.1.4 节
+- 明确支持的类型（基元值类型 + DurableObject 派生类型）
+- 明确不支持的类型（任意 struct、用户自定义值类型、普通 class、泛型集合等）
+- 说明运行时行为：赋值不支持类型时抛出明确异常（Fail-fast）
+
+**文件变更**：
+- `DurableHeap/docs/mvp-design-v2.md` — 新增 4.1.4 节（约 17 行）
+
+---
+
+### DurableHeap 设计文档修订 Round 14 — Q11 移除"（推荐）"标记 (2025-12-19)
+
+根据畅谈会质检（B-5 任务），移除 Q11 选项 A 的"（推荐）"标记，消除与决策表不一致的混淆。
+
+**背景问题**：
+- Q11 选项 A 标注"（推荐）"：`Upserts(key->value) + Deletes(keys)`
+- 但决策表最终选择了 B：`仅 Upserts，删除通过 tombstone value 表达`
+- 这会导致读者困惑
+
+**修订内容**：
+- Line 155: 移除选项 A 的"（推荐）"标记
+
+**采用方案一的理由**：
+- 决策表已有备注说明选择 B 的理由（"明显这样可以省掉一个集合和一次查找，实现起来更简单"）
+- 移除更简洁，避免混淆
+
+**文件变更**：
+- `DurableHeap/docs/mvp-design-v2.md` — 1 处修改
+
+---
+
+### DurableHeap 设计文档修订 Round 13 — 修复 Markdown 相对链接 (2025-12-19)
+
+根据畅谈会质检（B-4 任务），修复第 6 节中 ChunkedReservableWriter.cs 的相对链接路径错误。
+
+**背景问题**：
+- 链接写成 `../atelia/src/Data/ChunkedReservableWriter.cs`
+- 文档位于 `DurableHeap/docs/` 下，`../atelia` 会解析到 `DurableHeap/atelia`（不存在）
+- 实际目录在仓库根的 `atelia/`
+
+**修订内容**：
+- Line 1023: `../atelia/...` → `../../atelia/...`（从 `DurableHeap/docs/` 回到仓库根再进入 `atelia/`）
+
+**验证**：
+- 从 `DurableHeap/docs/` 执行 `ls ../../atelia/src/Data/ChunkedReservableWriter.cs` 成功
+
+**文件变更**：
+- `DurableHeap/docs/mvp-design-v2.md` — 1 处链接修复
+
+---
+
+### DurableHeap 设计文档修订 Round 12 — 统一 RecordKind/MetaKind 命名 (2025-12-19)
+
+根据畅谈会共识（B-3 任务），将 Meta 文件中的 `MetaKind` 统一替换为 `RecordKind`。
+
+**背景问题**：
+- Data payload 用 `RecordKind`，Meta payload 用 `MetaKind`，命名不统一
+- 同层不同名会导致读者误以为判定规则/扩展策略不同
+
+**修订内容**：
+1. Meta payload 最小字段中 `MetaKind` → `RecordKind`，并添加说明"Meta file 的 RecordKind"
+2. MetaCommitRecord payload 解析中 `MetaKind == 0x01` → `RecordKind == 0x01`
+3. 实现提示中 `MetaKind==0x01` → `RecordKind==0x01`
+
+**统一规则**：
+- `RecordKind` = 顶层类型判别（data 和 meta 文件都用这个名字）
+- `ObjectKind` = 对象级 codec 判别（仅在 ObjectVersionRecord 内）
+
+**文件变更**：
+- `DurableHeap/docs/mvp-design-v2.md` — 3 处 MetaKind 替换
+
+---
+
+### DurableHeap 设计文档修订 Round 11 — 术语表新增 EpochSeq 条目 (2025-12-19)
+
+在术语表（Glossary）的"标识与指针"分组中新增 `EpochSeq` 条目。
+
+**背景**：
+- `EpochSeq` 是三大核心标识之一（与 ObjectId、ObjectVersionPtr 并列）
+- 在 4.1.1 节有描述，但术语表中遗漏了
+
+**修订内容**：
+- 在"标识与指针"分组的 `ObjectVersionPtr` 之后新增 `EpochSeq` 行
+- 定义：Commit 的单调递增序号，用于判定 HEAD 新旧
+- 实现映射：`varuint`
+
+**文件变更**：
+- `DurableHeap/docs/mvp-design-v2.md` — 术语表新增 1 行
+
+---
+
+### DurableHeap 设计文档修订 Round 10 — 术语表新增"编码层"分组 (2025-12-19)
+
+在术语表（Glossary）中新增"编码层"分组，收录 RecordKind、ObjectKind、ValueType 三个编码类型标识术语：
+
+**修订内容**：
+- 在"载入与缓存"分组之后、"对象级 API（二阶段提交）"分组之前插入新的"编码层"分组
+- 添加 3 个术语定义：
+  - **RecordKind**: Record 的顶层类型标识，决定 payload 解码方式（`byte` 枚举）
+  - **ObjectKind**: ObjectVersionRecord 内的对象类型标识，决定 diff 解码器（`byte` 枚举）
+  - **ValueType**: Dict DiffPayload 中的值类型标识（`byte` 低 4 bit）
+
+**文件变更**：
+- `DurableHeap/docs/mvp-design-v2.md` — 术语表新增 1 个分组（8 行）
+
+---
+
+### DurableHeap 设计文档修订 Round 9 — 4.4.5 Commit finalize 规范约束 (2025-12-19)
+
+在 4.4.5 Commit(rootId) 章节增加规范约束，强调二阶段 finalize 语义：
+
+**修订内容**：
+- 在步骤 4/5 之后增加"规范约束（二阶段 finalize）"段落
+- 明确：**对象级写入不得改变 Committed/Dirty 状态；只有 heap 级 commit 成功才能 finalize**
+- 说明步骤 2 的 `WritePendingDiff()` 仅写入数据，不更新内存状态
+- 说明步骤 5 的 finalize 必须在步骤 4 meta 落盘成功后执行
+- 引用 4.4.4 的二阶段设计，保证语义一致性
+
+**文件变更**：
+- `DurableHeap/docs/mvp-design-v2.md` — 4.4.5 节增加 1 个规范约束段落
+
+---
+
+### DurableHeap 设计文档修订 Round 8 — 4.4.4 二阶段提交拆分 (2025-12-19)
+
+根据 commit point 语义修正需求，将 `FlushToWriter()` 拆分为两阶段 API：
+
+**背景问题**：
+- 原 `FlushToWriter()` 在写入成功后立即追平 `_committed = Clone(_current); _isDirty = false`
+- 但实际 commit point 在 meta commit record durable，不在对象级写入
+- 这会导致"假提交"状态：对象认为已提交但实际 commit 未确立
+
+**修订内容**：
+
+1. **术语表更新**（对象级 API 表格）：
+   - 删除 `FlushToWriter` 定义
+   - 新增 `WritePendingDiff`：Prepare 阶段，计算 diff 并序列化到 writer；不更新内存状态
+   - 新增 `OnCommitSucceeded`：Finalize 阶段，追平内存状态
+
+2. **4.4.4 节标题与说明**：
+   - 标题改为"DurableDict 伪代码骨架（二阶段提交）"
+   - 新增二阶段设计说明表格
+
+3. **伪代码骨架重构**：
+   - `FlushToWriter()` → `WritePendingDiff(writer)` + `OnCommitSucceeded()`
+   - `WritePendingDiff` 只写数据，返回 bool 表示是否写入了新版本
+   - `OnCommitSucceeded` 只追平内存状态，在 Heap 确认 meta 落盘后调用
+
+4. **关键实现要点更新**：
+   - 详细说明二阶段分离的崩溃安全性语义
+
+**文件变更**：
+- `DurableHeap/docs/mvp-design-v2.md` — 4 处修改
+
+根据术语表 Deprecated 标记（EpochMap → VersionIndex），对 mvp-design-v2.md 正文进行了术语一致性替换：
+
+**修订内容**：
+1. Line 111: `epoch map` → `VersionIndex`
+
+**保留位置**：
+- Line 36 术语表中的 `Deprecated: EpochMap` 保留，作为术语映射说明
+
+**文件变更**：
+- `DurableHeap/docs/mvp-design-v2.md` — 1 处替换
+
+---
+
+### DurableHeap 设计文档修订 Round 6 — EpochRecord 术语替换 (2025-12-19)
+
+根据术语表 Deprecated 标记（EpochRecord → Commit Record），对 mvp-design-v2.md 正文（特别是 Q4/Q5 决策选项区）进行了术语一致性替换：
+
+**修订内容**：
+1. Line 121: `EpochRecordPtr` → `CommitRecordPtr`
+2. Line 121: `epoch record` → `Commit Record`
+3. Line 122: `epoch record 可选` → `Commit Record 可选`
+4. Line 124: `**Q5. EpochRecord 最少包含哪些信息？**` → `**Q5. Commit Record 最少包含哪些信息？**`
+
+**保留位置**：
+- Line 52 术语表中的 `Deprecated: EpochRecord（MVP）` 保留，作为术语映射说明
+
+**文件变更**：
+- `DurableHeap/docs/mvp-design-v2.md` — 2 处替换（4 个 EpochRecord 相关术语实例）
+
+---
 
 ### DurableHeap 设计文档修订 Round 5 — 术语畅谈会共识落地 (2025-12-19)
 

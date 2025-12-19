@@ -25,10 +25,10 @@
 
 | ID | 任务 | 责任 | 预计工时 | Status |
 |----|------|------|----------|--------|
-| A-1 | 修改 4.4.4 伪代码：`FlushToWriter` → 二阶段拆分 (Prepare/Finalize) | Implementer | 30 min | ⏳ 待认领 |
-| A-2 | 修改 4.4.5 Commit 流程：增加 finalize 规范约束 | Implementer | 15 min | ⏳ 待认领 |
-| A-3 | 全文替换 `EpochRecord` → `Commit Record` | DocOps | 20 min | ⏳ 待认领 |
-| A-4 | 全文替换 `EpochMap` → `VersionIndex` | DocOps | 10 min | ⏳ 待认领 |
+| A-1 | 修改 4.4.4 伪代码：`FlushToWriter` → 二阶段拆分 (Prepare/Finalize) | Implementer | 30 min | ✅ 完成 |
+| A-2 | 修改 4.4.5 Commit 流程：增加 finalize 规范约束 | Implementer | 15 min | ✅ 完成 |
+| A-3 | 全文替换 `EpochRecord` → `Commit Record` | DocOps | 20 min | ✅ 完成 |
+| A-4 | 全文替换 `EpochMap` → `VersionIndex` | DocOps | 10 min | ✅ 完成 |
 
 ### A-1/A-2 详细规格
 
@@ -48,12 +48,12 @@
 
 | ID | 任务 | 责任 | 预计工时 | Status |
 |----|------|------|----------|--------|
-| B-1 | 术语表：新增"编码层"分组，收录 `RecordKind`/`ObjectKind` | DocOps | 15 min | ⏳ 待认领 |
-| B-2 | 术语表：新增 `EpochSeq` 条目 | DocOps | 5 min | ⏳ 待认领 |
-| B-3 | 统一 `RecordKind`/`MetaKind` 命名（废弃 `MetaKind`） | Implementer | 20 min | ⏳ 待认领 |
-| B-4 | 修复 Markdown 相对链接（§6 的 ChunkedReservableWriter.cs） | DocOps | 5 min | ⏳ 待认领 |
-| B-5 | Q11 移除 A 的"（推荐）"标记，或补充理由 | DocOps | 5 min | ⏳ 待认领 |
-| B-6 | 新增"类型约束"章节：明确支持的值类型/引用类型边界 | Implementer | 20 min | ⏳ 待认领 |
+| B-1 | 术语表：新增"编码层"分组，收录 `RecordKind`/`ObjectKind` | DocOps | 15 min | ✅ 完成 |
+| B-2 | 术语表：新增 `EpochSeq` 条目 | DocOps | 5 min | ✅ 完成 |
+| B-3 | 统一 `RecordKind`/`MetaKind` 命名（废弃 `MetaKind`） | Implementer | 20 min | ✅ 完成 |
+| B-4 | 修复 Markdown 相对链接（§6 的 ChunkedReservableWriter.cs） | Implementer | 5 min | ✅ 完成 |
+| B-5 | Q11 移除 A 的"（推荐）"标记，或补充理由 | DocOps | 5 min | ✅ 完成 |
+| B-6 | 新增"类型约束"章节：明确支持的值类型/引用类型边界 | Implementer | 20 min | ✅ 完成 |
 
 > **B-6 说明**：根据监护人补充批示，文档应显式声明 DurableHeap 的类型约束——这是设计边界，不是陷阱。
 

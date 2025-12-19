@@ -14,15 +14,79 @@
 
 ## 最近工作
 
-### 2025-12-19: DurableHeap MVP v2 术语修订验证
-- **状态**: ⚠️ 发现问题
-- **验证范围**: `DurableHeap/docs/mvp-design-v2.md` 术语修订
-- **发现问题**: 
-  - `head` 未完全统一为 `HEAD`（第289行）
-  - `On-Disk Diff` 在4.4.1语义层次定义中仍作为定义名出现（672/696/709行）
-  - `state diff` 在2.4节标题和正文中仍出现（146/652行）
-  - 决策表Q3/Q5标题仍使用旧术语（历史决策记录，可接受）
-  - 4.4.3节建议仍使用 `Commit()` 而非 `FlushToWriter()`（825行）
+### 2025-12-19: B-4/B-5/B-6 批量修订验证
+- **状态**: ✅ 全部通过
+- **验证范围**: `DurableHeap/docs/mvp-design-v2.md` 三项修订
+- **验证结果**:
+  - **B-4**: §6 ChunkedReservableWriter.cs 链接为 `../../atelia/src/Data/ChunkedReservableWriter.cs`（L1012）✓
+  - **B-5**: Q11 选项 A 已移除"（推荐）"标记，现为 `Upserts(key->value) + Deletes(keys)`（L155）✓
+  - **B-6**: 4.1.4 节"类型约束"存在（L292），含支持类型表格（L298-302），章节编号连续（4.1.3→4.1.4→4.2）✓
+
+### 2025-12-19: B-3 RecordKind/MetaKind 命名统一验证
+- **状态**: ✅ 通过
+- **验证范围**: `DurableHeap/docs/mvp-design-v2.md` RecordKind/MetaKind 命名统一
+- **验证结果**:
+  - `MetaKind` 无残留（grep 返回 0 matches）✓
+  - 4.2.2 节 meta payload 使用 `RecordKind`（L509）✓
+  - 区分文件域时使用"Meta file 的 RecordKind"表述（L509, L542）✓
+  - `ObjectKind` 保持不变（L68, L198, L246, L473, L566, L597, L604, L981）✓
+
+### 2025-12-19: B-2 术语表 EpochSeq 验证
+- **状态**: ✅ 通过
+- **验证范围**: `DurableHeap/docs/mvp-design-v2.md` 术语表"标识与指针"分组
+- **验证结果**:
+  - "标识与指针"分组存在 `EpochSeq` 条目（L46）✓
+  - 定义为"Commit 的单调递增序号，用于判定 HEAD 新旧" ✓
+  - 实现映射为 `varuint` ✓
+
+### 2025-12-19: B-1 术语表"编码层"分组验证
+- **状态**: ✅ 通过
+- **验证范围**: `DurableHeap/docs/mvp-design-v2.md` 术语表新增"编码层"分组
+- **验证结果**:
+  - "### 编码层"分组存在（L62）✓
+  - 包含 `RecordKind`、`ObjectKind`、`ValueType` 三个术语（L66-68）✓
+  - 表格格式与其他分组一致（四列：术语/定义/别名弃用/实现映射）✓
+  - 位置在"对象级 API（二阶段提交）"分组之前（L62 < L70）✓
+
+### 2025-12-19: A-2 Commit 流程规范约束验证
+- **状态**: ✅ 通过
+- **验证范围**: `DurableHeap/docs/mvp-design-v2.md` 中 4.4.5 节 Commit 流程规范约束
+- **验证结果**:
+  - 4.4.5 节新增"规范约束（二阶段 finalize）"段落（L977-L983）✓
+  - 核心约束语句存在："对象级写入不得改变 Committed/Dirty 状态；只有 heap 级 commit 成功才能 finalize"（L979）✓
+  - `WritePendingDiff()` 执行时机说明：步骤 2，仅写入不更新状态（L981）✓
+  - `OnCommitSucceeded()` 执行时机说明：步骤 5，必须在步骤 4 meta 落盘后（L982）✓
+  - 与 4.4.4 二阶段设计语义一致性声明（L983）✓
+
+### 2025-12-19: A-1 二阶段拆分修订验证（FlushToWriter → WritePendingDiff + OnCommitSucceeded）
+- **状态**: ✅ 通过
+- **验证范围**: `DurableHeap/docs/mvp-design-v2.md` 中 FlushToWriter 二阶段拆分
+- **验证结果**: 
+  - 术语表"对象级 API（二阶段提交）"新增 `WritePendingDiff` + `OnCommitSucceeded` 两行 ✓
+  - `FlushToWriter` 仅作为 Deprecated 标记保留 ✓
+  - 4.4.4 伪代码 `WritePendingDiff` 方法不更新 `_committed/_isDirty` ✓
+  - 4.4.4 伪代码新增 `OnCommitSucceeded()` 负责追平状态 ✓
+  - "关键实现要点"正确描述二阶段崩溃安全语义 ✓
+  - 正文无 `FlushToWriter` 残留（仅术语表 Deprecated 标记）✓
+
+### 2025-12-19: A-4 术语替换验证（EpochMap → VersionIndex）
+- **状态**: ✅ 通过
+- **验证范围**: `DurableHeap/docs/mvp-design-v2.md` 中 EpochMap 术语替换
+- **验证结果**: 
+  - `EpochMap` 正文无残留，仅术语表 Deprecated 标记保留（第36行）✓
+  - `epoch map`（小写）无残留 ✓
+  - `VersionIndex` 共出现35处，分布正确：术语表、Q7/Q8/Q9、决策汇总、规格说明等 ✓
+  - Q7/Q8/Q9 决策选项区语句通顺 ✓
+
+### 2025-12-19: A-3 术语替换验证（EpochRecord → Commit Record）
+- **状态**: ✅ 通过
+- **验证范围**: `DurableHeap/docs/mvp-design-v2.md` 中 EpochRecord/EpochRecordPtr 术语替换
+- **验证结果**: 
+  - `EpochRecord` 正文无残留，仅术语表 Deprecated 标记保留（第52行）✓
+  - `EpochRecordPtr` 已全部替换为 `CommitRecordPtr`（仅1处，第121行）✓
+  - `epoch record`/`Epoch Record` 等变体形式无残留 ✓
+  - 替换后语句通顺（第121行描述完整且语法正确）✓
+  - `EpochSeq` 为合法术语（epoch序号），不在替换范围内 ✓
 
 ### 2025-12-09: PipeMux 管理命令 E2E 测试
 - **状态**: ✅ 通过
@@ -34,7 +98,14 @@
 | Project | Changefeed | Baseline |
 |---------|------------|----------|
 | PipeMux | #delta-2025-12-09-management-commands | E2E: 7/7 pass |
-| DurableHeap | #delta-2025-12-19-terminology-review | Doc review: 术语表完整，正文有遗漏 |
+| DurableHeap | #delta-2025-12-19-b456-batch | B-4/B-5/B-6 批量修订: ✅ 验证通过 |
+| DurableHeap | #delta-2025-12-19-b3-recordkind | RecordKind命名统一: ✅ 验证通过 |
+| DurableHeap | #delta-2025-12-19-b2-epochseq | EpochSeq术语条目: ✅ 验证通过 |
+| DurableHeap | #delta-2025-12-19-b1-encoding-layer | 术语表编码层分组: ✅ 验证通过 |
+| DurableHeap | #delta-2025-12-19-a1-two-phase | WritePendingDiff + OnCommitSucceeded: ✅ 验证通过 |
+| DurableHeap | #delta-2025-12-19-a2-commit-constraint | Commit流程规范约束: ✅ 验证通过 |
+| DurableHeap | #delta-2025-12-19-terminology-a3 | EpochRecord替换: ✅ 全部完成 |
+| DurableHeap | #delta-2025-12-19-terminology-a4 | EpochMap替换: ✅ 全部完成 |
 
 ## Canonical Commands
 

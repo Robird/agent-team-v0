@@ -14,21 +14,21 @@
 
 ## Immediate (新会话优先)
 
-- **DurableHeap MVP v2 文档修订** (2025-12-19 畅谈会共识，监护人批准)
+- **DurableHeap MVP v2 文档修订** ✅ **全部完成** (2025-12-19)
   - 任务板: `agent-team/task-board.md`
   - 畅谈记录: `agent-team/meeting/2025-12-19-secret-base-durableheap-mvp-v2-review.md`
-  - **Critical (发布前必须)**:
-    - [ ] A-1: 修改 4.4.4 伪代码 `FlushToWriter` → 二阶段拆分 (Prepare/Finalize)
-    - [ ] A-2: 修改 4.4.5 Commit 流程增加 finalize 规范约束
-    - [ ] A-3: 全文替换 `EpochRecord` → `Commit Record`
-    - [ ] A-4: 全文替换 `EpochMap` → `VersionIndex`
-  - **Major (建议发布前)**:
-    - [ ] B-1: 术语表新增"编码层"分组
-    - [ ] B-2: 术语表新增 `EpochSeq` 条目
-    - [ ] B-3: 统一 `RecordKind`/`MetaKind` 命名
-    - [ ] B-4: 修复 Markdown 相对链接
-    - [ ] B-5: Q11 移除"（推荐）"标记或补充理由
-    - [ ] B-6: 新增"类型约束"章节（明确值类型/引用类型边界，Fail-fast 拦截）
+  - **Critical (4/4 完成)**:
+    - [x] A-1: 修改 4.4.4 伪代码 `FlushToWriter` → 二阶段拆分 (Prepare/Finalize)
+    - [x] A-2: 修改 4.4.5 Commit 流程增加 finalize 规范约束
+    - [x] A-3: 全文替换 `EpochRecord` → `Commit Record`
+    - [x] A-4: 全文替换 `EpochMap` → `VersionIndex`
+  - **Major (6/6 完成)**:
+    - [x] B-1: 术语表新增"编码层"分组
+    - [x] B-2: 术语表新增 `EpochSeq` 条目
+    - [x] B-3: 统一 `RecordKind`/`MetaKind` 命名
+    - [x] B-4: 修复 Markdown 相对链接
+    - [x] B-5: Q11 移除"（推荐）"标记
+    - [x] B-6: 新增"类型约束"章节（明确值类型/引用类型边界，Fail-fast）
   - **监护人批示要点**:
     - "Re-set to Update" 是伪问题（MVP 仅支持整数和 DurableDict）
     - DurableHeap 非通用序列化库，应显式声明类型边界（值类型仅基元，引用类型仅 DurableObject 派生）
