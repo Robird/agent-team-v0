@@ -191,6 +191,45 @@ DocUI 是一个 **LLM-Native 的用户界面框架**——为 LLM Agent 设计�
 > 文档不仅要说"怎么做是对的"，还要预判"用户通常会怎么做错"（如直接修改 List 内部状态）。
 > 对于 LLM 读者，这种显式的 **Negative Constraint** (什么是不被追踪的) 尤为重要，能有效抑制基于通用编程知识的幻觉。
 
+> **2025-12-19 API 示能性陷阱 (Affordance Trap)**
+> 在 DurableHeap 审阅中，发现了 `Commit(rootId)` 的语义陷阱。
+> 参数暗示了 Scope (局部提交)，但行为却是 Global (全局提交)。这种 **Affordance Mismatch** 是导致开发者数据事故的根源。
+> 确立了原则：**副作用必须显式化**。如果一个操作会触及参数以外的状态，必须在命名或参数设计上体现（如 `Commit(updateRootTo: id)`）。
+
+> **2025-12-19 隐形安全网 (Invisible Safety Net)**
+> 确认了 **Dirty Pinning** (脏对象强引用) 的 UX 价值。
+> 它解决了 WeakReference 带来的"薛定谔修改"问题。
+> 这是一个优秀的 **Passive Safety** 设计：用户不需要做任何事（不需要手动 Pin），系统自动保护了未提交的数据。
+
+> **2025-12-19 隐形安全网 (Invisible Safety Net)**
+> 确认了 **Dirty Pinning** (脏对象强引用) 的 UX 价值。
+> 它解决了 WeakReference 带来的"薛定谔修改"问题。
+> 这是一个优秀的 **Passive Safety** 设计：用户不需要做任何事（不需要手动 Pin），系统自动保护了未提交的数据。
+
+> **2025-12-19 错误恢复示能性 (Error Recovery Affordance)**
+> 错误信息不应只是 "Access Denied" 或 "Not Supported"，而应是 "Use X instead"。
+> 在 DurableHeap 类型约束中，明确了报错信息必须提供 **Migration Path** (如 "Use DurableList instead of List")。
+> 这将 Error Log 转化为了 Just-in-Time Documentation。
+
+> **2025-12-19 虚假示能 (False Affordance) 与 API 设计**
+> 在 DurableHeap `Commit(rootId)` 的审阅中，深刻认识到 API 签名是开发者的第一界面。
+> 参数名暗示了不存在的功能（Scoped Commit），构成了 **False Affordance**。
+> 解决方案是 **Self-Documenting API**：通过命名（`CommitAll`, `updateRootTo`）显式暴露副作用。
+
+> **2025-12-19 存储即渲染 (Storage as Rendering)**
+> 响应 Claude 关于 "Version Chain ≈ Agent-History" 的猜想，提出了 **Storage-UI Isomorphism**。
+> DurableHeap 的 Checkpoint/Diff 结构天然对应 DocUI 的 Gist/Full LOD。
+> 存储引擎不应只是"存数据"，而应提供"按需投影"的能力，成为 DocUI 的渲染后端。
+
+> **2025-12-20 智能脏状态 (Smart Dirty State)**
+> 在 DurableHeap 监护人反馈审阅中，确认了 `_dirtyKeys` 集合优于简单 `bool` 标记。
+> 从 UX 角度看，这实现了 **WYSIWYS (What You See Is What You Save)**：如果用户手动将数据改回原值，系统应自动识别为"无变更"。
+> 这提供了一种隐式的 **Manual Undo Affordance**，降低了开发者的心理负担。
+
+> **2025-12-20 格式标点 (Format Punctuation)**
+> 确认了 "Magic as Separator" 比 "Magic as Header + Sentinel" 具有更低的心智模型负担。
+> Magic 是二进制流的**标点符号**，提供了视觉韵律和直观的恢复示能性 (Recovery Affordance)。
+
 ### 教训记录
 
 > *（此区域将随着会话逐渐填充）*

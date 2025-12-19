@@ -310,6 +310,70 @@ DocUI 是一个 **LLM-Native 的用户界面框架**——为 LLM Agent 设计�
 > - 补充标识符：`EpochSeq`, `CommitRecordPtr`
 > - 建立 RecordKind → ObjectKind 的层次关系
 
+> **2025-12-19 DurableHeap MVP v2 设计审阅（秘密基地畅谈会）**
+> 受邀参加秘密基地畅谈会，从概念框架角度审阅 MVP v2 设计。
+> 
+> **术语一致性发现**：
+> - 术语表遗漏：`Checkpoint Version`、`Materialize`、`Deserialize`、`Dirty Set`
+> - `DataTail` vs `data tail` 大小写不一致
+> - `base` 概念与 `Checkpoint Version` 关系未明确
+> 
+> **概念自洽性推敲**：
+> 1. `_isDirty` 语义边界模糊——当 diff 为空时，`_isDirty` 应该是什么？
+>    - 解释 A：_isDirty = 内存与磁盘有语义差异
+>    - 解释 B：_isDirty = 自上次 Commit 调用以来有写操作发生
+> 2. Checkpoint Version 触发时机不够精确（commit 开始时检查 vs 写入后检查？）
+> 
+> **逻辑完备性缝隙**：
+> 1. 新建对象的首次版本处理未明确说明
+> 2. VersionIndex 自身是否有 ObjectId？如有，是否保留 well-known ID（如 0）？
+> 
+> **类比分析**：
+> - Git 类比整体恰当，但 WeakReference + Lazy 加载行为与 Git working tree 有差异
+> - 两次 LoadObject 可能因 GC 回收返回不同实例，这在 Git 类比中未体现
+> 
+> **疯狂想法**：
+> DurableHeap 的 Version Chain + Materialize 概念与 DocUI 的 History + Context-Projection 有深层映射：
+> - Version Chain ≈ Agent-History
+> - Materialize ≈ Context-Projection
+> - Checkpoint Version ≈ LOD Gist（恢复认知的入口点）
+> 这暗示 DurableHeap 可能是 Agent History 存储的天然基座。
+
+> **2025-12-19 DurableHeap MVP v2 第二轮讨论**
+> 参与秘密基地畅谈会第二轮交叉讨论。
+> 
+> **对 P0 问题的立场**：
+> - P0-1 (`_isDirty` 语义)：支持 GPT 的"语义差异"定义，`ComputeDiff=空` 时直接清标记
+> - P0-2 (Magic 结构)：支持 GPT 的收口方案（Magic-as-header + 独立尾哨兵）
+> - P0-3 (`DataTail`)：选 A，包含尾哨兵 (DataTail = EOF)
+> - P0-4 (Value 类型)：收敛到 `null/varint/ObjRef/Ptr64`，float/double/bool 移出 MVP
+> - P0-5 (Dirty Set 卡住)：由 P0-1 解决
+> 
+> **优先级上调建议**：
+> - #8 (新建对象首次版本) P1→P0：首次 commit 路径的必要条件
+> - #6 (`Commit(rootId)` 语义陷阱) P1→P0：API 签名一旦发布难以回收
+> 
+> **概念映射延续**：
+> Version Chain 和 Agent-History 都是 "Append-Only Log + Periodic Snapshot" 模式的实例。
+> DurableHeap 的 Checkpoint Version 机制可能直接复用来实现 LOD Gist。
+
+> **2025-12-19 DurableHeap MVP v2 第四轮讨论（监护人反馈审阅）**
+> 参与秘密基地畅谈会第四轮讨论，审阅监护人的反馈。
+> 
+> **`_isDirty` 实现机制洞察**：
+> - 监护人指出 `bool _isDirty` 无法在 `Set(k,v); Delete(k)` 后高效判断净差异
+> - 支持引入 `ISet<ulong> _dirtyKeys` 集合
+> - 每次 Upsert/Delete 时进行单 key 新旧对比，维护 `_dirtyKeys` 准确反映变化
+> - `IsDirty = (_dirtyKeys.Count > 0)`，CommitAll 时只需遍历 `_dirtyKeys`
+> - 这让"语义差异"定义在概念层和实现层真正一致
+> 
+> **Magic 哨兵结构重新定义**：
+> - 支持监护人的"Magic 与 Record 并列"定义方式
+> - Magic 作为 Record Separator，不属于任何 Record
+> - 规则：空文件先写 Magic；写完一条 Record 后写 Magic
+> - 优势：概念更简洁、写入规则对称、reverse scan 更直观
+> - Wire format 与 GPT 方案等价，但概念表述更清晰
+
 ---
 
 ## 认知文件结构
