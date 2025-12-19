@@ -1,127 +1,121 @@
-# Task Board - Phase 8: Sprint 05 – LLM-Native Editor Features
+# Task Board - DurableHeap MVP v2 文档修订
 
-> **Sprint 04 归档**: [`task-board-v8-sprint04-archive.md`](task-board-v8-sprint04-archive.md)
+> **来源**: 2025-12-19 秘密基地畅谈会共识
+> **决策记录**: [`meeting/2025-12-19-secret-base-durableheap-mvp-v2-review.md`](meeting/2025-12-19-secret-base-durableheap-mvp-v2-review.md)
+> **监护人批示**: 2025-12-19 ✅ 批准执行
 
-**Sprint Window:** 2025-12-02 ~ 2025-12-16  
-**Goal:** 基于 LLM-Native 视角精简剩余 gaps，完成 P1/P2 优先级任务，实现测试基线突破 1000。
-
-**Milestone Status:**
-- ✅ M1 - Diff 核心修复 & API 补齐 (完成 2025-12-02)
-- ✅ M2 - P1 任务清零 (完成 2025-12-04)
-- ✅ M3 - P2 任务清零 (完成 2025-12-05)
-- 🔄 M4 - P3 选择性实施 (进行中)
-
-**Test Baseline:** 1158 passed, 9 skipped (首次突破 1000! 🎉)
-
-**Changefeed Reminder:** 所有状态更新请同步到 `agent-team/indexes/README.md#delta-2025-12-*`；详细进度见 [`docs/sprints/sprint-05.md`](../docs/sprints/sprint-05.md)。
+**目标文档**: `DurableHeap/docs/mvp-design-v2.md`
 
 ---
 
-## LLM-Native 功能筛选结果
+## 监护人批示要点
 
-基于 [`docs/plans/llm-native-editor-features.md`](../docs/plans/llm-native-editor-features.md) 重新评估剩余 gaps：
+1. **"Re-set to Update" 陷阱是伪问题** — MVP 仅支持整数和 DurableDict 作为成员，后续也只支持基元类型和 DurableObject 派生的容器类型，不存在用户修改引用类型内部状态的场景。
 
-| 分类 | Gap 数量 | 工时影响 | Status |
-|------|---------|---------|--------|
-| ❌ 无需移植 | 7 | ~14h 节省 | ✅ 评估完成 |
-| 🔄 降级实现 | 8 | ~18h → ~8h | P3 计划中 |
-| ✅ 继续移植 | 11 | ~26h | ✅ P1/P2 完成 |
+2. **文档原则**：
+   - 首先呈现 **What**
+   - 在关键之处记录少量 **Why** 用于锁定决策
+   - 已被覆盖的旧信息应**移除**（有 git 历史可查，无需专门保留）
 
-**无需移植的功能**（已明确排除）:
-- Sticky Column（人类键盘导航）
-- FindStartFocusAction / 焦点管理（无 GUI）
-- Mac global clipboard write（平台 hook）
-- shouldAnimate / Delayer 节流（视觉动画）
-- Bracket pair colorization（纯视觉）
-- lineBreak + InjectedText viewport（视口特定）
-- Snippet P3 嵌套语法（复杂度高，使用罕见）
+3. **目标**：缩减文档规模，提高一致性
 
 ---
 
-## P1 任务 (高优先级核心 API) - ✅ 全部完成
+## 🔴 Critical — 发布前必须完成
 
-| ID | Description | Owner | Tests | Changefeed |
-|----|-------------|-------|-------|------------|
-| P1-1 | TextModelData.fromString | Porter-CS | +5 | [`#delta-2025-12-04-p1-complete`](indexes/README.md#delta-2025-12-04-p1-complete) |
-| P1-2 | validatePosition 边界测试 | QA-Automation | +44 | [`#delta-2025-12-04-p1-complete`](indexes/README.md#delta-2025-12-04-p1-complete) |
-| P1-3 | getValueLengthInRange + EOL | Porter-CS | +5 | [`#delta-2025-12-04-p1-complete`](indexes/README.md#delta-2025-12-04-p1-complete) |
-| P1-4 | Issue regressions 调研 | Investigator-TS | N/A | [`#delta-2025-12-04-p1-complete`](indexes/README.md#delta-2025-12-04-p1-complete) |
-| P1-5 | SelectAllMatches 排序 | Porter-CS | ✅ | (Sprint 04 完成) |
+| ID | 任务 | 责任 | 预计工时 | Status |
+|----|------|------|----------|--------|
+| A-1 | 修改 4.4.4 伪代码：`FlushToWriter` → 二阶段拆分 (Prepare/Finalize) | Implementer | 30 min | ⏳ 待认领 |
+| A-2 | 修改 4.4.5 Commit 流程：增加 finalize 规范约束 | Implementer | 15 min | ⏳ 待认领 |
+| A-3 | 全文替换 `EpochRecord` → `Commit Record` | DocOps | 20 min | ⏳ 待认领 |
+| A-4 | 全文替换 `EpochMap` → `VersionIndex` | DocOps | 10 min | ⏳ 待认领 |
 
-**P1 测试增长**: +54 tests  
-**P1 完成日期**: 2025-12-04
+### A-1/A-2 详细规格
 
----
+**二阶段拆分语义**：
 
-## P2 任务 (重要测试与特性) - ✅ 全部完成
+| 阶段 | API 名称 | 职责 | 状态变化 |
+|------|----------|------|----------|
+| **Prepare** | `WritePendingDiff(writer)` | 序列化 diff → 写入 data file | 无（保持 dirty） |
+| **Finalize** | `OnCommitSucceeded()` | 追平内存状态 | `_committed = _current`, `_isDirty = false` |
 
-| ID | Description | Owner | Tests | Changefeed |
-|----|-------------|-------|-------|------------|
-| P2-1 | Diff deterministic matrix | QA-Automation | +44 | [`#delta-2025-12-04-p1-complete`](indexes/README.md#delta-2025-12-04-p1-complete) |
-| P2-2 | PieceTree diagnostics | Porter-CS | +23 | [`#delta-2025-12-04-p1-complete`](indexes/README.md#delta-2025-12-04-p1-complete) |
-| P2-3 | Decorations multi-owner | Porter-CS | 🔄 存储层 | [`#delta-2025-12-02-ws3-textmodel`](indexes/README.md#delta-2025-12-02-ws3-textmodel) |
-| P2-4 | AddSelectionToNextFindMatch | Porter-CS | +34 | [`#delta-2025-12-05-add-selection-to-next-find`](indexes/README.md#delta-2025-12-05-add-selection-to-next-find) |
-| P2-5 | MultiCursor Snippet 集成 | QA-Automation | +6 | [`#delta-2025-12-05-multicursor-snippet`](indexes/README.md#delta-2025-12-05-multicursor-snippet) |
-| P2-6 | Snippet Transform | Porter-CS | +33 | [`#delta-2025-12-05-snippet-transform`](indexes/README.md#delta-2025-12-05-snippet-transform) |
-
-**P2 测试增长**: +140 tests  
-**P2 完成日期**: 2025-12-05  
-**P2 关键交付**:
-- Snippet Transform + FormatString（直译 TS snippetParser.ts）
-- MultiCursorSession + MultiCursorSelectionController
-- Diff deterministic matrix（59→103 tests）
+**规范约束**：
+> 对象级写入不得改变 Committed/Dirty 状态；只有 heap 级 commit 成功才能 finalize。
 
 ---
 
-## P3 任务 (降级实现 & 选择性完成) - 🔄 进行中
+## 🟠 Major — 建议发布前完成
 
-| ID | Description | 分类 | 工时估计 | Owner | Status |
-|----|-------------|------|---------|-------|--------|
-| P3-1 | 解除 SelectHighlightsAction skipped test | 降级实现 | ~2h | TBD | Planned |
-| P3-2 | 解除 MultiCursorSnippet skipped test | 降级实现 | ~2h | TBD | Planned |
-| P3-3 | Snippet Variables 扩展 | 降级实现 | ~2h | TBD | Planned |
-| P3-4 | Multi-cursor session merge | 降级实现 | ~1h | TBD | Planned |
-| P3-5 | InsertCursorAbove/Below | 降级实现 | ~0.5h | TBD | Planned |
-| P3-6 | guessIndentation 扩展 | 降级实现 | ~1.5h | TBD | Planned |
-| P3-7 | editStack 边界测试 | 降级实现 | ~0.5h | TBD | Planned |
+| ID | 任务 | 责任 | 预计工时 | Status |
+|----|------|------|----------|--------|
+| B-1 | 术语表：新增"编码层"分组，收录 `RecordKind`/`ObjectKind` | DocOps | 15 min | ⏳ 待认领 |
+| B-2 | 术语表：新增 `EpochSeq` 条目 | DocOps | 5 min | ⏳ 待认领 |
+| B-3 | 统一 `RecordKind`/`MetaKind` 命名（废弃 `MetaKind`） | Implementer | 20 min | ⏳ 待认领 |
+| B-4 | 修复 Markdown 相对链接（§6 的 ChunkedReservableWriter.cs） | DocOps | 5 min | ⏳ 待认领 |
+| B-5 | Q11 移除 A 的"（推荐）"标记，或补充理由 | DocOps | 5 min | ⏳ 待认领 |
+| B-6 | 新增"类型约束"章节：明确支持的值类型/引用类型边界 | Implementer | 20 min | ⏳ 待认领 |
 
-**预计总工时:** ~9.5h  
-**降级原则**: 只实现 LLM-Native 场景必需的功能，不追求完整 VS Code parity
+> **B-6 说明**：根据监护人补充批示，文档应显式声明 DurableHeap 的类型约束——这是设计边界，不是陷阱。
+
+### B-1 术语表扩展规格
+
+新增 **"编码层"** 分组：
+
+| 术语 | 定义 | 备注 |
+|------|------|------|
+| `RecordKind` | Record 的顶层类型标识，决定 payload 解码方式 | framing 层概念 |
+| `ObjectKind` | ObjectVersionRecord 内的对象类型标识，决定 diff 解码器 | payload 层概念 |
+
+### B-3 RecordKind 统一规格
+
+- `RecordKind` 统一顶层判别，`ObjectKind` 统一对象级 codec 判别
+- 废弃 `MetaKind`，改用"Meta file 的 RecordKind 表"/"Data file 的 RecordKind 表"表述
+- **命名约定**："Kind" 只用于判别字段，同一层不允许同义不同名
+
+### B-6 类型约束规格
+
+**目标**：在文档中显式声明 DurableHeap **不是通用序列化库**，而是有明确类型边界的持久化框架。
+
+**建议新增章节位置**：4.1 概念模型之后，或作为 4.1.4 子节
+
+**内容要点**：
+
+| 类别 | 支持 | 不支持 |
+|------|------|--------|
+| **值类型** | 基元类型：`int`, `long`, `ulong`, `float`, `double`, `bool`, `null` | 任意 struct、用户自定义值类型 |
+| **引用类型** | `DurableObject` 派生类型（内置集合：`DurableDict`, 未来: `DurableArray`） | 任意 class、`List<T>`、`Dictionary<K,V>` 等 |
+
+**运行时行为**：
+- 赋值不支持类型时，应抛出明确异常（Fail-fast）
+- 可选：编译时通过泛型约束或 Analyzer 提前拦截
 
 ---
 
-## Cross-Sprint 持续任务
+## 🟢 Minor — 可延迟
 
-| ID | Description | Owner | Status | Notes |
-|----|-------------|-------|--------|-------|
-| OPS-1 | 维护 Sprint 05 Progress Log | DocMaintainer | 🔄 持续 | [`docs/sprints/sprint-05.md`](../docs/sprints/sprint-05.md) |
-| OPS-2 | Changefeed 及时创建 | Info-Indexer | 🔄 待流程优化 | 见 [`handoffs/DocMaintainer-to-InfoIndexer-2025-12-05.md`](handoffs/DocMaintainer-to-InfoIndexer-2025-12-05.md) |
-| OPS-3 | TestMatrix 同步更新 | QA-Automation | 🔄 持续 | [`tests/TextBuffer.Tests/TestMatrix.md`](../../tests/TextBuffer.Tests/TestMatrix.md) |
+| ID | 任务 | 责任 | Status |
+|----|------|------|--------|
+| C-1 | 全文 grep `HEAD`/`head` 大小写一致性 | DocOps | ⏳ 延迟 |
+| C-2 | `Address64`/`Ptr64` 分层贯彻 | DocOps | ⏳ 延迟 |
+| C-3 | 统一 `CRC32C(u32 LE)` 表述 | DocOps | ⏳ 延迟 |
 
 ---
 
-## Sprint 04 快速回顾
+## 📋 已移除/降级的任务
 
-**完成时间**: 2025-11-27 ~ 2025-12-02  
-**测试增长**: 585 → 873 passed (+288)  
-**关键交付**:
-- WS1-WS5 全部完成（PieceTree Search、Range/Selection Helpers、IntervalTree、Cursor/Snippet、高风险测试）
-- Snippet P0-P2 实现（77 tests）
-- CursorCollection + WordOperations（94 tests）
-- IntervalTree AcceptReplace 集成
-
-**详细记录**: [`task-board-v8-sprint04-archive.md`](task-board-v8-sprint04-archive.md)
+| 原 ID | 任务 | 原因 |
+|-------|------|------|
+| M-4 | "Re-set to Update" 陷阱文档化 | 监护人批示：MVP 类型限制使其成为伪问题 |
+| B-6 | 增加变更契约警告块 | 同上 |
 
 ---
 
 ## References
-- **Sprint Log**: [`docs/sprints/sprint-05.md`](../docs/sprints/sprint-05.md)
-- **Migration Log**: [`docs/reports/migration-log.md`](../docs/reports/migration-log.md)
-- **Changefeed Index**: [`agent-team/indexes/README.md`](indexes/README.md)
-- **Test Matrix**: [`tests/TextBuffer.Tests/TestMatrix.md`](../../tests/TextBuffer.Tests/TestMatrix.md)
-- **LLM-Native Features**: [`docs/plans/llm-native-editor-features.md`](../docs/plans/llm-native-editor-features.md)
+
+- **畅谈会记录**: [`meeting/2025-12-19-secret-base-durableheap-mvp-v2-review.md`](meeting/2025-12-19-secret-base-durableheap-mvp-v2-review.md)
+- **目标文档**: [`DurableHeap/docs/mvp-design-v2.md`](../DurableHeap/docs/mvp-design-v2.md)
+- **历史归档**: [`archive/task-board-v9-sprint05-archive.md`](archive/task-board-v9-sprint05-archive.md)
 
 ---
 
-_Sprint 04 的详细 workstreams (WS1-WS5) 和 Cross-Stream Ops 已归档至 [`task-board-v8-sprint04-archive.md`](task-board-v8-sprint04-archive.md)。_
-
+_Last updated: 2025-12-19_

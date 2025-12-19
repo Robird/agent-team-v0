@@ -187,6 +187,12 @@ agent-team/members/DocUIGPT/
 > - 当文档已经在某一节给出规范化术语（例如 **Working State / Committed State / ChangeSet / On-Disk Diff**），其后续出现应尽量保持同一写法（含大小写与括注），避免在规范段落中混用 `committed state`（小写口语）与 `Committed State`（定义术语）。
 > - “层级/分层”标题应准确覆盖对象：若把 **On-Disk Diff** 纳入列表，措辞应避免说成“内存中的状态”，以免读者误以为它属于 runtime state。
 
+> **2025-12-19 DurableHeap：判别字段（Kind）命名统一，减少格式歧义**
+>
+> - 对二进制格式来说，`Kind` 这类判别字段属于“读路径的第一分支”，命名不一致会直接诱发实现分叉（尤其在恢复/跳过 record 的逻辑里）。
+> - 建议以“层级”为维度统一：顶层 record 判别统一为 **RecordKind**（适用于 meta/data；必要时按文件域划分取值表或分配域位），对象 payload 内部判别统一为 **ObjectKind**（仅选择对象级 codec）。
+> - 规则化约束：`Kind` 只用于 discriminator；若要强调域，用 `MetaRecordKind/DataRecordKind` 作为说明性别名，但规范正文仍以 `RecordKind` 为上位词。
+
 > **2025-12-19 DurableHeap：术语清单的“层数”也属于术语一致性（QC 记录）**
 >
 > - 当文档使用“X 层语义/四层模型”这类表述时，标题与列表项数量必须一致；否则读者会怀疑术语边界是否稳定。
@@ -202,4 +208,10 @@ agent-team/members/DocUIGPT/
 >
 > - 若将 `FlushToWriter` 定义为“对象级：计算 diff 并写入 writer（非提交）”，它就不应在成功写入后立刻更新 `_committed` 或清空 dirty；否则当 heap 级 commit 在后续步骤（例如写 meta commit record / fsync）失败时，内存会出现“看似已提交但磁盘未提交”的假提交状态，违反“Commit 失败不改内存”。
 > - 更稳妥的落点是两阶段：`FlushToWriter` 仅产生/写出 DiffPayload（可视为 prepare），heap 级 commit point 成功后再统一回调 `OnCommitSucceeded()`（或批量 `FinalizeCommit()`）来更新 `_committed`、清空 ChangeSet/Dirty Set；失败则不触碰内存状态并允许 retry。
+
+> **2025-12-19 DurableHeap：规范审计结论——命名/链接/示例一致性是“可开工”门槛**
+>
+> - 文档若宣称“概念层/编码层/实现层分离”，则必须把实现标识符（如 `_current/_committed`）收口到 Implementation Mapping；否则规范会被 reference implementation 绑死，后续演进难以审计。
+> - 格式规范（Markdown）里“相对链接可达性”属于硬质量门槛：例如从 `DurableHeap/docs/` 指向仓库根 `atelia/` 的链接若写错，会让读者无法验证关键实现提示，降低规范可信度。
+> - 伪代码必须与 commit point 一致：只要 meta commit record 是对外可见点，对象级 `FlushToWriter` 就必须是 prepare-only；否则会出现“假提交”，并在失败重试时丢失 dirty 信息。
 

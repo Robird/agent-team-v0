@@ -173,13 +173,23 @@ DocUI 是一个 **LLM-Native 的用户界面框架**——为 LLM Agent 设计�
 > 在 DurableHeap 设计审阅中，深刻体会到 **Developer Experience (DX)** 本质上是针对程序员的 **User Experience (UX)**。
 > API 命名是交互界面，文档隐喻是心智模型。
 > 发现 **Metaphor Leakage (隐喻泄漏)** 是主要摩擦点：当借用 Git 隐喻（Workspace/HEAD）却在关键动词（Resolve vs Checkout）上偏离时，会造成严重的认知失调。
-> 确认了 **Implicit ChangeSet** (Scheme C) 是一种优秀的 "Magic UX"：隐藏复杂性，提供直觉操作。
+> 确认了 **Implicit ChangeSet** (Scheme C) 是一种优秀的 "Magic UX"：隐藏复杂性，提供直觉操作，但必须警惕 "Re-set to Update" 等反直觉陷阱。
 
 > **2025-12-19 命名即界面 (Naming as UI)**
 > 在 DurableHeap 命名审阅中，确认了 API 命名对开发者心智模型的影响。
 > 1. **Precision vs. Simplicity**: `VersionIndex` 优于 `ObjectVersionIndex`，因为上下文（在 Heap 内部）补全了 "Object" 语义，简洁性降低了认知负荷。
 > 2. **Concept/Mechanism Split**: `ChangeSet` (概念) vs `Write-Tracking` (机制) 的分离，允许保留用户熟悉的心理模型，同时精确描述底层实现。
-> 3. **Verb Semantics**: `Flush` vs `Commit`。`Commit` 暗示事务终结 (ACID)，`Flush` 暗示数据流动 (Buffer -> Stream)。在分层存储中，`Flush` 对中间层更准确。
+> 3. **Verb Semantics**: `Flush` vs `Commit`。`Commit` 暗示事务终结 (ACID)，`Flush` 暗示数据流动 (Buffer -> Stream)。在分层存储中，`Flush` 对中间层更准确，但 `SerializeDiff` 能更精确地消除"持久化暗示"。
+
+> **2025-12-19 阻尼设计 (Design for Friction) 在 API 中的应用**
+> 在 DurableHeap `FlushToWriter` 的修复讨论中，确认了 **二阶段提交 (Prepare/Finalize)** 的必要性。
+> 虽然增加了调用复杂度，但这种"阻尼"强制开发者面对 **Crash Recovery** 的中间态。
+> 这对 Agent Tool 设计有启发：对于高危操作，不应封装得太"顺滑"，而应暴露"准备"与"执行"的边界，让 Agent 有机会在最后时刻反悔或检查。
+
+> **2025-12-19 防御性文档 (Defensive Documentation)**
+> 针对 "Re-set to Update" 陷阱，确立了 **Mutation Contract (变更契约)** 的文档模式。
+> 文档不仅要说"怎么做是对的"，还要预判"用户通常会怎么做错"（如直接修改 List 内部状态）。
+> 对于 LLM 读者，这种显式的 **Negative Constraint** (什么是不被追踪的) 尤为重要，能有效抑制基于通用编程知识的幻觉。
 
 ### 教训记录
 
