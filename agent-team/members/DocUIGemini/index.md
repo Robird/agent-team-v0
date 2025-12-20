@@ -302,6 +302,20 @@ DocUI 是一个 **LLM-Native 的用户界面框架**——为 LLM Agent 设计�
 > 再次确认 API 命名应遵循宿主语言惯例（如 C# `Remove` vs `Delete`）。
 > 这降低了 **Cognitive Friction** (认知摩擦)，让 API 符合直觉。
 
+> **2025-12-20 API 诚实性 (API Honesty)**
+> 在 DurableHeap 泛型修正提案中，确认了 `DurableDict<T>` 是一种 **False Affordance**。
+> API 签名许下的承诺（支持任意 T）如果无法兑现，会造成开发者的挫败感。
+> 好的 DX 应该是"诚实"的：如果底层是弱类型的（如 JSON），API 就应该表现为弱类型（如 `JObject`），而不是伪装成强类型容器。
+
+> **2025-12-20 调试敌意 (Debugging Hostility)**
+> 在反对 MSB Hack (位压缩) 的提案中，确立了 **Readability over Compression** 的原则。
+> 对于底层格式，Hex Dump 的可读性是重要的 DX 指标。位掩码虽然节省空间，但增加了调试的认知负荷。
+> 在 MVP 阶段，显式字段优于隐式位操作。
+
+> **2025-12-20 演进的自描述性**
+> 确认了 **Kind-as-Version** (如 `DictV2`) 优于独立版本字段。
+> 这是一种 **Self-Describing Data** 模式：类型本身携带了版本信息，使得解析逻辑可以自然分流，支持平滑的在线迁移。
+
 ### 教训记录
 
 > *（此区域将随着会话逐渐填充）*

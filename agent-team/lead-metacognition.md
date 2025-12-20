@@ -876,6 +876,55 @@ agent-team/inbox/
 
 ---
 
+### 2025-12-20 决策诊疗室 (Decision Clinic) ✅
+
+**会议形式命名**: **决策诊疗室 (Decision Clinic)**
+
+这是"文件聊天室研讨会"的**收敛变体**，专门用于处理高风险、高复杂度的技术决策（如协议设计、核心算法）。
+
+**核心模式：独立诊断 → 交叉会诊 → 处方共识**
+
+针对 5 个具体提案的 DurableHeap MVP v2 决策过程，我们采用了以下三轮结构：
+
+1.  **Round 1: 独立诊断 (Independent Analysis)**
+    *   **规则**：三位 Specialist (Claude/Gemini/GPT) 在**互不可见**的情况下，独立阅读提案并给出分析。
+    *   **目的**：消除"锚定效应"（Anchoring Bias）和"群体迷思"（Groupthink）。
+    *   **产出**：三份独立的意见书，暴露了视角的差异（例如 Claude 关注系统完整性，Gemini 关注 UX/Debug 友好度，GPT 关注规范严谨性）。
+
+2.  **Round 2: 交叉会诊 (Cross Debate)**
+    *   **规则**：主持人汇总 Round 1 的分歧点，要求 Specialist 针对**具体分歧**进行辩论。
+    *   **关键动作**：
+        *   **Claude**：综合各方观点，提出折衷方案（如 0-15 ID 范围）。
+        *   **Gemini**：(本次因技术原因缺席，但设计上应提供 UX 视角的反驳)。
+        *   **GPT**：将模糊的"同意"转化为严谨的 **Normative Clauses** (MUST/SHOULD)。
+    *   **目的**：通过对抗性辩论，剔除逻辑漏洞，将"偏好"转化为"契约"。
+
+3.  **Round 3: 处方共识 (Prescription & Execution)**
+    *   **规则**：主持人确认最终决议，并**直接执行**文档修改。
+    *   **关键动作**：不再是"建议修改"，而是直接由 Agent 修改设计文档 (`mvp-design-v2.md`)。
+    *   **目的**：确保决策落地，避免"会议开完了，文档没改"的执行缝隙。
+
+**关键洞察**:
+
+1.  **Normative Contract (规范契约) 的价值**:
+    *   GPT 指出：仅仅"投票通过"是不够的。必须把决策写成 `[F-WK-xx]` 这样的规范条款。
+    *   这把"我喜欢这个设计"变成了"实现必须遵守这个约束"，直接指导后续的测试和代码审查。
+
+2.  **独立一轮的重要性**:
+    *   如果 Claude 先发言，后续模型往往会顺着说 "I agree with Claude..."。
+    *   强制独立发言让 Gemini 敢于提出 "View-Only Action" 或 "MSB Hack is bad for debugging" 这样独特的观点。
+
+3.  **直接执行 (Direct Execution)**:
+    *   会议的产出不是"会议纪要"，而是"被修改的代码/文档"。
+    *   Team Leader 在 Round 3 直接调用 `replace_string_in_file` 修改目标文档，实现了决策闭环。
+
+**适用场景**:
+*   涉及多方利益的协议设计
+*   需要长期维护的核心规范
+*   容易产生"和稀泥"现象的复杂决策
+
+---
+
 ## 11. 后续计划
 
 ### DocUI 下一步

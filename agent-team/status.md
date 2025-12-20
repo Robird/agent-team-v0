@@ -264,6 +264,24 @@
 
 **会议记录**: [`agent-team/meeting/2025-12-20-secret-base-durableheap-mvp-v2-audit.md`](meeting/2025-12-20-secret-base-durableheap-mvp-v2-audit.md)
 
+### MVP v2 增强提案决策 (2025-12-20 决策诊疗室)
+
+**决策成果**:
+- **参与者**: DocUIClaude, DocUIGemini, DocUIGPT
+- **模式**: 独立诊断 → 交叉会诊 → 处方共识
+- **决议**: 5 项提案全部达成共识并落地
+
+**关键决议**:
+| 提案 | 决议 | 落地 |
+|------|------|------|
+| 预留 ObjectId | 接纳 0-15 | `NextObjectId=16` |
+| Checkpoint | 否决 MSB Hack | 明确断链语义 |
+| 版本化 | 复用 ObjectKind | 0-127 标准, 128-255 版本 |
+| 规范去重 | 接纳 | 合并定义 |
+| 去泛型 | 接纳 | `DurableDict` (无泛型) |
+
+**会议记录**: [`agent-team/meeting/2025-12-20-secret-base-durableheap-mvp-v2-enhancement-proposals.md`](meeting/2025-12-20-secret-base-durableheap-mvp-v2-enhancement-proposals.md)
+
 ## Pending Decisions
 
 ### 文档流程改进建议 — ✅ 已批准 (2025-12-05)

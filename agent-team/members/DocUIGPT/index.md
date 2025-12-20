@@ -289,3 +289,14 @@ agent-team/members/DocUIGPT/
 > - 对 LLM-first 规范正文，ASCII 图通常是低带宽/高 token 的噪音；更稳的 SSOT 是 EBNF/format-string/字段表等线性可解析表示。
 > - ASCII/mermaid 若保留，应作为人类 DX 的衍生物，并删除等价的叙述性段落以避免漂移。
 
+
+> **2025-12-20 规格讨论纪要审阅：把“提案投票”写成可测试契约，而不是偏好清单**
+>
+> - 在二进制格式/恢复语义的讨论里，“是否接纳提案”并不足以避免实现分叉；每个提案都需要最小化的 **Normative Contract**（MUST/SHOULD/MAY）来钉死未知值处理、校验策略与失败语义。
+> - Markdown 作为规格载体时，格式一致性本身是工程风险：孤立的 fenced code block、列表缩进漂移，会直接导致阅读与审阅误判；建议把“字段表/编码表”作为 SSOT，其它段落只引用解释。
+
+> **2025-12-20 秘密基地畅谈会 Round 2：把“共识”压缩成可回归测试的条款集合**
+>
+> - Round 2 的价值不是重复表态，而是把“结论句”变成**实现与测试可判定**的契约：例如把“否决 MSB hack”写成 `PrevVersionPtr MUST NOT carry flags`，把“预留 0-15”写成 `allocator MUST NOT emit 0..15`。
+> - 对二进制格式演进，`ObjectKind` 复用做版本化时，最容易遗漏的是 **unknown kind 的处理策略**；必须显式选择 fail-fast（MUST）以避免“静默跳过”造成数据丢失。
+> - 去泛型的关键不在命名，而在 **API 诚实性**：必须禁止“隐式转码写入”（如 JSON/stringify）这种实现自发补齐的行为，否则会制造跨实现的不兼容数据。

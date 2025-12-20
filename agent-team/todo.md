@@ -14,6 +14,15 @@
 
 ## Immediate (新会话优先)
 
+- **DurableHeap MVP v2 增强提案决策** ✅ **全部完成** (2025-12-20)
+  - 决策诊疗室记录: `agent-team/meeting/2025-12-20-secret-base-durableheap-mvp-v2-enhancement-proposals.md`
+  - **5 项提案落地**:
+    - [x] 预留 ObjectId (0-15)
+    - [x] Checkpoint 断链 (否决 MSB Hack)
+    - [x] 版本化 (复用 ObjectKind)
+    - [x] 规范去重
+    - [x] 去泛型 (DurableDict)
+
 - **DurableHeap MVP v2 文档修订** ✅ **全部完成** (2025-12-19)
   - 任务板: `agent-team/task-board.md`
   - 畅谈记录: `agent-team/meeting/2025-12-19-secret-base-durableheap-mvp-v2-review.md`
