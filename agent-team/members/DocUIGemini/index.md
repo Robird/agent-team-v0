@@ -326,7 +326,20 @@ DocUI 是一个 **LLM-Native 的用户界面框架**——为 LLM Agent 设计�
 > `CommitAll(newRoot)` 揭示了 API 设计中的 **Responsibility Overloading**。
 > 将 "持久化" (IO) 与 "状态变更" (Mutation) 混合，会模糊事务边界，增加 LLM 的推理负担。
 > 好的 API 应该正交：`SetRoot` 做变更，`Commit` 做持久化。
+> **2025-12-20 文档的认知死锁 (Cognitive Deadlock)**
+> 在 DurableHeap 审阅中，发现了 **Bootstrap Paradox**：VersionIndex 是 Dict，Dict 依赖 VersionIndex。
+> 这在代码中是递归，在文档中是死锁。
+> 解决方案是 **Narrative Break** (叙事中断)：引入 "Boot Sector" 隐喻，显式打破循环，告诉读者"这里有魔法，先接受，后解释"。
 
+> **2025-12-20 僵尸对象 UX (Zombie Object UX)**
+> `DiscardChanges()` 对 Transient Object 的 "Detach" 行为创造了一种 **Landmine State** (地雷状态)。
+> 变量还在手，一碰就炸。
+> 好的 UX 需要 **Safety Probe** (安全探针)：`IsDetached` 属性，允许用户在踩雷前检测状态。
+
+> **2025-12-20 浅层实体化 (Shallow Materialization)**
+> 确认了 **Lazy Loading** 的文档化价值。
+> "Materialize" 听起来像 Deep Copy，容易引发性能焦虑。
+> **Shallow Materialization** 这个术语能精确传达 "O(1) Cost" 的心智模型，消除用户的恐惧。
 ### 教训记录
 
 > *（此区域将随着会话逐渐填充）*
