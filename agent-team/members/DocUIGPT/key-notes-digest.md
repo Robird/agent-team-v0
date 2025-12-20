@@ -376,6 +376,23 @@ graph TD
 - 一旦选择 `[F/A/S/R-xx]` 作为条款 ID SSOT，正文应避免临时子前缀（如 `F-VER-01`、`S-CB-01`）混入；要么扁平化编号，要么把 ID 的 grammar（Topic 集合、递增/弃用规则、测试映射规则）写成规范。
 - 条款前缀的“分类正确性”与测试向量组织强耦合：Format/Framing 条款误标为 Semantics 会导致测试与审计索引错位。
 
+### 2025-12-21 补充：SSOT + 内联摘要（Inline Summary）作为 DocUI LOD 的写作落点
+
+- 这是把“减少跳转成本”与“防止定义漂移”同时满足的一种文档结构：SSOT 承载权威定义/边界条件（Full），正文只放足够推动推理的摘要（Summary）。
+- 写作纪律建议：正文摘要只能做 restatement，且必须回链条款/术语锚点；任何新增 MUST/SHOULD 必须落回 SSOT（否则摘要会变成第二个规范源）。
+- 若后续引入 Doc Compiler/CI，可优先做两类诊断：1) 摘要缺少回链；2) 摘要与 SSOT 定义首句显著不一致（高风险漂移）。
+
+### 2025-12-21 补充：条款“显示编号”与“稳定语义锚点”的双轨（面向测试映射）
+
+- 建议将条款 ID 分层为：**Display Index**（如 `[S-17]`，可重排、便于阅读）与 **Semantic Anchor**（如 `[S-OBJECTID-RESERVED-RANGE]`，稳定、机器可读）。
+- Semantic Anchor 的命名应绑定“可判定测试的语义轴”（字段/不变式/错误处理策略），并保持短（2-4 词）以便映射到测试名、错误码与索引键。
+
+### 2025-12-21 补充：把“Agent 友好性”写成可测试的规范条款（State / ErrorCode）
+
+- 在 DurableHeap 这类基础设施里，“DX 友好”与“Agent 友好”高度同构：都依赖可观测状态与可恢复错误。
+- `DurableObjectState` 作为 MVP 核心 API 时，除枚举值外还需要：1) 状态闭集；2) 各 API 的状态前置条件（允许/禁止状态集合）；3) 非法调用的错误码/异常类型，才能避免实现分叉。
+- Error Affordance 的“结构化字段”建议最低收敛为 `ErrorCode`（MUST 稳定且机器可判定）；`ObjectId/State/RecommendedAction` 为 SHOULD/MAY。这样测试向量可直接断言 `ErrorCode`，而 LLM/Agent 可据此选择恢复分支。
+
 ### 2025-12-20 补充：API 回滚语义的“baseline 缺失”规则（可审计写法）
 
 - 当一个 API 同名覆盖多对象生命周期（Persistent/Transient）时，规范必须先钉死“回滚目标 baseline 是否存在”。

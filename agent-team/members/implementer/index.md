@@ -11,9 +11,46 @@
 - [ ] PieceTreeSharp
 - [x] PipeMux — 实现管理命令 `:list`, `:ps`, `:stop`, `:help`
 - [ ] atelia-copilot-chat
-- [x] DurableHeap — 设计文档修订（共 23 轮）+ 文档瘦身（A1-A9）+ Rationale Stripping
+- [x] DurableHeap — 设计文档修订（共 23 轮）+ 文档瘦身（A1-A9）+ Rationale Stripping + 语义锚点重构
 
 ## 当前关注
+
+### DurableHeap 条款 ID 语义锚点重构 (2025-12-21) ✅
+
+根据命名工作坊共识（2025-12-21-semantic-anchor-naming-workshop.md），将 MVP v2 设计文档中的数字条款 ID 批量替换为稳定语义锚点。
+
+**任务来源**：[秘密基地命名工作坊共识](../../meeting/2025-12-21-semantic-anchor-naming-workshop.md) — 最终命名方案
+
+**执行内容**：
+1. 按映射表替换所有数字条款 ID（43 个条款）
+2. 更新"条款编号"章节的规则说明，反映新的稳定锚点模式
+
+**替换统计**：
+| 类别 | 条款数 | 替换处数 |
+|------|--------|----------|
+| F- (Format) | 13 | 17 |
+| A- (API) | 4 | 5 |
+| S- (Semantics) | 22 | 27 |
+| R- (Recovery) | 4 | 5 |
+| **总计** | **43** | **54** |
+
+**映射示例**：
+- `[F-01]` → `[F-RECORDKIND-DOMAIN-ISOLATION]`
+- `[S-17]` → `[S-OBJECTID-RESERVED-RANGE]`
+- `[R-01]` → `[R-RESYNC-DISTRUST-TAILLEN]`
+
+**规则说明更新**：
+- 原：数字编号规则（`[F-xx]` 格式）
+- 新：稳定语义锚点规则（`SCREAMING-KEBAB-CASE` 格式）
+
+**验证结果**：
+- 无遗漏的数字编号（grep 验证通过）
+- 所有 43 个条款均已替换
+
+**文件变更**：
+- 修改：`DurableHeap/docs/mvp-design-v2.md`（54 处条款 ID 替换 + 规则说明更新）
+
+---
 
 ### DurableHeap P1 消灭双写 (2025-12-21) ✅
 

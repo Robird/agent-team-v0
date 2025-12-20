@@ -336,10 +336,42 @@ DocUI 是一个 **LLM-Native 的用户界面框架**——为 LLM Agent 设计�
 > 变量还在手，一碰就炸。
 > 好的 UX 需要 **Safety Probe** (安全探针)：`IsDetached` 属性，允许用户在踩雷前检测状态。
 
+> **2025-12-20 职责混合的认知代价**
+> `CommitAll(newRoot)` 揭示了 API 设计中的 **Responsibility Overloading**。
+> 将 "持久化" (IO) 与 "状态变更" (Mutation) 混合，会模糊事务边界，增加 LLM 的推理负担。
+> 好的 API 应该正交：`SetRoot` 做变更，`Commit` 做持久化。
+
+> **2025-12-20 Nullability 的隐式契约**
+> `LoadObject` 返回 `null` 违反了 "Load implies Expectation" 的惯例。
+> 建议区分 `Load` (Fail-fast) 与 `TryLoad` (Nullable)，明确开发者的预期契约。
+
+> **2025-12-20 错误信息的导航价值**
+> 再次确认 **Error Affordance**：错误信息是 Agent 的调试导航图。
+> 必须将 "Actionable Error Message" 提升为规范条款，而不仅仅是建议。
+
 > **2025-12-20 浅层实体化 (Shallow Materialization)**
 > 确认了 **Lazy Loading** 的文档化价值。
 > "Materialize" 听起来像 Deep Copy，容易引发性能焦虑。
 > **Shallow Materialization** 这个术语能精确传达 "O(1) Cost" 的心智模型，消除用户的恐惧。
+
+> **2025-12-20 文档的语义缩放 (Semantic Zoom for Docs)**
+> 确认了 **SSOT + Inline Summary** 模式是文档领域的 **LOD (Level of Detail)** 实现。
+> SSOT 是 Full View，Inline Summary 是 Summary View。
+> 这允许 LLM 在不频繁跳转上下文的情况下获取足够信息，符合 "Just-in-Time Information" 原则。
+
+> **2025-12-20 观测值 vs 异常 (Observation vs Exception)**
+> 确立了 Agent 视角的错误处理哲学：`null` 是有效的 **Observation** (观测到不存在)，而 Exception 是 **System Failure**。
+> 对于预期内的缺失（如 TryLoad），返回 `null` 比抛出异常更符合 Agent 的 "Fail-Soft" 需求。
+
+> **2025-12-20 API 状态机显性化 (Explicit State Machine)**
+> 确认了 API 应该暴露底层状态机的当前状态。
+> `IsDirty` 和 `State` 属性不仅是调试工具，更是 Agent 的 **Predictability Probe** (可预测性探针)，允许 Agent 在执行副作用前进行预判。
+
+> **2025-12-21 命名即心智模型 (Naming as Mental Model)**
+> 在语义锚点设计工作坊中，确认了锚点名不仅仅是索引，更是 **Mental Model** 的载体。
+> 例如：`Pinning` 比 `Strong Ref` 更能传达"防止移动/回收"的内存管理意图；`Fence` 比 `Separator` 更能传达"边界/隔离"的视觉隐喻。
+> 好的命名应该具有 **Affordance** (示能性)，如 `[F-UNKNOWN-KIND-TRAP]` 暗示了"会中断/捕获"，而不仅仅是"未知"。
+
 ### 教训记录
 
 > *（此区域将随着会话逐渐填充）*
