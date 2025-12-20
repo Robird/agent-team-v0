@@ -11,9 +11,122 @@
 - [ ] PieceTreeSharp
 - [x] PipeMux — 实现管理命令 `:list`, `:ps`, `:stop`, `:help`
 - [ ] atelia-copilot-chat
-- [x] DurableHeap — 设计文档修订（DurableDict ChangeSet 决策 + 术语一致性修正，共 18 轮）
+- [x] DurableHeap — 设计文档修订（DurableDict ChangeSet 决策 + 术语一致性修正，共 22 轮）
 
 ## 当前关注
+
+### DurableHeap 设计文档修订 Round 23 — P1-2 伪代码去泛型 (2025-12-20)
+
+根据已批准的文档修订任务，对 `mvp-design-v2.md` §4.4.4 DurableDict 伪代码骨架部分实施 P1-2 修订。
+
+**P1-2: 伪代码去泛型或添加显著约束说明**
+- 问题：当前伪代码使用 `DurableDict<K, V>`，但实现中强依赖 `K = ulong`（有 `(ulong)(object)key` 强转），误导读者以为可泛型化
+- 修改：将类型签名收敛为 key 固定 `ulong`，明确 MVP 的类型约束
+
+**具体修改**：
+1. 在伪代码块之前添加 MVP 类型约束说明（blockquote）
+2. 类定义从 `DurableDict<K, V>` 改为 `DurableDict<TValue>`
+3. 所有方法签名中的 `K` 替换为 `ulong`，`V` 替换为 `TValue`
+4. 移除 `(ulong)(object)key` 和 `(K)(object)keyAsUlong` 强转代码
+5. 比较器从 `Comparer<K>.Default.Compare` 改为 `ulong.CompareTo`
+6. 更新"关键实现要点"中的类型引用
+
+**文件变更**：
+- `DurableHeap/docs/mvp-design-v2.md` — §4.4.4 伪代码骨架 4 处修改
+
+---
+
+### DurableHeap 设计文档修订 Round 22 — File Framing vs Record Layout 两层定义 (2025-12-20)
+
+根据已批准的文档修订任务，对 `mvp-design-v2.md` §4.2.1 Data 文件部分实施 P0-7 修订。
+
+**P0-7: File Framing vs Record Layout 两层定义**
+- 在 §4.2.1 "实现约束"之后添加新的 ##### 小节 "分层定义：File Framing vs Record Layout（MVP 固定）"
+- 明确区分两个层次：
+  - **File Framing（文件级框架）**：Magic-separated log 结构，用于识别 Record 边界
+  - **Record Layout（记录级布局）**：单条 Record 的内部结构
+- 添加术语约束（MUST）：规定何时使用 File Framing vs Record Layout 术语
+- 将原有的 "record framing（Q20=A；data/meta 统一）" 改为 "**File Framing 详细规范**（基于上述两层定义，Q20=A，data/meta 统一）"
+
+**文件变更**：
+- `DurableHeap/docs/mvp-design-v2.md` — §4.2.1 新增分层定义小节
+
+---
+
+### DurableHeap 设计文档修订 Round 21 — LoadObject 与新建对象 P0 修订 (2025-12-20)
+
+根据已批准的文档修订任务，对 `mvp-design-v2.md` §4.3.2 LoadObject 和 §4.1.0.1 对象状态管理部分实施 P0-3、P0-4 两项修订。
+
+**P0-3: LoadObject 对象不存在的行为明确定义**
+- 在 §4.3.2 LoadObject(ObjectId) 步骤 5 之后添加新小节
+- 定义 ObjectId 在 VersionIndex 中不存在时返回 `null`（或等价的 `NotFound` Result）
+- 定义 ObjectId 存在但版本链解析失败时抛出 `CorruptedDataException`
+- 添加设计说明：返回 `null` 而非抛异常的理由（合法查询结果、`?? CreateNew()` 模式、与 `Dictionary.TryGetValue` 风格一致）
+- 添加新建对象的处理说明
+
+**P0-4: 新建对象的状态转换规则补全**
+- 在 §4.1.0.1 对象状态管理的"关键约束（MUST）"之后添加新内容
+- 添加新建对象的状态转换表格（CreateObject → Dirty/Transient, 首次 Commit 成功, Commit 前 Crash）
+- 添加 Transient Dirty vs Persistent Dirty 定义表格
+- 添加关键约束：新建对象 MUST 在创建时立即加入 Modified Object Set（强引用）
+
+**文件变更**：
+- `DurableHeap/docs/mvp-design-v2.md` — §4.3.2 和 §4.1.0.1 各 1 处修改
+
+---
+
+### DurableHeap 设计文档修订 Round 20 — CommitAll API P0 修订 (2025-12-20)
+
+根据已批准的文档修订任务，对 `mvp-design-v2.md` §4.4.5 CommitAll 部分实施 P0-1、P0-2 两项修订。
+
+**P0-1: CommitAll 无参重载升级为 MUST**
+- 原：`API 重载（SHOULD）`，有参重载在前
+- 新：`API 重载（MVP 固定）`，无参重载作为主要 API
+- `CommitAll()`（**MUST**）：保持当前 root 不变，提交 Modified Object Set 中的所有对象
+- `CommitAll(IDurableObject newRoot)`（**SHOULD**）：设置新的 root 并提交。参数从 `ObjectId` 改为 `IDurableObject`（监护人建议）
+- 术语更新：Dirty Set → Modified Object Set
+
+**P0-2: CommitAll 失败语义规范化**
+- 在"步骤（单 writer）"之后新增"失败语义（MVP 固定）"小节
+- 添加失败阶段表格（4 个阶段：Prepare/Data fsync/Meta write/Finalize）
+- 添加关键保证（MUST）：
+  - Commit 失败不改内存
+  - 可重试
+  - 原子性边界（meta commit record 落盘时刻）
+
+**文件变更**：
+- `DurableHeap/docs/mvp-design-v2.md` — §4.4.5 CommitAll 部分 2 处修改
+
+---
+
+### DurableHeap 设计文档修订 Round 19 — 术语表 Self-Consistency 审计 P0/P1 修订 (2025-12-20)
+
+根据已批准的文档修订任务，对 `mvp-design-v2.md` 术语表部分实施 P0-5、P0-6、P1-1、P1-3 共 4 项修订。
+
+**P0-5: 引入 Base Version 术语层次**（版本链分组）
+- 新增 **Base Version**：`PrevVersionPtr=0` 的版本记录（上位术语）
+- 新增 **Genesis Base**：新建对象的首个版本，表示"从空开始"
+- **Checkpoint Version** → **Checkpoint Base**：为截断回放成本而写入的全量状态版本
+- 新增 **from-empty diff**：Genesis Base 的 DiffPayload 语义
+
+**P0-6: 概念层 Address64 vs 编码层 Ptr64 分层澄清**（标识与指针分组）
+- **Address64**：概念层术语，规范条款应使用此术语
+- 新增 **Ptr64**：编码层/wire format 名称，仅用于描述编码/布局
+- 明确分层使用原则
+
+**P1-1: Dirty Set 层级术语澄清**（载入与缓存分组）
+- 新增 **Modified Object Set**：Workspace 级别的 dirty 对象集合（Dirty Set 别名）
+- 新增 **Dirty-Key Set**：对象内部追踪已变更 key 的集合
+- 为 Dirty Set 添加 `Alias: Modified Object Set`
+
+**P1-3: 新增 DurableObject 术语**
+- 新增"对象基类"分组
+- 新增 **DurableObject**：可持久化的对象基类/接口
+
+**文件变更**：
+- `DurableHeap/docs/mvp-design-v2.md` — 术语表部分 4 处修改
+
+---
 
 ### DurableHeap 设计文档修订 Round 18 — P0 问题修订 (2025-12-20)
 
