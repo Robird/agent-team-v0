@@ -374,6 +374,73 @@ DocUI 是一个 **LLM-Native 的用户界面框架**——为 LLM Agent 设计�
 > - 优势：概念更简洁、写入规则对称、reverse scan 更直观
 > - Wire format 与 GPT 方案等价，但概念表述更清晰
 
+> **2025-12-20 DurableHeap MVP v2 概念框架审阅**
+> 受刘德智主席邀请，参加秘密基地畅谈会，从概念框架视角审阅 MVP v2 设计文档。
+> 
+> **术语一致性发现**：
+> - `Checkpoint Version` 与 `base` 术语混用（多处正文仍用 `base`）
+> - `_dirtyKeys`（对象级）与 `Dirty Set`（Workspace 级）层级关系未明确
+> - `LoadObject` vs `Resolve` 边界模糊（弃用声明与"内部仍可使用"矛盾）
+> 
+> **概念完备性缝隙**：
+> - 术语表遗漏 `Commit point` 概念定义（理解崩溃恢复的关键）
+> - `RecordKind` 枚举值分散在 4.2.1/4.2.2/4.2.5 三处，无集中表
+> - `Deserialize`, `Materialize` 在 4.1.0 定义但术语表未收录
+> - `Identity Map` 与 `Dirty Set` 的生命周期/清理时机未明确
+> 
+> **逻辑自洽性问题**：
+> - `PrevVersionPtr=0` 双重语义（Checkpoint Version vs 创世版本）未显式区分
+> - `ValueType` 枚举包含 `Tombstone`，但类型约束表未提及编码层细节
+> 
+> **审阅方法论收获**：
+> 设计文档审阅的核心检查点：
+> 1. 术语表完备性 — 正文定义的概念是否都有术语表条目
+> 2. 术语使用一致性 — 正文用词是否与术语表定义一致
+> 3. 概念层级清晰度 — 概念层 / 编码层 / 实现层是否分明
+> 4. 生命周期完整性 — 对象/状态的创建、使用、销毁是否都有说明
+
+> **2025-12-20 DurableHeap MVP v2 第二轮审阅（秘密基地畅谈会）**
+> 参与第二轮交叉讨论，对三个待讨论点形成明确建议：
+> 
+> **Dirty Set 设计决策**：
+> - 选 `Dictionary<ObjectId, IDurableObject>` 而非 `Set<ObjectId>`
+> - 核心论点：`ObjectId` 是值类型，无法持有强引用阻止 GC
+> - 概念层定义应为"持有 dirty 对象强引用的集合"
+> 
+> **ulong 值类型决策**：
+> - 选"收紧支持类型"而非"新增 Val_VarUInt"
+> - MVP 原则：最小可行方案优先，复杂性后置
+> - `ulong` 主要用于标识符/地址（已有专门类型），业务值需求少
+> 
+> **伪代码定位决策**：
+> - 选"显著标注为伪代码 + 规范层/示例层分离"
+> - 规范层：Method signatures + 不变式
+> - 伪代码层：加 `⚠️ PSEUDO-CODE` 标注
+> - 参考实现可放 Appendix 或单独文件
+> 
+> **跨问题关联洞察**：
+> P0-2（Dirty Set 类型）、P0-6（生命周期）、P1-2（`_dirtyKeys` 层级）是同一概念域的三个切面。
+> 建议在术语表中增加"对象状态管理"分组，统一定义 Identity Map、Dirty Set、DirtyKeys 三者关系。
+
+> **2025-12-20 DurableHeap MVP v2 修复复审**
+> 参与修复后的复审工作，验证 P0/P1 级修复的实施质量。
+> 
+> **复审要点**：
+> - P0-5（Commit point）：术语表"提交与 HEAD"分组已添加定义，与 §4.2.2 一致
+> - P0-6（对象状态管理）：新增 §4.1.0.1 定义 Clean/Dirty 状态转换规则
+> - P0-7（LoadObject/Resolve）：术语表标注 Resolve 为 "Internal Only"
+> - P1-1（Checkpoint/base）：全文统一使用 `Checkpoint Version`
+> - P1-2（_dirtyKeys 层级）：伪代码前增加术语澄清说明
+> 
+> **复审方法论收获**：
+> 修复验证的核心检查点：
+> 1. 定义是否添加到正确位置（术语表/正文小节）
+> 2. 定义内容是否与问题描述中的建议一致
+> 3. 修复后是否引入新的不一致（交叉检查）
+> 4. 概念自洽性是否恢复（状态转换闭合、逻辑链完整）
+> 
+> **结论**：批准所有修复，文档已达"可开工规格"质量标准。
+
 ---
 
 ## 认知文件结构

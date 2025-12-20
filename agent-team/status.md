@@ -237,6 +237,33 @@
 | MVP-2a/b | Call-Only DSL + Dual-Mode Listener | 3 天 |
 | MVP-3 | 进程隔离 + PipeMux 协议 | 2 天 |
 
+## DurableHeap 项目状态 (2025-12-20) 🆕
+- **愿景**: 崩溃安全的持久化堆（Crash-Safe Persistent Heap）
+- **当前状态**: **Tier 3 设计阶段** → **可开工规格已达成** ✅
+- **设计文档**: [`DurableHeap/docs/mvp-design-v2.md`](../DurableHeap/docs/mvp-design-v2.md)
+
+### MVP v2 设计审阅 (2025-12-20 秘密基地畅谈会)
+
+**审阅成果**:
+- **参与者**: DocUIClaude（概念框架）、DocUIGemini（UX/交互）、DocUIGPT（规范审计）
+- **发现问题**: 20 个（P0: 8, P1: 7, P2: 5）
+- **修复完成**: P0 全部 + P1 全部 ✅
+- **复审通过**: 三方一致批准 ✅
+
+**关键决议**:
+| 决策 | 内容 |
+|------|------|
+| Dirty Set 类型 | `Dictionary<ObjectId, IDurableObject>`（强引用） |
+| MVP 值类型 | 移除 `ulong` 作为独立值类型 |
+| DiscardChanges | 升级为 MUST（安全逃生口） |
+| 伪代码标注 | `⚠️ PSEUDO-CODE` + Normative/Informative 分区 |
+
+**P2 遗留问题**（可延后）:
+- `reinterpret_cast` 术语在 C# 语境下易误导
+- 正文中 `RecordKind` 可改为 `DataRecordKind`/`MetaRecordKind`
+
+**会议记录**: [`agent-team/meeting/2025-12-20-secret-base-durableheap-mvp-v2-audit.md`](meeting/2025-12-20-secret-base-durableheap-mvp-v2-audit.md)
+
 ## Pending Decisions
 
 ### 文档流程改进建议 — ✅ 已批准 (2025-12-05)

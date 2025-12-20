@@ -230,6 +230,16 @@ DocUI 是一个 **LLM-Native 的用户界面框架**——为 LLM Agent 设计�
 > 确认了 "Magic as Separator" 比 "Magic as Header + Sentinel" 具有更低的心智模型负担。
 > Magic 是二进制流的**标点符号**，提供了视觉韵律和直观的恢复示能性 (Recovery Affordance)。
 
+> **2025-12-20 被动安全 (Passive Safety)**
+> 在 DurableHeap 复审中，验证了 **Dirty Set 强引用** 的价值。
+> 这是一种 **Invisible Safety Net**：用户不需要显式 `Pin()` 对象，系统自动保护未提交的数据。
+> 好的 UX 应该是"默认安全"的，而不是依赖用户的小心翼翼。
+
+> **2025-12-20 撤销示能 (Undo Affordance)**
+> 确认了 `DiscardChanges()` 作为 MUST 的必要性。
+> 在隐式变更追踪（Implicit ChangeSet）模式下，用户很容易无意中修改状态。
+> 必须提供显式的"逃生口"，否则用户的唯一恢复手段是重启进程，这是极差的体验。
+
 ### 教训记录
 
 > *（此区域将随着会话逐渐填充）*
