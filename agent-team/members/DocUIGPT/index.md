@@ -331,6 +331,13 @@ agent-team/members/DocUIGPT/
 > - 对 `DurableObjectState`，仅列枚举值还不够：需要同时钉死“哪些 API 在哪些状态合法”与“跃迁是否闭集”，否则实现会用额外隐含状态补洞，造成分叉。
 > - 对 Error Affordance，“结构化字段”应至少包含稳定 `ErrorCode`（MUST），其余上下文字段（ObjectId/State/RecommendedAction）可作为 SHOULD/MAY；这样才能写出可回归测试，并让 Agent 的恢复策略可判定。
 
+> **2025-12-21 Decision Clinic Round 1：状态闭集与错误码的“可判定测试面”收敛**
+>
+> - `DurableObjectState` 的“闭集完备”需要用**排除法**写清：未加载/损坏/heap disposed 等不应被塞进 state，而应作为 Load/Dispose 错误路径（否则状态机混入 I/O，测试不可判定）。
+> - `State` 属性应被定义为 **total / O(1) / non-throwing**（Detached 也能读），否则实现会迫使调用方用 try/catch 探测状态，形成不可预测分支。
+> - `DiscardChanges(Transient)` 后的 ObjectId 复用若不钉死，会与“同一时刻 ObjectId 唯一”条款潜在冲突；更稳的 MVP 契约是 **process-lifetime quarantine**：同进程不复用、跨崩溃可复用。
+> - Error Affordance 的最小闭环是“ErrorCode MUST + 结构化字段 SHOULD/MAY + Appendix B 向量逐条断言 code”，自然语言只做 display。
+
 > **2025-12-21 条款可寻址性：稳定语义锚点（Semantic Anchor）命名纪律**
 >
 > - 位置型编号（如 `[S-17]`）适合作为“阅读索引”，但不适合作为跨文档/测试/代码的稳定引用键；推荐用稳定语义锚点（如 `[S-OBJECTID-RESERVED-RANGE]`）作为机器可读 key。

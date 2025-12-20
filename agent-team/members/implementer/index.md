@@ -11,9 +11,94 @@
 - [ ] PieceTreeSharp
 - [x] PipeMux — 实现管理命令 `:list`, `:ps`, `:stop`, `:help`
 - [ ] atelia-copilot-chat
-- [x] DurableHeap — 设计文档修订（共 23 轮）+ 文档瘦身（A1-A9）+ Rationale Stripping + 语义锚点重构
+- [x] DurableHeap — 设计文档修订（共 23 轮）+ 文档瘦身（A1-A9）+ Rationale Stripping + 语义锚点重构 + 决策诊疗室落文（第二批中复杂度）
 
 ## 当前关注
+
+### DurableHeap MVP v2 设计文档第二批中复杂度修订 (2025-12-21) ✅
+
+根据决策诊疗室共识（2025-12-21-decision-clinic-state-and-error.md），执行第二批中复杂度修订。
+
+**任务来源**：[决策诊疗室 State 与 Error Affordance](../../meeting/2025-12-21-decision-clinic-state-and-error.md) — Round 2/3 共识落文
+
+**执行内容**：
+
+1. **P0-1: State 枚举升级为核心 API**
+   - 位置：§3.1.0.1 对象状态管理
+   - 修改：枚举 `Dirty` → `PersistentDirty`（与 `TransientDirty` 形成清晰对偶）
+   - 新增条款：`[A-OBJECT-STATE-PROPERTY]`、`[A-OBJECT-STATE-CLOSED-SET]`、`[A-HASCHANGES-O1-COMPLEXITY]`、`[S-STATE-TRANSITION-MATRIX]`
+   - 更新状态机可视化：增加 PersistentDirty 自环、异常类型说明
+
+2. **P0-3: "必须写死"升级为条款**
+   - 位置：§3.2.1 和 §3.2.2
+   - 新增条款：`[F-RECORD-WRITE-SEQUENCE]`（写入顺序步骤 0-7）
+   - 刷盘顺序条款已存在：`[R-COMMIT-FSYNC-ORDER]`、`[R-COMMIT-POINT-META-FSYNC]`
+   - 将叙述性步骤列表转换为规范性表格
+
+3. **P1-5: Error Affordance 规范化**
+   - 位置：§3.4.8（新增章节）
+   - 新增条款：`[A-ERROR-CODE-MUST]`、`[A-ERROR-MESSAGE-MUST]`、`[A-ERROR-CODE-REGISTRY]`、`[A-ERROR-RECOVERY-HINT-SHOULD]`
+   - 新增 ErrorCode 枚举表：7 种错误码（OBJECT_DETACHED, OBJECT_NOT_FOUND, CORRUPTED_RECORD 等）
+   - 新增好/坏异常示例对比
+
+4. **P1-8: DiscardChanges ObjectId 语义**
+   - 位置：[S-TRANSIENT-DISCARD-DETACH] 条款末尾
+   - 新增条款：`[S-TRANSIENT-DISCARD-OBJECTID-QUARANTINE]`
+   - 语义：进程内 MUST NOT 重用；进程重启后 MAY 重用
+
+**新增条款汇总**（9 条）：
+| 类别 | 条款 ID | 优先级 |
+|------|---------|--------|
+| API | `[A-OBJECT-STATE-PROPERTY]` | P0 |
+| API | `[A-OBJECT-STATE-CLOSED-SET]` | P0 |
+| API | `[A-HASCHANGES-O1-COMPLEXITY]` | P0 |
+| Semantics | `[S-STATE-TRANSITION-MATRIX]` | P0 |
+| Format | `[F-RECORD-WRITE-SEQUENCE]` | P0 |
+| API | `[A-ERROR-CODE-MUST]` | P1 |
+| API | `[A-ERROR-MESSAGE-MUST]` | P1 |
+| API | `[A-ERROR-CODE-REGISTRY]` | P1 |
+| API | `[A-ERROR-RECOVERY-HINT-SHOULD]` | P1 |
+| Semantics | `[S-TRANSIENT-DISCARD-OBJECTID-QUARANTINE]` | P1 |
+
+**文件变更**：
+- 修改：`DurableHeap/docs/mvp-design-v2.md`（6 处修改，约 +70 行）
+
+**Handoff**: `agent-team/handoffs/2025-12-21-decision-clinic-impl-IMP.md`
+
+---
+
+### DurableHeap MVP v2 设计文档第一批低复杂度修订 (2025-12-21) ✅
+
+根据畅谈会共识（2025-12-20-secret-base-durableheap-mvp-v2-final-audit.md），执行第一批低复杂度修订。
+
+**任务来源**：[秘密基地畅谈会最终审阅](../../meeting/2025-12-20-secret-base-durableheap-mvp-v2-final-audit.md) — P0/P1 优先级修订
+
+**执行内容**：
+
+1. **P0-4: 删除泛型写法矛盾**
+   - 位置：§3.4.5 步骤 3
+   - 问题：文档说禁用泛型（§3.4.2 命名约定），但正文使用了 `DurableDict<ulong, Ptr64>` 泛型写法
+   - 修复：将 `DurableDict<ulong, Ptr64> 的 dict diff` 改为描述性语句 `VersionIndex 的 dict diff（key 为 ObjectId as ulong，value 为 Ptr64 编码的 ObjectVersionPtr，使用 Val_Ptr64 类型）`
+
+2. **P1-7: 命名一致性**
+   - 位置：§3.4.4 二阶段提交流程图
+   - 问题：流程图使用 `WriteDiff()` 而非 `WritePendingDiff()`
+   - 修复：将流程图中两处 `WriteDiff()` 统一替换为 `WritePendingDiff()`，同时调整 ASCII 图框宽度以适应更长的方法名
+
+3. **P1-9: 删除 Modified Object Set 弃用映射**
+   - 位置：术语表 Dirty Set 定义行
+   - 问题：有 "Deprecated: Modified Object Set（使用 Dirty Set 作为主术语）" 的弃用映射容易让读者困惑
+   - 修复：删除该弃用映射，"别名/弃用"列改为 `—`
+
+**验证结果**：
+- grep 验证无残留的泛型写法（除规范条款说明外）
+- grep 验证无残留的 `WriteDiff()` 方法名（`WriteDiffTo` 是伪代码内部方法，正确保留）
+- grep 验证无残留的 "Modified Object Set" 术语
+
+**文件变更**：
+- 修改：`DurableHeap/docs/mvp-design-v2.md`（3 处修改）
+
+---
 
 ### DurableHeap 条款 ID 语义锚点重构 (2025-12-21) ✅
 

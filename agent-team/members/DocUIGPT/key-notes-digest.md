@@ -393,6 +393,12 @@ graph TD
 - `DurableObjectState` 作为 MVP 核心 API 时，除枚举值外还需要：1) 状态闭集；2) 各 API 的状态前置条件（允许/禁止状态集合）；3) 非法调用的错误码/异常类型，才能避免实现分叉。
 - Error Affordance 的“结构化字段”建议最低收敛为 `ErrorCode`（MUST 稳定且机器可判定）；`ObjectId/State/RecommendedAction` 为 SHOULD/MAY。这样测试向量可直接断言 `ErrorCode`，而 LLM/Agent 可据此选择恢复分支。
 
+### 2025-12-21 补充：闭集状态机与错误码是“可判定交互协议”的共同基元
+
+- “状态（State）”与“错误（Error）”属于同一类协议基元：它们都是让非人类用户（LLM Agent）在低观测条件下做确定性分派（branching）的离散键。
+- 状态闭集要用排除法写清边界：未加载/损坏/已释放等不应新增为 state 值（除非规范显式引入 resource lifecycle），否则会把 I/O 失败与生命周期混成一张状态图，降低可测试性。
+- 对 API 规范写作，建议把“前置条件集合（allowed states）→ 后置条件（state transition）→ 非法时 ErrorCode”作为固定模板；这样 Requirement → Test Vector 的映射是机械的。
+
 ### 2025-12-20 补充：API 回滚语义的“baseline 缺失”规则（可审计写法）
 
 - 当一个 API 同名覆盖多对象生命周期（Persistent/Transient）时，规范必须先钉死“回滚目标 baseline 是否存在”。
