@@ -344,6 +344,17 @@ agent-team/members/DocUIGPT/
 > - 锚点名优先选择“可测试的语义维度”（字段名/不变式/错误策略），避免把 MUST/SHOULD 写进锚点名（规范级别会变，但语义锚点应保持稳定）。
 > - 命名长度以 2-4 个词（不含 `F-/A-/S-/R-` 前缀）更利于 grep 与测试名映射；必要时用术语化缩写（如 `CRC32C`、`PTR64`），但避免引入第二套缩写词表。
 
+> **2025-12-21 DurableHeap 命名与归属：品牌名/技术名分层 + NuGet/namespace 的“不可逆成本”**
+>
+> - “是否改名”建议分两层：**品牌名（package/repo）**可相对稳定以降低外部迁移成本；**技术名（public API 类型/组件名）**必须对齐真实语义，避免 `Heap` 暗示随机访问/allocator 语义。
+> - NuGet `PackageId` 与 public `namespace` 属于高不可逆资产：不建议用 `*V2/*2` 这类临时后缀固化在包名；更稳妥用 **SemVer major bump** 表达语义断裂，并把格式版本放到 `FormatVersion`（与 API version 解耦）。
+> - Repo 归属优先按依赖方向与发布节奏裁决：底层存储不应依赖 UI（避免层级反转）；若主要服务 Agent runtime/历史存储，放进 atelia 往往更自然；独立 repo 仅在明确存在跨生态消费者与“协议化”目标时才值得。
+
+> **2025-12-21 命名投票经验：优先“稳定语义/用例名”，把实现术语留在内部**
+>
+> - 当底层实现仍在演进（diff 编码、对象图布局、GC/compaction 策略）时，repo/package 的名字更应锚定“对外不变的语义与用例”（如 State + Journal/Append-only），避免把短期实现细节（如 DeltaGraph）固化为外部心智模型。
+> - 实现导向名可以作为内部组件/子模块名（codec、index、graph 等），但对外优先选“使用者第一眼就能预测行为边界”的命名。
+
 > **2025-12-20 DurableHeap Decision Clinic：ObjectId 分配时机是“身份模型”决策，不是 allocator 细节**
 >
 > - 只要规范把 Identity Map / Dirty Set 的 key 钉死为 `ObjectId`（如 `[S-02]`），那么“延迟到 commit 才分配 ObjectId”就会迫使引入第二套身份（TransientKey/CreationSeq），属于跨章节的身份模型重写。

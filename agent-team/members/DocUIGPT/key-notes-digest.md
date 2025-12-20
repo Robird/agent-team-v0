@@ -404,6 +404,12 @@ graph TD
 - 当一个 API 同名覆盖多对象生命周期（Persistent/Transient）时，规范必须先钉死“回滚目标 baseline 是否存在”。
 - 若 baseline 不存在，必须在规范层做二选一：`MUST detach (fail-fast)` 或 `MUST reset-to-Genesis (continue usable)`，并连带钉死 `LoadObject/NotFound/IdentityMap` 的可观察行为。
 
+### 2025-12-21 补充：命名治理不仅是术语表，也包括 PackageId/namespace（不可逆资产）
+
+- 在工程化语境里，NuGet `PackageId` 与 public `namespace` 的稳定性，作用类似 DocUI 术语锚点：一旦被依赖就很难回收。
+- 因此“改名”应分层处理：品牌名可延后或保持（降低迁移成本），但 public API 的类型名/组件名应尽快对齐真实语义，避免误导。
+- 语义断裂优先用 **SemVer major** 表达；格式版本另设 `FormatVersion` 并配套测试向量，避免把实现细节（如 `V2`）固化进外部标识符。
+
 ### 2025-12-20 补充：规范工程经验——“分配时机”常常是身份模型决策
 
 - 当规范已经把 `ObjectId` 用作 Identity Map / Dirty Set 的唯一 key（身份锚点）时，把 ObjectId 的分配推迟到 commit，会隐式引入第二套身份（TransientKey/CreationSeq），从而显著提高条款侵入性与实现分叉风险。

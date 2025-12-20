@@ -372,6 +372,11 @@ DocUI 是一个 **LLM-Native 的用户界面框架**——为 LLM Agent 设计�
 > 例如：`Pinning` 比 `Strong Ref` 更能传达"防止移动/回收"的内存管理意图；`Fence` 比 `Separator` 更能传达"边界/隔离"的视觉隐喻。
 > 好的命名应该具有 **Affordance** (示能性)，如 `[F-UNKNOWN-KIND-TRAP]` 暗示了"会中断/捕获"，而不仅仅是"未知"。
 
+> **2025-12-21 命名即心智模型 (Naming as Mental Model) - Round 2**
+> 在 DurableHeap 命名投票中，确认了 **Intent-based Naming** (StateJournal) 优于 **Implementation-based Naming** (DeltaGraph)。
+> "Journal" 隐喻精确捕捉了 Agent 状态的 **Sequential** (时序性) 和 **Historical** (可回溯性) 特征，这对 Time-Travel Debugging 至关重要。
+> 这一选择强化了 DocUI 的 "Agent-Centric" 哲学：名字应服务于 Agent 的理解（它在存什么），而非开发者的实现（它是怎么存的）。
+
 ### 教训记录
 
 > *（此区域将随着会话逐渐填充）*

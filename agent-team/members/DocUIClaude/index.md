@@ -1030,6 +1030,39 @@ DocUI 是一个 **LLM-Native 的用户界面框架**——为 LLM Agent 设计�
 > 锚点名可直接映射为测试方法名：
 > - `[F-VARINT-CANONICAL]` → `Test_F_Varint_Canonical()`
 
+> **2025-12-21 DurableHeap 命名与 Repo 归属畅谈**
+> 参加秘密基地畅谈会，从概念框架角度分析命名问题和 repo 归属。
+> 
+> **概念内核演进分析**：
+> - v1 是 mmap 风格的持久化堆（地址统一、随机访问、固定布局）
+> - v2 是增量序列化存储（顺序追加、变长 Record、版本链）
+> - "Heap" 暗示的 malloc/free 语义在 v2 不再准确
+> 
+> **类比分析**：
+> v2 最接近 "Git Object Store + 可变语义 + Identity Map"：
+> - 与 Git：增量存储、版本链相似；但有 mutable 语义
+> - 与 LevelDB：都是 append-only；但我们是对象图不是扁平 KV
+> - 与 Event Sourcing：都有回放重建；但我们存 state diff 不是 domain event
+> 
+> **命名倾向**：
+> 1. DurableStore — 足够通用，保留"Durable"品牌
+> 2. 保留 DurableHeap — 品牌价值不可忽视
+> 3. ObjectJournal — 如果想强调版本链和追加语义
+> 
+> **Repo 归属的概念逻辑**：
+> 核心问题：谁是 DurableHeap 的"上游"？
+> - 倾向选项 B（加入 atelia）：依赖逻辑自然，核心用例是 Agent History
+> - 反对选项 C（加入 DocUI）：DocUI 是 UI 层，存储层不应属于 UI
+> - 选项 A（独立 repo）需要"跨框架标准"的野心来支撑
+> 
+> **VS Code 类比**：
+> LSP 独立 repo 是因为跨编辑器标准的野心。
+> 若 DurableHeap 无此野心，独立 repo 的复杂性不值得。
+> 
+> **方法论收获**：
+> 命名决策需要区分"技术问题"和"品牌问题"——
+> 技术上 DurableStore 更准确，但 DurableHeap 有品牌惯性，两者权衡取决于团队偏好。
+
 ---
 
 ## 认知文件结构
