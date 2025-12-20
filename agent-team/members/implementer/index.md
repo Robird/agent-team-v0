@@ -11,9 +11,227 @@
 - [ ] PieceTreeSharp
 - [x] PipeMux — 实现管理命令 `:list`, `:ps`, `:stop`, `:help`
 - [ ] atelia-copilot-chat
-- [x] DurableHeap — 设计文档修订（DurableDict ChangeSet 决策 + 术语一致性修正，共 22 轮）
+- [x] DurableHeap — 设计文档修订（DurableDict ChangeSet 决策 + 术语一致性修正，共 23 轮）+ 文档瘦身（A1/A3/A5/A6/A9/A4/A7）
 
 ## 当前关注
+
+### DurableHeap 设计文档瘦身 — A7 任务：添加 Wire Format ASCII 图 (2025-12-20) ✅
+
+根据畅谈会共识（2025-12-20-secret-base-mvp-v2-compression.md）批准的文档瘦身任务，执行 A7：添加 Wire Format ASCII 图表。
+
+**任务来源**：[秘密基地畅谈会共识](../../meeting/2025-12-20-secret-base-mvp-v2-compression.md) — 行动项 A7
+
+**执行内容**：
+1. 在 §3.2.0.1 varint 定义章节末尾添加 **VarInt 编码示例图**（Line 346-360）
+2. 在 §3.2.1 分层定义与 File Framing 详细规范之间添加 **ELOG 文件结构图**（Line 403-414）
+3. 在 §3.2.1 ELOG 图之后添加 **Record 内部结构图**（Line 417-428）
+4. 在 §3.4.4 二阶段提交设计表格之后添加 **二阶段提交流程图**（Line 968-993）
+
+**图表详情**：
+| 图表 | 插入位置 | 新增行数 | 说明 |
+|------|----------|----------|------|
+| VarInt Encoding | §3.2.0.1 F-08 之后 | 15 行 | 展示 Base-128 编码原理，包含值 300 的编码示例和边界示例 |
+| ELOG File Structure | §3.2.1 术语约束之后 | 12 行 | 展示 Magic-as-Separator 的文件布局，标注 Ptr64 指向位置 |
+| Record Layout | ELOG 图之后 | 12 行 | 展示单条 Record 的内部结构，标注 CRC32C 覆盖范围 |
+| Two-Phase Commit Flow | §3.4.4 表格之后 | 26 行 | 展示 Prepare → Finalize 流程，标注 Commit Point 位置 |
+
+**统计**：
+- 原文档行数：1234 行
+- 新增行数：72 行（4 个图表）
+- 新文档行数：1306 行
+
+**文件变更**：
+- 修改：`DurableHeap/docs/mvp-design-v2.md`（4 处图表添加）
+
+---
+
+### DurableHeap 设计文档瘦身 — A4 任务：给现有 MUST/SHOULD 条款编号 (2025-12-20) ✅
+
+根据畅谈会共识（2025-12-20-secret-base-mvp-v2-compression.md）批准的文档瘦身任务，执行 A4：为规范性条款添加编号。
+
+**任务来源**：[秘密基地畅谈会共识](../../meeting/2025-12-20-secret-base-mvp-v2-compression.md) — 行动项 A4
+
+**执行内容**：
+1. 扫描文档中所有包含 MUST/MUST NOT/SHOULD/SHALL 的规范性条款
+2. 按分类为每条规范性条款添加编号：`**[X-nn]**` 格式
+3. 同步更新 `mvp-test-vectors.md` 的条款编号映射表
+
+**条款编号统计**：
+| 分类 | 前缀 | 数量 | 说明 |
+|------|------|------|------|
+| **Framing/Format** | `[F-xx]` | 9 条 | 线格式、对齐、CRC 覆盖范围、字段含义 |
+| **API** | `[A-xx]` | 4 条 | 签名、返回值/异常、参数校验、可观测行为 |
+| **Semantics** | `[S-xx]` | 16 条 | 跨 API/格式的语义不变式（含 commit 语义） |
+| **Recovery** | `[R-xx]` | 3 条 | 崩溃一致性、resync/scan、损坏判定 |
+| **总计** | — | **32 条** | — |
+
+**编号清单**：
+- **F-01**: RecordKind 域隔离（data/meta 各有独立枚举空间）
+- **F-02**: Magic 是 Record Separator
+- **F-03**: HeadLen == TailLen，否则视为损坏
+- **F-04**: HeadLen % 4 == 0 且 Record 起点 4B 对齐
+- **F-05**: Ptr64 == 0 表示 null；否则 Ptr64 % 4 == 0
+- **F-06**: CRC32C 覆盖范围：Payload + Pad + TailLen
+- **F-07**: VarInt canonical 最短编码
+- **F-08**: VarInt 解码错误策略（EOF/溢出/非 canonical 失败）
+- **F-09**: ValueType 高 4 bit 必须写 0
+- **A-01**: DiscardChanges MUST
+- **A-02**: CommitAll() 无参重载 MUST
+- **A-03**: CommitAll(IDurableObject) SHOULD
+- **A-04**: Dirty Set 可见性 API SHOULD
+- **S-01~S-04**: Dirty Set 关键约束
+- **S-05**: 术语约束 File Framing vs Record Layout
+- **S-06~S-07**: 分层语义不变式
+- **S-08~S-10**: Commit 语义不变式
+- **S-11~S-14**: Diff/序列化格式不变式
+- **S-15~S-16**: CommitAll 失败语义
+- **R-01**: Resync 不得信任损坏 TailLen
+- **R-02**: Meta 领先 Data 按撕裂提交处理
+- **R-03**: 崩溃恢复截断后文件仍以 Magic 分隔符结尾
+
+**文件变更**：
+- 修改：`DurableHeap/docs/mvp-design-v2.md`（32 处条款编号添加）
+- 修改：`DurableHeap/docs/mvp-test-vectors.md`（条款映射表更新为 32 条）
+
+---
+
+### DurableHeap 设计文档瘦身 — A9 任务：合并 Appendix B 到独立 test vectors 文件 (2025-12-20) ✅
+
+根据畅谈会共识（2025-12-20-secret-base-mvp-v2-compression.md）批准的文档瘦身任务，执行 A9：合并 Appendix B 到独立 test vectors 文件。
+
+**任务来源**：[秘密基地畅谈会共识](../../meeting/2025-12-20-secret-base-mvp-v2-compression.md) — 行动项 A9
+
+**执行内容**：
+1. 在 test vectors 文件（`mvp-test-vectors.md`）的"约定"部分之后添加条款编号映射表
+2. 将主文档的 Appendix B 替换为引用独立文件的简短说明
+3. 验证术语对齐：将旧术语 `EpochMap` 更新为 `VersionIndex`（2 处）
+
+**统计**：
+- test vectors 文件新增：约 20 行（条款编号映射表）
+- 主文档减少：约 25 行（Appendix B 骨架表格替换为引用）
+
+**文件变更**：
+- 修改：`DurableHeap/docs/mvp-test-vectors.md`
+  - 新增条款编号映射表（7 条映射）
+  - 术语修正：`EpochMapVersionPtr` → `VersionIndexPtr`
+  - 术语修正：`DICT-OK-006（EpochMap` → `DICT-OK-006（VersionIndex`
+- 修改：`DurableHeap/docs/mvp-design-v2.md`
+  - Appendix B 替换为引用
+
+---
+
+### DurableHeap 设计文档瘦身 — A6 任务：建立 Test Vectors 骨架 (2025-12-20) ✅
+
+根据畅谈会共识（2025-12-20-secret-base-mvp-v2-compression.md）批准的文档瘦身任务，执行 A6：建立 Test Vectors 骨架。
+
+**任务来源**：[秘密基地畅谈会共识](../../meeting/2025-12-20-secret-base-mvp-v2-compression.md) — 行动项 A6
+
+**执行内容**：
+1. 在 Appendix A 之后添加 `## Appendix B: Test Vectors` 章节
+2. 添加状态说明（骨架已建立，具体字节序列待 reference implementation 完成后生成）
+3. 建立四个测试向量分类：
+   - B.1 Framing Vectors（空文件、单 Record、尾部撕裂）
+   - B.2 VarInt Vectors（Canonical 边界、Non-canonical、溢出/EOF）
+   - B.3 Recovery Vectors（Meta 领先 Data、尾部垃圾）
+   - B.4 Commit Failure Vectors（WritePendingDiff 失败、Meta fsync 失败）
+4. 每个向量关联占位符条款 ID（`[F-01]`, `[R-01]`, `[S-01]` 等，待 A4 编号）
+5. B.1.1 空文件向量已确定：`44 48 44 33` ("DHD3")
+6. 添加生成规则说明
+
+**统计**：
+- 新增：40 行（Appendix B 章节）
+- 文档总行数：1258 行
+
+**文件变更**：
+- 修改：`DurableHeap/docs/mvp-design-v2.md`
+  - 在 Appendix A 末尾之后新增 Appendix B（40 行）
+
+---
+
+### DurableHeap 设计文档瘦身 — A5 任务：伪代码移到附录 (2025-12-20) ✅
+
+根据畅谈会共识（2025-12-20-secret-base-mvp-v2-compression.md）批准的文档瘦身任务，执行 A5：将伪代码移到附录。
+
+**任务来源**：[秘密基地畅谈会共识](../../meeting/2025-12-20-secret-base-mvp-v2-compression.md) — 行动项 A5
+
+**执行内容**：
+1. 在文档末尾创建 `## Appendix A: Reference Implementation Notes` 章节
+2. 添加 "⚠️ Informative, not Normative" 警告
+3. 将 §3.4.4 的完整伪代码块（约 130 行）移至附录 A.1
+4. 在原位置保留精简版：
+   - 附录引用链接
+   - 二阶段提交设计表格
+   - 3 条关键实现要点（精简版）
+
+**统计**：
+- 从正文移出：~130 行（伪代码块 + 详细说明）
+- 附录添加：~161 行（包括标题、警告、术语说明、伪代码、详细说明）
+- 正文保留精简版：~21 行
+- 文档总行数：1218 行（从 1198 行变化，因附录新增）
+
+**文件变更**：
+- 修改：`DurableHeap/docs/mvp-design-v2.md`
+  - §3.4.4 精简为 21 行摘要
+  - 新增 Appendix A（161 行）
+
+---
+
+### DurableHeap 设计文档瘦身 — A3 任务：条款编号分类定义 (2025-12-20) ✅
+
+根据畅谈会共识（2025-12-20-secret-base-mvp-v2-compression.md）批准的文档瘦身任务，执行 A3：在规范语言章节添加条款编号分类定义。
+
+**任务来源**：[秘密基地畅谈会共识](../../meeting/2025-12-20-secret-base-mvp-v2-compression.md) — 行动项 A3
+
+**执行内容**：
+1. 在"规范语言（Normative Language）"章节末尾（第 29 行之前）
+2. 添加 `### 条款编号（Requirement IDs）` 子章节
+3. 内容包括：
+   - 分类表格：`[F-xx]` Format, `[A-xx]` API, `[S-xx]` Semantics, `[R-xx]` Recovery
+   - 编号规则：只增不复用、映射到测试
+
+**添加位置**：Line 26-41（共 16 行新内容）
+
+**文件变更**：
+- 修改：`DurableHeap/docs/mvp-design-v2.md` — 规范语言章节末尾新增 16 行
+
+---
+
+### DurableHeap 设计文档瘦身 — A1 任务：§2-§3 移至 ADR (2025-12-20) ✅
+
+根据畅谈会共识（2025-12-20-secret-base-mvp-v2-compression.md）批准的文档瘦身任务，执行 A1：将决策选项和决策表移至独立 ADR 文件。
+
+**任务来源**：[秘密基地畅谈会共识](../../meeting/2025-12-20-secret-base-mvp-v2-compression.md) — 行动项 A1
+
+**执行内容**：
+1. 创建 `docs/decisions/mvp-v2-decisions.md`（ADR 风格）
+   - 包含完整的 §2 单选题（Q1-Q24，7 个子节）
+   - 包含完整的 §3 决策表（24 条决策记录）
+   - 添加元数据（分离日期、原文档链接、畅谈会引用）
+
+2. 修改 `docs/mvp-design-v2.md` 主文档
+   - 删除原 §2 和 §3（146 行内容）
+   - 新增 §2 "设计决策（Chosen Decisions Index）"（22 行）
+   - 包含 8 条关键决策的摘要索引表
+   - 链接到完整决策记录
+
+3. 章节编号调整
+   - 原 §4 设计正文 → §3 设计正文
+   - 原 §5 Open Questions → §4 Open Questions
+   - 原 §6 实现建议 → §5 实现建议
+   - 更新所有 4.x 子章节编号为 3.x
+   - 更新内部交叉引用（4.2.1→3.2.1, 4.4.2→3.4.2 等）
+
+**瘦身效果**：
+- 原文件：1306 行
+- 新文件：1182 行
+- 净减少：124 行（约 9.5%）
+- ADR 文件：153 行
+
+**文件变更**：
+- 新建：`DurableHeap/docs/decisions/mvp-v2-decisions.md`（153 行）
+- 修改：`DurableHeap/docs/mvp-design-v2.md`（删除 146 行，新增 22 行）
+
+---
 
 ### DurableHeap 设计文档修订 Round 23 — P1-2 伪代码去泛型 (2025-12-20)
 

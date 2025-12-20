@@ -345,3 +345,17 @@ graph TD
 - **信息组织机制**：将 `Attention Focus` 从“待消化建议”转正，作为驱动 LOD 动态切换的机制。
 - **跨 App 一致性**：引入 `DocUI Vocabulary`（界面协议/词汇表，语义+最小契约），避免过早固化 SDK 组件库。
 - **可视化与层级澄清**：为三层模型补 Mermaid 图；澄清 Window/Notification/History-View/Recent History 的包含关系与“选取策略 vs 呈现形态”。
+
+---
+
+## 写作方法补充（从 DurableHeap v2 文档瘦身讨论提炼）
+
+- **SSOT 优先**：将“规范核心”收敛为可引用条款（MUST/SHOULD 带编号），其余解释/伪代码/决策理由全部降级为 Informative/Appendix/ADR。
+- **可测试性绑定**：为关键协议（framing/恢复/提交语义）提供 Test Vectors，并在条款编号上建立可追溯映射，减少跨段落重复解释。
+- **Pseudo-code 限位**：伪代码只做“参考算法/路标”，不得替代规范契约；除非它能编译执行并成为 reference impl 的一部分。
+
+### 2025-12-20 补充：决策文件的“目录语义”与条款分类（F/A/S/R）
+
+- **ADR 落点优先**：决策/权衡属于“可回溯的规范资产”，更适合进入 `docs/decisions/`（ADR 风格）；`docs/archive/` 更像“死档”，会诱导读者忽略。
+- **条款分类建议**：以 `[F/A/S/R]` 作为规范条款 ID 的前缀更通用：`[F-xx]` Format/Framing、`[A-xx]` API、`[S-xx]` Semantics（含 commit 语义不变式）、`[R-xx]` Recovery。并建议“编号不复用、每条可映射到至少一个测试向量/失败注入测试”。
+- **Test Vectors 的骨架策略**：可以先建立 Appendix 骨架（按类目列场景 + 关联条款 ID），但每类至少放 1 个 seed vector 用于钉死歧义，其余优先从 reference impl 自动生成。

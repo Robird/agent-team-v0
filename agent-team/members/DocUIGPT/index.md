@@ -171,6 +171,19 @@ agent-team/members/DocUIGPT/
 > - 规范文档里大量使用嵌套列表时，Tab 缩进在不同 Markdown 引擎（CommonMark/GFM/静态站点）下更容易触发“意外代码块/列表断裂”。
 > - 更稳妥的写作约定：统一使用空格缩进（例如嵌套层级用 2 或 4 spaces），并保持同一层级的缩进一致。
 
+> **2025-12-20 文档瘦身会议：决策归档语义、条款分类与 Test Vectors 的“空壳风险”**
+>
+> - `docs/archive/` 的目录语义会把内容推向“可忽略死档”，不适合承载“未来实现分叉时的权威回溯依据”；决策/权衡更应进入 `docs/decisions/`（ADR 风格），并在主文保留一页以内的结论索引。
+> - 条款编号分类以 `[F/A/S/R]` 更稳健：Format/Framing、API、Semantics（涵盖 commit 语义不变式）、Recovery；相比单独的 `Commit` 前缀，更能覆盖全域契约并减少歧义（Contract/Constraint/Commit）。
+> - Test Vectors 允许“先立骨架后填内容”，但需要避免空壳：至少每个大类放 1 个 seed vector 用于钉死歧义，其余向量优先从 reference impl + tests 自动生成/导出以避免漂移。
+
+> **2025-12-20 规范瘦身方法论：把“长文档问题”转写为“契约可测试性问题”**
+>
+> - 文档冗余的根因通常不是写啰嗦，而是把三类语义混写：Normative Contract（必须一致的契约）、Reference Algorithm（参考实现路径）、Rationale/ADR（取舍理由）。
+> - 瘦身优先级：先抽出“可引用/可测试的契约核心”（编号 MUST/SHOULD + 边界行为 + 恢复语义）作为 SSOT，再把伪代码与 ADR 迁入附录/归档。
+> - “代码即真理”只有在代码可编译、可执行、并纳入测试时成立；pseudo-code 的精确性是幻觉，适合当路标不适合作为规格主轴。
+> - 最小可维护闭环：条款 ID ↔ Test Vectors（格式向量/恢复向量/failpoint），任何格式或语义变更都必须同步更新向量，避免靠叙述维持一致性。
+
 > **2025-12-19 DurableDict：术语消歧的“禁用模糊词”经验（QC 记录）**
 >
 > - 即便在文档中提供了“术语映射”（例如把“内存态”映射到 Working State/ChangeSet），仍建议在规范段中**彻底禁用**这类跨层模糊词：它会在其他章节再次引入歧义，并削弱读者对三层语义边界的信心。

@@ -14,6 +14,23 @@
 
 ## 最近工作
 
+### 2025-12-20: DurableHeap MVP-v2 重构语义漂移审查
+- **状态**: ✅ 通过 - 无语义漂移
+- **验证范围**: A1/A3/A4/A5/A6/A7/A9 重构任务后的语义对齐验证
+- **对比文件**: 
+  - 原始: `mvp-design-v2.bak.md`
+  - 新版: `mvp-design-v2.md`
+- **重构内容**:
+  - A1: §2-§3 移至 `decisions/mvp-v2-decisions.md`
+  - A3: 添加条款编号分类定义 [F-xx], [A-xx], [S-xx], [R-xx]
+  - A4: 给 MUST/SHOULD 条款编号（32 条）
+  - A5: 伪代码移到 Appendix A
+  - A6: Test Vectors 引用独立文件 `mvp-test-vectors.md`
+  - A7: 添加 Wire Format ASCII 图（ELOG 文件结构、Record Layout、VarInt 编码）
+  - A9: 章节编号从 4.x 调整为 3.x
+- **验证结果**: 所有规范性条款完整保留，语义一致
+- **报告**: [handoffs/QA-2025-12-20-semantic-drift-audit.md](../../handoffs/QA-2025-12-20-semantic-drift-audit.md)
+
 ### 2025-12-20: DurableHeap MVP 文档第四轮共识修订验证
 - **状态**: ✅ 全部通过（7/7 P0 问题）
 - **验证范围**: `mvp-design-v2.md` + `mvp-test-vectors.md` 针对 2025-12-19 会议第四轮共识的修订

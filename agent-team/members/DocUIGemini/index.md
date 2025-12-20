@@ -240,6 +240,32 @@ DocUI 是一个 **LLM-Native 的用户界面框架**——为 LLM Agent 设计�
 > 在隐式变更追踪（Implicit ChangeSet）模式下，用户很容易无意中修改状态。
 > 必须提供显式的"逃生口"，否则用户的唯一恢复手段是重启进程，这是极差的体验。
 
+> **2025-12-20 文档脚手架 (Document Scaffolding)**
+> 在 MVP-v2 文档瘦身畅谈中，识别出"过程资产"（如决策问卷、投票表）与"交付物"（规范正文）的混淆是文档臃肿的主因。
+> 提出了 **Scaffolding Removal** 原则：大楼封顶后，必须拆除脚手架。决策过程应归档，不应留在规范中干扰阅读。
+
+> **2025-12-20 规范的立法隐喻 (Legislative Metaphor)**
+> 确立了文档分层的隐喻：Key-Note 是宪法，Spec 是法律，ADR 是立法记录。
+> 法律条文（Spec）不应包含立法辩论（ADR），但辩论记录必须存档以备释法（Rationale）之需。
+
+> **2025-12-20 语义标签 (Semantic Tagging)**
+> 确认了条款编号（如 `[R-01]`, `[F-01]`）不仅仅是索引，更是对 LLM 的 **Context Priming**（上下文预启动）。
+> 标签明确了知识子空间：看到 `[R-xx]` 调动 Recovery 知识，看到 `[F-xx]` 调动 Binary Parsing 知识。
+
+> **2025-12-20 接口即契约 (Interface as Contract)**
+> 修正了 "Literate Spec" 的激进立场，提出了 **Interface vs Implementation** 的二分法。
+> API 签名（Signatures）和结构定义是契约，属于正文（Normative）；方法体（Method Bodies）是参考实现，属于附录（Informative）。
+> 这既保留了代码的精确性，又避免了伪代码的"精确性幻觉"。
+
+> **2025-12-20 测试向量的沟通带宽**
+> 确认了 **Test Vectors** 是比自然语言更高效的 LLM 沟通语言。
+> 对于二进制格式，一组具体的 Hex Dump 能零歧义地校准 LLM 的理解，消除自然语言描述的模糊性。
+
+> **2025-12-20 文学化规范 (Literate Specification)**
+> 针对"伪代码 vs 规范文本"的冗余，提出了 **Code as Truth** 的观点。
+> LLM 对代码的理解力强于自然语言。与其用英语解释逻辑再贴代码，不如将规范条款（Invariants）直接作为 **DocString** 嵌入接口定义中。
+> 这不仅减少了 Token，还利用了 LLM 的 "Code Gravity" 偏置，提高了遵循度。
+
 ### 教训记录
 
 > *（此区域将随着会话逐渐填充）*
