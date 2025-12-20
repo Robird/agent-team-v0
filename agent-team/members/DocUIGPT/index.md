@@ -300,6 +300,12 @@ agent-team/members/DocUIGPT/
 > - 在二进制格式/恢复语义的讨论里，“是否接纳提案”并不足以避免实现分叉；每个提案都需要最小化的 **Normative Contract**（MUST/SHOULD/MAY）来钉死未知值处理、校验策略与失败语义。
 > - Markdown 作为规格载体时，格式一致性本身是工程风险：孤立的 fenced code block、列表缩进漂移，会直接导致阅读与审阅误判；建议把“字段表/编码表”作为 SSOT，其它段落只引用解释。
 
+> **2025-12-20 DurableHeap Decision Clinic：ObjectId 分配时机是“身份模型”决策，不是 allocator 细节**
+>
+> - 只要规范把 Identity Map / Dirty Set 的 key 钉死为 `ObjectId`（如 `[S-02]`），那么“延迟到 commit 才分配 ObjectId”就会迫使引入第二套身份（TransientKey/CreationSeq），属于跨章节的身份模型重写。
+> - 立即分配并不与 `NextObjectId`“仅在 commit record 持久化”矛盾：只需把契约边界写清——未提交分配在崩溃后允许被重用（因为从未进入 VersionIndex/HEAD），并用测试向量固化。
+> - 可测试性优先级：A 能写成纯 black-box 的 crash/reopen 向量；B 为可判定性必须规定 commit 内分配顺序与可观察状态，测试与实现细节强耦合，增加实现分叉风险。
+
 > **2025-12-20 API 语义审计：同名操作的“baseline 缺失”必须显式入规范**
 >
 > - 当同一个 API（例如 `DiscardChanges()`）同时作用于 Persistent 与 Transient 两类对象时，最大的分叉源不是实现细节，而是“是否存在可回滚的 baseline”。

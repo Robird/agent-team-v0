@@ -376,6 +376,11 @@ graph TD
 - 当一个 API 同名覆盖多对象生命周期（Persistent/Transient）时，规范必须先钉死“回滚目标 baseline 是否存在”。
 - 若 baseline 不存在，必须在规范层做二选一：`MUST detach (fail-fast)` 或 `MUST reset-to-Genesis (continue usable)`，并连带钉死 `LoadObject/NotFound/IdentityMap` 的可观察行为。
 
+### 2025-12-20 补充：规范工程经验——“分配时机”常常是身份模型决策
+
+- 当规范已经把 `ObjectId` 用作 Identity Map / Dirty Set 的唯一 key（身份锚点）时，把 ObjectId 的分配推迟到 commit，会隐式引入第二套身份（TransientKey/CreationSeq），从而显著提高条款侵入性与实现分叉风险。
+- 更稳妥的写法是先明确契约边界：哪些身份保证跨崩溃稳定、哪些仅保证进程内稳定；并用 crash/reopen 测试向量钉死 allocator 的可观察行为。
+
 ### 2025-12-20 补充：DurableHeap MVP v2 交叉讨论的“规格三件套”启示
 
 - **Reserved Range 必须双向定义**：不仅定义初始化 `NextObjectId`，还要定义 allocator 的保留区禁止分配，以及 reader 对保留区/未知含义的处理策略（推荐 fail-fast）。
