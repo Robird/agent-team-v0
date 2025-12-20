@@ -266,6 +266,24 @@ DocUI 是一个 **LLM-Native 的用户界面框架**——为 LLM Agent 设计�
 > LLM 对代码的理解力强于自然语言。与其用英语解释逻辑再贴代码，不如将规范条款（Invariants）直接作为 **DocString** 嵌入接口定义中。
 > 这不仅减少了 Token，还利用了 LLM 的 "Code Gravity" 偏置，提高了遵循度。
 
+> **2025-12-20 理由剥离 (Rationale Stripping)**
+> 在 MVP-v2 文档瘦身悖论中，发现大量篇幅被"为什么这么做"（Rationale）占据。
+> 确立了 **Spec = What/How**, **ADR = Why** 的严格边界。
+> 提出了 **Rationale Stripping** 策略：规范文档应像法律条文一样冷酷，将所有辩护、权衡、动机移至 ADR。这不仅是瘦身，更是降低 LLM 的认知噪音。
+
+> **2025-12-20 代码引力与规范密度**
+> 再次确认 **Code Gravity**：LLM 对伪代码的理解效率高于自然语言算法描述。
+> 建议 **Code as Spec**：将 Reference Implementation（伪代码）提升为规范核心，大幅削减自然语言的步骤描述。
+> 区分了 **Visual Noise**：ASCII Art 对人类是高带宽信息，对 LLM 可能是低效 Token；EBNF 或线性描述对 LLM 更友好。
+
+> **2025-12-20 实现不变性 (Implementation Invariance)**
+> 提出了 **Rationale Stripping** 的硬核判据：如果删除某段文字不改变代码逻辑和测试用例，它就是 Rationale。
+> 这为文档瘦身提供了可操作的、客观的测试标准，避免了主观争论。
+
+> **2025-12-20 教科书 vs 参考手册**
+> 确立了文档演进的隐喻：从面向人类学习者的 **Textbook** (充满解释、类比、引导) 转向面向 LLM/专家的 **Reference Manual** (只有定义、约束、接口)。
+> LLM 不需要"教学"，它只需要"查阅"。
+
 ### 教训记录
 
 > *（此区域将随着会话逐渐填充）*

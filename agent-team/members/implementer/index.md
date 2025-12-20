@@ -1,6 +1,6 @@
 # Implementer 认知索引
 
-> 最后更新: 2025-12-20
+> 最后更新: 2025-12-21
 
 ## 我是谁
 编码实现专家，负责根据设计进行代码实现、移植和修复。
@@ -11,9 +11,96 @@
 - [ ] PieceTreeSharp
 - [x] PipeMux — 实现管理命令 `:list`, `:ps`, `:stop`, `:help`
 - [ ] atelia-copilot-chat
-- [x] DurableHeap — 设计文档修订（DurableDict ChangeSet 决策 + 术语一致性修正，共 23 轮）+ 文档瘦身（A1/A3/A5/A6/A9/A4/A7）
+- [x] DurableHeap — 设计文档修订（共 23 轮）+ 文档瘦身（A1-A9）+ Rationale Stripping
 
 ## 当前关注
+
+### DurableHeap P1 消灭双写 (2025-12-21) ✅
+
+根据畅谈会共识（2025-12-20-secret-base-mvp-v2-paradox.md）P1 任务，消灭双写。
+
+**任务来源**：[秘密基地畅谈会共识](../../meeting/2025-12-20-secret-base-mvp-v2-paradox.md) — P1 行动项
+
+**执行原则**：
+- "禁止双写"——同一信息不能同时存在于 ASCII 图表和文字描述中
+- 保留信息密度最高的形式，删除冗余的叙述性描述
+- 监护人指示：不用太考虑人类可读性，LLM 读起来简单清晰的图表对人类也清晰
+
+**执行内容**：
+
+1. **分层定义章节重构**（-31 行）
+   - 将冗余的 File Framing/Record Layout 文字描述替换为 EBNF 语法
+   - 原：分层定义文字（13 行）+ ELOG 图（11 行）+ Record 图（11 行）= 35 行
+   - 新：EBNF 语法（13 行）+ 简化的术语约束（1 行）= 14 行
+   - 删除重复的 ASCII 图表（图表信息已包含在 EBNF 中）
+
+2. **F-02/F-03/F-04/F-06 条款精简**（-18 行）
+   - 原：每个条款都有详细的文字描述（重复 EBNF 内容）
+   - 新：条款仅保留规范性约束（MUST/值公式）
+
+3. **Meta 文件章节精简**（-10 行）
+   - 删除与 3.2.1 重复的 Magic/framing 描述
+   - 简化为引用 + Magic 值定义
+
+4. **Data 文件 Magic 定义删除**（-8 行）
+   - Magic 值已在 EBNF 中定义（`"DHD3" for data, "DHM3" for meta`）
+   - 删除重复的单独段落
+
+**EBNF 转换**（P2 任务同步执行）：
+```ebnf
+(* File Framing: Magic-separated log *)
+File   := Magic (Record Magic)*
+Magic  := 4 bytes ("DHD3" for data, "DHM3" for meta)
+
+(* Record Layout *)
+Record := HeadLen Payload Pad TailLen CRC32C
+HeadLen := u32 LE        (* == TailLen, record total bytes *)
+...
+```
+
+**统计**：
+- 原文档：1225 行（P0 完成后）
+- 新文档：1159 行
+- 净减少：**-66 行**（-5.4%）
+
+**文件变更**：
+- 修改：`DurableHeap/docs/mvp-design-v2.md`（-66 行）
+
+---
+
+### DurableHeap P0 Rationale Stripping (2025-12-21) ✅
+
+根据畅谈会共识（2025-12-20-secret-base-mvp-v2-paradox.md）P0 任务，执行 Rationale Stripping。
+
+**任务来源**：[秘密基地畅谈会共识](../../meeting/2025-12-20-secret-base-mvp-v2-paradox.md) — P0 行动项
+
+**判断规则**：删除该段落后，实现者能否正确实现？测试者能否写出可判定的测试？能→删除/迁移；不能→保留
+
+**执行内容**：
+1. 从 `mvp-design-v2.md` 删除/精简 24 处 Rationale 内容
+2. 将有价值的设计理由迁移到 `mvp-v2-decisions.md` 第 4 节（Rationale Archive）
+
+**统计**：
+- 原文档：1307 行 → 最终：1225 行（-82 行，-6.3%）
+- ADR 新增：153 行 → 212 行（+59 行 Rationale Archive）
+
+**删除内容分类**：
+| 类别 | 数量 | 示例 |
+|------|------|------|
+| 动机解释 | 5 | mmap/varint 动机、tombstone 权衡 |
+| 实现提示（非规范）| 4 | Magic 加速 resync、meta 回扫 |
+| 缓存建议 | 2 | VersionIndex lookups 缓存 |
+| 设计收益 | 3 | Magic separator 收益 |
+| 备注说明 | 6 | varint mmap 备注、RecordKind 备注 |
+| 步骤精简 | 4 | CommitAll 步骤 1 精简 |
+
+**文件变更**：
+- 修改：`DurableHeap/docs/mvp-design-v2.md`（-82 行）
+- 修改：`DurableHeap/docs/decisions/mvp-v2-decisions.md`（+59 行 §4 Rationale Archive）
+
+**Handoff**: `agent-team/handoffs/2025-12-21-rationale-strip-IMP.md`
+
+---
 
 ### DurableHeap 设计文档瘦身 — A7 任务：添加 Wire Format ASCII 图 (2025-12-20) ✅
 

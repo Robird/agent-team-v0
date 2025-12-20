@@ -354,6 +354,12 @@ graph TD
 - **可测试性绑定**：为关键协议（framing/恢复/提交语义）提供 Test Vectors，并在条款编号上建立可追溯映射，减少跨段落重复解释。
 - **Pseudo-code 限位**：伪代码只做“参考算法/路标”，不得替代规范契约；除非它能编译执行并成为 reference impl 的一部分。
 
+### 2025-12-20 补充：Rationale Stripping 与图表取舍的“可执行判据”
+
+- **Rationale 边界硬判据**：删除文本不影响实现正确性与测试可判定性 → 迁 ADR/删除；影响则属于 Contract，应升级为 MUST/SHOULD + 编号。
+- **Note/备注处理**：若承载约束就“提条款、删 Note”；若只是解释就剥离。
+- **ASCII vs 线性表示**：禁止双写；对 LLM-first 上下文优先 EBNF/字段表/format-string 作为 SSOT，ASCII/mermaid 仅作人类附录或衍生物。
+
 ### 2025-12-20 补充：决策文件的“目录语义”与条款分类（F/A/S/R）
 
 - **ADR 落点优先**：决策/权衡属于“可回溯的规范资产”，更适合进入 `docs/decisions/`（ADR 风格）；`docs/archive/` 更像“死档”，会诱导读者忽略。

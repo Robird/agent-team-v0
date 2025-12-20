@@ -14,6 +14,25 @@
 
 ## 最近工作
 
+### 2025-12-20: DurableHeap MVP-v2 文档优化语义完整性验证
+- **状态**: ✅ 通过 - 无语义丢失
+- **验证范围**: P0 (Rationale Stripping) + P1 (消灭双写) 文档优化后的语义完整性
+- **对比文件**: 
+  - 原始: `mvp-design-v2.bak.md` (1307 行)
+  - 新版: `mvp-design-v2.md` (1159 行, -148 行)
+- **验证结果**:
+  - **条款完整性**: 32/32 条规范性条款全部保留
+    - F 系列: 9/9 条 (Framing/Format)
+    - A 系列: 4/4 条 (API)
+    - S 系列: 16/16 条 (Semantics)
+    - R 系列: 3/3 条 (Recovery)
+  - **MUST/SHOULD 语义**: 16 处 MUST/MUST NOT (原 15 处，新增 1 处更明确的标注)
+  - **核心概念定义**: 全部保留于术语表
+  - **Wire Format**: EBNF 正确表达原有信息
+  - **测试可追踪性**: Appendix B 引用独立测试向量文件
+- **删除内容验证**: 被删除内容均为 Rationale/解释性内容，无 Contract 丢失
+- **报告**: [handoffs/QA-2025-12-20-doc-optimization.md](../../handoffs/QA-2025-12-20-doc-optimization.md)
+
 ### 2025-12-20: DurableHeap MVP-v2 重构语义漂移审查
 - **状态**: ✅ 通过 - 无语义漂移
 - **验证范围**: A1/A3/A4/A5/A6/A7/A9 重构任务后的语义对齐验证
