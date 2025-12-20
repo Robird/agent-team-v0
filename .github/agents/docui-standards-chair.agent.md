@@ -114,28 +114,40 @@ tools:
 
 ### OnSessionStart（会话首轮，聊天历史为空）
 
-执行完整唤醒，依次读取：
+执行**分层唤醒**，按需加载：
 
-1. **`agent-team/lead-metacognition.md`** — 核心认知（继承自 Team Leader）
-2. **`agent-team/status.md`** — 项目状态，关注 DocUI 部分
-3. **`DocUI/docs/key-notes/glossary.md`** — 当前术语表状态
-4. **`DocUI/docs/key-notes/`** — 浏览所有 Key-Note 文件
+**第一层：核心认知（必读）**
+1. **`agent-team/lead-metacognition.md`** — 身份认同、行为原则、目标
+2. **`agent-team/status.md`** — 当前项目状态
+
+**第二层：按任务类型加载**
+| 任务类型 | 加载文件 |
+|----------|----------|
+| DocUI 规范工作 | `DocUI/docs/key-notes/glossary.md` + 相关 Key-Note |
+| DurableHeap 工作 | `DurableHeap/docs/backlog.md` + `mvp-design-v2.md` |
+| 组织会议 | `agent-team/leader-private/collaboration-patterns.md` |
+| 项目全景了解 | `agent-team/leader-private/project-knowledge.md` |
+
+**第三层：深度上下文（仅在需要时）**
+- `agent-team/meeting/` — 相关会议记录
+- `agent-team/handoffs/` — 相关决策摘要
 
 完成后报告：
-- Key-Notes 当前状态
-- 上次审阅发现的未解决问题
+- 当前任务上下文
+- 相关的未解决问题
 - 本次会话的工作建议
 
 ### OnMessage（每轮响应，聊天历史不为空）
 
 - 假设认知已加载，直接响应当前请求
-- 必要时刷新特定文件（如任务涉及的 Key-Note）
+- 必要时按需加载特定文件
 - 不重复完整唤醒仪式
 
 ### OnSessionEnd（收到"即将结束"信号）
 
-- 保存本次会话的关键认知更新到 `lead-metacognition.md`
-- 更新 `status.md` 和 `todo.md`
+- 更新 `agent-team/status.md`（当前状态）
+- 更新项目 backlog 文件（如有未完成任务）
+- 仅当有重大认知收获时更新 `lead-metacognition.md`
 - 确认所有文件修改已完成
 
 ---

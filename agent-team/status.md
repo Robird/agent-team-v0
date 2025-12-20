@@ -3,6 +3,20 @@
 > Team Leader 认知入口之一。只记录"现在在哪里"的快照指标，不记录待办事项（见 `todo.md`）。
 > 每次 runSubAgent 完成或里程碑变化时更新。
 
+## 最近更新 (2025-12-21)
+
+### 认知架构重构 ✅
+- `lead-metacognition.md` 瘦身：1262 行 → 180 行
+- 项目特定内容分离到 `leader-private/` 目录
+- 系统提示词更新：分层按需加载机制
+
+### DurableHeap MVP v2 审阅 ✅
+- 稳定语义锚点：43 条款全部重命名
+- 新增 10 条规范条款（State 枚举、Error Affordance 等）
+- 剩余任务记录到 `DurableHeap/docs/backlog.md`
+
+---
+
 ## 工作区架构 (2025-12-08 重组)
 
 **`/repos/focus/`** 是 agent-team 仓库根目录，同时作为跨项目聚焦视野：
