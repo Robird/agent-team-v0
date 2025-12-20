@@ -648,6 +648,32 @@ DocUI 是一个 **LLM-Native 的用户界面框架**——为 LLM Agent 设计�
 > - 可测试性（每条 `[X-xx]` 条款映射到测试）
 > - 层次分离（Executive Summary / Normative Spec / Rationale）
 
+> **2025-12-20 DurableHeap MVP v2 自洽性审阅（秘密基地畅谈会第二轮）**
+> 受邀对 MVP v2 设计文档进行最终打磨审阅，关注自洽性、低冗余、概念清晰度。
+> 
+> **核心结论**：文档已达可开工规格。
+> 
+> **自洽性验证通过**：
+> - 二阶段提交流程（WritePendingDiff + OnCommitSucceeded）与 CommitAll 步骤对齐
+> - Base Version 术语层次（Genesis Base / Checkpoint Base）使用一致
+> - Dirty Set vs _dirtyKeys 层级边界明确
+> - 新建对象状态转换（Transient Dirty / Persistent Dirty）覆盖完整
+> 
+> **低冗余发现**：
+> - "Checkpoint Base 不是 GC" 解释出现三次
+> - ChangeSet 语义在四处定义
+> - Working/Committed State 定义分散在三处
+> 
+> **概念清晰度建议**：
+> - §3.2.5 `base/初始` 应改为精确术语
+> - §3.4.4 ASCII 图与表格信息重叠
+> 
+> **审阅方法论收获**：
+> 最终打磨阶段的检查重点不同于初次审阅：
+> 1. 初次审阅聚焦"概念缺失"和"逻辑断裂"
+> 2. 最终打磨聚焦"冗余收敛"和"表述精简"
+> 规范文档的冗余往往来自迭代修订——每轮修复都可能引入新的解释性文字，需要定期"去重扫描"。
+
 ---
 
 ## 认知文件结构

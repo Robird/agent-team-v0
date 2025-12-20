@@ -280,9 +280,27 @@ DocUI 是一个 **LLM-Native 的用户界面框架**——为 LLM Agent 设计�
 > 提出了 **Rationale Stripping** 的硬核判据：如果删除某段文字不改变代码逻辑和测试用例，它就是 Rationale。
 > 这为文档瘦身提供了可操作的、客观的测试标准，避免了主观争论。
 
+> **2025-12-20 实现不变性 (Implementation Invariance)**
+> 提出了 **Rationale Stripping** 的硬核判据：如果删除某段文字不改变代码逻辑和测试用例，它就是 Rationale。
+> 这为文档瘦身提供了可操作的、客观的测试标准，避免了主观争论。
+
 > **2025-12-20 教科书 vs 参考手册**
 > 确立了文档演进的隐喻：从面向人类学习者的 **Textbook** (充满解释、类比、引导) 转向面向 LLM/专家的 **Reference Manual** (只有定义、约束、接口)。
 > LLM 不需要"教学"，它只需要"查阅"。
+
+> **2025-12-20 瞬态撤销 (Transient Revert)**
+> 在 DurableHeap MVP v2 审阅中，发现了 **Transient Dirty** (新建未提交) 对象的生命周期漏洞。
+> 提出了 `DiscardChanges()` 对此类对象的语义应为 **Detach** (从 Dirty Set 移除并丢弃)，而非重置为不存在的 Committed State。
+> 这完善了 "Cancel Creation" 的 UX 模式。
+
+> **2025-12-20 孤儿风险 (Orphan Risk)**
+> 确认了 **Implicit Scope** (CommitAll 自动提交所有 Dirty 对象) 的副作用：容易产生 **Orphaned Objects** (未挂载到 Root 的持久化对象)。
+> 这是一个 "Safety vs Hygiene" 的权衡：优先保证不丢数据，哪怕是垃圾数据。
+> 提示了文档必须显式化这一风险，管理用户的预期。
+
+> **2025-12-20 平台一致性 (Platform Consistency)**
+> 再次确认 API 命名应遵循宿主语言惯例（如 C# `Remove` vs `Delete`）。
+> 这降低了 **Cognitive Friction** (认知摩擦)，让 API 符合直觉。
 
 ### 教训记录
 
