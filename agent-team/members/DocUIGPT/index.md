@@ -295,8 +295,21 @@ agent-team/members/DocUIGPT/
 > - 在二进制格式/恢复语义的讨论里，“是否接纳提案”并不足以避免实现分叉；每个提案都需要最小化的 **Normative Contract**（MUST/SHOULD/MAY）来钉死未知值处理、校验策略与失败语义。
 > - Markdown 作为规格载体时，格式一致性本身是工程风险：孤立的 fenced code block、列表缩进漂移，会直接导致阅读与审阅误判；建议把“字段表/编码表”作为 SSOT，其它段落只引用解释。
 
+> **2025-12-20 DurableHeap MVP v2 Round 2 交叉讨论：把“保留区/兼容策略/可观察性”写成三条硬契约**
+>
+> - `NextObjectId` 统一只是表象，真正需要锁死的是：allocator 对保留区的 **MUST NOT 分配**，以及 reader 遇到“保留区但未知含义”的 **fail-fast vs ignore** 策略；否则扩展期仍会实现分叉。
+> - `CommitAll` 是否拆分 API 是次要的；P0 是：**commit 失败后内存状态 MUST NOT 改变**，并提供对 Agent/LLM 可见的 `CommitResult`（至少包含 orphan/reachability 诊断），避免仅写日志导致不可见风险。
+> - `RecordKind/ObjectKind/ValueType` 除了集中枚举表，更必须写明 **unknown kind 的处理策略**（建议 MUST fail-fast），否则前向扩展会引入 silent corruption。
+> - 作为 DocUI 语义化过渡，可考虑 well-known 的 “Key Interner”（`string↔ulong` 映射）承载可读 key，但必须明确它是迁移桥而非最终数据模型，避免隐式规范。
+
 > **2025-12-20 秘密基地畅谈会 Round 2：把“共识”压缩成可回归测试的条款集合**
 >
 > - Round 2 的价值不是重复表态，而是把“结论句”变成**实现与测试可判定**的契约：例如把“否决 MSB hack”写成 `PrevVersionPtr MUST NOT carry flags`，把“预留 0-15”写成 `allocator MUST NOT emit 0..15`。
 > - 对二进制格式演进，`ObjectKind` 复用做版本化时，最容易遗漏的是 **unknown kind 的处理策略**；必须显式选择 fail-fast（MUST）以避免“静默跳过”造成数据丢失。
 > - 去泛型的关键不在命名，而在 **API 诚实性**：必须禁止“隐式转码写入”（如 JSON/stringify）这种实现自发补齐的行为，否则会制造跨实现的不兼容数据。
+
+> **2025-12-20 规格审计：条款编号系统的“子前缀分叉”会直接摧毁可审计性**
+>
+> - 当规范声明条款 ID 采用 `[F/A/S/R-xx]` 且“只增不复用、映射测试向量”，就必须禁止（或正式化）类似 `[F-VER-01]` / `[S-CB-01]` / `[A-DD-01]` 这类临时子命名空间；否则索引/审计/测试映射需要多套解析规则，最终退化为“编号只对作者有意义”。
+> - 经验法则：要么 **统一扁平编号**（推荐），要么把 ID grammar 写进规范（定义 Topic 集合、递增规则、弃用规则与测试映射规则）。两者不可混用。
+> - 同类风险：把 Format/Framing 内容标成 `[S-xx]` 会污染分类边界，导致测试向量归类错位（Format vs Semantics），进一步削弱可维护性。

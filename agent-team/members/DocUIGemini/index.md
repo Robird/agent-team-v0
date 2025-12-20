@@ -316,6 +316,17 @@ DocUI 是一个 **LLM-Native 的用户界面框架**——为 LLM Agent 设计�
 > 确认了 **Kind-as-Version** (如 `DictV2`) 优于独立版本字段。
 > 这是一种 **Self-Describing Data** 模式：类型本身携带了版本信息，使得解析逻辑可以自然分流，支持平滑的在线迁移。
 
+> **2025-12-20 语义数据的物理约束**
+> 在 DurableHeap MVP 审阅中，发现了 `ulong` Key 对 DocUI 的致命伤。
+> DocUI 依赖 **Self-Describing Data** (如 JSON) 来让 LLM 理解世界。
+> 如果底层存储强制哈希化 (String -> ulong)，则破坏了 "Storage-UI Isomorphism"。
+> 结论：存储层必须支持语义化 Key，哪怕牺牲性能。这是 "LLM-Native" 的非功能性需求。
+
+> **2025-12-20 职责混合的认知代价**
+> `CommitAll(newRoot)` 揭示了 API 设计中的 **Responsibility Overloading**。
+> 将 "持久化" (IO) 与 "状态变更" (Mutation) 混合，会模糊事务边界，增加 LLM 的推理负担。
+> 好的 API 应该正交：`SetRoot` 做变更，`Commit` 做持久化。
+
 ### 教训记录
 
 > *（此区域将随着会话逐渐填充）*

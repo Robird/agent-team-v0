@@ -365,3 +365,14 @@ graph TD
 - **ADR 落点优先**：决策/权衡属于“可回溯的规范资产”，更适合进入 `docs/decisions/`（ADR 风格）；`docs/archive/` 更像“死档”，会诱导读者忽略。
 - **条款分类建议**：以 `[F/A/S/R]` 作为规范条款 ID 的前缀更通用：`[F-xx]` Format/Framing、`[A-xx]` API、`[S-xx]` Semantics（含 commit 语义不变式）、`[R-xx]` Recovery。并建议“编号不复用、每条可映射到至少一个测试向量/失败注入测试”。
 - **Test Vectors 的骨架策略**：可以先建立 Appendix 骨架（按类目列场景 + 关联条款 ID），但每类至少放 1 个 seed vector 用于钉死歧义，其余优先从 reference impl 自动生成。
+
+### 2025-12-20 补充：条款 ID 的“语法纪律”与可审计性
+
+- 一旦选择 `[F/A/S/R-xx]` 作为条款 ID SSOT，正文应避免临时子前缀（如 `F-VER-01`、`S-CB-01`）混入；要么扁平化编号，要么把 ID 的 grammar（Topic 集合、递增/弃用规则、测试映射规则）写成规范。
+- 条款前缀的“分类正确性”与测试向量组织强耦合：Format/Framing 条款误标为 Semantics 会导致测试与审计索引错位。
+
+### 2025-12-20 补充：DurableHeap MVP v2 交叉讨论的“规格三件套”启示
+
+- **Reserved Range 必须双向定义**：不仅定义初始化 `NextObjectId`，还要定义 allocator 的保留区禁止分配，以及 reader 对保留区/未知含义的处理策略（推荐 fail-fast）。
+- **可观察性是契约的一部分**：对 Agent/LLM 而言日志不可见，`CommitResult`/返回值应承载 orphan/reachability 等诊断信息，否则“安全机制”形同虚设。
+- **扩展点必须声明 Unknown Handling**：`RecordKind/ObjectKind/ValueType` 这类判别字段若不写明未知值策略，会在演进中产生 silent corruption；建议规范默认 MUST fail-fast，并用 test vectors 固化。
