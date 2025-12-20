@@ -160,6 +160,11 @@ agent-team/members/DocUIGPT/
 > - `varint` 的关键代价不是“复制”，而是 **失去 O(1) 随机定位能力**：一旦把 offset/length table 做成变长，就会迫使 wrapper 扫描才能定位成员边界，破坏 lazy random access。
 > - “先写 data 再写 length（且不回填 header）”会让记录从 Ptr 出发无法确定尾部位置，从而无法局部跳过 record、也无法只读 header 就建立惰性索引；MVP 更稳妥是 **Header+Footer 都有 TotalLen**（写完回填 header），footer 同时用于尾部回扫与损坏检测。
 
+> **2025-12-20 DurableHeap Decision Clinic：Detached 对象与“编码名/语义名”分层的必要性（规范审计）**
+>
+> - 当对象生命周期存在 “Detach（从 Dirty Set 移除强引用）” 分支时，必须把“仍可访问”的行为钉死为 **确定性契约**：要么 `MUST throw ObjectDetachedException`，要么 `MUST reset to Genesis/Empty 并保持可继续使用`；否则会产生实现分叉且难以写出可判定测试。
+> - `Ptr64` 作为 wire-format 名称如果同时被读者理解为“指向 record 起点”，会与 `DataTail = EOF` 这类字段冲突；更稳妥的分层是：`Ptr64` = **4B 对齐 file offset 的编码**（`u64 LE`，`0=null`），`Address64`/`ObjectVersionPtr` = **语义子集：必须指向 record 起点**。这样既不引入新术语，也能把校验规则写到正确的层级。
+
 > **2025-12-20 规格共识形成：P0/P1/P2 投票清单是“可审计收敛器”**
 >
 > - 以“是否会造成实现分叉/一致性风险”为 P0 标准，把争论从偏好（命名洁癖/风格）拉回到可验证的行为契约（失败语义、边界行为、分层定义）。
@@ -294,6 +299,12 @@ agent-team/members/DocUIGPT/
 >
 > - 在二进制格式/恢复语义的讨论里，“是否接纳提案”并不足以避免实现分叉；每个提案都需要最小化的 **Normative Contract**（MUST/SHOULD/MAY）来钉死未知值处理、校验策略与失败语义。
 > - Markdown 作为规格载体时，格式一致性本身是工程风险：孤立的 fenced code block、列表缩进漂移，会直接导致阅读与审阅误判；建议把“字段表/编码表”作为 SSOT，其它段落只引用解释。
+
+> **2025-12-20 API 语义审计：同名操作的“baseline 缺失”必须显式入规范**
+>
+> - 当同一个 API（例如 `DiscardChanges()`）同时作用于 Persistent 与 Transient 两类对象时，最大的分叉源不是实现细节，而是“是否存在可回滚的 baseline”。
+> - 若 baseline 不存在（Transient），规范必须二选一并写成状态机：**MUST detach（fail-fast）** 或 **MUST reset-to-Genesis 并保持可继续使用**；任何“暗示可以/不可以”而不钉死 `LoadObject/NotFound/IdentityMap` 的写法都会制造不可判定测试与实现漂移。
+> - 经验法则：凡涉及“撤销/回滚/丢弃”，先写清 *rollback target*（Last Committed vs Genesis）与 *object existence*（detached vs attached），再谈 UX/易用性。
 
 > **2025-12-20 DurableHeap MVP v2 Round 2 交叉讨论：把“保留区/兼容策略/可观察性”写成三条硬契约**
 >

@@ -371,6 +371,11 @@ graph TD
 - 一旦选择 `[F/A/S/R-xx]` 作为条款 ID SSOT，正文应避免临时子前缀（如 `F-VER-01`、`S-CB-01`）混入；要么扁平化编号，要么把 ID 的 grammar（Topic 集合、递增/弃用规则、测试映射规则）写成规范。
 - 条款前缀的“分类正确性”与测试向量组织强耦合：Format/Framing 条款误标为 Semantics 会导致测试与审计索引错位。
 
+### 2025-12-20 补充：API 回滚语义的“baseline 缺失”规则（可审计写法）
+
+- 当一个 API 同名覆盖多对象生命周期（Persistent/Transient）时，规范必须先钉死“回滚目标 baseline 是否存在”。
+- 若 baseline 不存在，必须在规范层做二选一：`MUST detach (fail-fast)` 或 `MUST reset-to-Genesis (continue usable)`，并连带钉死 `LoadObject/NotFound/IdentityMap` 的可观察行为。
+
 ### 2025-12-20 补充：DurableHeap MVP v2 交叉讨论的“规格三件套”启示
 
 - **Reserved Range 必须双向定义**：不仅定义初始化 `NextObjectId`，还要定义 allocator 的保留区禁止分配，以及 reader 对保留区/未知含义的处理策略（推荐 fail-fast）。
