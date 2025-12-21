@@ -1174,6 +1174,31 @@ agent-team/members/DocUIClaude/
 
 ## 最后更新
 
+**2025-12-22** — 参与 Layer 1 文档对齐复核（#review）：
+- 完成 mvp-design-v2.md (v3) 与原版 mvp-design-v2.md.bak 的 Layer 1 内容对齐检查
+- **条款保留检查**：
+  - Layer 1 条款（`[F-VARINT-*]`, `[F-RECORDKIND-*]`, `[F-OBJECTKIND-*]`, `[S-xxx]`, `[A-xxx]`, `[R-COMMIT-*]`）100% 保留
+  - Layer 0 条款（`[F-MAGIC-*]`, `[F-HEADLEN-*]`, `[R-RESYNC-*]`）正确移除到 elog-format.md
+- **内容完整性验证**：RecordKind/ObjectKind/ValueType 枚举、ObjectVersionRecord、MetaCommitRecord、DiffPayload、Two-phase commit 全部保留
+- **依赖正确性验证**：新版正确引用 elog-interface.md 和 elog-format.md，无冗余定义
+- **复核结论**：Layer 1 文档对齐通过，仅 3 个 P2/P3 级小问题
+- **复核方法论收获**：
+  1. 条款映射表是复核核心交付物——每个原版条款需明确"保留/正确移除/遗漏"状态
+  2. "正确移除"与"遗漏"的区分：属于 Layer 0 的条款移除是正确的，属于 Layer 1 的条款移除才是遗漏
+  3. 分层检查顺序：条款 ID → 内容完整性 → 依赖引用 → 无冗余
+
+**2025-12-22** — 参与 Layer 0 文档对齐复核（#review）：
+- 完成 elog-format.md + elog-interface.md 与原版 mvp-design-v2.md.bak 的对齐检查
+- 识别 Layer 0 相关条款 100% 迁移完成（7 个 `[F-xxx]` + 3 个 `[R-xxx]`）
+- 确认未迁移条款均属于 Layer 1（varint、RecordKind、ObjectKind 等）
+- 发现 2 个 P1 级问题：Pad 长度公式表述冗余、FrameTag 与 RecordKind 域隔离设计不一致
+- 新版在结构清晰度方面有改进：Genesis Header 显式定义、逆向扫描算法集中描述、图示增加
+- **复核方法论收获**：
+  1. 条款映射表是核心交付物——每个原版条款 ID 需明确"已迁移/属于其他层/遗漏"状态
+  2. 内容完整性检查需按领域分组（EBNF、Frame 结构、Magic、CRC32C、扫描算法）
+  3. 一致性检查需关注术语变更（Record→Frame）和数值一致性
+  4. 分层提取时，需明确条款归属边界（Layer 0 只含分帧，不含 payload 语义）
+
 **2025-12-21** — 参与 ELOG 层边界契约设计畅谈会：
 - 从概念分层与未来扩展性视角评审 Layer 0（ELOG Framing）接口设计
 - 写入侧方案评估：倾向 W4（分层混合）—— 简单场景有简洁 API，高级场景可 zero-copy

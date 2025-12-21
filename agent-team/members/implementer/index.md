@@ -1,6 +1,6 @@
 # Implementer 认知索引
 
-> 最后更新: 2025-12-21
+> 最后更新: 2025-12-22 (P0 RecordKind vs FrameTag 判别器冲突修复)
 > 
 > ⚠️ **更名通知**：DurableHeap → StateJournal（2025-12-21）
 > - 新路径：`atelia/docs/StateJournal/`
@@ -16,11 +16,399 @@
 - [ ] PieceTreeSharp
 - [x] PipeMux — 实现管理命令 `:list`, `:ps`, `:stop`, `:help`
 - [ ] atelia-copilot-chat
-- [x] StateJournal — 设计文档修订（共 23 轮）+ 文档瘦身（A1-A9）+ Rationale Stripping + 语义锚点重构 + 决策诊疗室落文（第二批中复杂度）
+- [x] StateJournal — 设计文档修订（共 23 轮）+ 文档瘦身（A1-A9）+ Rationale Stripping + 语义锚点重构 + 决策诊疗室落文 + **ELOG 层拆分（elog-format.md）** + **P0 判别器冲突修复**
   - 📍 **2025-12-21 更名**：DurableHeap → StateJournal，迁入 `atelia/docs/StateJournal/`
+  - 📍 **2025-12-22 拆分**：从 mvp-design-v2.md 提取 ELOG 二进制格式规范到 elog-format.md
+  - 📍 **2025-12-22 P0 修复**：RecordKind vs FrameTag 判别器冲突修复
 - [x] Atelia.Primitives — 基础类型库（AteliaResult、AteliaError、AteliaException）
 
 ## 当前关注
+
+### P0: varint 精确定义 SSOT 缺失修复 (2025-12-22) ✅
+
+**任务来源**：用户指令 — Layer 1 对齐复核发现 P0 级问题：varint 规范在新版 SSOT 链路中缺失
+
+**问题描述**：
+1. 原版 `mvp-design-v2.md.bak` 有完整的 varint 定义（§3.2.0 和 §3.2.0.1）
+2. 新版 `mvp-design-v2.md` 将"编码基础"改为引用 `elog-format.md`
+3. 但 `elog-format.md` 是 ELOG framing 文档，**不包含 varint 定义**
+4. 结果：varint 规范无处可寻
+
+**影响**：
+- StateJournal payload 大量使用 varint（EpochSeq, ObjectId, PairCount, KeyDelta 等）
+- 无 SSOT 会导致编码/解码策略分叉
+- 测试向量无法判定"非最短编码"、"溢出"等边界行为
+
+**修复方案**：将 varint 规范回迁到 `mvp-design-v2.md`（属于 Layer 1 payload 编码）
+
+**执行内容**：
+
+1. 移除错误的引用：`> **编码基础**：本节使用的变长整数编码（varint）定义见 [elog-format.md](elog-format.md)。`
+2. 恢复 §3.2.0 变长编码（varint）决策章节
+3. 恢复 §3.2.0.1 varint 的精确定义章节（包含 VarInt Encoding 图示）
+4. 保留条款：`[F-VARINT-CANONICAL-ENCODING]`、`[F-DECODE-ERROR-FAILFAST]`
+
+**恢复内容关键点**：
+- `varuint`：无符号 base-128（ULEB128 等价），`uint64` 最多 10 字节
+- `varint`：有符号整数采用 ZigZag 映射后按 `varuint` 编码
+- **canonical 最短编码**：非最短编码视为格式错误
+- **fail-fast 解码**：EOF、溢出、非 canonical 一律失败
+
+**文件变更**：
+- 修改：`atelia/docs/StateJournal/mvp-design-v2.md`
+  - 移除错误引用（-2 行）
+  - 新增 §3.2.0 变长编码（varint）决策（+10 行）
+  - 新增 §3.2.0.1 varint 的精确定义（+24 行，含编码图示）
+  - 净增：约 32 行
+
+**条款保留确认**：
+| 条款 ID | 名称 | 说明 |
+|---------|------|------|
+| `[F-VARINT-CANONICAL-ENCODING]` | canonical 最短编码 | varint MUST 使用最短表示 |
+| `[F-DECODE-ERROR-FAILFAST]` | 解码错误 fail-fast | EOF/溢出/非 canonical MUST 失败 |
+
+---
+
+### P0: RecordKind vs FrameTag 判别器冲突修复 (2025-12-22) ✅
+
+**任务来源**：用户指令 — 修复 Layer 1 对齐复核发现的 P0 级问题 (L1-ALIGN-RECORD-DISCRIMINATOR)
+
+**问题描述**：
+三份文档对"判别器"的定义冲突：
+1. **elog-format.md**：定义 `FrameTag` 是 Payload 的第 1 个字节
+2. **elog-interface.md §5.1**：定义 `FrameTag 0x01` = ObjectVersion, `FrameTag 0x02` = MetaCommit
+3. **mvp-design-v2.md**：仍然使用 `RecordKind` 作为 payload 内第一字节，且 data/meta 都复用 `0x01`（域隔离）
+
+**冲突后果**：
+- 若 FrameTag 已经是 payload[0]，则 RecordKind 要么重复，要么错位
+- 实现者会产生分叉
+
+**修复方案**：采用 FrameTag 作为唯一顶层判别器
+
+**执行内容**：
+
+1. **更新 mvp-design-v2.md 术语表编码层**：
+   - 将 `RecordKind` 定义改为 `FrameTag`
+   - 标记 `RecordKind` 为 deprecated（旧名称）
+   - 移除域隔离 `[F-RECORDKIND-DOMAIN-ISOLATION]` 条款引用
+
+2. **更新枚举值速查表**：
+   - 从 `RecordKind` 改为 `FrameTag`
+   - 统一值空间：`0x00` = Padding, `0x01` = ObjectVersionRecord, `0x02` = MetaCommitRecord
+   - 移除"域隔离"表述
+
+3. **更新 §3.2.1 DataRecord 类型判别**：
+   - 移除 "RecordKind 作为 payload 第一字节" 的表述
+   - 添加说明：FrameTag 是唯一判别器
+
+4. **更新 §3.2.2 MetaCommitRecord Payload**：
+   - 移除 `RecordKind` 字段
+   - Payload 直接从 `EpochSeq` 开始
+
+5. **更新 §3.2.5 ObjectVersionRecord payload 布局**：
+   - 移除 `RecordKind` 字段
+   - Payload 直接从 `PrevVersionPtr` 开始
+
+6. **更新命名规则示例**：
+   - 将 `[F-RECORDKIND-DOMAIN-ISOLATION]` 示例改为 `[F-OBJECTKIND-STANDARD-RANGE]`
+
+7. **更新 elog-interface.md §5.1**：
+   - 确认 FrameTag 映射表正确
+   - 移除"待与 mvp-design-v2.md 完成最终对齐"注释
+   - 添加"FrameTag 是唯一判别器"说明
+
+**文件变更**：
+- 修改：`atelia/docs/StateJournal/mvp-design-v2.md`（6 处修改）
+- 修改：`atelia/docs/StateJournal/elog-interface.md`（1 处修改）
+
+**废弃条款**：
+- `[F-RECORDKIND-DOMAIN-ISOLATION]`：域隔离条款废弃，FrameTag 统一值空间
+
+---
+
+### elog-format.md P1 问题修复 (2025-12-22) ✅
+
+**任务来源**：用户指令 — 修复 Layer 0 对齐复核发现的 4 个 P1 级问题
+
+**执行内容**：
+
+1. **P1-1: Magic 端序歧义修复**
+   - 位置：§2.1 Genesis Header / Magic 章节
+   - 问题：`DHD3` → `0x44484433` 作为 u32 LE 写入会变成 `33 44 48 44`（非 ASCII）
+   - 修复：
+     - 表格改为"字节序列 (Hex)"列，显示 `44 48 44 33`
+     - 新增条款 `[E-MAGIC-BYTE-SEQUENCE]`：明确 Magic 以 ASCII 字节序列写入，非 u32 端序
+
+2. **P1-2: PadLen 公式简化**
+   - 位置：§3.2 长度字段
+   - 问题：同时给出两个公式且 `+4` 来源不清
+   - 修复：
+     - 保留简式 `PadLen = (4 - (PayloadLen % 4)) % 4`
+     - 删除冗余的 `(PayloadLen + 4)` 公式
+     - 添加推导说明（为何 `+4` 可省略）
+     - 新增条款 `[E-PADLEN-FORMULA]`
+
+3. **P1-3: CRC/Framing 失败策略条款化**
+   - 位置：§4（新增 §4.3 校验失败处理）
+   - 新增条款 `[E-CRC-FAIL-REJECT]`：CRC 不匹配 MUST 视为帧损坏
+   - 新增条款 `[E-FRAMING-FAIL-REJECT]`：枚举 5 种 Framing 失败情况
+
+4. **P1-4: FrameTag 与 RecordKind 域隔离对齐说明**
+   - 位置：elog-interface.md §5.1 FrameTag ↔ RecordKind 映射
+   - 添加"设计变更说明"：解释原版域隔离 vs 新版统一 FrameTag 空间的差异
+   - 标注"待与 mvp-design-v2.md 完成最终对齐"
+
+**文件变更**：
+- 修改：`atelia/docs/StateJournal/elog-format.md`
+  - 版本：0.2 → 0.3
+  - Magic 编码约定新增
+  - PadLen 公式简化
+  - 新增 §4.3 校验失败处理
+  - 条款索引更新（新增 4 条）
+  - 变更日志添加 P1 修订记录
+- 修改：`atelia/docs/StateJournal/elog-interface.md`
+  - §5.1 添加设计变更说明
+
+**新增条款汇总**（4 条）：
+| 条款 ID | 名称 | 说明 |
+|---------|------|------|
+| `[E-MAGIC-BYTE-SEQUENCE]` | Magic 编码 | ASCII 字节序列写入，非 u32 端序 |
+| `[E-PADLEN-FORMULA]` | Pad 公式 | PadLen = (4 - (PayloadLen % 4)) % 4 |
+| `[E-CRC-FAIL-REJECT]` | CRC 失败 | CRC 不匹配 MUST 视为帧损坏 |
+| `[E-FRAMING-FAIL-REJECT]` | Framing 失败 | 5 种失败情况 MUST 视为帧损坏 |
+
+---
+
+### elog-format.md P0 问题修复 (2025-12-22) ✅
+
+**任务来源**：用户指令 — 修复 Layer 0 对齐复核发现的 3 个 P0 级问题
+
+**执行内容**：
+
+1. **P0-1: CRC32C 多项式表述修正**
+   - 位置：§4.2 CRC32C 算法
+   - 问题：`0x1EDC6F41` 被误标为"反射形式"，实际是 normal 形式
+   - 修复：添加 Normal/Reflected 两种形式对照表，明确采用 Reflected I/O 约定
+   - 新增：与 `.NET System.IO.Hashing.Crc32C` 等价语义说明
+
+2. **P0-2: 逆向扫描边界条件修正**
+   - 位置：§7.2 逆向扫描算法
+   - 问题：`RecordStart >= 8` 会拒绝单帧文件的第一帧（RecordStart=4）
+   - 修复：引入 `GenesisLen = 4` 常量，条件改为 `>= GenesisLen`
+   - 新增：边界说明注释
+
+3. **P0-3: FrameTag wire encoding 补充**
+   - 位置：§3.1 Frame 二进制布局
+   - 问题：FrameTag 在 elog-interface.md 定义但 elog-format.md 未说明其 wire 位置
+   - 修复：更新 Frame 布局图，明确 Tag 是 Payload 的第 1 字节
+   - 新增条款：`[E-FRAMETAG-WIRE-ENCODING]`
+   - 更新表格：Payload 分拆为 Tag + PayloadBody
+
+**文件变更**：
+- 修改：`atelia/docs/StateJournal/elog-format.md`
+  - 版本：0.1 → 0.2
+  - CRC32C 算法章节重写
+  - 逆向扫描算法条件修正
+  - Frame 布局图和表格更新
+  - 条款索引更新（新增 `[E-FRAMETAG-WIRE-ENCODING]`）
+  - 变更日志添加 P0 修订记录
+
+---
+
+### mvp-design-v2.md 术语表 Ptr64/Address64 简化 (2025-12-22) ✅
+
+**任务来源**：用户指令 — 简化 mvp-design-v2.md 术语表中的 Ptr64/Address64 定义
+
+**背景**：
+- Ptr64/Address64 的详细定义已在 elog-interface.md §2.2 中
+- mvp-design-v2.md 术语表应简化为引用，避免重复维护
+
+**执行内容**：
+1. 合并"标识与指针"表格中的 Ptr64 和 Address64 两行为一行
+2. 简化定义为引用：`详见 [elog-interface.md](elog-interface.md) §2.2`
+3. 更新"命名约定"章节中的第 4 条，改为简短引用
+
+**修改前**：
+```markdown
+| **Ptr64** | 64 位文件偏移量的编码形式... | — | `ulong`，4B 对齐 |
+| **Address64** | 概念层术语：指向 Record 起始位置... | 编码形式: `Ptr64` | `ulong` |
+```
+
+**修改后**：
+```markdown
+| **Ptr64** / **Address64** | 8 字节文件偏移量。详见 [elog-interface.md](elog-interface.md) §2.2 | — | `ulong` |
+```
+
+**文件变更**：
+- 修改：`atelia/docs/StateJournal/mvp-design-v2.md`（2 处修改）
+
+---
+
+### mvp-design-v2.md 崩溃恢复章节精简 (2025-12-22) ✅
+
+**任务来源**：用户指令 — 精简 mvp-design-v2.md 的崩溃恢复章节
+
+**背景**：
+- ELOG Layer 0 内容已提取到 elog-format.md
+- §3.5 崩溃恢复章节需要添加对 elog-format.md 的引用
+- **实际检查发现**：该章节已经是精简状态，无需移除内容
+
+**章节现状**（已精简）：
+- ✅ 从 meta 文件尾部回扫找 HEAD（Layer 1 语义）
+- ✅ `[R-DATATAIL-TRUNCATE-GARBAGE]` 条款（Layer 1，保留）
+- ✅ `[R-ALLOCATOR-SEED-FROM-HEAD]` 条款（Layer 1，保留）
+- ✅ 撕裂提交处理策略（Layer 1，保留）
+
+**添加的引用**：
+```markdown
+> **帧级恢复**：Frame 级别的逆向扫描、CRC 校验、Resync 机制详见 [elog-format.md](elog-format.md)。
+> 本节描述 StateJournal 的 **Record 级恢复语义**。
+```
+
+**统计**：
+- 移除：0 行（章节已是精简状态）
+- 新增：3 行（引用说明）
+
+---
+
+### mvp-design-v2.md Meta 文件章节精简 (2025-12-22) ✅
+
+**任务来源**：用户指令 — 精简 mvp-design-v2.md 的 Meta 文件章节
+
+**背景**：
+- ELOG Layer 0 内容已提取到 elog-format.md
+- mvp-design-v2.md §3.2.2 Meta 文件章节仍保留了重复的 Layer 0 内容
+- 需要移除重复内容，保留 Layer 1 特有内容
+
+**移除的内容（Layer 0，已在 elog-format.md）**：
+- `**Framing**：与 data 相同（§3.2.1 EBNF），Magic = DHM3。` — 帧格式描述
+- `[R-META-RESYNC-SAME-AS-DATA]` 条款 — meta 文件 resync 策略
+
+**保留的内容（Layer 1）**：
+- MetaCommitRecord Payload 字段定义（RecordKind, EpochSeq, RootObjectId 等）
+- Open 策略描述
+- `[R-META-AHEAD-BACKTRACK]` 条款（meta 领先 data 的回扫处理）
+- 提交点定义
+- 刷盘顺序条款
+
+**添加的引用**：
+```markdown
+> **帧格式**：Meta 文件与 Data 文件使用相同的 ELOG 帧格式，详见 [elog-format.md](elog-format.md)。
+```
+
+**新增小节标题**：
+- `##### MetaCommitRecord Payload`（提升 payload 字段的可读性）
+
+**统计**：
+- 移除：约 8 行（Framing 描述 + R-META-RESYNC-SAME-AS-DATA 条款）
+- 净减少：约 **4 行**（添加了引用和小节标题）
+
+---
+
+### mvp-design-v2.md Data 文件章节精简 (2025-12-22) ✅
+
+**任务来源**：用户指令 — 精简 mvp-design-v2.md 的 Data 文件章节
+
+**背景**：
+- ELOG Layer 0 内容已提取到 elog-format.md
+- mvp-design-v2.md §3.2.1 Data 文件章节仍保留了重复的 Layer 0 内容
+- 需要移除重复内容，保留 Layer 1 特有内容
+
+**移除的内容（Layer 0，已在 elog-format.md）**：
+- EBNF 语法定义（`File := Magic (Record Magic)*` 等）
+- `[F-MAGIC-IS-FENCE]` 术语约束
+- `[F-MAGIC-RECORD-SEPARATOR]` Magic 是 Record Separator
+- `[F-HEADLEN-TAILLEN-SYMMETRY]` HeadLen == TailLen
+- `[F-RECORD-4B-ALIGNMENT]` 对齐约束
+- `[F-CRC32C-PAYLOAD-COVERAGE]` CRC32C 覆盖范围
+- `[F-RECORD-WRITE-SEQUENCE]` 写入顺序表（8 步）
+- 反向扫尾（reverse scan）算法详细描述
+- Resync 策略详细描述
+- `[R-RESYNC-DISTRUST-TAILLEN]` 条款
+
+**保留的内容（Layer 1）**：
+- I/O 目标描述（随机读、追加写、可截断）
+- 实现约束（FileStream 底座、mmap 后续优化）
+- `RecordKind` 枚举定义
+- RecordKind 与 ObjectKind 的约定说明
+- Ptr64 与对齐约束
+- 可被 meta 指向的关键 record 说明
+
+**添加的引用**：
+```markdown
+> **帧格式**：Frame 结构（HeadLen/TailLen/Pad/CRC32C/Magic）、逆向扫描算法、Resync 机制详见 [elog-format.md](elog-format.md)。
+```
+
+**新增小节标题**：
+- `##### DataRecord 与 RecordKind`（替代原来的"分层定义"小节）
+
+**统计**：
+- 移除：约 72 行（EBNF + 条款 + 算法描述）
+- 净减少：约 **68 行**（从 1456 行降至约 1388 行）
+
+---
+
+### ELOG 二进制格式规范提取 (2025-12-22) ✅
+
+**任务来源**：用户指令 — 从 mvp-design-v2.md 提取 ELOG 内容创建独立文档
+
+**背景**：
+- 正在将 `mvp-design-v2.md` 拆分为两层文档
+- Layer 0: `elog-format.md`（ELOG 二进制格式规范）
+- Layer 1: `mvp-design-v2.md`（StateJournal 语义）
+- 接口文档 `elog-interface.md` 已作为两层的对接契约
+
+**交付物**：
+- 新建：`atelia/docs/StateJournal/elog-format.md`（约 450 行）
+
+**后续任务（2025-12-22）**：
+- 从 mvp-design-v2.md 移除 §3.2.0 和 §3.2.0.1 varint 章节
+- 添加对 elog-format.md 的引用
+
+**移除 varint 章节**：
+- 已移除 §3.2.0 变长编码（varint）决策（10 行）
+- 已移除 §3.2.0.1 varint 的精确定义（Q22=A）（26 行 + 代码块）
+- 已添加引用：`> **编码基础**：本节使用的变长整数编码（varint）定义见 [elog-format.md](elog-format.md)。`
+- 净移除：**约 36 行**（从 1492 行降至 1455 行）
+
+**文档结构**：
+1. 概述（与 elog-interface.md 的关系、文档层次图）
+2. 文件结构（Genesis Header、整体布局、EBNF 语法）
+3. Frame 结构（二进制布局、长度字段、Pad 填充）
+4. CRC32C 校验（覆盖范围、算法）
+5. Magic 分隔符（语义、位置）
+6. 写入流程（8 步写入顺序）
+7. 逆向扫描算法（步骤、地址计算、图示）
+8. Resync 机制（问题背景、策略、图示）
+9. Ptr64 / Address64（编码、对齐与空值）
+10. DataTail 与截断（定义、恢复）
+11. 条款索引（格式条款 16 条、恢复条款 3 条）
+12. 测试向量（编码示例、Resync 场景）
+13. 变更日志
+
+**条款统计**：
+| 类别 | 数量 | 前缀 |
+|------|------|------|
+| 格式条款 | 16 | `[E-xxx]` |
+| 恢复条款 | 3 | `[E-xxx]` |
+| **总计** | **19** | — |
+
+**关键提取内容**：
+- Genesis Header（文件头 Magic）
+- Frame 结构（HeadLen/Payload/Pad/TailLen/CRC32C/Magic）
+- CRC32C 覆盖范围（Payload + Pad + TailLen）
+- 4 字节对齐规则
+- 逆向扫描算法（从尾部向前遍历）
+- Resync 机制（不信任损坏 TailLen，按 4B 对齐回退扫描 Magic）
+- DataTail 截断恢复
+
+**不提取（保留在 Layer 1）**：
+- RecordKind、ObjectKind 定义
+- ObjectVersionRecord、MetaCommitRecord 结构
+- DiffPayload 编码
+- Two-phase commit 语义
+
+---
 
 ### format.ps1 WSL2 兼容修复 (2025-12-21) ✅
 

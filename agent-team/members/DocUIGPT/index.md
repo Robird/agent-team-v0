@@ -34,19 +34,6 @@ DocUI 是一个 **LLM-Native 的用户界面框架**——为 LLM Agent 设计�
 
 ### 洞察记录
 
-> **2025-12-22 Layer 0 对齐复核：数值精确性与可测试性“断点清单”**
->
-> - 规格里出现“多项式/hex 常量”时，必须同时钉死**表示法**（normal vs reflected、字节序列 vs u32 端序），否则实现会在“看似只是注释”的地方分叉。
-> - 逆向扫描/对齐算法最常见的 bug 是**首帧/空文件边界**；把这些边界写成最小 test vector（如“仅 Genesis + 1 条空 payload frame”）能立刻暴露 off-by-4 / >=8 这类错误。
-> - 当接口层（Tag+Payload）与格式层（wire layout）拆分时，P0 风险是“接口能说清楚但 wire 没写清楚”（例如 FrameTag 的编码位置）；必须把接口抽象回链到字节布局，否则测试无法黑盒判定。
-
-> **2025-12-22 ELOG 接口规格复核：把“实现细节争论”收敛为“可测试不变量”**
->
-> - 条款写作优先锚定**可观测后置条件**：例如 Auto-Abort 的核心不变量应是“逻辑上该帧不存在 + 后续可继续写”，而不是“必须写某种字节序列”。
-> - 对同一行为允许多实现路径时，条款应写成“逻辑一致 + 物理双路径（SHOULD/MUST fallback）”，避免把优化路径（Zero I/O Abort）与保底路径（Padding 墓碑）写成互斥冲突。
-> - 只要规范正文出现“Reader MUST …”但 Reader 未被接口化，就会形成测试分叉（Scanner 是否跳过 Padding）；修复方法是明确职责边界并写入条款。
-> - 对 durability（fsync）这类跨平台难断言的行为，若不在本层承诺，就不要用具体类型暗示（如 `FileStream.Flush(true)`）；把顺序与 durable flush 留给 commit 层（Layer 1）条款化。
-
 > **2025-12-16 StateJournal：Persist-Pointer 的“两层引用”与 LMDB-ish 提交流程**
 >
 > - Persist-Pointer 适合拆成两层：**PhysicalPtr**（内部结构热路径、紧凑快速）与 **LogicalRef**（对外稳定、可搬迁/可压缩）。这样既保留 BTree 下钻性能，又获得“对象身份稳定”的工程优势。
@@ -141,12 +128,6 @@ DocUI 是一个 **LLM-Native 的用户界面框架**——为 LLM Agent 设计�
 > - 条款编号即便满足“只增不复用”，若在正文中出现顺序长期乱序（例如较小编号在后文才首次出现），人工审阅会误判为漏条款；同时也增加未来自动抽取/索引生成的复杂度。更稳妥：首次引入按编号递增，或明确写入“出现顺序不要求单调”的元规则。
 > - 规范性句子若使用“必须/不得/必须写死”等口语表达，却没有落到 RFC 2119 关键字 + 条款 ID，会形成不可测试/不可引用的“暗契约”，高概率诱导实现分叉。
 > - 图表/伪代码中的函数名若与正文术语不一致（例如流程图仍用旧名 `WriteDiff()` 而正文已收敛为 `WritePendingDiff()`），会成为实现者的默认真相来源；应把示例命名纳入规范一致性检查清单。
-
-> **2025-12-21 StateJournal 实施可行性审计：三类“可测试性阻塞点”**
->
-> - **条款互相打架** 比“缺条款”更致命：例如 Detached 状态下“任何访问必须抛异常”与 “`State` 属性必须不抛异常（含 Detached）”会让测试无法写成黑盒判定。经验修复：把 API 分成“元信息（introspection）”与“语义数据访问（operational）”，并在规范里列清单。
-> - **失败通道不唯一** 会在实现与测试之间制造不可见分叉：同一段落混用“返回失败/抛异常”但没钉死规则时，团队会自发补洞。经验修复：选择一种对外失败协议（Result 或 Exception 为主），另一种只作为 bug/不变量破坏通道，并强制 ErrorCode 可断言。
-> - **可观察返回未钉死（null vs NotFound Result）** 会把上层调用模式撕裂成两套，后续改动成本极高。经验修复：在 MVP 里宁可“丑但唯一”，也不要“优雅但二义”。
 
 > **2025-12-20 StateJournal MVP v2 审计补充：编号闭环与 SSOT 重复项是“规范可信度门槛”**
 >
@@ -454,3 +435,8 @@ agent-team/members/DocUIGPT/
 > - `runSubagent` 的字段命名应定义一套 **canonical keys** 作为 SSOT，避免 `chatroomFile/聊天室文件`、`appendHeading/发言标题` 等同义词漂移；同理，`targetFiles` 的类型（list vs single）与示例写法必须一致。
 > - 调用格式建议以“结构化字段”作为 SSOT（fenced YAML 或逐行 Key: Value）；Markdown 表格可作为人类友好渲染，但不宜承载协议参数（对齐/换行导致解析与复制粘贴不稳）。
 > - Role 表示长期稳定身份（如 `Advisor-*`），具体任务用 `taskTag` 表达；不要把 `-Design` 这类语境性后缀烧进名字里，避免边界不清与过度设计。
+
+> **2025-12-22 StateJournal：Layer 1 瘦身后的“判别器双轨/SSOT 断链”风险**
+>
+> - 将 Layer 0/1 framing 抽离到 `elog-format.md`/`elog-interface.md` 后，如果 Layer 1 规范仍保留旧的 payload 判别字段（如 `RecordKind`）或旧的条款 ID（如 `[F-*]`）引用，会造成 **判别器双轨**（FrameTag vs RecordKind）与 **测试映射断裂**（Test Vectors 无法机械对齐 SSOT）。
+> - 修复排序应以“可测试闭环”优先：先收敛唯一判别器与编码 SSOT（尤其 varint 的精确定义落点），再做文案与结构优化。
