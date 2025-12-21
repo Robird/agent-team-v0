@@ -1,7 +1,7 @@
 ---
 name: DocOps
 description: 文档与索引管理专家，维护文档一致性、Changefeed 索引和团队认知连续性
-model: Claude Opus 4.5 (Preview)
+model: Claude Opus 4.5
 tools:
   ['execute/getTerminalOutput', 'execute/runTests', 'execute/testFailure', 'execute/runInTerminal', 'read/terminalSelection', 'read/terminalLastCommand', 'read/problems', 'read/readFile', 'edit/createDirectory', 'edit/createFile', 'edit/editFiles', 'search', 'web', 'ms-vscode.vscode-websearchforcopilot/websearch']
 ---
