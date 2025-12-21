@@ -1174,4 +1174,15 @@ agent-team/members/DocUIClaude/
 
 ## 最后更新
 
-**2025-12-21** — 记录 TryLoadObject Round 2 讨论洞察：机制级别选择、AteliaError 类型设计、与 Error Affordance 的关系澄清
+**2025-12-21** — 参与 AI Team 元认知重构畅谈第二轮：
+- 最终确认 Role 名词选择：`Advisor`（不加后缀），理由是职能差异应体现在 taskTag 而非名字
+- 给出 AGENTS.md 具体草案（约 350 tokens），采用 RFC 2119 风格
+- 融合 GPT 和 Gemini 的研讨会标签提案，新增 `#jam` 标签对应纯发散模式
+- 提议 runSubagent 调用用结构化字段（`**Key**: Value`）而非表格——对 LLM 解析更友好
+- 建议将研讨会详细指南放入 `agent-team/wiki/jam-session-guide.md`，AGENTS.md 保持极简
+
+**2025-12-21** — 参与 AI Team 元认知重构畅谈：
+- 讨论命名方案（倾向 Advisor-Claude 职能风格）
+- 提出 runSubagent 邀请的 MUST/SHOULD/MAY Checklist
+- 建议统一研讨会形式为"畅谈会 + 场景标签"
+- 提议给 Team Leader 也建立 agent.md 作为研讨会组织的 SSOT

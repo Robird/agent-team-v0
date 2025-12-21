@@ -417,8 +417,21 @@ agent-team/members/DocUIGPT/
 > - 若团队选择“结构化错误返回值”而非 `bool + out` 经典签名，需要在规范中明确：Try 系列方法允许返回 `Result<T>`（Success/Value/Error），并将“异常仅用于编程错误/不变量破坏”写成条款。
 > - Error contract 建议双层：`ErrorCode: string` 作为稳定可注册键（可映射测试向量），`ErrorKind` 作为粗粒度类别（更利于 switch/策略），并定义其是否属于对外协议面。
 
+> **2025-12-21 AI Team 元认知：Subagent 命名 grammar 与 runSubagent 的可审计字段**
+>
+> - 命名优先级：先保证“可机械解析”，再考虑好听；推荐 grammar：`<Role>-<Model>`，Role 取自受控词表（Advisor/Reviewer/Tester/Facilitator），Model 取自 {Claude/Gemini/GPT}（或更具体版本）。避免把“项目归属/品牌前缀”混进同一层命名，降低歧义与迁移成本。
+> - 研讨会形式合并要避免“只有语气没有契约”：建议 `#review/#design/#decision` 三类标签绑定最低产物（FixList / 候选方案+tradeoff / ADR+回滚条件），否则讨论难以复用与审计。
+> - `runSubagent` 的邀请信息应补齐可审计字段：`chatroomFile`、`targetFiles`、`appendHeading`、`scope`、`outputForm`、`language`（MUST）；`existingConsensus/openQuestions/timebox/verificationStep`（SHOULD）。其中 `verificationStep`（调用方与子代理都声明“已追加到文件末尾”）能显著减少“插入中间/写错文件”的返工。
+
 > **2025-12-21 交叉讨论收口：错误即文档索引（AteliaError / ErrorCode / Details）**
 >
 > - `Message` 应默认面向 Agent（LLM-friendly），不再拆 `AgentMessage` 以避免双文案漂移；如需人类友好，交由 DocUI Presenter 做摘要/裁剪。
 > - `Details` 约束为 `IReadOnlyDictionary<string, string>` 是务实且安全的跨边界选择；复杂结构允许 JSON-in-string。
 > - `ErrorCode` 除“机器分派键”外应被视为“静态文档索引”：需要配套 ErrorCode Registry（SOP/示例/恢复路径），并提供 `help(code)` 类入口把运行时错误闭环到文档与处置流程。
+
+> **2025-12-21 畅谈会 Round 2：AGENTS.md 协议收口的“唯一规范”原则（标题与调用卡片）**
+>
+> - 协议里最忌“同时鼓励两套写法”：例如 `### <Name> 发言` 与 `### <Name> 第 N 轮`。必须二选一收口（另一种只能作为可选元信息），否则索引/检索/工具化会立刻分叉。
+> - `runSubagent` 的字段命名应定义一套 **canonical keys** 作为 SSOT，避免 `chatroomFile/聊天室文件`、`appendHeading/发言标题` 等同义词漂移；同理，`targetFiles` 的类型（list vs single）与示例写法必须一致。
+> - 调用格式建议以“结构化字段”作为 SSOT（fenced YAML 或逐行 Key: Value）；Markdown 表格可作为人类友好渲染，但不宜承载协议参数（对齐/换行导致解析与复制粘贴不稳）。
+> - Role 表示长期稳定身份（如 `Advisor-*`），具体任务用 `taskTag` 表达；不要把 `-Design` 这类语境性后缀烧进名字里，避免边界不清与过度设计。

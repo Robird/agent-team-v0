@@ -78,18 +78,23 @@
 
 ### 当前阵容
 
+**参谋组 (Advisory Board)** — 设计文档审阅、方案探讨
+
 | Specialist | 模型 | 行为模式 |
 |------------|------|----------|
-| **Planner** | Claude Opus 4.5 | 多方案采样、任务分解 |
+| **Advisor-Claude** | Claude Opus 4.5 | 概念框架、术语治理、系统类比 |
+| **Advisor-Gemini** | Gemini 3 Pro | UX/DX、交互设计、视觉隐喻 |
+| **Advisor-GPT** | GPT-5.2 | 规范审计、精确性验证、条款编号 |
+
+**前线组 (Field Team)** — 编码实现、测试验证
+
+| Specialist | 模型 | 行为模式 |
+|------------|------|----------|
 | **Investigator** | Claude Opus 4.5 | 源码分析、技术调研 |
 | **Implementer** | Claude Opus 4.5 | 编码实现、移植 |
 | **QA** | Claude Opus 4.5 | 测试编写、验证 |
 | **DocOps** | Claude Opus 4.5 | 文档维护、索引管理 |
-| **DocUIClaude** | Claude Opus 4.5 | 概念框架、术语一致性 |
-| **DocUIGemini** | Gemini 3 Pro | UX/DX、交互模式 |
-| **DocUIGPT** | GPT-5.2 | 规范审计、命名约定 |
 | **CodexReviewer** | GPT-5.1-Codex | 代码审查、Bug 检测 |
-| **GeminiAdvisor** | Gemini 3 Pro | 前端专家、第二意见 |
 
 ### 设计原则
 - **"兼听则明"**：多模型多样性减少盲点

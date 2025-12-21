@@ -5,6 +5,19 @@
 
 ## 最近更新 (2025-12-21)
 
+### AI Team 元认知重构 ✅ 🆕
+- **畅谈会完成**：`agent-team/meeting/2025-12-21-meta-cognition-refactor-jam.md`
+- **参谋组改名**：DocUIClaude/Gemini/GPT → Advisor-Claude/Gemini/GPT
+- **AGENTS.md 创建**：`/repos/focus/AGENTS.md`（全局协议入口）
+- **畅谈会指南**：`agent-team/wiki/jam-session-guide.md`
+
+| 产出 | 位置 |
+|------|------|
+| AGENTS.md | `/repos/focus/AGENTS.md` |
+| 畅谈会指南 | `agent-team/wiki/jam-session-guide.md` |
+| 会议记录 | `agent-team/meeting/2025-12-21-meta-cognition-refactor-jam.md` |
+| 重命名的 Agent 文件 | `.github/agents/advisor-*.agent.md` |
+
 ### AteliaResult 规范化完成 ✅ 🆕
 - **决策确认**：`AteliaResult<T>` 升级为 Atelia 全项目基础机制
 - **代码实现**：`atelia/src/Primitives/`（net9.0 + xUnit，27 测试全通过）
@@ -126,25 +139,25 @@
 
 ## AI Team 技术状态
 
-### Specialist 体系 (2025-12-09 重组完成)
+### Specialist 体系 (2025-12-21 重组)
 
 **架构原则**: `Specialist = {模型, 行为模式, 认知积累}`
-- 按"模型×行为模式"划分，保持粗粒度
-- 项目是认知索引中的维度，而非划分维度
 
-**当前阵容** (10 个 Specialist):
+**参谋组 (Advisory Board)** — 设计文档审阅、方案探讨：
 | Specialist | 模型 | 行为模式 |
 |------------|------|----------|
-| Planner | Claude Opus 4.5 | 多方案采样、任务分解 |
+| **Advisor-Claude** | Claude Opus 4.5 | 概念框架、术语治理 |
+| **Advisor-Gemini** | Gemini 3 Pro | UX/DX、交互设计 |
+| **Advisor-GPT** | GPT-5.2 | 规范审计、精确性验证 |
+
+**前线组 (Field Team)** — 编码实现、测试验证：
+| Specialist | 模型 | 行为模式 |
+|------------|------|----------|
 | Investigator | Claude Opus 4.5 | 源码分析、技术调研 |
 | Implementer | Claude Opus 4.5 | 编码实现、移植 |
 | QA | Claude Opus 4.5 | 测试编写、验证 |
 | DocOps | Claude Opus 4.5 | 文档维护、索引管理 |
 | CodexReviewer | GPT-5.1-Codex | 代码审查、Bug 检测 |
-| GeminiAdvisor | Gemini 3 Pro | 前端专家、第二意见 |
-| **DocUIClaude** | Claude Opus 4.5 | DocUI Key-Note 顾问（概念图谱） |
-| **DocUIGemini** | Gemini 3 Pro | DocUI Key-Note 顾问（UX/HCI） |
-| **DocUIGPT** | GPT-5.2 | DocUI Key-Note 顾问（术语审计） |
 
 **认知目录结构**:
 - `agent-team/members/{specialist}/` — 私有认知 (index.md + meta-cognition.md)

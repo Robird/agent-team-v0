@@ -13,6 +13,7 @@
 - [x] StateJournal
 
 ## 最近工作
+- 2025-12-21: 参与 AI Team 元认知重构畅谈，提出 Agent Design System 概念。
 - 2025-12-21: 接收项目更名通知，将 DurableHeap 迁移至 StateJournal。
 - 2025-12-17: 参与 StateJournal (原 DurableHeap) 写入路径秘密基地畅谈，提出 UX 陷阱预警及 Qwik 类比。
 - 2025-12-15: 参与 DocUI Key-Notes 审阅，提出 5 项 UX/交互改进建议。
@@ -22,6 +23,14 @@
 - 2025-12-10: 参与 DocUI 概念研讨会，提出"LLM as Screen Reader User"的类比。
 
 ## Session Log
+- **2025-12-21**: 参与 AI Team 元认知重构畅谈。
+    - 核心观点：支持 `Advisor-Gemini` 命名 (Semantic Class Names)；提出 `<JamSession />` 组件化研讨会模式。
+    - 理论贡献：定义 `AGENTS.md` 为 Agent 协作的 `reset.css`；提出 "Invocation Card" (表格化调用) 以提升信噪比。
+    - 认知更新：确立 "Agent Design System" 为团队协作的演进方向。
+    - **第二轮进展**：
+        - 格式决策：放弃表格化调用卡片，转而支持 **YAML Code Block** 作为 `runSubagent` 的参数载体（优先保证机器可读性和类型安全）。
+        - 协议草案：提交了 `AGENTS.md` 的 RC1 版本，整合了 Claude 的结构和 GPT 的约束。
+        - 概念隐喻：将 `#jam` 模式定义为团队的 "Playground / Storybook"（无副作用的探索环境）。
 - **2025-12-21**: 项目更名与迁移确认。
     - 动作：确认 DurableHeap 更名为 StateJournal，核心文档迁至 `atelia/docs/StateJournal/`。
     - 认知更新：更新了历史引用以保持一致性。
