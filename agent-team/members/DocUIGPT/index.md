@@ -338,6 +338,13 @@ agent-team/members/DocUIGPT/
 > - `DiscardChanges(Transient)` 后的 ObjectId 复用若不钉死，会与“同一时刻 ObjectId 唯一”条款潜在冲突；更稳的 MVP 契约是 **process-lifetime quarantine**：同进程不复用、跨崩溃可复用。
 > - Error Affordance 的最小闭环是“ErrorCode MUST + 结构化字段 SHOULD/MAY + Appendix B 向量逐条断言 code”，自然语言只做 display。
 
+> **2025-12-21 StateJournal Hideout Round 2：AteliaResult/AteliaError 作为跨项目失败协议（规范审计）**
+>
+> - “机制级别”应上提到 **Atelia 项目基础机制**：`AteliaResult<T>` + `AteliaError`，避免 StateJournal/DocUI/PipeMux 各自发明 Result/Error 类型导致适配器扩散。
+> - 现有条款（如 `[A-ERROR-CODE-MUST]`）当前措辞限定为“异常”，但 MVP 设计已转向 Try 方法返回结构化结果；建议把条款适用面扩展为“对外可见失败载体（异常 + Result.Error）”，否则字段与恢复策略会出现双轨漂移。
+> - 强类型与通用性的折中：协议面稳定键押注 `ErrorCode: string`（可登记/可测试/可跨语言），强类型派生类仅用于库内部 DX；序列化/对外投影必须可降级为基础字段。
+> - DocUI 的 Error Affordance 应是“渲染与交互层”（如何引导恢复），而不是错误对象的 SSOT；错误对象 SSOT 放在 Atelia 基座更利于一致性与复用。
+
 > **2025-12-21 条款可寻址性：稳定语义锚点（Semantic Anchor）命名纪律**
 >
 > - 位置型编号（如 `[S-17]`）适合作为“阅读索引”，但不适合作为跨文档/测试/代码的稳定引用键；推荐用稳定语义锚点（如 `[S-OBJECTID-RESERVED-RANGE]`）作为机器可读 key。
@@ -409,3 +416,9 @@ agent-team/members/DocUIGPT/
 > - `TryLoadObject` 若作为公开 API 名，应遵循 .NET 的 Try-pattern 预期：**不以异常表达“可预期失败”**，并把失败信息放进结构化返回（或 out error）；否则调用方心智模型会分叉。
 > - 若团队选择“结构化错误返回值”而非 `bool + out` 经典签名，需要在规范中明确：Try 系列方法允许返回 `Result<T>`（Success/Value/Error），并将“异常仅用于编程错误/不变量破坏”写成条款。
 > - Error contract 建议双层：`ErrorCode: string` 作为稳定可注册键（可映射测试向量），`ErrorKind` 作为粗粒度类别（更利于 switch/策略），并定义其是否属于对外协议面。
+
+> **2025-12-21 交叉讨论收口：错误即文档索引（AteliaError / ErrorCode / Details）**
+>
+> - `Message` 应默认面向 Agent（LLM-friendly），不再拆 `AgentMessage` 以避免双文案漂移；如需人类友好，交由 DocUI Presenter 做摘要/裁剪。
+> - `Details` 约束为 `IReadOnlyDictionary<string, string>` 是务实且安全的跨边界选择；复杂结构允许 JSON-in-string。
+> - `ErrorCode` 除“机器分派键”外应被视为“静态文档索引”：需要配套 ErrorCode Registry（SOP/示例/恢复路径），并提供 `help(code)` 类入口把运行时错误闭环到文档与处置流程。

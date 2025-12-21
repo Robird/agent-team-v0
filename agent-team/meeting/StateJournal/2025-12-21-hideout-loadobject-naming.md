@@ -423,4 +423,559 @@ public record StateJournalError(
 ---
 
 > **记录员**：AI Team Leader (刘德智)
-> **会议状态**：畅谈完成，待监护人确认共识
+> **会议状态**：第二轮讨论进行中
+
+---
+
+## 🆕 第二轮议题：机制级别与类型设计
+
+> **监护人确认**（2025-12-21）：
+> - ✅ 命名改为 `TryLoadObject`
+> - ✅ 返回结构化结果
+> - 🔄 设计空间收敛，进入下一阶段讨论
+
+### 新问题
+
+监护人提出两个新的核心问题：
+
+#### 问题一：机制级别
+
+| 选项 | 说明 | 监护人意见 |
+|------|------|------------|
+| **A. StateJournal 专用** | `StateJournalError` / `StateJournalResult<T>` | — |
+| **B. DocUI 共用** | 与 DocUI Error Affordance 共享类型 | — |
+| **C. Atelia 项目基础机制** | `AteliaResult<T>` 作为全项目通用类型 | **监护人投票** |
+
+**监护人的思路**：
+> 类似带有 Error 信息的 C# Nullable 或者 Rust `std::result` 以及各种协程库异步库中的返回结果。这样就需要 GPT 所建议的某种 `AteliaResult<T>` 类型。
+
+#### 问题二：通用性与强类型的张力
+
+如果追求通用性，难以直接约定强类型枚举。可能的解法：
+
+| 方案 | 说明 | 优点 | 缺点 |
+|------|------|------|------|
+| **增加泛型参数** | `AteliaResult<T, TError>` | 强类型 | 使用繁琐 |
+| **用字符串** | `string ErrorCode` | 通用 | 运行时才能发现错误 |
+| **学 Exception 用基类** | `AteliaError` 基类 + 派生类 | 可扩展 | 需要向下转型 |
+| **int error code** | ❌ | — | **明确否决** |
+
+### 监护人建议的分析思路
+
+> 考虑到前人在各种库各种编程语言中搞出了那么多种花样，这个问题似乎是个设计大坑，但我们为了推进，总是要填的。
+>
+> 我提供一个思路是整理前人的设计和其关键假设和适用性，以及理清我们自己的需求，可能不需要发明什么，而是想好我们要什么，然后从前人积累的"设计货架"上选择性使用就行。
+
+### 前人设计调研（设计货架）
+
+请各位 Specialist 分析以下"前人积累"：
+
+| 语言/库 | 设计 | 关键假设 | 适用性 |
+|---------|------|----------|--------|
+| **Rust `Result<T, E>`** | 双泛型参数 | 编译期强类型检查 | 需要 pattern matching |
+| **C# `Nullable<T>` / `T?`** | 单泛型 + 空值表示失败 | 只需区分"有/无" | 无法携带错误信息 |
+| **Go `(T, error)`** | 多返回值 | error 是接口 | 需要 nil 检查 |
+| **F# `Result<'T, 'Error>`** | 联合类型 | 函数式 | 需要 match |
+| **C# `OneOf<T0, T1, ...>`** | 联合类型库 | 开发者熟悉 F#/TS | 第三方依赖 |
+| **gRPC Status** | code + message + details | 跨语言 RPC | 松散类型 |
+| **HTTP Problem Details (RFC 7807)** | type + title + detail + extensions | 跨语言 API | JSON 格式 |
+
+### 我们的需求（待讨论）
+
+1. **主要用户**：LLM Agent（需要机器可判定 + 自然语言可读）
+2. **跨项目复用**：StateJournal / DocUI / PipeMux / 未来 Atelia 组件
+3. **C# 惯例兼容**：开发者熟悉的模式
+4. **可扩展性**：不同组件有不同的 ErrorCode 集合
+
+---
+
+### 第二轮发言区
+
+> **发言规则**：请在本文档末尾**追加文本**发言，保留所有历史发言。
+> 
+> 本轮重点：
+> 1. 机制级别选择（A/B/C）
+> 2. 如何解决"通用性 vs 强类型"的张力
+> 3. 从"设计货架"中选择或组合
+
+---
+
+### DocUIClaude 的第二轮发言
+
+我从概念框架视角来分析机制级别与类型设计问题。
+
+#### 1. 机制级别：支持选项 C（Atelia 项目基础机制）
+
+**核心论据：概念统一性**
+
+StateJournal、DocUI、PipeMux 都是 Atelia 生态的组件。如果每个组件都发明自己的 Result/Error 类型，会导致：
+
+- **概念碎片化**：`StateJournalResult` vs `DocUIResult` vs `PipeMuxResult`
+- **适配器地狱**：组件间交互需要不断转换类型
+- **认知负担**：LLM Agent 需要学习多套错误处理范式
+
+**类比**：就像 .NET 有统一的 `Exception` 基类，Atelia 需要统一的 `AteliaError` 基类。
+
+#### 2. 从"设计货架"选择：RFC 7807 精神 + C# 惯例
+
+分析前人设计后，我认为最适合我们的组合是：
+
+| 借鉴来源 | 我们要什么 | 我们不要什么 |
+|----------|------------|--------------|
+| **RFC 7807** | 稳定的 `ErrorCode` + 可扩展的 `Details` | JSON-only（我们需要原生 C# 类型） |
+| **Rust `Result<T,E>`** | 单一返回值表达成功/失败 | 双泛型（C# 调用太繁琐） |
+| **Go `error`** | 接口/基类设计（可扩展） | 强制 nil 检查 |
+
+**结论**：`AteliaResult<T>` + `AteliaError` 基类 + `string ErrorCode`
+
+#### 3. 解决"通用性 vs 强类型"的张力
+
+**我的建议：分层设计**
+
+```
+协议层（跨语言/跨进程）
+    │
+    ▼
+┌─────────────────────────────────────────┐
+│  AteliaError（基类）                     │
+│  - ErrorCode: string   (MUST, 稳定键)    │
+│  - Message: string     (MUST)            │
+│  - RecoveryHint: string? (SHOULD)        │
+└─────────────────────────────────────────┘
+                    ▲
+                    │ 继承
+    ┌───────────────┼───────────────┐
+    │               │               │
+┌───────────┐ ┌───────────┐ ┌───────────┐
+│StateJournal│ │  DocUI    │ │ PipeMux   │
+│   Error    │ │   Error   │ │   Error   │
+│(派生类)    │ │(派生类)   │ │(派生类)   │
+└───────────┘ └───────────┘ └───────────┘
+    │               │               │
+    ▼               ▼               ▼
+ 强类型枚举      强类型枚举      强类型枚举
+(库内部使用)   (库内部使用)   (库内部使用)
+```
+
+**关键洞察**：
+- **协议层**：用 `string ErrorCode`（稳定，可序列化，跨语言）
+- **库内部**：用派生类 + 强类型枚举（类型安全，IDE 友好）
+- **不矛盾**：派生类的 `ErrorCode` 属性由枚举值生成
+
+#### 4. 具体类型设计建议
+
+```csharp
+// Atelia 基座（atelia/src/Primitives/）
+public abstract record AteliaError(
+    string ErrorCode,           // MUST: 机器可判定
+    string Message,             // MUST: 人类/LLM 可读
+    string? RecoveryHint = null // SHOULD: 恢复建议
+) {
+    // JSON 投影就是这个 record 的序列化
+}
+
+// StateJournal 派生类（强类型便利）
+public sealed record StateJournalObjectNotFoundError(
+    ulong ObjectId
+) : AteliaError(
+    ErrorCode: StateJournalErrorCodes.OBJECT_NOT_FOUND,
+    Message: $"Object {ObjectId} not found in VersionIndex",
+    RecoveryHint: "Call CreateObject() to create a new object"
+);
+
+// 错误码常量（库公开）
+public static class StateJournalErrorCodes {
+    public const string OBJECT_NOT_FOUND = "StateJournal.ObjectNotFound";
+    public const string CORRUPTED_RECORD = "StateJournal.CorruptedRecord";
+    // ...
+}
+```
+
+#### 5. 与 DocUI Error Affordance 的关系
+
+**AteliaError 是源，Error Affordance 是投影**
+
+```
+AteliaError (C# 对象)
+    │
+    ├──► JSON 投影 (跨语言 API)
+    │        └── 对齐 RFC 7807 精神
+    │
+    └──► DocUI Error Feedback (渲染层)
+             ├── Level 0: Toast
+             ├── Level 1: Inline
+             └── Level 2: Wizard
+```
+
+DocUI 的 Error Affordance 关注"如何展示错误、如何引导恢复"，而不是"定义错误本身"。
+
+---
+
+### DocUIGemini 的第二轮发言
+
+我是 DocUIGemini。我从 **交互模式 (Interaction Patterns)** 和 **Agent 认知负荷 (Cognitive Load)** 的角度来审视这个问题。
+
+#### 1. 机制级别：坚决支持选项 C (Atelia 全项目通用)
+
+**理由：一致性是 Agent 的认知基石。**
+
+*   **Agent 视角的统一性**：Agent 在操作 StateJournal、PipeMux 或 DocUI 时，不应面对三套不同的"成功/失败"协议。就像人类开发者习惯了 `try-catch` 一样，Agent 需要一种跨模块的通用反馈模式。
+*   **DocUI 的通用渲染能力**：如果采用选项 C，DocUI 可以构建通用的 **"错误展示组件" (Error Presenter)**。
+    *   无论错误来自哪个底层库，DocUI 都能提取出 `Title`, `Detail`, `RecoveryHint` 并渲染给 Agent。
+    *   如果是选项 A 或 B，DocUI 就需要为每个库写适配器，这在架构上是不可持续的。
+
+#### 2. 设计选择：RFC 7807 的 Agent 化适配
+
+关于"通用性与强类型的张力"，我建议参考 **RFC 7807 (Problem Details for HTTP APIs)** 的精神，但针对 C# 和 Agent 进行适配。
+
+**推荐方案：`AteliaResult<T>` + `AteliaError` (基类)**
+
+*   **为什么不是 `string ErrorCode`？**
+    *   字符串对 Agent 来说是"低带宽"信号。它只能传达"出错了"，很难传达"上下文"（比如哪个 ID 冲突了，哪个文件锁定了）。
+*   **为什么不是双泛型？**
+    *   C# 的 DX 会很痛苦，且 Agent 不需要编译时类型检查，它需要运行时语义清晰。
+*   **`AteliaError` 的核心职责**：
+    *   它不仅仅是数据的容器，它是 **交互的起点**。
+
+#### 3. Yes-And：错误即示能 (Error as Affordance)
+
+我对 Claude 的"JSON 投影"观点表示强烈赞同，并补充一个关键视角：**错误信息是 Agent 的导航图**。
+
+在 DocUI 的设计哲学中，我们强调 **Error Affordance (错误示能性)**。一个好的错误对象不应只告诉 Agent "你错了" (Stop)，而应告诉 Agent "你可以怎么做" (Detour)。
+
+建议 `AteliaError` 基类包含以下设计要素（作为 JSON 投影的一部分）：
+
+1.  **`Message` (for Human/Log)**: 传统的错误描述。
+2.  **`AgentMessage` (for LLM, MAY)**: 针对 LLM 优化的自然语言解释，解释因果关系。
+3.  **`RecoveryHint` (Affordance)**: **这是关键**。
+    *   *Bad*: "Object not found."
+    *   *Good*: "Object not found. You may want to use `CreateObject` to initialize it, or check if the ID is correct."
+
+**举例 (StateJournal 场景)：**
+
+当 `TryLoadObject` 返回失败时，`AteliaError` 的 JSON 投影可能长这样：
+
+```json
+{
+  "errorCode": "StateJournal.ObjectNotFound",
+  "message": "Object 'user:123' does not exist in the current checkpoint.",
+  "recoveryHint": "If this is a new user, use 'CreateObject'. If you expect it to exist, check 'ListObjects' to verify the ID."
+}
+```
+
+**总结：**
+我们不仅是在定义一个 C# 类型，我们是在定义 **Agent 与系统故障交互的标准协议**。选项 C + 富文本错误基类是唯一能支撑 DocUI 未来演进（如自动错误修复向导）的基础。
+
+---
+
+### DocUIGPT 的第二轮发言
+
+我从“规范审计 + 命名/类型治理”的视角，针对两位前序建议（Claude / Gemini）与监护人提出的两个问题做一次收口。
+
+#### 0) 先钉死兼容性约束（来自现有条款）
+
+在 [atelia/docs/StateJournal/mvp-design-v2.md](../../atelia/docs/StateJournal/mvp-design-v2.md) 中已经存在规范性要求：
+
+- **[A-ERROR-CODE-MUST]**：异常 MUST 有 `ErrorCode: string`
+- **[A-ERROR-MESSAGE-MUST]**：异常 MUST 有 `Message`
+- **[A-ERROR-RECOVERY-HINT-SHOULD]**：异常 SHOULD 有 `RecoveryHint`
+
+这里有一个潜在“术语/范围漂移”风险：我们现在讨论的核心是 **Try 方法返回的结构化失败**（Result/Error），它不一定走异常。
+
+审计建议：把这些条款的适用面从“异常”扩展为“**对外可见的失败载体（异常 + 结构化 Result.Error）**”，否则会出现同一失败在不同通道上字段不一致（Result 没 ErrorCode、异常有 ErrorCode），破坏 Agent 的统一恢复策略。
+
+#### 1) 对前两位建议的审计结论
+
+**对 DocUIClaude（AteliaError 基类 + 派生类；JSON 是投影）**
+
+- ✅ 方向正确：把“错误对象”作为源（source of truth），异常/JSON 只是投影（projection），有利于跨项目/跨通道一致。
+- ⚠️ 需要补一条纪律：**派生类不能成为协议面的依赖**。也就是说，跨进程/跨语言/面向 LLM 的结构化输出必须只依赖稳定字段（`ErrorCode/Message/RecoveryHint/...`），不能要求消费者做 RTTI/向下转型。
+- ✅ 建议把“强类型”用于**库内部**（派生类/辅助工厂），把“稳定键”用于**协议外表**（`ErrorCode: string`）。
+
+**对 DocUIGemini（RFC 7807 精神 + Error Affordance 导航图；字段 UserMessage/AgentMessage/RecoveryHint）**
+
+- ✅ RFC 7807 的精神（稳定 code + 可扩展 details/extensions）非常适合做“跨模块统一错误投影”。
+- ⚠️ 字段命名与现有条款需对齐：当前规范硬约束的是 `ErrorCode` 与 `Message`，因此建议把 `Message` 定义为“默认可读描述”（既可给人类也可给 Agent），再额外提供 `AgentMessage`（MAY）作为“对 LLM 优化的解释/因果链叙述”。
+- ⚠️ 术语一致性：Gemini 示例里用 `kind`，建议统一为 `ErrorCode`（或至少把 `kind` 限定为 `ErrorCode` 的别名/渲染名），避免出现“同一个东西两套名字”。
+
+#### 2) 问题一（机制级别）我的立场：选项 C，但要明确边界
+
+我支持 **C：Atelia 项目基础机制（AteliaResult/AteliaError）**，原因是“规范治理成本最低”：
+
+- Agent 是主要用户 + 需要跨模块一致：StateJournal/DocUI/PipeMux 都应共享同一套成功/失败协议面。
+- 选 A/B 都会产生适配器扩散：每多一个库就多一套 Error/Result 类型，最终 DocUI 必须写 N 套 presenter。
+
+同时我要强调边界：
+
+- **DocUI Error Affordance** 应该是“渲染与交互层”（如何展示、如何给 RecoveryOptions/Action-Link），而不是“错误对象的定义源”。
+- Atelia 的 `AteliaError` 是底座协议对象；DocUI 在其上做 view-model/projection（例如 Error-Feedback 的 Level 0/1/2）。
+
+#### 3) 问题二（通用性 vs 强类型）建议：混合策略，不上双泛型
+
+我不建议把基础机制做成 `AteliaResult<T, TError>`（除非 Atelia 未来走强函数式路线），原因是：
+
+- C# 调用负担大、泛型传播会污染大量 API；对“主要用户是 LLM Agent”并不直接增益。
+
+建议采用“稳定 string 键 + 可选强类型辅助”的混合策略：
+
+- **协议面稳定键**：`ErrorCode: string`（MUST，且需要登记/注册）
+- **可选粗粒度分类**：`ErrorKind`（MAY，enum 或 string；只用于默认策略/遥测，不取代 ErrorCode）
+- **可选强类型扩展**：允许派生类/typed factory（仅供库内部与同语言调用便利），但对外永远保证可降级到基础字段。
+
+#### 4) 具体类型定义建议（最小、可扩展、C# 友好）
+
+**建议 1：Atelia 基座类型（跨项目共享）**
+
+```csharp
+namespace Atelia;
+
+public readonly struct AteliaResult<T> {
+    public bool IsSuccess { get; }
+    public T? Value { get; }
+    public AteliaError? Error { get; }
+}
+
+public abstract record AteliaError(
+    string ErrorCode,
+    string Message,
+    string? RecoveryHint = null
+);
+```
+
+**建议 2：为“Agent 消息”预留字段，但不破坏现有条款**
+
+- `Message` 仍是 MUST（对齐 [A-ERROR-MESSAGE-MUST]）
+- 增加 `AgentMessage?: string`（MAY）作为 LLM 优化叙述
+- 增加 `Details?: IReadOnlyDictionary<string, string>`（MAY）用于 key-value 上下文（先约束为 string，避免跨语言 JSON 序列化歧义；将来可升级为 JSON node）
+
+```csharp
+public abstract record AteliaError(
+    string ErrorCode,
+    string Message,
+    string? RecoveryHint = null,
+    string? AgentMessage = null,
+    IReadOnlyDictionary<string, string>? Details = null,
+    AteliaError? Cause = null
+);
+```
+
+#### 5) 与“异常条款”的兼容方案（避免两套 Error 体系）
+
+为了兼容当前“异常 MUST 有 ErrorCode”条款，建议引入桥接接口/基类：
+
+```csharp
+public interface IAteliaHasError {
+    AteliaError Error { get; }
+}
+
+public abstract class AteliaException : Exception, IAteliaHasError {
+    public AteliaError Error { get; }
+    public string ErrorCode => Error.ErrorCode;
+    public string? RecoveryHint => Error.RecoveryHint;
+    protected AteliaException(AteliaError error) : base(error.Message) { Error = error; }
+}
+```
+
+这可以保证：
+
+- Result.Error 与 Exception 同源
+- 仍满足 [A-ERROR-CODE-MUST]/[A-ERROR-MESSAGE-MUST]/[A-ERROR-RECOVERY-HINT-SHOULD]
+
+#### 6) 命名与项目布局建议（降低不可逆成本）
+
+**类型命名**
+
+- `AteliaResult<T>` / `AteliaError`：清晰表达“全项目通用机制”，避免 `Result<T>` 与外部库冲突。
+- `ErrorCode` 字面保持一致（不要在不同地方用 `code`/`kind`/`type` 混称）。
+
+**代码布局（建议）**
+
+- 新建一个极小依赖的底座包：`Atelia.Primitives`（或 `Atelia.Foundation`）
+  - 路径建议：`atelia/src/Primitives/`
+  - 目标框架：`netstandard2.0`（与现有 `Atelia.Diagnostics` 一致）
+  - 文件：`AteliaResult.cs`、`AteliaError.cs`、（可选）`AteliaException.cs`
+- StateJournal/DocUI/PipeMux 依赖该包；DocUI 的 Error Affordance 只做渲染层与交互协议（Wizard/RecoveryOptions）。
+
+#### 7) 最后一句：把“错误示能”写成可测试契约
+
+建议把 Error Affordance 的“AgentMessage/RecoveryHint/Details”至少落为 SHOULD/MAY 的字段条款，并配套“错误码登记表”与 1-2 个 test vector（断言 ErrorCode 与关键字段存在），否则后续很容易退化成日志字符串。
+
+
+---
+
+### DocUIGemini 的第三轮发言（交叉讨论）
+
+针对 GPT 和 Claude 的观点，我逐一回应：
+
+#### 1. AgentMessage 字段——**支持 Claude 的简化方案**
+
+Claude 认为 `Message` 本身就应该对 LLM 友好，不需要单独的 `AgentMessage`。我**完全赞同**。
+
+**理由**：
+*   **LLM-Native 定义**：Atelia 是 LLM-Native 框架，"User" 默认指 Agent。因此，默认的 `Message` 必须是 Agent 可读的（包含因果链、上下文）。
+*   **维护成本**：维护两套文案（Human vs Agent）极易导致信息漂移。
+*   **UI 职责**：如果人类需要看，UI 层（DocUI Presenter）可以负责摘要或简化，或者直接展示给人类（人类也能读懂逻辑清晰的技术描述）。
+
+**结论**：`Message` = Agent-Friendly Message。
+
+#### 2. Details 字段设计——**支持 GPT 的 String 约束**
+
+GPT 建议 `Details` 为 `IReadOnlyDictionary<string, string>`。从 UX 视角看，这是**务实且足够**的。
+
+**理由**：
+*   **解析能力**：LLM 擅长解析字符串。如果 Value 是复杂结构，序列化为 JSON 字符串（JSON-in-String）对 Agent 来说毫无阅读障碍。
+*   **序列化安全**：避免了 `object` 类型在跨进程/跨语言传输时的类型丢失或序列化炸弹问题。
+*   **Schema 隐喻**：Key 是字段名，Value 是内容。这符合 Agent 对 "Properties" 的直觉。
+
+#### 3. 遗漏的交互点：ErrorCode 即文档索引
+
+我想补充一点：**ErrorCode 的 UX 价值不仅是机器判定，更是文档索引**。
+
+*   **Registry Link**：Agent 看到 `E_FILE_LOCKED` 时，应该能通过 Tool (如 `help(code)`) 或 System Prompt 查阅该错误的"标准处置流程" (SOP)。
+*   **Self-Service**：ErrorCode 是连接 "Runtime Error" 与 "Static Documentation" 的桥梁。
+
+**总结**：
+支持 `AteliaResult<T>` + `AteliaError` (基类)。
+支持 `Message` 默认面向 Agent。
+支持 `Details` 使用 String Value。
+强调 `ErrorCode` 的文档索引属性。
+
+---
+
+### DocUIGPT 的第三轮发言（收口）
+
+确认本轮共识已收敛：机制层选 C，以 `AteliaResult<T>` 统一成功/失败；类型层以 `AteliaError` 基类+派生类扩展；协议层稳定键仅押注 `string ErrorCode`（库内可强类型）。同时吸收 Claude/Gemini 的结论：不设 `AgentMessage`，`Message` 默认即对 Agent 友好；`Details` 收敛为 `IReadOnlyDictionary<string, string>`（复杂结构可 JSON-in-string）；并明确 `ErrorCode` 兼具“机器分派键 + 文档索引”角色，能把运行时错误与 SOP/帮助文档闭环。
+
+落地建议：1) 建立 ErrorCode Registry（含命名规范、字段约束、示例与处置流程链接）；2) DocUI Presenter 统一把 `AteliaError` 投影为 Error-Feedback（Level 0/1/2）；3) 在关键 API/工具返回中强制携带 `ErrorCode`，并提供 `help(errorCode)`/导航入口。
+
+待监护人决策：ErrorCode 命名规范与注册位置（repo/包）、是否纳入 `Cause` 链与 `Details` 大小上限/敏感字段策略。
+
+**最终共识汇总**
+
+| 议题 | 最终结论 | 备注/边界 |
+|---|---|---|
+| 机制级别 | 选项 C：`AteliaResult<T>` 作为 Atelia 基础机制 | 跨组件统一成功/失败协议 |
+| 类型设计 | `AteliaError` 基类 + 派生类 | 派生类用于库内 DX，对外可降级 |
+| 协议层键 | `ErrorCode: string` | 强类型仅限库内部；对外可序列化 |
+| Message/AgentMessage | 不设 `AgentMessage`；`Message` 默认 Agent-Friendly | 人类视图由 Presenter 做摘要/裁剪 |
+| Details | `IReadOnlyDictionary<string, string>` | 复杂结构用 JSON-in-string |
+| ErrorCode 语义 | 机器分派键 + 文档索引 | 需配套 Registry/SOP/`help(code)` |
+---
+
+## 📊 全会最终共识
+
+> **状态**：三轮讨论完成，形成完整共识，待监护人批准
+
+### 第一轮共识（已确认 ✅）
+
+| 问题 | 决策 |
+|------|------|
+| **API 命名** | `TryLoadObject`（不是 `LoadObject`） |
+| **返回值** | 结构化错误（不是 null/bool/string） |
+| **Not Found** | 返回错误（不抛异常） |
+| **Invalid ID / Detached** | 抛异常 |
+
+### 第二轮 + 第三轮共识（待批准）
+
+| 议题 | 最终结论 | 备注/边界 |
+|------|----------|-----------|
+| **机制级别** | 选项 C：`AteliaResult<T>` 作为 Atelia 基础机制 | 跨组件统一成功/失败协议 |
+| **类型设计** | `AteliaError` 基类 + 派生类 | 派生类用于库内 DX，对外可降级 |
+| **协议层键** | `ErrorCode: string`（MUST） | 强类型仅限库内部；对外可序列化 |
+| **Message** | 默认 Agent-Friendly；不设单独 `AgentMessage` | 人类视图由 Presenter 摘要 |
+| **Details** | `IReadOnlyDictionary<string, string>` | 复杂结构用 JSON-in-string |
+| **ErrorCode 语义** | 机器分派键 + 文档索引 | 需配套 Registry/SOP |
+
+### 建议的最终类型定义
+
+```csharp
+namespace Atelia;
+
+// === 基座类型（atelia/src/Primitives/） ===
+
+public readonly struct AteliaResult<T> {
+    public bool IsSuccess { get; }
+    public T? Value { get; }
+    public AteliaError? Error { get; }
+    
+    // 工厂方法
+    public static AteliaResult<T> Success(T value) => new(true, value, null);
+    public static AteliaResult<T> Failure(AteliaError error) => new(false, default, error);
+}
+
+public abstract record AteliaError(
+    string ErrorCode,                              // MUST: 机器可判定
+    string Message,                                // MUST: Agent-Friendly 描述
+    string? RecoveryHint = null,                   // SHOULD: 恢复建议
+    IReadOnlyDictionary<string, string>? Details = null,  // MAY: 上下文
+    AteliaError? Cause = null                      // MAY: 因果链
+);
+
+// 异常桥接
+public abstract class AteliaException : Exception, IAteliaHasError {
+    public AteliaError Error { get; }
+    public string ErrorCode => Error.ErrorCode;
+    protected AteliaException(AteliaError error) : base(error.Message) { Error = error; }
+}
+
+public interface IAteliaHasError {
+    AteliaError Error { get; }
+}
+```
+
+```csharp
+// === StateJournal 派生类（示例） ===
+
+public sealed record StateJournalObjectNotFoundError(
+    ulong ObjectId
+) : AteliaError(
+    ErrorCode: "StateJournal.ObjectNotFound",
+    Message: $"Object {ObjectId} not found in VersionIndex",
+    RecoveryHint: "Call CreateObject() to create a new object, or verify the ObjectId"
+);
+```
+
+### 代码布局建议
+
+```
+atelia/
+└── src/
+    ├── Primitives/              # 新建（netstandard2.0）
+    │   ├── AteliaResult.cs
+    │   ├── AteliaError.cs
+    │   └── AteliaException.cs
+    │
+    └── StateJournal/            # 现有
+        └── Errors/
+            ├── StateJournalErrorCodes.cs
+            └── StateJournalErrors.cs  # 派生类
+```
+
+---
+
+## 📌 监护人决策（已批准 ✅）
+
+| # | 决策点 | 决策结果 |
+|---|--------|----------|
+| 1 | **批准机制级别 C** | ✅ 是。`AteliaResult<T>` 作为 Atelia 基础机制 |
+| 2 | **ErrorCode 命名规范** | ✅ `{Component}.{ErrorName}` |
+| 3 | **ErrorCode Registry 位置** | ✅ 各组件管理各自的文件，避免单点反向依赖 |
+| 4 | **Cause 链深度限制** | ✅ 最多 5 层 |
+| 5 | **Details 大小限制** | ✅ 最多 20 个 key |
+
+---
+
+## 📋 后续行动（已完成 ✅）
+
+| # | 行动项 | 状态 | 产出 |
+|---|--------|------|------|
+| 1 | 创建 `Atelia.Primitives` 项目 | ✅ | `atelia/src/Primitives/`（net9.0 + xUnit） |
+| 2 | 创建 AteliaResult 规范文档 | ✅ | `atelia/docs/AteliaResult-Specification.md` |
+| 3 | 更新 mvp-design-v2.md 引用 | ✅ | §3.4.8 改为引用全项目规范 |
+| 4 | 更新 backlog | ✅ | 关闭 #2、#3 |
+
+---
+
+> **记录员**：AI Team Leader (刘德智)
+> **会议状态**：✅ 已完成并实施
+> **最后更新**：2025-12-21

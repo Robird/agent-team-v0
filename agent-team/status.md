@@ -3,7 +3,21 @@
 > Team Leader 认知入口之一。只记录"现在在哪里"的快照指标，不记录待办事项（见 `todo.md`）。
 > 每次 runSubAgent 完成或里程碑变化时更新。
 
-## 最近更新 (2025-12-22)
+## 最近更新 (2025-12-21)
+
+### AteliaResult 规范化完成 ✅ 🆕
+- **决策确认**：`AteliaResult<T>` 升级为 Atelia 全项目基础机制
+- **代码实现**：`atelia/src/Primitives/`（net9.0 + xUnit，27 测试全通过）
+- **规范文档**：`atelia/docs/AteliaResult-Specification.md`
+- **条款体系**：7 个全项目范围条款（`[ATELIA-ERROR-*]`）
+- **ErrorCode 命名**：`{Component}.{ErrorName}` 格式
+
+| 产出 | 位置 |
+|------|------|
+| 基础类型库 | `atelia/src/Primitives/` |
+| 测试 | `atelia/tests/Primitives.Tests/` |
+| 规范文档 | `atelia/docs/AteliaResult-Specification.md` |
+| 会议记录 | `agent-team/meeting/StateJournal/2025-12-21-hideout-loadobject-naming.md` |
 
 ### StateJournal 迁移完成 ✅
 - **项目更名**：DurableHeap → StateJournal（全票通过）

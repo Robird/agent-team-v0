@@ -18,8 +18,64 @@
 - [ ] atelia-copilot-chat
 - [x] StateJournal — 设计文档修订（共 23 轮）+ 文档瘦身（A1-A9）+ Rationale Stripping + 语义锚点重构 + 决策诊疗室落文（第二批中复杂度）
   - 📍 **2025-12-21 更名**：DurableHeap → StateJournal，迁入 `atelia/docs/StateJournal/`
+- [x] Atelia.Primitives — 基础类型库（AteliaResult、AteliaError、AteliaException）
 
 ## 当前关注
+
+### format.ps1 WSL2 兼容修复 (2025-12-21) ✅
+
+**问题**：从 Windows 迁移到 WSL2 后首次运行 `format.ps1` 脚本失败
+
+**根因**：脚本尝试将 `.editorconfig` 备份到 `gitignore/` 目录，但该目录在 WSL2 环境中不存在（可能是 `.gitignore` 忽略导致未被同步）
+
+**修复**：在 `Copy-Item` 备份前添加目录存在性检查和自动创建
+
+```diff
++    # 确保 gitignore 目录存在（WSL2 环境可能没有）
++    if(-not (Test-Path 'gitignore')){ New-Item -ItemType Directory -Path 'gitignore' | Out-Null }
+     Copy-Item $editorConfig $backup -Force
+```
+
+**验证**：
+- 脚本运行成功，格式化完成 5 个文件
+- Primitives 项目已被 Analyzers.Style 覆盖（通过 Directory.Build.props）
+
+**文件变更**：
+- `atelia/format.ps1` — 1 处修改（添加目录创建逻辑）
+
+---
+
+### Atelia.Primitives 项目创建 (2025-12-21) ✅
+
+根据畅谈会共识（2025-12-21-hideout-loadobject-naming.md），创建 Atelia 项目的基础类型库。
+
+**任务来源**：[秘密基地畅谈会共识](../../meeting/StateJournal/2025-12-21-hideout-loadobject-naming.md) — 机制级别选项 C
+
+**交付物**：
+
+| 文件 | 说明 |
+|------|------|
+| `atelia/src/Primitives/Primitives.csproj` | 项目文件 (net9.0) |
+| `atelia/src/Primitives/IAteliaHasError.cs` | 携带错误的对象接口 |
+| `atelia/src/Primitives/AteliaError.cs` | 错误基类 (abstract record) |
+| `atelia/src/Primitives/AteliaResult.cs` | 结果类型 (readonly struct) |
+| `atelia/src/Primitives/AteliaException.cs` | 异常桥接基类 |
+| `atelia/tests/Primitives.Tests/Primitives.Tests.csproj` | 测试项目 (xUnit) |
+| `atelia/tests/Primitives.Tests/AteliaResultTests.cs` | 27 个测试用例 |
+
+**类型设计要点**：
+- `AteliaResult<T>` 是 `readonly struct`，避免装箱
+- `AteliaError` 是 `abstract record`，支持派生类扩展
+- `Cause` 链深度验证（`IsCauseChainTooDeep()`, `GetCauseChainDepth()`）
+- `AteliaException` 实现 `IAteliaHasError`，桥接异常和结构化错误
+
+**测试结果**：
+- Build: ✅ `dotnet build Atelia.sln -c Release` 成功
+- Test: ✅ 27/27 测试通过
+
+**Handoff**: `agent-team/handoffs/2025-12-21-primitives-IMP.md`
+
+---
 
 ### StateJournal MVP v2 设计文档第二批中复杂度修订 (2025-12-21) ✅
 

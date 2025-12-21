@@ -404,6 +404,18 @@ graph TD
 - 若公开 API 采用 `TryLoadObject`，规范应把 Try 语义写死为“预期失败不抛异常、失败通过结构化错误返回”，否则与 .NET 常识心智模型冲突。
 - 现有规范条款要求 `ErrorCode` 为 string（且需登记），适合作为**稳定、可测试、可文档化**的机器分派键；建议把 `ErrorKind` 仅作为粗粒度分类（更利于策略与遥测），并明确其是否进入对外协议面（若要跨进程/跨语言传递，优先用 string 表示）。
 
+### 2025-12-21 补充：AteliaResult/AteliaError 与 Error-Feedback 的分层（机制 SSOT vs 呈现/向导）
+
+- 机制层（Atelia）：`AteliaResult<T>` + `AteliaError` 解决“跨模块成功/失败统一协议”，面向 C# 调用与跨语言序列化；其稳定键应为 `ErrorCode: string`。
+- 呈现层（DocUI/Error-Feedback）：把 `AteliaError` 投影成 Error Affordance（Level 0/1/2）的渲染与可执行恢复选项（Action-Link/Micro-Wizard）。DocUI 不应成为错误对象的定义源，否则会反向耦合底层库。
+- RFC 7807 的借鉴点更接近“Problem Details + extensions”的数据模型：稳定 code/title/detail + 可扩展 details；在本体系里应映射为 `ErrorCode/Message/RecoveryHint/Details`，并保持与现有条款命名一致（避免 `code/kind/type` 混称）。
+
+### 2025-12-21 补充：Message/Details/ErrorCode 的“Agent 协议面”收口
+
+- `Message` 默认即 Agent-Friendly（LLM 可读、含必要因果/上下文），不设 `AgentMessage` 双轨，避免文案漂移；人类可读性由 DocUI Presenter 做摘要/分层。
+- `Details` 优先收敛为 `IReadOnlyDictionary<string, string>`：跨进程/跨语言序列化稳定、避免 `object` 语义炸裂；复杂结构采用 JSON-in-string。
+- `ErrorCode` 除机器分派键外应被视为“静态文档索引”（Runtime → SOP/Registry）：推荐配套 ErrorCode Registry + `help(errorCode)`/导航入口以实现自助恢复闭环。
+
 ### 2025-12-20 补充：API 回滚语义的“baseline 缺失”规则（可审计写法）
 
 - 当一个 API 同名覆盖多对象生命周期（Persistent/Transient）时，规范必须先钉死“回滚目标 baseline 是否存在”。

@@ -14,6 +14,45 @@ DocOps - 文档与索引管理专家，负责维护团队的集体记忆和认�
 
 ## 最近工作
 
+### 2025-12-21 - StateJournal mvp-design-v2.md §3.4.8 引用更新
+- **任务**: 将 Error Affordance 部分改为引用全项目规范
+- **修改文件**: `atelia/docs/StateJournal/mvp-design-v2.md`
+- **变更内容**:
+  - 添加规范提升通知 banner，引用 `AteliaResult-Specification.md`
+  - 添加条款映射表，说明原 StateJournal 本地条款与新全项目条款的对应关系
+  - 更新 ErrorCode 格式：从 `SCREAMING_SNAKE_CASE` 改为 `StateJournal.{ErrorName}` 格式
+  - 保留 StateJournal 特有的 ErrorCode 注册表
+  - 保留异常示例（更新 ErrorCode 格式）
+- **删除的重复内容**:
+  - 结构化错误字段定义（已在全项目规范中定义）
+  - 本地条款定义 `[A-ERROR-CODE-MUST]` 等（改为引用）
+- **状态**: ✅ 完成
+
+### 2025-12-21 - AteliaResult 全项目规范文档
+- **任务**: 创建 `atelia/docs/AteliaResult-Specification.md`
+- **来源**: LoadObject 命名与返回值设计畅谈会共识
+- **文档内容**:
+  - §1 概述：定位、设计目标、核心洞察
+  - §2 规范语言（RFC 2119）
+  - §3 类型定义：`AteliaResult<T>`、`AteliaError`、`AteliaException`、`IAteliaHasError`
+  - §4 规范条款（从 StateJournal 提升为全项目范围）
+  - §5 使用规范：Result vs 异常选择、派生类模式、JSON 序列化
+  - §6 与 StateJournal 规范的关系
+  - §7 代码位置
+- **定义的条款**:
+  - [ATELIA-ERROR-CODE-MUST]
+  - [ATELIA-ERROR-MESSAGE-MUST]
+  - [ATELIA-ERROR-RECOVERY-HINT-SHOULD]
+  - [ATELIA-ERROR-DETAILS-MAY]
+  - [ATELIA-ERROR-CAUSE-MAY]
+  - [ATELIA-ERRORCODE-NAMING]
+  - [ATELIA-ERRORCODE-REGISTRY]
+- **约束**:
+  - Cause 链最多 5 层
+  - Details 最多 20 个 key
+  - ErrorCode 格式：`{Component}.{ErrorName}`
+- **状态**: ✅ 完成
+
 ### 2025-12-21 - DurableHeap → StateJournal 更名迁移
 - **任务**: 响应项目更名通知，更新所有文档索引中的 DurableHeap 引用
 - **变更摘要**:
