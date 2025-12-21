@@ -1,6 +1,11 @@
 # Implementer 认知索引
 
 > 最后更新: 2025-12-21
+> 
+> ⚠️ **更名通知**：DurableHeap → StateJournal（2025-12-21）
+> - 新路径：`atelia/docs/StateJournal/`
+> - 代码目标：`atelia/src/StateJournal/`
+> - 下方历史记录中的 "DurableHeap" 章节标题保留原名（作为历史事实）
 
 ## 我是谁
 编码实现专家，负责根据设计进行代码实现、移植和修复。
@@ -11,11 +16,17 @@
 - [ ] PieceTreeSharp
 - [x] PipeMux — 实现管理命令 `:list`, `:ps`, `:stop`, `:help`
 - [ ] atelia-copilot-chat
-- [x] DurableHeap — 设计文档修订（共 23 轮）+ 文档瘦身（A1-A9）+ Rationale Stripping + 语义锚点重构 + 决策诊疗室落文（第二批中复杂度）
+- [x] StateJournal — 设计文档修订（共 23 轮）+ 文档瘦身（A1-A9）+ Rationale Stripping + 语义锚点重构 + 决策诊疗室落文（第二批中复杂度）
+  - 📍 **2025-12-21 更名**：DurableHeap → StateJournal，迁入 `atelia/docs/StateJournal/`
 
 ## 当前关注
 
-### DurableHeap MVP v2 设计文档第二批中复杂度修订 (2025-12-21) ✅
+### StateJournal MVP v2 设计文档第二批中复杂度修订 (2025-12-21) ✅
+
+> ⚠️ **更名通知（2025-12-21）**：DurableHeap 已更名为 **StateJournal** 并迁入 atelia repo。
+> - 新路径：`atelia/docs/StateJournal/`
+> - 命名空间：`Atelia.StateJournal`
+> - 代码目标位置：`atelia/src/StateJournal/`
 
 根据决策诊疗室共识（2025-12-21-decision-clinic-state-and-error.md），执行第二批中复杂度修订。
 
@@ -61,13 +72,13 @@
 | Semantics | `[S-TRANSIENT-DISCARD-OBJECTID-QUARANTINE]` | P1 |
 
 **文件变更**：
-- 修改：`DurableHeap/docs/mvp-design-v2.md`（6 处修改，约 +70 行）
+- 修改：`atelia/docs/StateJournal/mvp-design-v2.md`（6 处修改，约 +70 行）
 
 **Handoff**: `agent-team/handoffs/2025-12-21-decision-clinic-impl-IMP.md`
 
 ---
 
-### DurableHeap MVP v2 设计文档第一批低复杂度修订 (2025-12-21) ✅
+### StateJournal MVP v2 设计文档第一批低复杂度修订 (2025-12-21) ✅
 
 根据畅谈会共识（2025-12-20-secret-base-durableheap-mvp-v2-final-audit.md），执行第一批低复杂度修订。
 
@@ -96,11 +107,11 @@
 - grep 验证无残留的 "Modified Object Set" 术语
 
 **文件变更**：
-- 修改：`DurableHeap/docs/mvp-design-v2.md`（3 处修改）
+- 修改：`atelia/docs/StateJournal/mvp-design-v2.md`（3 处修改）
 
 ---
 
-### DurableHeap 条款 ID 语义锚点重构 (2025-12-21) ✅
+### StateJournal 条款 ID 语义锚点重构 (2025-12-21) ✅
 
 根据命名工作坊共识（2025-12-21-semantic-anchor-naming-workshop.md），将 MVP v2 设计文档中的数字条款 ID 批量替换为稳定语义锚点。
 
@@ -133,11 +144,11 @@
 - 所有 43 个条款均已替换
 
 **文件变更**：
-- 修改：`DurableHeap/docs/mvp-design-v2.md`（54 处条款 ID 替换 + 规则说明更新）
+- 修改：`atelia/docs/StateJournal/mvp-design-v2.md`（54 处条款 ID 替换 + 规则说明更新）
 
 ---
 
-### DurableHeap P1 消灭双写 (2025-12-21) ✅
+### StateJournal P1 消灭双写 (2025-12-21) ✅
 
 根据畅谈会共识（2025-12-20-secret-base-mvp-v2-paradox.md）P1 任务，消灭双写。
 
@@ -186,11 +197,11 @@ HeadLen := u32 LE        (* == TailLen, record total bytes *)
 - 净减少：**-66 行**（-5.4%）
 
 **文件变更**：
-- 修改：`DurableHeap/docs/mvp-design-v2.md`（-66 行）
+- 修改：`atelia/docs/StateJournal/mvp-design-v2.md`（-66 行）
 
 ---
 
-### DurableHeap P0 Rationale Stripping (2025-12-21) ✅
+### StateJournal P0 Rationale Stripping (2025-12-21) ✅
 
 根据畅谈会共识（2025-12-20-secret-base-mvp-v2-paradox.md）P0 任务，执行 Rationale Stripping。
 
@@ -217,14 +228,14 @@ HeadLen := u32 LE        (* == TailLen, record total bytes *)
 | 步骤精简 | 4 | CommitAll 步骤 1 精简 |
 
 **文件变更**：
-- 修改：`DurableHeap/docs/mvp-design-v2.md`（-82 行）
-- 修改：`DurableHeap/docs/decisions/mvp-v2-decisions.md`（+59 行 §4 Rationale Archive）
+- 修改：`atelia/docs/StateJournal/mvp-design-v2.md`（-82 行）
+- 修改：`atelia/docs/StateJournal/decisions/mvp-v2-decisions.md`（+59 行 §4 Rationale Archive）
 
 **Handoff**: `agent-team/handoffs/2025-12-21-rationale-strip-IMP.md`
 
 ---
 
-### DurableHeap 设计文档瘦身 — A7 任务：添加 Wire Format ASCII 图 (2025-12-20) ✅
+### StateJournal 设计文档瘦身 — A7 任务：添加 Wire Format ASCII 图 (2025-12-20) ✅
 
 根据畅谈会共识（2025-12-20-secret-base-mvp-v2-compression.md）批准的文档瘦身任务，执行 A7：添加 Wire Format ASCII 图表。
 
@@ -250,11 +261,11 @@ HeadLen := u32 LE        (* == TailLen, record total bytes *)
 - 新文档行数：1306 行
 
 **文件变更**：
-- 修改：`DurableHeap/docs/mvp-design-v2.md`（4 处图表添加）
+- 修改：`atelia/docs/StateJournal/mvp-design-v2.md`（4 处图表添加）
 
 ---
 
-### DurableHeap 设计文档瘦身 — A4 任务：给现有 MUST/SHOULD 条款编号 (2025-12-20) ✅
+### StateJournal 设计文档瘦身 — A4 任务：给现有 MUST/SHOULD 条款编号 (2025-12-20) ✅
 
 根据畅谈会共识（2025-12-20-secret-base-mvp-v2-compression.md）批准的文档瘦身任务，执行 A4：为规范性条款添加编号。
 
@@ -299,12 +310,12 @@ HeadLen := u32 LE        (* == TailLen, record total bytes *)
 - **R-03**: 崩溃恢复截断后文件仍以 Magic 分隔符结尾
 
 **文件变更**：
-- 修改：`DurableHeap/docs/mvp-design-v2.md`（32 处条款编号添加）
-- 修改：`DurableHeap/docs/mvp-test-vectors.md`（条款映射表更新为 32 条）
+- 修改：`atelia/docs/StateJournal/mvp-design-v2.md`（32 处条款编号添加）
+- 修改：`atelia/docs/StateJournal/mvp-test-vectors.md`（条款映射表更新为 32 条）
 
 ---
 
-### DurableHeap 设计文档瘦身 — A9 任务：合并 Appendix B 到独立 test vectors 文件 (2025-12-20) ✅
+### StateJournal 设计文档瘦身 — A9 任务：合并 Appendix B 到独立 test vectors 文件 (2025-12-20) ✅
 
 根据畅谈会共识（2025-12-20-secret-base-mvp-v2-compression.md）批准的文档瘦身任务，执行 A9：合并 Appendix B 到独立 test vectors 文件。
 
@@ -320,16 +331,16 @@ HeadLen := u32 LE        (* == TailLen, record total bytes *)
 - 主文档减少：约 25 行（Appendix B 骨架表格替换为引用）
 
 **文件变更**：
-- 修改：`DurableHeap/docs/mvp-test-vectors.md`
+- 修改：`atelia/docs/StateJournal/mvp-test-vectors.md`
   - 新增条款编号映射表（7 条映射）
   - 术语修正：`EpochMapVersionPtr` → `VersionIndexPtr`
   - 术语修正：`DICT-OK-006（EpochMap` → `DICT-OK-006（VersionIndex`
-- 修改：`DurableHeap/docs/mvp-design-v2.md`
+- 修改：`atelia/docs/StateJournal/mvp-design-v2.md`
   - Appendix B 替换为引用
 
 ---
 
-### DurableHeap 设计文档瘦身 — A6 任务：建立 Test Vectors 骨架 (2025-12-20) ✅
+### StateJournal 设计文档瘦身 — A6 任务：建立 Test Vectors 骨架 (2025-12-20) ✅
 
 根据畅谈会共识（2025-12-20-secret-base-mvp-v2-compression.md）批准的文档瘦身任务，执行 A6：建立 Test Vectors 骨架。
 
@@ -352,12 +363,12 @@ HeadLen := u32 LE        (* == TailLen, record total bytes *)
 - 文档总行数：1258 行
 
 **文件变更**：
-- 修改：`DurableHeap/docs/mvp-design-v2.md`
+- 修改：`atelia/docs/StateJournal/mvp-design-v2.md`
   - 在 Appendix A 末尾之后新增 Appendix B（40 行）
 
 ---
 
-### DurableHeap 设计文档瘦身 — A5 任务：伪代码移到附录 (2025-12-20) ✅
+### StateJournal 设计文档瘦身 — A5 任务：伪代码移到附录 (2025-12-20) ✅
 
 根据畅谈会共识（2025-12-20-secret-base-mvp-v2-compression.md）批准的文档瘦身任务，执行 A5：将伪代码移到附录。
 
@@ -379,13 +390,13 @@ HeadLen := u32 LE        (* == TailLen, record total bytes *)
 - 文档总行数：1218 行（从 1198 行变化，因附录新增）
 
 **文件变更**：
-- 修改：`DurableHeap/docs/mvp-design-v2.md`
+- 修改：`atelia/docs/StateJournal/mvp-design-v2.md`
   - §3.4.4 精简为 21 行摘要
   - 新增 Appendix A（161 行）
 
 ---
 
-### DurableHeap 设计文档瘦身 — A3 任务：条款编号分类定义 (2025-12-20) ✅
+### StateJournal 设计文档瘦身 — A3 任务：条款编号分类定义 (2025-12-20) ✅
 
 根据畅谈会共识（2025-12-20-secret-base-mvp-v2-compression.md）批准的文档瘦身任务，执行 A3：在规范语言章节添加条款编号分类定义。
 
@@ -401,11 +412,11 @@ HeadLen := u32 LE        (* == TailLen, record total bytes *)
 **添加位置**：Line 26-41（共 16 行新内容）
 
 **文件变更**：
-- 修改：`DurableHeap/docs/mvp-design-v2.md` — 规范语言章节末尾新增 16 行
+- 修改：`atelia/docs/StateJournal/mvp-design-v2.md` — 规范语言章节末尾新增 16 行
 
 ---
 
-### DurableHeap 设计文档瘦身 — A1 任务：§2-§3 移至 ADR (2025-12-20) ✅
+### StateJournal 设计文档瘦身 — A1 任务：§2-§3 移至 ADR (2025-12-20) ✅
 
 根据畅谈会共识（2025-12-20-secret-base-mvp-v2-compression.md）批准的文档瘦身任务，执行 A1：将决策选项和决策表移至独立 ADR 文件。
 
@@ -437,12 +448,12 @@ HeadLen := u32 LE        (* == TailLen, record total bytes *)
 - ADR 文件：153 行
 
 **文件变更**：
-- 新建：`DurableHeap/docs/decisions/mvp-v2-decisions.md`（153 行）
-- 修改：`DurableHeap/docs/mvp-design-v2.md`（删除 146 行，新增 22 行）
+- 新建：`atelia/docs/StateJournal/decisions/mvp-v2-decisions.md`（153 行）
+- 修改：`atelia/docs/StateJournal/mvp-design-v2.md`（删除 146 行，新增 22 行）
 
 ---
 
-### DurableHeap 设计文档修订 Round 23 — P1-2 伪代码去泛型 (2025-12-20)
+### StateJournal 设计文档修订 Round 23 — P1-2 伪代码去泛型 (2025-12-20)
 
 根据已批准的文档修订任务，对 `mvp-design-v2.md` §4.4.4 DurableDict 伪代码骨架部分实施 P1-2 修订。
 
@@ -459,11 +470,11 @@ HeadLen := u32 LE        (* == TailLen, record total bytes *)
 6. 更新"关键实现要点"中的类型引用
 
 **文件变更**：
-- `DurableHeap/docs/mvp-design-v2.md` — §4.4.4 伪代码骨架 4 处修改
+- `atelia/docs/StateJournal/mvp-design-v2.md` — §4.4.4 伪代码骨架 4 处修改
 
 ---
 
-### DurableHeap 设计文档修订 Round 22 — File Framing vs Record Layout 两层定义 (2025-12-20)
+### StateJournal 设计文档修订 Round 22 — File Framing vs Record Layout 两层定义 (2025-12-20)
 
 根据已批准的文档修订任务，对 `mvp-design-v2.md` §4.2.1 Data 文件部分实施 P0-7 修订。
 
@@ -476,11 +487,11 @@ HeadLen := u32 LE        (* == TailLen, record total bytes *)
 - 将原有的 "record framing（Q20=A；data/meta 统一）" 改为 "**File Framing 详细规范**（基于上述两层定义，Q20=A，data/meta 统一）"
 
 **文件变更**：
-- `DurableHeap/docs/mvp-design-v2.md` — §4.2.1 新增分层定义小节
+- `atelia/docs/StateJournal/mvp-design-v2.md` — §4.2.1 新增分层定义小节
 
 ---
 
-### DurableHeap 设计文档修订 Round 21 — LoadObject 与新建对象 P0 修订 (2025-12-20)
+### StateJournal 设计文档修订 Round 21 — LoadObject 与新建对象 P0 修订 (2025-12-20)
 
 根据已批准的文档修订任务，对 `mvp-design-v2.md` §4.3.2 LoadObject 和 §4.1.0.1 对象状态管理部分实施 P0-3、P0-4 两项修订。
 
@@ -498,11 +509,11 @@ HeadLen := u32 LE        (* == TailLen, record total bytes *)
 - 添加关键约束：新建对象 MUST 在创建时立即加入 Modified Object Set（强引用）
 
 **文件变更**：
-- `DurableHeap/docs/mvp-design-v2.md` — §4.3.2 和 §4.1.0.1 各 1 处修改
+- `atelia/docs/StateJournal/mvp-design-v2.md` — §4.3.2 和 §4.1.0.1 各 1 处修改
 
 ---
 
-### DurableHeap 设计文档修订 Round 20 — CommitAll API P0 修订 (2025-12-20)
+### StateJournal 设计文档修订 Round 20 — CommitAll API P0 修订 (2025-12-20)
 
 根据已批准的文档修订任务，对 `mvp-design-v2.md` §4.4.5 CommitAll 部分实施 P0-1、P0-2 两项修订。
 
@@ -522,11 +533,11 @@ HeadLen := u32 LE        (* == TailLen, record total bytes *)
   - 原子性边界（meta commit record 落盘时刻）
 
 **文件变更**：
-- `DurableHeap/docs/mvp-design-v2.md` — §4.4.5 CommitAll 部分 2 处修改
+- `atelia/docs/StateJournal/mvp-design-v2.md` — §4.4.5 CommitAll 部分 2 处修改
 
 ---
 
-### DurableHeap 设计文档修订 Round 19 — 术语表 Self-Consistency 审计 P0/P1 修订 (2025-12-20)
+### StateJournal 设计文档修订 Round 19 — 术语表 Self-Consistency 审计 P0/P1 修订 (2025-12-20)
 
 根据已批准的文档修订任务，对 `mvp-design-v2.md` 术语表部分实施 P0-5、P0-6、P1-1、P1-3 共 4 项修订。
 
@@ -551,11 +562,11 @@ HeadLen := u32 LE        (* == TailLen, record total bytes *)
 - 新增 **DurableObject**：可持久化的对象基类/接口
 
 **文件变更**：
-- `DurableHeap/docs/mvp-design-v2.md` — 术语表部分 4 处修改
+- `atelia/docs/StateJournal/mvp-design-v2.md` — 术语表部分 4 处修改
 
 ---
 
-### DurableHeap 设计文档修订 Round 18 — P0 问题修订 (2025-12-20)
+### StateJournal 设计文档修订 Round 18 — P0 问题修订 (2025-12-20)
 
 根据 P0 问题清单，完成三项关键修订：
 
@@ -574,11 +585,11 @@ HeadLen := u32 LE        (* == TailLen, record total bytes *)
 - 新增 4.4.6 章节：首次 Commit 与新建对象语义
 
 **文件变更**：
-- `DurableHeap/docs/mvp-design-v2.md` — 6 处修改 + 1 个新章节
+- `atelia/docs/StateJournal/mvp-design-v2.md` — 6 处修改 + 1 个新章节
 
 ---
 
-### DurableHeap 设计文档修订 Round 17 — Magic as Record Separator (2025-12-20)
+### StateJournal 设计文档修订 Round 17 — Magic as Record Separator (2025-12-20)
 
 根据 2025-12-19 畅谈会第四轮共识（监护人建议采纳），将 Magic 定义为 **Record Separator**，而非 Record 的一部分。
 
@@ -635,11 +646,11 @@ HeadLen := u32 LE        (* == TailLen, record total bytes *)
 - **空间效率**：Record 格式减少 4 字节（Magic 移到 Record 外部）
 
 **文件变更**：
-- `DurableHeap/docs/mvp-design-v2.md` — 9 处修改
+- `atelia/docs/StateJournal/mvp-design-v2.md` — 9 处修改
 
 ---
 
-### DurableHeap 设计文档修订 Round 16 — `_isDirty` → `_dirtyKeys` 重构 (2025-12-20)
+### StateJournal 设计文档修订 Round 16 — `_isDirty` → `_dirtyKeys` 重构 (2025-12-20)
 
 根据 2025-12-19 畅谈会第四轮共识（监护人反馈采纳），将 `bool _isDirty` 修改为 `ISet<ulong> _dirtyKeys` 集合。
 
@@ -728,11 +739,11 @@ HeadLen := u32 LE        (* == TailLen, record total bytes *)
 - 移除更简洁，避免混淆
 
 **文件变更**：
-- `DurableHeap/docs/mvp-design-v2.md` — 1 处修改
+- `atelia/docs/StateJournal/mvp-design-v2.md` — 1 处修改
 
 ---
 
-### DurableHeap 设计文档修订 Round 13 — 修复 Markdown 相对链接 (2025-12-19)
+### StateJournal 设计文档修订 Round 13 — 修复 Markdown 相对链接 (2025-12-19)
 
 根据畅谈会质检（B-4 任务），修复第 6 节中 ChunkedReservableWriter.cs 的相对链接路径错误。
 
@@ -748,11 +759,11 @@ HeadLen := u32 LE        (* == TailLen, record total bytes *)
 - 从 `DurableHeap/docs/` 执行 `ls ../../atelia/src/Data/ChunkedReservableWriter.cs` 成功
 
 **文件变更**：
-- `DurableHeap/docs/mvp-design-v2.md` — 1 处链接修复
+- `atelia/docs/StateJournal/mvp-design-v2.md` — 1 处链接修复
 
 ---
 
-### DurableHeap 设计文档修订 Round 12 — 统一 RecordKind/MetaKind 命名 (2025-12-19)
+### StateJournal 设计文档修订 Round 12 — 统一 RecordKind/MetaKind 命名 (2025-12-19)
 
 根据畅谈会共识（B-3 任务），将 Meta 文件中的 `MetaKind` 统一替换为 `RecordKind`。
 
@@ -770,11 +781,11 @@ HeadLen := u32 LE        (* == TailLen, record total bytes *)
 - `ObjectKind` = 对象级 codec 判别（仅在 ObjectVersionRecord 内）
 
 **文件变更**：
-- `DurableHeap/docs/mvp-design-v2.md` — 3 处 MetaKind 替换
+- `atelia/docs/StateJournal/mvp-design-v2.md` — 3 处 MetaKind 替换
 
 ---
 
-### DurableHeap 设计文档修订 Round 11 — 术语表新增 EpochSeq 条目 (2025-12-19)
+### StateJournal 设计文档修订 Round 11 — 术语表新增 EpochSeq 条目 (2025-12-19)
 
 在术语表（Glossary）的"标识与指针"分组中新增 `EpochSeq` 条目。
 
@@ -804,11 +815,11 @@ HeadLen := u32 LE        (* == TailLen, record total bytes *)
   - **ValueType**: Dict DiffPayload 中的值类型标识（`byte` 低 4 bit）
 
 **文件变更**：
-- `DurableHeap/docs/mvp-design-v2.md` — 术语表新增 1 个分组（8 行）
+- `atelia/docs/StateJournal/mvp-design-v2.md` — 术语表新增 1 个分组（8 行）
 
 ---
 
-### DurableHeap 设计文档修订 Round 9 — 4.4.5 Commit finalize 规范约束 (2025-12-19)
+### StateJournal 设计文档修订 Round 9 — 4.4.5 Commit finalize 规范约束 (2025-12-19)
 
 在 4.4.5 Commit(rootId) 章节增加规范约束，强调二阶段 finalize 语义：
 
@@ -820,11 +831,11 @@ HeadLen := u32 LE        (* == TailLen, record total bytes *)
 - 引用 4.4.4 的二阶段设计，保证语义一致性
 
 **文件变更**：
-- `DurableHeap/docs/mvp-design-v2.md` — 4.4.5 节增加 1 个规范约束段落
+- `atelia/docs/StateJournal/mvp-design-v2.md` — 4.4.5 节增加 1 个规范约束段落
 
 ---
 
-### DurableHeap 设计文档修订 Round 8 — 4.4.4 二阶段提交拆分 (2025-12-19)
+### StateJournal 设计文档修订 Round 8 — 4.4.4 二阶段提交拆分 (2025-12-19)
 
 根据 commit point 语义修正需求，将 `FlushToWriter()` 拆分为两阶段 API：
 

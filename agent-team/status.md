@@ -3,17 +3,22 @@
 > Team Leader 认知入口之一。只记录"现在在哪里"的快照指标，不记录待办事项（见 `todo.md`）。
 > 每次 runSubAgent 完成或里程碑变化时更新。
 
-## 最近更新 (2025-12-21)
+## 最近更新 (2025-12-22)
 
-### 认知架构重构 ✅
+### StateJournal 迁移完成 ✅
+- **项目更名**：DurableHeap → StateJournal（全票通过）
+- **文档迁移**：`atelia/docs/StateJournal/`
+- **名称替换**：全部文档批量替换完成
+- **Backlog**：`atelia/docs/StateJournal/backlog.md`
+
+### 2025-12-21 认知架构重构 ✅
 - `lead-metacognition.md` 瘦身：1262 行 → 180 行
 - 项目特定内容分离到 `leader-private/` 目录
 - 系统提示词更新：分层按需加载机制
 
-### DurableHeap MVP v2 审阅 ✅
+### 2025-12-21 MVP v2 审阅 ✅
 - 稳定语义锚点：43 条款全部重命名
 - 新增 10 条规范条款（State 枚举、Error Affordance 等）
-- 剩余任务记录到 `DurableHeap/docs/backlog.md`
 
 ---
 

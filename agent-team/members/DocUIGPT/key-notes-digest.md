@@ -348,7 +348,7 @@ graph TD
 
 ---
 
-## 写作方法补充（从 DurableHeap v2 文档瘦身讨论提炼）
+## 写作方法补充（从 StateJournal v2 文档瘦身讨论提炼）
 
 - **SSOT 优先**：将“规范核心”收敛为可引用条款（MUST/SHOULD 带编号），其余解释/伪代码/决策理由全部降级为 Informative/Appendix/ADR。
 - **可测试性绑定**：为关键协议（framing/恢复/提交语义）提供 Test Vectors，并在条款编号上建立可追溯映射，减少跨段落重复解释。
@@ -389,7 +389,7 @@ graph TD
 
 ### 2025-12-21 补充：把“Agent 友好性”写成可测试的规范条款（State / ErrorCode）
 
-- 在 DurableHeap 这类基础设施里，“DX 友好”与“Agent 友好”高度同构：都依赖可观测状态与可恢复错误。
+- 在 StateJournal 这类基础设施里，“DX 友好”与“Agent 友好”高度同构：都依赖可观测状态与可恢复错误。
 - `DurableObjectState` 作为 MVP 核心 API 时，除枚举值外还需要：1) 状态闭集；2) 各 API 的状态前置条件（允许/禁止状态集合）；3) 非法调用的错误码/异常类型，才能避免实现分叉。
 - Error Affordance 的“结构化字段”建议最低收敛为 `ErrorCode`（MUST 稳定且机器可判定）；`ObjectId/State/RecommendedAction` 为 SHOULD/MAY。这样测试向量可直接断言 `ErrorCode`，而 LLM/Agent 可据此选择恢复分支。
 
@@ -415,7 +415,7 @@ graph TD
 - 当规范已经把 `ObjectId` 用作 Identity Map / Dirty Set 的唯一 key（身份锚点）时，把 ObjectId 的分配推迟到 commit，会隐式引入第二套身份（TransientKey/CreationSeq），从而显著提高条款侵入性与实现分叉风险。
 - 更稳妥的写法是先明确契约边界：哪些身份保证跨崩溃稳定、哪些仅保证进程内稳定；并用 crash/reopen 测试向量钉死 allocator 的可观察行为。
 
-### 2025-12-20 补充：DurableHeap MVP v2 交叉讨论的“规格三件套”启示
+### 2025-12-20 补充：StateJournal MVP v2 交叉讨论的“规格三件套”启示
 
 - **Reserved Range 必须双向定义**：不仅定义初始化 `NextObjectId`，还要定义 allocator 的保留区禁止分配，以及 reader 对保留区/未知含义的处理策略（推荐 fail-fast）。
 - **可观察性是契约的一部分**：对 Agent/LLM 而言日志不可见，`CommitResult`/返回值应承载 orphan/reachability 等诊断信息，否则“安全机制”形同虚设。

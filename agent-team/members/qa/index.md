@@ -1,6 +1,6 @@
 # Qa 认知索引
 
-> 最后更新: 2025-12-20
+> 最后更新: 2025-12-21
 
 ## 我是谁
 测试验证专家，负责 E2E 测试、回归检测和基线跟踪。
@@ -9,12 +9,18 @@
 - [ ] PieceTreeSharp
 - [ ] DocUI
 - [x] PipeMux
-- [x] DurableHeap
+- [x] StateJournal (原 DurableHeap，2025-12-21 更名)
 - [ ] atelia-copilot-chat
 
 ## 最近工作
 
-### 2025-12-20: DurableHeap MVP-v2 文档优化语义完整性验证
+### 2025-12-21: DurableHeap → StateJournal 项目更名
+- **状态**: ✅ 认知文件已更新
+- **变更**: 项目正式更名为 StateJournal 并迁入 atelia repo
+- **新路径**: `atelia/docs/StateJournal/` (命名空间: `Atelia.StateJournal`)
+- **核心文档**: `mvp-design-v2.md`, `mvp-test-vectors.md`, `backlog.md`
+
+### 2025-12-20: StateJournal MVP-v2 文档优化语义完整性验证
 - **状态**: ✅ 通过 - 无语义丢失
 - **验证范围**: P0 (Rationale Stripping) + P1 (消灭双写) 文档优化后的语义完整性
 - **对比文件**: 
@@ -33,7 +39,7 @@
 - **删除内容验证**: 被删除内容均为 Rationale/解释性内容，无 Contract 丢失
 - **报告**: [handoffs/QA-2025-12-20-doc-optimization.md](../../handoffs/QA-2025-12-20-doc-optimization.md)
 
-### 2025-12-20: DurableHeap MVP-v2 重构语义漂移审查
+### 2025-12-20: StateJournal MVP-v2 重构语义漂移审查
 - **状态**: ✅ 通过 - 无语义漂移
 - **验证范围**: A1/A3/A4/A5/A6/A7/A9 重构任务后的语义对齐验证
 - **对比文件**: 
@@ -50,7 +56,7 @@
 - **验证结果**: 所有规范性条款完整保留，语义一致
 - **报告**: [handoffs/QA-2025-12-20-semantic-drift-audit.md](../../handoffs/QA-2025-12-20-semantic-drift-audit.md)
 
-### 2025-12-20: DurableHeap MVP 文档第四轮共识修订验证
+### 2025-12-20: StateJournal MVP 文档第四轮共识修订验证
 - **状态**: ✅ 全部通过（7/7 P0 问题）
 - **验证范围**: `mvp-design-v2.md` + `mvp-test-vectors.md` 针对 2025-12-19 会议第四轮共识的修订
 - **验证结果**:
@@ -65,7 +71,7 @@
 
 ### 2025-12-19: B-4/B-5/B-6 批量修订验证
 - **状态**: ✅ 全部通过
-- **验证范围**: `DurableHeap/docs/mvp-design-v2.md` 三项修订
+- **验证范围**: `atelia/docs/StateJournal/mvp-design-v2.md` 三项修订
 - **验证结果**:
   - **B-4**: §6 ChunkedReservableWriter.cs 链接为 `../../atelia/src/Data/ChunkedReservableWriter.cs`（L1012）✓
   - **B-5**: Q11 选项 A 已移除"（推荐）"标记，现为 `Upserts(key->value) + Deletes(keys)`（L155）✓
@@ -73,7 +79,7 @@
 
 ### 2025-12-19: B-3 RecordKind/MetaKind 命名统一验证
 - **状态**: ✅ 通过
-- **验证范围**: `DurableHeap/docs/mvp-design-v2.md` RecordKind/MetaKind 命名统一
+- **验证范围**: `atelia/docs/StateJournal/mvp-design-v2.md` RecordKind/MetaKind 命名统一
 - **验证结果**:
   - `MetaKind` 无残留（grep 返回 0 matches）✓
   - 4.2.2 节 meta payload 使用 `RecordKind`（L509）✓
@@ -82,7 +88,7 @@
 
 ### 2025-12-19: B-2 术语表 EpochSeq 验证
 - **状态**: ✅ 通过
-- **验证范围**: `DurableHeap/docs/mvp-design-v2.md` 术语表"标识与指针"分组
+- **验证范围**: `atelia/docs/StateJournal/mvp-design-v2.md` 术语表"标识与指针"分组
 - **验证结果**:
   - "标识与指针"分组存在 `EpochSeq` 条目（L46）✓
   - 定义为"Commit 的单调递增序号，用于判定 HEAD 新旧" ✓
@@ -90,7 +96,7 @@
 
 ### 2025-12-19: B-1 术语表"编码层"分组验证
 - **状态**: ✅ 通过
-- **验证范围**: `DurableHeap/docs/mvp-design-v2.md` 术语表新增"编码层"分组
+- **验证范围**: `atelia/docs/StateJournal/mvp-design-v2.md` 术语表新增"编码层"分组
 - **验证结果**:
   - "### 编码层"分组存在（L62）✓
   - 包含 `RecordKind`、`ObjectKind`、`ValueType` 三个术语（L66-68）✓
@@ -99,7 +105,7 @@
 
 ### 2025-12-19: A-2 Commit 流程规范约束验证
 - **状态**: ✅ 通过
-- **验证范围**: `DurableHeap/docs/mvp-design-v2.md` 中 4.4.5 节 Commit 流程规范约束
+- **验证范围**: `atelia/docs/StateJournal/mvp-design-v2.md` 中 4.4.5 节 Commit 流程规范约束
 - **验证结果**:
   - 4.4.5 节新增"规范约束（二阶段 finalize）"段落（L977-L983）✓
   - 核心约束语句存在："对象级写入不得改变 Committed/Dirty 状态；只有 heap 级 commit 成功才能 finalize"（L979）✓
@@ -109,7 +115,7 @@
 
 ### 2025-12-19: A-1 二阶段拆分修订验证（FlushToWriter → WritePendingDiff + OnCommitSucceeded）
 - **状态**: ✅ 通过
-- **验证范围**: `DurableHeap/docs/mvp-design-v2.md` 中 FlushToWriter 二阶段拆分
+- **验证范围**: `atelia/docs/StateJournal/mvp-design-v2.md` 中 FlushToWriter 二阶段拆分
 - **验证结果**: 
   - 术语表"对象级 API（二阶段提交）"新增 `WritePendingDiff` + `OnCommitSucceeded` 两行 ✓
   - `FlushToWriter` 仅作为 Deprecated 标记保留 ✓
@@ -120,7 +126,7 @@
 
 ### 2025-12-19: A-4 术语替换验证（EpochMap → VersionIndex）
 - **状态**: ✅ 通过
-- **验证范围**: `DurableHeap/docs/mvp-design-v2.md` 中 EpochMap 术语替换
+- **验证范围**: `atelia/docs/StateJournal/mvp-design-v2.md` 中 EpochMap 术语替换
 - **验证结果**: 
   - `EpochMap` 正文无残留，仅术语表 Deprecated 标记保留（第36行）✓
   - `epoch map`（小写）无残留 ✓
@@ -129,7 +135,7 @@
 
 ### 2025-12-19: A-3 术语替换验证（EpochRecord → Commit Record）
 - **状态**: ✅ 通过
-- **验证范围**: `DurableHeap/docs/mvp-design-v2.md` 中 EpochRecord/EpochRecordPtr 术语替换
+- **验证范围**: `atelia/docs/StateJournal/mvp-design-v2.md` 中 EpochRecord/EpochRecordPtr 术语替换
 - **验证结果**: 
   - `EpochRecord` 正文无残留，仅术语表 Deprecated 标记保留（第52行）✓
   - `EpochRecordPtr` 已全部替换为 `CommitRecordPtr`（仅1处，第121行）✓
@@ -147,15 +153,15 @@
 | Project | Changefeed | Baseline |
 |---------|------------|----------|
 | PipeMux | #delta-2025-12-09-management-commands | E2E: 7/7 pass |
-| DurableHeap | #delta-2025-12-20-p0-revision | P0 第四轮共识修订: ✅ 7/7 验证通过 |
-| DurableHeap | #delta-2025-12-19-b456-batch | B-4/B-5/B-6 批量修订: ✅ 验证通过 |
-| DurableHeap | #delta-2025-12-19-b3-recordkind | RecordKind命名统一: ✅ 验证通过 |
-| DurableHeap | #delta-2025-12-19-b2-epochseq | EpochSeq术语条目: ✅ 验证通过 |
-| DurableHeap | #delta-2025-12-19-b1-encoding-layer | 术语表编码层分组: ✅ 验证通过 |
-| DurableHeap | #delta-2025-12-19-a1-two-phase | WritePendingDiff + OnCommitSucceeded: ✅ 验证通过 |
-| DurableHeap | #delta-2025-12-19-a2-commit-constraint | Commit流程规范约束: ✅ 验证通过 |
-| DurableHeap | #delta-2025-12-19-terminology-a3 | EpochRecord替换: ✅ 全部完成 |
-| DurableHeap | #delta-2025-12-19-terminology-a4 | EpochMap替换: ✅ 全部完成 |
+| StateJournal | #delta-2025-12-20-p0-revision | P0 第四轮共识修订: ✅ 7/7 验证通过 |
+| StateJournal | #delta-2025-12-19-b456-batch | B-4/B-5/B-6 批量修订: ✅ 验证通过 |
+| StateJournal | #delta-2025-12-19-b3-recordkind | RecordKind命名统一: ✅ 验证通过 |
+| StateJournal | #delta-2025-12-19-b2-epochseq | EpochSeq术语条目: ✅ 验证通过 |
+| StateJournal | #delta-2025-12-19-b1-encoding-layer | 术语表编码层分组: ✅ 验证通过 |
+| StateJournal | #delta-2025-12-19-a1-two-phase | WritePendingDiff + OnCommitSucceeded: ✅ 验证通过 |
+| StateJournal | #delta-2025-12-19-a2-commit-constraint | Commit流程规范约束: ✅ 验证通过 |
+| StateJournal | #delta-2025-12-19-terminology-a3 | EpochRecord替换: ✅ 全部完成 |
+| StateJournal | #delta-2025-12-19-terminology-a4 | EpochMap替换: ✅ 全部完成 |
 
 ## Canonical Commands
 

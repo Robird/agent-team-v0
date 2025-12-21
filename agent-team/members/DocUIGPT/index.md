@@ -34,7 +34,7 @@ DocUI 是一个 **LLM-Native 的用户界面框架**——为 LLM Agent 设计�
 
 ### 洞察记录
 
-> **2025-12-16 DurableHeap：Persist-Pointer 的“两层引用”与 LMDB-ish 提交流程**
+> **2025-12-16 StateJournal：Persist-Pointer 的“两层引用”与 LMDB-ish 提交流程**
 >
 > - Persist-Pointer 适合拆成两层：**PhysicalPtr**（内部结构热路径、紧凑快速）与 **LogicalRef**（对外稳定、可搬迁/可压缩）。这样既保留 BTree 下钻性能，又获得“对象身份稳定”的工程优势。
 > - `epoch` 是关键字段：把“失效引用”变成可恢复分支（类似 UI-Anchor 的 `obj:23@e17`），并天然对接 Error-Feedback/Micro-Wizard 的恢复路径。
@@ -129,14 +129,14 @@ DocUI 是一个 **LLM-Native 的用户界面框架**——为 LLM Agent 设计�
 > - 规范性句子若使用“必须/不得/必须写死”等口语表达，却没有落到 RFC 2119 关键字 + 条款 ID，会形成不可测试/不可引用的“暗契约”，高概率诱导实现分叉。
 > - 图表/伪代码中的函数名若与正文术语不一致（例如流程图仍用旧名 `WriteDiff()` 而正文已收敛为 `WritePendingDiff()`），会成为实现者的默认真相来源；应把示例命名纳入规范一致性检查清单。
 
-> **2025-12-20 DurableHeap MVP v2 审计补充：编号闭环与 SSOT 重复项是“规范可信度门槛”**
+> **2025-12-20 StateJournal MVP v2 审计补充：编号闭环与 SSOT 重复项是“规范可信度门槛”**
 >
 > - 条款编号体系只要出现“跳号但未声明 Deprecated”（例如 `[S-05]` 缺失），读者会立刻怀疑编号规则是否真的可审计；修复成本低但信任收益极高。
 > - Glossary（SSOT）若出现同名术语重复条目（例如 `Address64` 两条定义），会让实现者与未来工具链无法确定权威定义；必须强制“一术语一锚点”。
 > - 规范正文若宣告“非泛型容器”，就应避免在正文叙述中使用 `DurableDict<...>` 形式（哪怕是描述性），否则会诱发实现分叉心智模型。
 > - 若文档声明“（MVP 固定）都应映射条款编号”，就要么补齐编号，要么撤销该元规则；否则属于自洽性破口（元规则 vs 实际执行不一致）。
 
-> **2025-12-20 DurableHeap MVP v2 审阅：伪代码“看似泛型”会诱发实现分叉**
+> **2025-12-20 StateJournal MVP v2 审阅：伪代码“看似泛型”会诱发实现分叉**
 >
 > - 当规范已经把 Dict key 收敛为 `ulong` 时，伪代码不应再以 `DurableDict<K,V>` 形式出现并依赖 `(ulong)(object)key` 这类强转；这会让读者误以为实现可泛型化，复制后产生 runtime cast 风险。
 > - 更稳妥：要么把类型签名直接写死为 `DurableDict<V>`（key 固定 `ulong`），要么把 `_dirtyKeys` 改为 `HashSet<K>` 并在规范层把 `K==ulong` 写成编译期约束（否则示例与规范脱钩）。
@@ -167,13 +167,13 @@ agent-team/members/DocUIGPT/
 
 **2025-12-14** — 同步术语治理研讨会洞察与 Key-Notes 变更
 
-> **2025-12-16 DurableHeap：varint 与“可跳过性”的边界条件**
+> **2025-12-16 StateJournal：varint 与“可跳过性”的边界条件**
 >
 > - “zero-copy”需要拆开看：对 `string/blob` 的 payload bytes 可以做到 zero-copy；对 `int` 这类标量必然要 decode（CPU 计算），不应把“必须解码”与“复制 payload bytes”混为一谈。
 > - `varint` 的关键代价不是“复制”，而是 **失去 O(1) 随机定位能力**：一旦把 offset/length table 做成变长，就会迫使 wrapper 扫描才能定位成员边界，破坏 lazy random access。
 > - “先写 data 再写 length（且不回填 header）”会让记录从 Ptr 出发无法确定尾部位置，从而无法局部跳过 record、也无法只读 header 就建立惰性索引；MVP 更稳妥是 **Header+Footer 都有 TotalLen**（写完回填 header），footer 同时用于尾部回扫与损坏检测。
 
-> **2025-12-20 DurableHeap Decision Clinic：Detached 对象与“编码名/语义名”分层的必要性（规范审计）**
+> **2025-12-20 StateJournal Decision Clinic：Detached 对象与“编码名/语义名”分层的必要性（规范审计）**
 >
 > - 当对象生命周期存在 “Detach（从 Dirty Set 移除强引用）” 分支时，必须把“仍可访问”的行为钉死为 **确定性契约**：要么 `MUST throw ObjectDetachedException`，要么 `MUST reset to Genesis/Empty 并保持可继续使用`；否则会产生实现分叉且难以写出可判定测试。
 > - `Ptr64` 作为 wire-format 名称如果同时被读者理解为“指向 record 起点”，会与 `DataTail = EOF` 这类字段冲突；更稳妥的分层是：`Ptr64` = **4B 对齐 file offset 的编码**（`u64 LE`，`0=null`），`Address64`/`ObjectVersionPtr` = **语义子集：必须指向 record 起点**。这样既不引入新术语，也能把校验规则写到正确的层级。
@@ -213,14 +213,14 @@ agent-team/members/DocUIGPT/
 > - 即便在文档中提供了“术语映射”（例如把“内存态”映射到 Working State/ChangeSet），仍建议在规范段中**彻底禁用**这类跨层模糊词：它会在其他章节再次引入歧义，并削弱读者对三层语义边界的信心。
 > - “Materialize（过程）→ committed state（结果）”与“Materialized State（名词）”极易发生术语碰撞；更稳妥的写法是把对外语义状态称为 Working/Current State，把 materialize 的结果明确称为 Committed Baseline/Committed State。
 
-> **2025-12-20 DurableHeap MVP v2：规范可实现性审计（关键坑位清单）**
+> **2025-12-20 StateJournal MVP v2：规范可实现性审计（关键坑位清单）**
 >
 > - `ELOG reverse scan` 的空文件边界判定存在 off-by-4 风险：若定义 `MagicPos = FileLength-4` 且 `RecordEnd = MagicPos`，则“仅 `[Magic]`”时应判定 `RecordEnd == 0` 而非 `4`。
 > - `Dirty Set` 若只存 `ObjectId` 不能防 GC，无法满足“防丢改动”的动机；必须强引用对象实例（或引入独立强引用表）。
 > - `RecordKind` 在 data/meta 两域都用 `0x01` 时必须声明“域隔离”，否则实现者很容易误用单一枚举表。
 > - `ulong` 作为值类型与 `Val_VarInt(ZigZag)` 不匹配：要么新增 `Val_VarUInt`，要么收紧值类型为有符号。
 
-> **2025-12-16 DurableHeap：纯 C# span-view vs C/FFI 低层的权衡**
+> **2025-12-16 StateJournal：纯 C# span-view vs C/FFI 低层的权衡**
 >
 > - `ReadOnlySpan<byte>` 的“临时构造”本质是（ptr,length）两个字段的轻量视图，通常可被 JIT 内联/消除；真实成本更多来自“映射视图切换/边界检查/分支”，而不是 span 本身。
 > - 纯 C# 方案的关键是把 `unsafe` 收口在“AcquirePointer + span 建立”的边界层，其余解析用 `BinaryPrimitives/MemoryMarshal` 走安全代码；可获得接近 C 的吞吐且大幅降低跨平台/构建复杂度。
@@ -231,7 +231,7 @@ agent-team/members/DocUIGPT/
 > - 记录：用户明确表示“没有强主观偏好，追求客观决策依据”，并鼓励我在发现不合理动议时直接反对/提出替代方案。
 > - 启发：在 MVP 规格收敛时，应更激进地把“不确定性”转写为可验证的假设（benchmark / crash-injection / invariants），避免礼貌性含糊。
 
-> **2025-12-17 DurableHeap：把“可实现性”写进格式——CRC32C + DataTail + SortedDict 写入算法**
+> **2025-12-17 StateJournal：把“可实现性”写进格式——CRC32C + DataTail + SortedDict 写入算法**
 >
 > - 校验应明确到“具体变体”：CRC32C（Castagnoli）比泛称 CRC32 更可实现/更一致，且 .NET 有 `System.IO.Hashing.Crc32C` 可直接复用。
 > - DataTail 作为必填字段能显著简化恢复：恢复路径从“尾扫推断”降维到“truncate 到 DataTail”，尾扫仅保留为诊断工具。
@@ -251,43 +251,43 @@ agent-team/members/DocUIGPT/
 > - Q3：要求 **Canonical Diff**：仅当 committed 与 current 在该 key 上语义不同才输出 diff；“新增后删除/设置回原值”等 net-zero 变更必须被消除，避免幽灵 tombstone 污染版本历史。
 > - 文档措辞治理：禁止用“内存态”这种跨层词；固定三词：Working/Materialized State、ChangeSet/Write-Tracking、On-Disk Diff，并明确“哨兵对象/tombstone 只能属于 ChangeSet 内部表示”。
 
-> **2025-12-19 DurableHeap/DurableDict：定义术语必须保持“显式命名一致性”**
+> **2025-12-19 StateJournal/DurableDict：定义术语必须保持“显式命名一致性”**
 >
 > - 当文档已经在某一节给出规范化术语（例如 **Working State / Committed State / ChangeSet / On-Disk Diff**），其后续出现应尽量保持同一写法（含大小写与括注），避免在规范段落中混用 `committed state`（小写口语）与 `Committed State`（定义术语）。
 > - “层级/分层”标题应准确覆盖对象：若把 **On-Disk Diff** 纳入列表，措辞应避免说成“内存中的状态”，以免读者误以为它属于 runtime state。
 
-> **2025-12-19 DurableHeap：判别字段（Kind）命名统一，减少格式歧义**
+> **2025-12-19 StateJournal：判别字段（Kind）命名统一，减少格式歧义**
 >
 > - 对二进制格式来说，`Kind` 这类判别字段属于“读路径的第一分支”，命名不一致会直接诱发实现分叉（尤其在恢复/跳过 record 的逻辑里）。
 > - 建议以“层级”为维度统一：顶层 record 判别统一为 **RecordKind**（适用于 meta/data；必要时按文件域划分取值表或分配域位），对象 payload 内部判别统一为 **ObjectKind**（仅选择对象级 codec）。
 > - 规则化约束：`Kind` 只用于 discriminator；若要强调域，用 `MetaRecordKind/DataRecordKind` 作为说明性别名，但规范正文仍以 `RecordKind` 为上位词。
 
-> **2025-12-19 DurableHeap：术语清单的“层数”也属于术语一致性（QC 记录）**
+> **2025-12-19 StateJournal：术语清单的“层数”也属于术语一致性（QC 记录）**
 >
 > - 当文档使用“X 层语义/四层模型”这类表述时，标题与列表项数量必须一致；否则读者会怀疑术语边界是否稳定。
 > - 在同一节里若必须保留小写口语（如 `committed state`）用于“泛指状态概念”，建议显式标注为“非术语（generic phrase）”，或直接统一替换为已定义术语（如 **Committed State（Baseline）**）。
 
-> **2025-12-19 DurableHeap：术语规范审计——“概念名”与“代码名”必须分层**
+> **2025-12-19 StateJournal：术语规范审计——“概念名”与“代码名”必须分层**
 >
 > - 在设计草稿中，建议把**概念层术语**（例如 **Working State / Committed State (Baseline) / On-Disk Diff / Snapshot / Identity Map / Dirty Set**）与**实现层标识符**（例如 `_current/_committed/_dirtySet/Ptr64/DiffPayload`）显式分层：概念层用统一的规范化词表与大小写，代码名仅在“实现映射”小节出现。
 > - 动词类阶段名（Deserialize/Materialize/Resolve/Commit）要么统一作为 API 名（PascalCase），要么统一作为过程名（小写动词短语），避免“同一段同时把它当术语又当函数名”，否则读者会混淆职责边界（例如把 `DurableDict.Commit()` 误解为“写 meta 的全局提交点”）。
 > - “Baseline/Base/Snapshot/BaseVersionPtr”是最容易漂移的词簇：Baseline 应只保留为“上次 commit 的已提交状态”；Base/Snapshot/Checkpoint 归入“版本链分段/封顶策略”，并在词表中强制单义。
 
-> **2025-12-19 DurableHeap：FlushToWriter 的两阶段语义（避免“假提交”）**
+> **2025-12-19 StateJournal：FlushToWriter 的两阶段语义（避免“假提交”）**
 >
 > - 若将 `FlushToWriter` 定义为“对象级：计算 diff 并写入 writer（非提交）”，它就不应在成功写入后立刻更新 `_committed` 或清空 dirty；否则当 heap 级 commit 在后续步骤（例如写 meta commit record / fsync）失败时，内存会出现“看似已提交但磁盘未提交”的假提交状态，违反“Commit 失败不改内存”。
 > - 更稳妥的落点是两阶段：`FlushToWriter` 仅产生/写出 DiffPayload（可视为 prepare），heap 级 commit point 成功后再统一回调 `OnCommitSucceeded()`（或批量 `FinalizeCommit()`）来更新 `_committed`、清空 ChangeSet/Dirty Set；失败则不触碰内存状态并允许 retry。
 
-> **2025-12-19 DurableHeap：ELOG framing 的“Magic 哨兵/分隔符”歧义与 reverse-scan 校验点（规范审计）**
+> **2025-12-19 StateJournal：ELOG framing 的“Magic 哨兵/分隔符”歧义与 reverse-scan 校验点（规范审计）**
 >
 > - 发现潜在 P0 规格歧义：`Magic` 既被描述为 record header 字段，又被描述为文件级 separator/尾部哨兵；若不收口会导致 reverse scan 的 `MagicPos`/`End` 语义分叉。
 > - 如果采用“record header 的 Magic + 文件末尾孤立 Magic 哨兵”的方案，reverse scan 的下一轮边界应更新为 `MagicPos = Start`（当前 record 的起点也是前一条 record 的 End），而不是 `Start - 4`；否则会落入上一条 record 的 CRC 字段。
 > - `DataTail` 必须精确定义是否包含尾部哨兵（更推荐 `DataTail = EOF` 包含哨兵），否则恢复 truncate 会破坏“文件以 Magic 结束”的不变量。
 
-> **2025-12-19 DurableHeap：规范审计结论——命名/链接/示例一致性是“可开工”门槛**
+> **2025-12-19 StateJournal：规范审计结论——命名/链接/示例一致性是“可开工”门槛**
 >
 > - 文档若宣称“概念层/编码层/实现层分离”，则必须把实现标识符（如 `_current/_committed`）收口到 Implementation Mapping；否则规范会被 reference implementation 绑死，后续演进难以审计。
-> - 格式规范（Markdown）里“相对链接可达性”属于硬质量门槛：例如从 `DurableHeap/docs/` 指向仓库根 `atelia/` 的链接若写错，会让读者无法验证关键实现提示，降低规范可信度。
+> - 格式规范（Markdown）里“相对链接可达性”属于硬质量门槛：例如从 `atelia/docs/StateJournal/` 指向仓库根 `atelia/` 的链接若写错，会让读者无法验证关键实现提示，降低规范可信度。
 > - 伪代码必须与 commit point 一致：只要 meta commit record 是对外可见点，对象级 `FlushToWriter` 就必须是 prepare-only；否则会出现“假提交”，并在失败重试时丢失 dirty 信息。
 
 > **2025-12-20 “瘦身悖论”复盘：行数不是目标，SSOT + 可测试闭环才是**
@@ -307,7 +307,7 @@ agent-team/members/DocUIGPT/
 > - 对 LLM-first 规范正文，ASCII 图通常是低带宽/高 token 的噪音；更稳的 SSOT 是 EBNF/format-string/字段表等线性可解析表示。
 > - ASCII/mermaid 若保留，应作为人类 DX 的衍生物，并删除等价的叙述性段落以避免漂移。
 
-> **2025-12-20 DurableHeap Spec Review：把“分散定义/隐性概念”转写为 SSOT + 命名契约**
+> **2025-12-20 StateJournal Spec Review：把“分散定义/隐性概念”转写为 SSOT + 命名契约**
 >
 > - “ObjectId 保留区/Well-known Id”这类身份模型规则一旦分散在 Open/首次 Commit/条款里，会制造实现分叉风险；应收敛为 Glossary/单一权威定义，并让正文只引用不双写。
 > - “Shallow Materialization”即使在正文里描述正确，只要没有被命名并纳入 Glossary，读者仍容易把“全量 materialize”误解为“对象图递归加载”；命名 + cross-ref 是最低成本的降歧义手段。
@@ -319,7 +319,7 @@ agent-team/members/DocUIGPT/
 > - 在二进制格式/恢复语义的讨论里，“是否接纳提案”并不足以避免实现分叉；每个提案都需要最小化的 **Normative Contract**（MUST/SHOULD/MAY）来钉死未知值处理、校验策略与失败语义。
 > - Markdown 作为规格载体时，格式一致性本身是工程风险：孤立的 fenced code block、列表缩进漂移，会直接导致阅读与审阅误判；建议把“字段表/编码表”作为 SSOT，其它段落只引用解释。
 
-> **2025-12-20 DurableHeap MVP v2 最终轮确认：元规则（MVP 固定→条款编号）必须闭环**
+> **2025-12-20 StateJournal MVP v2 最终轮确认：元规则（MVP 固定→条款编号）必须闭环**
 >
 > - 当规范文档在“规范语言/编号规则”里宣告“所有（MVP 固定）约束必须有 `[F/A/S/R-xx]` 条款编号”时，这句话本身就变成了可审计契约。
 > - 若正文大量使用“（MVP 固定）”却不配套编号，会形成“规则写了但没执行”的裂缝：读者无法判定哪些是可测试的硬约束，未来也难以建立条款→测试向量的映射。
@@ -344,7 +344,7 @@ agent-team/members/DocUIGPT/
 > - 锚点名优先选择“可测试的语义维度”（字段名/不变式/错误策略），避免把 MUST/SHOULD 写进锚点名（规范级别会变，但语义锚点应保持稳定）。
 > - 命名长度以 2-4 个词（不含 `F-/A-/S-/R-` 前缀）更利于 grep 与测试名映射；必要时用术语化缩写（如 `CRC32C`、`PTR64`），但避免引入第二套缩写词表。
 
-> **2025-12-21 DurableHeap 命名与归属：品牌名/技术名分层 + NuGet/namespace 的“不可逆成本”**
+> **2025-12-21 StateJournal 命名与归属：品牌名/技术名分层 + NuGet/namespace 的“不可逆成本”**
 >
 > - “是否改名”建议分两层：**品牌名（package/repo）**可相对稳定以降低外部迁移成本；**技术名（public API 类型/组件名）**必须对齐真实语义，避免 `Heap` 暗示随机访问/allocator 语义。
 > - NuGet `PackageId` 与 public `namespace` 属于高不可逆资产：不建议用 `*V2/*2` 这类临时后缀固化在包名；更稳妥用 **SemVer major bump** 表达语义断裂，并把格式版本放到 `FormatVersion`（与 API version 解耦）。
@@ -355,7 +355,7 @@ agent-team/members/DocUIGPT/
 > - 当底层实现仍在演进（diff 编码、对象图布局、GC/compaction 策略）时，repo/package 的名字更应锚定“对外不变的语义与用例”（如 State + Journal/Append-only），避免把短期实现细节（如 DeltaGraph）固化为外部心智模型。
 > - 实现导向名可以作为内部组件/子模块名（codec、index、graph 等），但对外优先选“使用者第一眼就能预测行为边界”的命名。
 
-> **2025-12-20 DurableHeap Decision Clinic：ObjectId 分配时机是“身份模型”决策，不是 allocator 细节**
+> **2025-12-20 StateJournal Decision Clinic：ObjectId 分配时机是“身份模型”决策，不是 allocator 细节**
 >
 > - 只要规范把 Identity Map / Dirty Set 的 key 钉死为 `ObjectId`（如 `[S-02]`），那么“延迟到 commit 才分配 ObjectId”就会迫使引入第二套身份（TransientKey/CreationSeq），属于跨章节的身份模型重写。
 > - 立即分配并不与 `NextObjectId`“仅在 commit record 持久化”矛盾：只需把契约边界写清——未提交分配在崩溃后允许被重用（因为从未进入 VersionIndex/HEAD），并用测试向量固化。
@@ -367,7 +367,7 @@ agent-team/members/DocUIGPT/
 > - 若 baseline 不存在（Transient），规范必须二选一并写成状态机：**MUST detach（fail-fast）** 或 **MUST reset-to-Genesis 并保持可继续使用**；任何“暗示可以/不可以”而不钉死 `LoadObject/NotFound/IdentityMap` 的写法都会制造不可判定测试与实现漂移。
 > - 经验法则：凡涉及“撤销/回滚/丢弃”，先写清 *rollback target*（Last Committed vs Genesis）与 *object existence*（detached vs attached），再谈 UX/易用性。
 
-> **2025-12-20 DurableHeap MVP v2 Round 2 交叉讨论：把“保留区/兼容策略/可观察性”写成三条硬契约**
+> **2025-12-20 StateJournal MVP v2 Round 2 交叉讨论：把“保留区/兼容策略/可观察性”写成三条硬契约**
 >
 > - `NextObjectId` 统一只是表象，真正需要锁死的是：allocator 对保留区的 **MUST NOT 分配**，以及 reader 遇到“保留区但未知含义”的 **fail-fast vs ignore** 策略；否则扩展期仍会实现分叉。
 > - `CommitAll` 是否拆分 API 是次要的；P0 是：**commit 失败后内存状态 MUST NOT 改变**，并提供对 Agent/LLM 可见的 `CommitResult`（至少包含 orphan/reachability 诊断），避免仅写日志导致不可见风险。
@@ -392,3 +392,14 @@ agent-team/members/DocUIGPT/
 > - 同时建议把条款 ID 分层：`[S-17]` 作为阅读友好的 display index；可选引入稳定的语义 key（如 `S-ID-RESERVED-RANGE`）用于测试向量与外部引用，避免重排导致引用崩溃。
 > - 强烈支持“SSOT + 内联摘要”：它与 DocUI 的 LOD 同构（Full=SSOT、Summary=正文摘要）。关键纪律是：摘要只能 restatement，不得引入新约束；任何新增 MUST/SHOULD 必须回落到 SSOT 条款块。
 > - State 枚举与 Error Affordance 不是 DX 花活，而是让对象生命周期状态机“可观测/可恢复”的协议面；建议错误信息至少包含结构化字段（ErrorCode/ObjectId/State/RecommendedAction），自然语言仅作为 display。
+
+> **2025-12-21 项目更名与迁移完成：StateJournal（投票经验落地）**
+>
+> - 命名收敛点：优先把名字锚定到“Agent 状态 + 仅追加写/版本链（journal）”这层稳定语义；把 diff 编码、对象图布局、GC/compaction 等留给内部实现演进。
+> - 迁移落地后的权威入口统一到 `atelia/docs/StateJournal/`（核心：`mvp-design-v2.md`；Backlog：`backlog.md`），公开命名空间使用 `Atelia.StateJournal`，减少后续不可逆迁移成本。
+
+> **2025-12-21 命名投票复盘：把“稳定语义”写成可迁移的共识**
+>
+> - 论证策略：优先用“对外不变的语义边界”取代“实现机制名”。例如 `StateJournal` 直接承诺“状态 + 追加写 + 版本链/可回放”，比 `Heap`/`Store` 更不容易随实现演进而过时。
+> - 迁移动作：同步明确旧文档目录已删除、新路径 `atelia/docs/StateJournal/` 生效，并把 namespace 钉死为 `Atelia.StateJournal`，避免后续出现“文档已迁/代码仍旧名”的二次漂移。
+> - 团队协作经验：投票理由要求一句话且能映射到后续 PR checklist（链接替换、命名空间、入口文档与 backlog），可把“偏好争论”收敛成可执行的迁移清单。

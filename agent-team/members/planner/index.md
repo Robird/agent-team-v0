@@ -1,6 +1,6 @@
 # Planner 认知索引
 
-> 最后更新: 2025-12-15
+> 最后更新: 2025-12-21
 
 ## 我是谁
 方案空间探索者，为 Team Leader 提供多样化决策建议和任务分解。
@@ -10,8 +10,18 @@
 - [x] DocUI — 当前重点，参与设计研讨
 - [ ] PipeMux
 - [ ] atelia-copilot-chat
+- [ ] StateJournal — 原 DurableHeap，已迁入 atelia repo
 
 ## 最近工作
+
+### 2025-12-21: 项目更名通知 — DurableHeap → StateJournal
+- **变更**: DurableHeap 正式更名为 StateJournal，迁入 atelia repo
+- **新路径**: `atelia/docs/StateJournal/`
+- **命名空间**: `Atelia.StateJournal`
+- **命名由来**: 全票通过（DocUIClaude/DocUIGPT/DocUIGemini）
+  - "State" = Agent 状态持久化用例
+  - "Journal" = 追加写入 + 版本可回溯
+- **我的状态**: 无需更新（之前未跟踪此项目），已添加到关注列表
 
 ### 2025-12-15: Tool-As-Command 秘密基地畅谈
 - **议题**: 工具调用 = Command + 状态机（Micro-Wizard 落地方案）

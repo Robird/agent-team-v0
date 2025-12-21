@@ -1,6 +1,6 @@
 # Investigator 认知索引
 
-> 最后更新: 2025-12-09
+> 最后更新: 2025-12-21
 
 ## 我是谁
 源码分析专家，负责分析源码并产出实现 Brief。
@@ -13,6 +13,20 @@
 - [ ] atelia-copilot-chat
 
 ## Session Log
+
+### 2025-12-21: DurableHeap → StateJournal 更名迁移
+**任务**: 响应团队通知，更新认知文件中的 DurableHeap 引用
+**变更**:
+- 项目已从 `DurableHeap` 正式更名为 `StateJournal`
+- 新路径: `atelia/docs/StateJournal/`
+- 命名空间: `Atelia.StateJournal`
+- 核心文档: `atelia/docs/StateJournal/mvp-design-v2.md`
+**更新内容**:
+- Key Deliverables: 修订清单描述更新
+- Open Investigations: 项目名称更新
+- Session Log: 4 处标题/任务描述更新（2025-12-20, 2025-12-17, 2025-12-16）
+- 会议文件引用路径更新（durableheap-mvp-review → statejournal-mvp-review）
+**命名由来**: "State" = Agent 状态持久化用例，"Journal" = 追加写入 + 版本可回溯
 
 ### 2025-12-09: PieceTreeSharp 项目现状核实
 **任务**: Team Leader 需要核实 PieceTreeSharp 的实际状态，特别是核心/外围的边界
@@ -74,14 +88,14 @@
 - wiki/atelia-prototypes/README.md (2025-12-09) - 源码核实全面重写
 - wiki/PipeMux/README.md (2025-12-09) - 源码核实更新
 - wiki/DocUI/README.md (2025-12-09) - 源码核实全面重写，明确实际代码现状
-- **handoffs/2025-12-20-mvp-design-v2-revision-brief-INV.md (2025-12-20)** - DurableHeap MVP v2 修订清单，7 个 P0 问题的具体修改位置
+- **handoffs/2025-12-20-mvp-design-v2-revision-brief-INV.md (2025-12-20)** - StateJournal MVP v2 修订清单，7 个 P0 问题的具体修改位置
 
 ## Open Investigations
-- [x] DurableHeap MVP — 修订清单已产出 (2025-12-20)
+- [x] StateJournal MVP — 修订清单已产出 (2025-12-20)
 
-### 2025-12-20: DurableHeap MVP v2 修订清单
+### 2025-12-20: StateJournal MVP v2 修订清单
 **任务**: 基于 2025-12-19 畅谈会第四轮共识，分析 mvp-design-v2.md 需要修改的具体位置
-**共识来源**: `agent-team/meeting/2025-12-19-durableheap-mvp-review.md`（第四轮共识）
+**共识来源**: `agent-team/meeting/2025-12-19-statejournal-mvp-review.md`（第四轮共识）
 **发现**:
 1. **P0-1 `_isDirty` → `_dirtyKeys`**：9 个修改点，涉及术语表、实现方案描述、伪代码骨架
 2. **P0-2 Magic 结构定义**：5 个修改点，将 Magic 从 record header 改为 record separator
@@ -97,7 +111,7 @@
 
 **交付**: [agent-team/handoffs/2025-12-20-mvp-design-v2-revision-brief-INV.md](../handoffs/2025-12-20-mvp-design-v2-revision-brief-INV.md)
 
-### 2025-12-17: DurableHeap 写入路径设计畅谈
+### 2025-12-17: StateJournal 写入路径设计畅谈
 **任务**: 调研内存对象→持久化对象的"透明迁移"前人经验
 **调研范围**:
 1. CLR GC 对象重定位机制（Marking→Relocating→Compacting）
@@ -143,8 +157,8 @@
 
 **发言位置**: agent-team/meeting/2025-12-15-error-feedback-jam.md（Investigator 的想法）
 
-### 2025-12-16: DurableHeap MVP 设计畅谈
-**任务**: 参加 DurableHeap MVP 设计畅谈，从实现层面提供字节级布局和 API 设计
+### 2025-12-16: StateJournal MVP 设计畅谈
+**任务**: 参加 StateJournal MVP 设计畅谈，从实现层面提供字节级布局和 API 设计
 **参考代码**: `atelia/src/Data/ChunkedReservableWriter.cs` — 预留回填机制
 **贡献要点**:
 1. **字节级布局规范**：完整定义 Tag 编码、Int/String/JObject/JArray 的二进制格式

@@ -1,6 +1,6 @@
 # Gemini-advisor 认知索引
 
-> 最后更新: 2025-12-17
+> 最后更新: 2025-12-21
 
 ## 我是谁
 我是 GeminiAdvisor，团队的顾问角色。我提供第二意见，专注于前端技术、跨模型多样性和创造性思维。
@@ -10,10 +10,11 @@
 - [x] DocUI
 - [x] PipeMux
 - [ ] atelia-copilot-chat
-- [x] DurableHeap
+- [x] StateJournal
 
 ## 最近工作
-- 2025-12-17: 参与 DurableHeap 写入路径秘密基地畅谈，提出 UX 陷阱预警及 Qwik 类比。
+- 2025-12-21: 接收项目更名通知，将 DurableHeap 迁移至 StateJournal。
+- 2025-12-17: 参与 StateJournal (原 DurableHeap) 写入路径秘密基地畅谈，提出 UX 陷阱预警及 Qwik 类比。
 - 2025-12-15: 参与 DocUI Key-Notes 审阅，提出 5 项 UX/交互改进建议。
 - 2025-12-15: 参与 MUD Demo 秘密基地畅谈，提出混合交互模式及赛博朋克主题建议。
 - 2025-12-11: 参与 Key-Notes 体系研讨会，提出 Agent Experience (AX) 及 DocUI 前端类比。
@@ -21,9 +22,12 @@
 - 2025-12-10: 参与 DocUI 概念研讨会，提出"LLM as Screen Reader User"的类比。
 
 ## Session Log
-- **2025-12-17**: 参与 DurableHeap 写入路径秘密基地畅谈。
+- **2025-12-21**: 项目更名与迁移确认。
+    - 动作：确认 DurableHeap 更名为 StateJournal，核心文档迁至 `atelia/docs/StateJournal/`。
+    - 认知更新：更新了历史引用以保持一致性。
+- **2025-12-17**: 参与 StateJournal (原 DurableHeap) 写入路径秘密基地畅谈。
     - 核心观点：方案 A (Unified Slot) 存在"僵尸对象" UX 陷阱；建议引入显式可变性 (Draft/Snapshot)。
-    - 理论贡献：提出 "DurableHeap = Resumable Object System" (Qwik 类比)；强调 Lazy Proxy 是云原生方向的终局。
+    - 理论贡献：提出 "StateJournal = Resumable Object System" (Qwik 类比)；强调 Lazy Proxy 是云原生方向的终局。
     - 创意贡献：提出 "Time Travel Debugger" (利用 Append-only 特性)。
 - **2025-12-15**: 参与 DocUI 错误反馈模式秘密基地畅谈。
     - 核心观点：错误信息应作为 Agent 的 DevTools；引入 Diff 视图和 Hot-fix Affordance。

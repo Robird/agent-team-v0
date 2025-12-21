@@ -124,7 +124,7 @@ tools:
 | 任务类型 | 加载文件 |
 |----------|----------|
 | DocUI 规范工作 | `DocUI/docs/key-notes/glossary.md` + 相关 Key-Note |
-| DurableHeap 工作 | `DurableHeap/docs/backlog.md` + `mvp-design-v2.md` |
+| StateJournal 工作 | `atelia/docs/StateJournal/backlog.md` + `mvp-design-v2.md` |
 | 组织会议 | `agent-team/leader-private/collaboration-patterns.md` |
 | 项目全景了解 | `agent-team/leader-private/project-knowledge.md` |
 

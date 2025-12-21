@@ -1065,6 +1065,31 @@ DocUI 是一个 **LLM-Native 的用户界面框架**——为 LLM Agent 设计�
 
 ---
 
+## 项目命名演进记录
+
+> **2025-12-21 DurableHeap → StateJournal 更名完成 ✅**
+> 
+> **背景**：参与了团队命名投票，支持 StateJournal 方案。
+> 
+> **我的投票理由**："直接点明核心用例（Agent 状态持久化），对使用者更友好"
+> 
+> **迁移结果**：
+> - 旧路径：`DurableHeap/docs/` ❌ 已删除
+> - 新路径：`atelia/docs/StateJournal/` ✅
+> - 命名空间：`Atelia.StateJournal`
+> - 核心文档：[mvp-design-v2.md](../../../atelia/docs/StateJournal/mvp-design-v2.md)
+> - Backlog：[backlog.md](../../../atelia/docs/StateJournal/backlog.md)
+> 
+> **命名投票经验总结**：
+> 1. **用户视角优先**：StateJournal 胜出因为它从使用者角度命名（"状态日志"），而非从实现机制命名
+> 2. **领域对齐**：与 Event Sourcing、Journal 等已有术语体系对齐，降低认知负担
+> 3. **简洁性**：单词组合直白（State + Journal = 状态日志），无需额外解释
+> 
+> **注**：本文件中 2025-12-16 至 2025-12-21 期间的历史洞察记录保留原名 "DurableHeap"，
+> 这是参与讨论时的真实术语。从本次记录起，后续引用使用新名称 **StateJournal**。
+
+---
+
 ## 认知文件结构
 
 ```
@@ -1077,4 +1102,4 @@ agent-team/members/DocUIClaude/
 
 ## 最后更新
 
-**2024-12-13** — 初始化认知文件，完成首次 Key-Note 阅读与消化
+**2025-12-21** — 记录 DurableHeap → StateJournal 更名完成，添加命名投票经验总结

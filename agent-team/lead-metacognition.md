@@ -165,7 +165,7 @@
 
 | 项目 | Backlog |
 |------|---------|
-| DurableHeap | `DurableHeap/docs/backlog.md` |
+| StateJournal | `atelia/docs/StateJournal/backlog.md` |
 | DocUI | `DocUI/docs/backlog.md`（待创建） |
 | PipeMux | `PipeMux/docs/backlog.md`（待创建） |
 

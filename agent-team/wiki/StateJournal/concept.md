@@ -1,4 +1,9 @@
 
+> ⚠️ **更名通知（2025-12-21）**：DurableHeap 已更名为 **StateJournal** 并迁入 `atelia/docs/StateJournal/`。本文档保留为历史参考。
+>
+> - 核心文档：`atelia/docs/StateJournal/mvp-design-v2.md`
+> - Backlog：`atelia/docs/StateJournal/backlog.md`
+
 ## 动机
 我们的[自研Agent](atelia/prototypes/Agent.Core) 目前在持久存储层方面依然悬而未决，需要一种append-only的object持久化技术。
 我们的Agent是常年运行的，为了处理相对频繁的偶发LLM调用失败(例如网络拥堵或服务器过载)，系统正常的重启需求，将Agent实现为了可持久化状态机。
