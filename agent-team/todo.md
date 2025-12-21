@@ -14,33 +14,12 @@
 
 ## Immediate (新会话优先)
 
-- **DurableHeap MVP v2 增强提案决策** ✅ **全部完成** (2025-12-20)
-  - 决策诊疗室记录: `agent-team/meeting/2025-12-20-secret-base-durableheap-mvp-v2-enhancement-proposals.md`
-  - **5 项提案落地**:
-    - [x] 预留 ObjectId (0-15)
-    - [x] Checkpoint 断链 (否决 MSB Hack)
-    - [x] 版本化 (复用 ObjectKind)
-    - [x] 规范去重
-    - [x] 去泛型 (DurableDict)
-
-- **DurableHeap MVP v2 文档修订** ✅ **全部完成** (2025-12-19)
+- **StateJournal MVP v2 文档修订** ✅ **全部完成** (2025-12-19)
   - 任务板: `agent-team/task-board.md`
   - 畅谈记录: `agent-team/meeting/2025-12-19-secret-base-durableheap-mvp-v2-review.md`
-  - **Critical (4/4 完成)**:
-    - [x] A-1: 修改 4.4.4 伪代码 `FlushToWriter` → 二阶段拆分 (Prepare/Finalize)
-    - [x] A-2: 修改 4.4.5 Commit 流程增加 finalize 规范约束
-    - [x] A-3: 全文替换 `EpochRecord` → `Commit Record`
-    - [x] A-4: 全文替换 `EpochMap` → `VersionIndex`
-  - **Major (6/6 完成)**:
-    - [x] B-1: 术语表新增"编码层"分组
-    - [x] B-2: 术语表新增 `EpochSeq` 条目
-    - [x] B-3: 统一 `RecordKind`/`MetaKind` 命名
-    - [x] B-4: 修复 Markdown 相对链接
-    - [x] B-5: Q11 移除"（推荐）"标记
-    - [x] B-6: 新增"类型约束"章节（明确值类型/引用类型边界，Fail-fast）
   - **监护人批示要点**:
     - "Re-set to Update" 是伪问题（MVP 仅支持整数和 DurableDict）
-    - DurableHeap 非通用序列化库，应显式声明类型边界（值类型仅基元，引用类型仅 DurableObject 派生）
+    - StateJournal 非通用序列化库，应显式声明类型边界（值类型仅基元，引用类型仅 DurableObject 派生）
     - 文档原则：呈现 What + 少量 Why，移除已被覆盖的旧信息
 
 - **MUD Demo (赛博酒馆)** (2025-12-15 畅谈共识)
