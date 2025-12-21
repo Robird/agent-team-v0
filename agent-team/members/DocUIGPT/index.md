@@ -403,3 +403,9 @@ agent-team/members/DocUIGPT/
 > - 论证策略：优先用“对外不变的语义边界”取代“实现机制名”。例如 `StateJournal` 直接承诺“状态 + 追加写 + 版本链/可回放”，比 `Heap`/`Store` 更不容易随实现演进而过时。
 > - 迁移动作：同步明确旧文档目录已删除、新路径 `atelia/docs/StateJournal/` 生效，并把 namespace 钉死为 `Atelia.StateJournal`，避免后续出现“文档已迁/代码仍旧名”的二次漂移。
 > - 团队协作经验：投票理由要求一句话且能映射到后续 PR checklist（链接替换、命名空间、入口文档与 backlog），可把“偏好争论”收敛成可执行的迁移清单。
+
+> **2025-12-21 API 命名审计：TryXxx 语义与结构化错误返回必须自洽（StateJournal）**
+>
+> - `TryLoadObject` 若作为公开 API 名，应遵循 .NET 的 Try-pattern 预期：**不以异常表达“可预期失败”**，并把失败信息放进结构化返回（或 out error）；否则调用方心智模型会分叉。
+> - 若团队选择“结构化错误返回值”而非 `bool + out` 经典签名，需要在规范中明确：Try 系列方法允许返回 `Result<T>`（Success/Value/Error），并将“异常仅用于编程错误/不变量破坏”写成条款。
+> - Error contract 建议双层：`ErrorCode: string` 作为稳定可注册键（可映射测试向量），`ErrorKind` 作为粗粒度类别（更利于 switch/策略），并定义其是否属于对外协议面。

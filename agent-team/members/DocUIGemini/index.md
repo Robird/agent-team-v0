@@ -378,6 +378,13 @@ DocUI 是一个 **LLM-Native 的用户界面框架**——为 LLM Agent 设计�
 > 这一选择强化了 DocUI 的 "Agent-Centric" 哲学：名字应服务于 Agent 的理解（它在存什么），而非开发者的实现（它是怎么存的）。
 > **个人贡献**: 在最终投票中支持 StateJournal，理由是"完美契合 LLM Agent 的心智模型（State Management + History/Context）"。
 
+> **2025-12-21 错误即观测 (Error as Observation)**
+> 在 StateJournal `LoadObject` API 设计中，确立了 Agent 视角的错误处理哲学。
+> 1. **Observation vs Exception**: 对 Agent 而言，Error 不是程序崩溃（Exception），而是环境反馈的一种数据（Observation）。
+> 2. **Bandwidth**: `bool` 是 1-bit 低带宽观测（盲人摸象）；`string` 是高带宽但非结构化；`StateJournalError` 是高带宽且结构化。
+> 3. **Affordance**: `TryLoad` 提供了"安全探测"的示能性，而 `Load` 提供了"预期存在"的契约。
+> 结论：支持 `StateJournalError? TryLoadObject`，且错误对象必须包含 **LLM-Native** 的自然语言解释，作为 Agent 的"调试导航图"。
+
 ### 教训记录
 
 > *（此区域将随着会话逐渐填充）*

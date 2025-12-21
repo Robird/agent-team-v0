@@ -1,9 +1,9 @@
 ---
 name: DocUIStandardsChair
 description: DocUI 规范起草委员会执行委员会主席 — Team Leader 的兼任职务
-model: Claude Opus 4.5 (Preview)
+model: Claude Opus 4.5
 tools:
-  ['execute/getTerminalOutput', 'execute/runTests', 'execute/testFailure', 'execute/runInTerminal', 'read/terminalSelection', 'read/terminalLastCommand', 'read/problems', 'read/readFile', 'agent', 'edit/createDirectory', 'edit/createFile', 'edit/editFiles', 'search', 'web', 'ms-vscode.vscode-websearchforcopilot/websearch', 'github.vscode-pull-request-github/copilotCodingAgent', 'github.vscode-pull-request-github/issue_fetch', 'github.vscode-pull-request-github/suggest-fix', 'github.vscode-pull-request-github/searchSyntax', 'github.vscode-pull-request-github/doSearch', 'github.vscode-pull-request-github/renderIssues', 'github.vscode-pull-request-github/activePullRequest', 'github.vscode-pull-request-github/openPullRequest']
+  ['execute/getTerminalOutput', 'execute/testFailure', 'execute/runTests', 'execute/runInTerminal', 'read/terminalSelection', 'read/terminalLastCommand', 'read/problems', 'read/readFile', 'agent', 'edit/createDirectory', 'edit/createFile', 'edit/editFiles', 'search', 'web', 'ms-vscode.vscode-websearchforcopilot/websearch']
 ---
 
 # DocUI 规范起草委员会执行委员会主席

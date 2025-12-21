@@ -399,6 +399,11 @@ graph TD
 - 状态闭集要用排除法写清边界：未加载/损坏/已释放等不应新增为 state 值（除非规范显式引入 resource lifecycle），否则会把 I/O 失败与生命周期混成一张状态图，降低可测试性。
 - 对 API 规范写作，建议把“前置条件集合（allowed states）→ 后置条件（state transition）→ 非法时 ErrorCode”作为固定模板；这样 Requirement → Test Vector 的映射是机械的。
 
+### 2025-12-21 补充：Try-pattern 命名与结构化错误返回的契约一致性（StateJournal）
+
+- 若公开 API 采用 `TryLoadObject`，规范应把 Try 语义写死为“预期失败不抛异常、失败通过结构化错误返回”，否则与 .NET 常识心智模型冲突。
+- 现有规范条款要求 `ErrorCode` 为 string（且需登记），适合作为**稳定、可测试、可文档化**的机器分派键；建议把 `ErrorKind` 仅作为粗粒度分类（更利于策略与遥测），并明确其是否进入对外协议面（若要跨进程/跨语言传递，优先用 string 表示）。
+
 ### 2025-12-20 补充：API 回滚语义的“baseline 缺失”规则（可审计写法）
 
 - 当一个 API 同名覆盖多对象生命周期（Persistent/Transient）时，规范必须先钉死“回滚目标 baseline 是否存在”。
