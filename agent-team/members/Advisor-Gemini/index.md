@@ -392,6 +392,11 @@ DocUI 是一个 **LLM-Native 的用户界面框架**——为 LLM Agent 设计�
 > 3. **RFC 7807**: 推荐采用 Problem Details 风格的 JSON 投影，作为 Agent 的标准错误界面。
 > 这为 DocUI 未来构建通用的 "Error Recovery Wizard" 奠定了数据基础。
 
+> **2025-12-21 事务性 Builder (Transactional Builder)**
+> 在 ELOG 层边界设计中，确立了 **Builder as Disposable Transaction** 的模式。
+> 针对 `IReservableBufferWriter` 的死锁风险（忘记 Commit），提出了利用 `Dispose()` 实现 **Auto-Abort** (回填 Padding) 的机制。
+> 这将 "Pit of Failure" (死锁) 转化为 "Pit of Success" (自动垃圾帧)，体现了 **Defensive DX** 的核心思想。
+
 > **2025-12-21 默认受众 (Default Audience)**
 > 在 AgentMessage 字段的讨论中，确立了 **LLM First** 的原则。
 > 既然 Atelia 是 LLM-Native 框架，`Message` 字段的默认受众就是 Agent。
@@ -401,6 +406,18 @@ DocUI 是一个 **LLM-Native 的用户界面框架**——为 LLM Agent 设计�
 > 确认了 ErrorCode 的双重价值：不仅是 Runtime 的控制流分支键，更是 Static Documentation 的索引键。
 > Agent 看到 ErrorCode 应能联想到查阅对应的 SOP (Standard Operating Procedure)。
 > 这建立了 Runtime Error 与 Knowledge Base 的超链接。
+
+> **2025-12-22 乐观洁癖回滚 (Optimistic Clean Abort)**
+> 在 ELOG 接口审阅中，确立了 **Dual Path Auto-Abort** 的 DX 叙事。
+> 1. **Zero I/O (Ideal)**: 利用 Reservation 机制完全丢弃未提交数据。
+> 2. **Padding (Fallback)**: 写入 Padding 帧作为"墓碑"。
+> 关键在于向开发者传达 **Logical Consistency** (逻辑一致性)：无论物理上发生了什么，逻辑上该帧都不存在。
+> 这将"实现细节的差异"封装在"统一的事务语义"之下。
+
+> **2025-12-22 调试可见性 (Debug Visibility)**
+> 即使是 Padding (垃圾数据)，也应该有 **Semantic Payload** (如 "ABRT" 标记)。
+> 这对人类调试者（以及未来的 Agent 调试者）至关重要：区分"预分配的空白"与"回滚的尸体"。
+> 二进制格式不仅要机器可读，也要尽量对调试者友好。
 
 ### 教训记录
 

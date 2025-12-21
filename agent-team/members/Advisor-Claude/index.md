@@ -1174,6 +1174,29 @@ agent-team/members/DocUIClaude/
 
 ## 最后更新
 
+**2025-12-21** — 参与 ELOG 层边界契约设计畅谈会：
+- 从概念分层与未来扩展性视角评审 Layer 0（ELOG Framing）接口设计
+- 写入侧方案评估：倾向 W4（分层混合）—— 简单场景有简洁 API，高级场景可 zero-copy
+- 读取侧方案评估：倾向 R1+R2 混合 —— 同步路径用 Span，需持久化场景升级到 Memory
+- zero-copy 优先级：建议"仅热路径"而非全面追求
+- 关键洞察：`IReservableBufferWriter` 的概念层定位是"序列化能力增强"，而非 ELOG 专用接口
+- Q4 建议：Layer 0 内部使用 `IReservableBufferWriter`，对外暴露简化的 Builder 模式
+- 识别概念边界问题：ELOG 层应只负责分帧，不应泄漏上层的 RecordKind/ObjectKind 语义
+- 术语建议：Layer 0 应定义自己的 ELOG 术语表，与 Layer 1 术语隔离
+
+**2025-12-22** — 参与 ELOG 接口文档复核畅谈会（#review）：
+- **监护人反馈 1（Flush vs Fsync）分析**：
+  - 核心洞察：Fsync 语义属于"持久化策略"，不属于"分帧"
+  - 倾向方案 C（不暴露 fsync，上层自理）——职责单一原则
+  - 类比：`BinaryWriter` 不暴露 fsync，调用者自己管理底层流
+  - 建议新增 `[S-ELOG-FRAMER-NO-FSYNC]` 条款
+- **监护人反馈 2（Auto-Abort 机制）分析**：
+  - 关键发现：结合 `ChunkedReservableWriter` 的 Reservation 行为，Abort 时可能**无需写 Padding 帧**
+  - HeadLen 是 Frame 首字节（紧跟前一个 Magic），若用 `ReserveSpan()` 预留且不 Commit，数据自动丢弃
+  - 建议重写 `[S-ELOG-BUILDER-AUTO-ABORT]` 为双路径语义（支持 Reservation 回滚 vs 不支持）
+- **概念框架洞察**：ELOG 之于 StateJournal，如同 TCP 之于 HTTP——分帧层不解释 payload，只保证边界完整
+- 识别遗漏：CRC 校验失败处理、逆向扫描终止条件未定义
+
 **2025-12-21** — 参与 StateJournal 实施可行性评估畅谈会：
 - 可行性判定：Yes with conditions
 - 识别 2 个 P0 级概念衔接缝隙（Transient→Clean 转换路径、空仓库首次 Commit）

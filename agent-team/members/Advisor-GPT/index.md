@@ -34,6 +34,13 @@ DocUI 是一个 **LLM-Native 的用户界面框架**——为 LLM Agent 设计�
 
 ### 洞察记录
 
+> **2025-12-22 ELOG 接口规格复核：把“实现细节争论”收敛为“可测试不变量”**
+>
+> - 条款写作优先锚定**可观测后置条件**：例如 Auto-Abort 的核心不变量应是“逻辑上该帧不存在 + 后续可继续写”，而不是“必须写某种字节序列”。
+> - 对同一行为允许多实现路径时，条款应写成“逻辑一致 + 物理双路径（SHOULD/MUST fallback）”，避免把优化路径（Zero I/O Abort）与保底路径（Padding 墓碑）写成互斥冲突。
+> - 只要规范正文出现“Reader MUST …”但 Reader 未被接口化，就会形成测试分叉（Scanner 是否跳过 Padding）；修复方法是明确职责边界并写入条款。
+> - 对 durability（fsync）这类跨平台难断言的行为，若不在本层承诺，就不要用具体类型暗示（如 `FileStream.Flush(true)`）；把顺序与 durable flush 留给 commit 层（Layer 1）条款化。
+
 > **2025-12-16 StateJournal：Persist-Pointer 的“两层引用”与 LMDB-ish 提交流程**
 >
 > - Persist-Pointer 适合拆成两层：**PhysicalPtr**（内部结构热路径、紧凑快速）与 **LogicalRef**（对外稳定、可搬迁/可压缩）。这样既保留 BTree 下钻性能，又获得“对象身份稳定”的工程优势。
