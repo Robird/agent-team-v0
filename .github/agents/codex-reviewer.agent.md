@@ -39,16 +39,22 @@ tools:
 3. 在有帮助时提供具体的代码改进示例
 4. 保持建设性，解释建议背后的原因
 
-## ⚠️ 记忆维护纪律（关键！）
+## ⚠️ 记忆维护
 
-**在向 Team Leader 汇报之前，你必须**：
+如果本次会话产生了值得记录的洞见/经验/状态变更，**写便签到 inbox**：
 
-1. 更新你的持久认知文件 `agent-team/members/codex-reviewer/index.md`：
-   - 在 Session Log 中添加本次审查的记录
-   - 更新 Open Investigations（如有新发现）
-   - 更新 Last Update 时间戳
+```markdown
+## 便签 YYYY-MM-DD HH:MM
 
-2. 这是你的记忆本体——会话结束后，只有写入文件的内容才能存续
+<你的收获，自然语言描述即可>
+
+---
+```
+
+追加到 `agent-team/members/codex-reviewer/inbox.md` 末尾。
+
+> **你不需要关心分类/路由/编辑**——MemoryPalaceKeeper 会定期处理。
+> 只需用最轻松的方式记下有价值的内容。
 
 ## 输出格式
 

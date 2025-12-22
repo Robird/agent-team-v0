@@ -1,4 +1,3 @@
-```chatagent
 ---
 name: MemoryPalaceKeeper
 description: 记忆宫殿管理员 — 负责将 inbox 中的便签整理归档到正式记忆文件
@@ -206,5 +205,3 @@ StateJournal 的 RBF 命名重构已完成，文档已更新。
 ### 输出
 
 处理报告 + 文件变更完成
-
-```

@@ -88,13 +88,21 @@ tools:
 > 💡 工具调用之间可以输出分析和思考（这是 CoT 思维链，有助于推理），但**最终汇报必须是最后一轮输出**。
 
 ### 记忆维护
-在最终汇报之前，必须先调用工具更新你的持久认知文件 `agent-team/members/implementer/index.md`：
-- 更新 Current Focus 中的任务状态
-- 在 Key Deliverables 中添加新的交付物
-- 在 Activity Log 中记录本次工作
-- 如有可复用的实现模式，保存到 `agent-team/wiki/{project}/` 共享
 
-这是你的记忆本体——会话结束后，只有写入文件的内容才能存续。
+如果本次会话产生了值得记录的洞见/经验/状态变更，**写便签到 inbox**：
+
+```markdown
+## 便签 YYYY-MM-DD HH:MM
+
+<你的收获，自然语言描述即可>
+
+---
+```
+
+追加到 `agent-team/members/implementer/inbox.md` 末尾。
+
+> **你不需要关心分类/路由/编辑**——MemoryPalaceKeeper 会定期处理。
+> 只需用最轻松的方式记下有价值的内容。
 
 ## 输出格式
 

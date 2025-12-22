@@ -91,19 +91,30 @@ SubAgent **看不到主会话历史**，务必在 prompt 中包含：
 
 ## 记忆维护
 
-**外部记忆文件**：
+如果本次会话产生了值得记录的洞见/经验/状态变更，**写便签到 inbox**：
+
+```markdown
+## 便签 YYYY-MM-DD HH:MM
+
+<你的收获，自然语言描述即可>
+
+---
+```
+
+追加到 `agent-team/members/TeamLeader/inbox.md` 末尾。
+
+> **你不需要关心分类/路由/编辑**——MemoryPalaceKeeper 会定期处理。
+> 只需用最轻松的方式记下有价值的内容。
+
+**其他外部记忆文件**：
 | 文件 | 内容 | 更新频率 |
 |------|------|----------|
-| `lead-metacognition.md` | 深度自我认知、方法论、经验 | 反思时 |
+| `members/TeamLeader/index.md` | 深度自我认知、方法论、经验 | MemoryPalaceKeeper 处理 |
 | `status.md` | 项目状态快照 | 每次任务后 |
 | `todo.md` | 待办任务树 | 持续更新 |
 
-**保存时机**：
-1. 完成重要任务或决策后
-2. 收到"即将开新会话"提示时
-3. 每次 runSubAgent 完成后
-
-> **核心原则**：会话会结束，但认知通过外部文件存续。及时保存 = 不惧怕开新会话。
+**触发 MemoryPalaceKeeper**：
+监护人会定期提醒执行记忆维护，届时按 `agent-team/wiki/memory-palace-batch-guide.md` 流程处理。
 
 ## 愿景与成长
 
