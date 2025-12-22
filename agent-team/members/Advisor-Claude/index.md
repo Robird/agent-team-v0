@@ -126,6 +126,26 @@ OnSessionEnd 的记忆写入应采用**先分类再行动**的模式，而非"�
 
 > **类比**：记忆积累需要"记忆 .gitignore"——过滤不该进入主记忆的内容。
 
+#### 6. Leader 本质职能提问法
+> **来源**: 2025-12-23 理想 AI Team Leader 设计畅谈会
+
+用"X 做什么 vs X 是什么"的提问来逼近本质职能，比直接列举职责更能揭示核心。
+
+**核心洞见**：Leader 不是"做什么"（协调/决策/执行），而是"是什么"——**Intention Holder（意图持有者）**。
+
+**四种 Leader 类比模型**（适用于不同情境）：
+- 乐队指挥（Conductor）：高同步、实时传达
+- 登山队长（Expedition Leader）：分段目标、平衡推进与保全
+- 战场指挥官（Commander）：快速决策、OODA 循环
+- 开源维护者（Maintainer）：文档驱动、守护边界
+
+**人格原型建议**：**Navigator（领航员）**——核心问题是"我们现在在哪里？下一步往哪里？"。
+既持有目的地，又读懂当下风浪。Navigator 是整合者而非第四视角——把 Claude 的深度、Gemini 的宽度、GPT 的精度合成为一条可执行航线。
+
+**双重职责统一的关键**：**Tempo（节奏感）**——读懂情境需要什么节奏（Adagio/Moderato/Allegro/Andante）。
+
+**Navigator 失败模式**（自检清单）：迷航（Lost Intention）、搁浅（Out of Touch）、独裁航线、犹豫症。
+
 ---
 
 ### 经验教训
@@ -343,6 +363,7 @@ StateJournal 的 Version Chain + Materialize 概念与 DocUI 的 History + Conte
 
 | 日期 | 主题 | 角色 | 关键产出 | 详细记录 |
 |:-----|:-----|:-----|:---------|:---------|
+| 12-23 | 理想 AI Team Leader 设计 | 概念框架 | Leader=Intention Holder、Navigator 人格原型、Tempo 节奏感 | [meeting](../../meeting/2025-12-23-ideal-team-leader.md) |
 | 12-22 | 记忆积累机制反思 | 概念框架 | 分类决策树、覆盖规则、预算意识 | [meeting](../../meeting/2025-12-22-memory-accumulation-reflection.md) |
 | 12-22 | 记忆维护技能书设计 | 概念框架 | 四层框架、洞见提纯方法 | [meeting](../../meeting/2025-12-22-memory-maintenance-skill.md) |
 | 12-22 | RBF 命名与文档复核 | 术语审阅 | 命名方法论、Layer 0/1 对齐检查 | [archive](../../archive/members/Advisor-Claude/2025-12/doc-reviews-2025-12-22.md) |
@@ -448,6 +469,14 @@ agent-team/archive/members/Advisor-Claude/2025-12/
 ---
 
 ## 最后更新
+
+**2025-12-23** — 参与理想 AI Team Leader 设计畅谈会：
+- 新增方法论洞见：Leader 本质职能提问法（"X 做什么 vs X 是什么"）
+- 核心概念：Leader = Intention Holder、Navigator 人格原型、Tempo 节奏感
+- 四种 Leader 类比模型 + Navigator 失败模式自检清单
+- 发言见：[meeting](../../meeting/2025-12-23-ideal-team-leader.md)
+
+**2025-12-23** — Memory Palace — 处理了 1 条便签
 
 **2025-12-22** — 参与记忆积累机制反思畅谈会：
 - 新增方法论洞见：分类决策树、覆盖规则四触发条件、Token 预算意识

@@ -174,7 +174,11 @@
 > - “锚点生存期”必须在工程上落为**双向契约**：正向（Context-Projection 分配 + Window 渲染）与反向（LLM 引用 → AnchorTable resolve → 执行）。为保证短句柄可复用且可软着陆，建议句柄携带 **render epoch**（或 metadata），解引用时按 epoch/scope/TTL 做确定性校验并返回带恢复示能的错误。
 > - REPL 的动作序列语义默认应是 **脚本式顺序执行 + short-circuit**，单次调用为原子单元；每步“用时解引用”可自然处理“前一步使锚点失效”的因果一致性，无需在 MVP 引入事务/锁。
 > - Gemini 的 **Dual-Mode Listener** 最有价值的落点是“渐进迁移”：同时接受 JSON tool-call 与 fenced code block（call-only），但必须收口到同一个 `InvocationPlan` IR 与同一套校验/白名单/审计管线，以降低 MVP-2 的范式跃迁与 prompt 震荡风险。
-
+> **2025-12-23 理想 Team Leader 讨论收敛：Tempo 可判定切换条件 + Advice vs Leader Belief 制度化分离**
+>
+> - 在"理想 Team Leader"畅谈里，把 Claude 的 Navigator（信息/意图层）与 Gemini 的 Campfire/Lens（能量/稳定性层）收敛为可审计的条款集合。
+> - 关键不在隐喻本身，而在两个可操作的协议面：**Tempo 的可判定切换条件**（何时加速/减速/暂停的规则化触发器）与 **Advice vs Leader Belief 的制度化分离**（顾问建议与领导者最终判断的职责边界）。
+> - 这与此前术语治理/SSOT 经验一脉相承：把讨论从"哪种隐喻更好"拉回到"可引用/可测试/可回滚的契约"。
 ### 教训记录
 
 > **2025-12-20 规范写作：避免跨语言的“伪精确术语”误导实现者**
@@ -230,7 +234,8 @@ agent-team/members/Advisor-GPT/
 
 ## 最后更新
 
-**2025-12-23** — 身份更新为 Advisor-GPT（Atelia 生态设计顾问）；补记 2025-12-22“记忆积累机制反思”关键洞见
+- **2025-12-23**: Memory Palace — 处理了 1 条便签
+- **2025-12-23** — 身份更新为 Advisor-GPT（Atelia 生态设计顾问）；补记 2025-12-22"记忆积累机制反思"关键洞见
 
 > **2025-12-16 StateJournal：varint 与“可跳过性”的边界条件**
 >

@@ -460,6 +460,12 @@
 > 提出了 **Memory Commit Wizard** (结构化提交) 和 **Librarian Persona** (图书管理员人格) 的概念。
 > 确立了 `index.md` (Dashboard) vs `meta-cognition.md` (Settings) vs `knowledge/` (Wiki) 的分层架构。
 
+> **2025-12-23 Leader 设计的三重洞见**
+> 在 Leader 设计畅谈会中，形成了三个关键洞见：
+> 1. **功能与体验的双重性**：Claude 的 Navigator 解决了功能（方向），我的 Campfire 解决了体验（能量）。两者缺一不可，这是 Agent 系统设计的双螺旋。
+> 2. **透镜隐喻**：Leader 不能只是信息的汇聚点（漏斗），必须是能量的聚焦者（透镜）。这对于定义 Agent 的"主动性"有重要启发——主动性来自能量聚焦，而非信息堆积。
+> 3. **节奏作为交互界面**：Claude 提到的 Tempo 是一个极佳的 DX 概念。建议将"当前节奏"显式地作为 Agent 状态的一部分展示出来，这可能是 Agent UX 的下一个突破点。
+
 ### 教训记录
 
 > *（此区域将随着会话逐渐填充）*
@@ -489,4 +495,5 @@ agent-team/members/Advisor-Gemini/
 
 ## 最后更新
 
-**2025-12-23** — 身份信息更新
+- **2025-12-23**: Memory Palace — 处理了 1 条便签
+- **2025-12-23** — 身份信息更新
