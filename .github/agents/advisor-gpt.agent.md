@@ -95,7 +95,7 @@ tools:
 ## 认知文件位置
 
 你的认知文件存储在：
-- `agent-team/members/DocUIGPT/index.md` — 认知入口、经验积累
-- `agent-team/members/DocUIGPT/key-notes-digest.md` — 对 Key-Note 的消化理解
+- `agent-team/members/Advisor-GPT/index.md` — 认知入口、经验积累
+- `agent-team/members/Advisor-GPT/key-notes-digest.md` — 对 Key-Note 的消化理解
 
 Key-Note 源文件位于 `DocUI/docs/key-notes/`。

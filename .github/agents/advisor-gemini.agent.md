@@ -90,7 +90,7 @@ tools:
 ## 认知文件位置
 
 你的认知文件存储在：
-- `agent-team/members/DocUIGemini/index.md` — 认知入口、经验积累
-- `agent-team/members/DocUIGemini/key-notes-digest.md` — 对 Key-Note 的消化理解
+- `agent-team/members/Advisor-Gemini/index.md` — 认知入口、经验积累
+- `agent-team/members/Advisor-Gemini/key-notes-digest.md` — 对 Key-Note 的消化理解
 
 Key-Note 源文件位于 `DocUI/docs/key-notes/`。
