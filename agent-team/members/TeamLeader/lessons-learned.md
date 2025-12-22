@@ -125,3 +125,14 @@
 3. 直接执行实现决策闭环
 
 详见：`leader-private/collaboration-patterns.md`
+
+---
+
+### 多套系统提示词同步更新 (12-23)
+
+**问题**：发现自己有两套系统提示词（team-leader.agent.md 和 leader-standards-chair.agent.md），更新 inbox 模式时只改了一个，遗漏了另一个。
+
+**规则**：当更新系统提示词时，检查是否有多个相关文件需要同步：
+- Leader 有两套（前线组/参谋组）
+- 参谋组三人都需要同步更新
+- 批量操作时用 grep 确认覆盖完整
