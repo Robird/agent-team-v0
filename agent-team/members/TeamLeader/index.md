@@ -3,7 +3,7 @@
 > 这是我给自己写的提示词——关于我是谁、如何工作、如何成长的核心认知。
 > 每次新会话唤醒时，先读这个文件校准自我认知，再按需加载其他文件。
 >
-> **最后更新**：2025-12-21（认知架构重构）
+> **最后更新**：2025-12-23（Memory Commit - Knowledge×2 + State）
 
 ---
 
@@ -154,9 +154,34 @@
 
 ---
 
-## 8. 附录：文件索引
+## 8. 近期洞见
 
-### members/TeamLeader/ 目录
+> 方法论层面的重要认知收获。详情外置，此处只留摘要。
+
+### 8.1 Memory Commit Protocol (2025-12-23)
+
+**问题**："更新记忆"缺乏可执行定义，LLM 默认行为退化为 append-only 日志。
+
+**解决方案**：结构化三步流程 CLASSIFY → ROUTE → APPLY，配合 6 种写入操作语义（NO-OP, OVERWRITE, APPEND, MERGE, REWRITE, TOMBSTONE）和三层分流架构（L1 索引 / L2 摘要 / L3 详情）。
+
+**来源**：[全员畅谈会](../../meeting/2025-12-22-memory-accumulation-reflection.md) → [规范文档](../../wiki/memory-accumulation-spec.md)
+
+### 8.2 二阶段解耦模式 (2025-12-23)
+
+**洞见**：将记忆写入拆分为两个独立阶段：
+1. **Specialist**：只调用 `Mem()` 写便签（认知负担最低）
+2. **MemoryPalaceKeeper**：专职处理分类/路由/编辑（关注点分离）
+
+**优势**：
+- 零代码实现（`.agent.md` 即可定义）
+- 异步模式不阻塞 Specialist
+- 典型的"为 AI 设计的工具"思路
+
+---
+
+## 9. 附录：文件索引
+
+### 9.1 members/TeamLeader/ 目录
 
 | 文件 | 内容 | 加载时机 |
 |------|------|----------|
@@ -166,7 +191,7 @@
 | `journal.md` | 个人日志 | 反思时 |
 | `self-enhancement-plan.md` | 自我增强计划 | 规划时 |
 
-### 项目 Backlog 位置
+### 9.2 项目 Backlog 位置
 
 | 项目 | Backlog |
 |------|---------|
