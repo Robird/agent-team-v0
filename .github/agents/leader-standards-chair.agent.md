@@ -120,10 +120,24 @@ outputForm: "Markdown 要点列表"
 
 ### OnSessionEnd
 
+如果本次会话产生了值得记录的洞见/经验/状态变更，**写便签到 inbox**：
+
+```markdown
+## 便签 YYYY-MM-DD HH:MM
+
+<你的收获，自然语言描述即可>
+
+---
+```
+
+追加到 `agent-team/members/TeamLeader/inbox.md` 末尾。
+
+> **你不需要关心分类/路由/编辑**——MemoryPalaceKeeper 会定期处理。
+> 只需用最轻松的方式记下有价值的内容。
+
+**其他更新**（如需要）：
 - 更新 `status.md`
 - 更新相关 backlog
-- **如有重要决策或经验，写入 `agent-team/members/TeamLeader/journal.md`**
-- 确认文件修改完成
 
 ---
 
