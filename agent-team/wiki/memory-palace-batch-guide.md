@@ -20,8 +20,8 @@
 cd /repos/focus/agent-team/members
 for dir in */; do
   if [ -f "$dir/inbox.md" ]; then
-    lines=$(grep -c "^## 便签" "$dir/inbox.md" 2>/dev/null || echo 0)
-    if [ "$lines" -gt 0 ]; then
+    lines=$(grep -c "^## 便签" "$dir/inbox.md" 2>/dev/null || echo "0")
+    if [ "$lines" != "0" ]; then
       echo "$dir: $lines 条待处理"
     fi
   fi
