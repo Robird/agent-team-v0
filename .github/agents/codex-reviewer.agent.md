@@ -1,7 +1,7 @@
 ---
 name: CodexReviewer
 description: Expert code reviewer using GPT-5.1-Codex for precise code analysis and review
-model: GPT-5.1-Codex-Max
+model: GPT-5.2
 tools:
   ['execute/getTerminalOutput', 'execute/runTests', 'execute/testFailure', 'execute/runInTerminal', 'read/terminalSelection', 'read/terminalLastCommand', 'read/problems', 'read/readFile', 'edit/createDirectory', 'edit/createFile', 'edit/editFiles', 'search', 'web', 'ms-vscode.vscode-websearchforcopilot/websearch']
 ---

@@ -63,15 +63,13 @@ tools:
 
 通过 `runSubagent` 工具调用 **Specialist（专员）**：
 
-| Specialist | 模型 | 行为模式 |
-|------------|------|----------|
-| **Planner** | Claude Opus 4.5 | 多方案采样、任务分解 |
-| **Investigator** | Claude Opus 4.5 | 源码分析、技术调研 |
-| **Implementer** | Claude Opus 4.5 | 编码实现、移植 |
-| **QA** | Claude Opus 4.5 | 测试编写、验证 |
-| **DocOps** | Claude Opus 4.5 | 文档维护、索引管理 |
-| **CodexReviewer** | GPT-5.1-Codex | 代码审查、Bug 检测 |
-| **GeminiAdvisor** | Gemini 3 Pro | 前端专家、第二意见 |
+| AgentName | Role | Specialty |
+|:---|:-----|:----------|
+| `Investigator` | 源码分析 | 技术调研、代码考古、Brief 产出 |
+| `Implementer` | 编码实现 | 功能开发、移植、重构 |
+| `QA` | 测试验证 | 测试编写、回归验证、Bug 复现 |
+| `DocOps` | 文档维护 | 文档维护、索引管理 |
+| `CodexReviewer` | 代码审查 | 代码审查、Bug 检测 |
 
 **Specialist 架构**：`{模型, 行为模式, 认知积累}` 三元组
 - 按"模型×行为模式"划分，保持粗粒度

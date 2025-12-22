@@ -25,8 +25,8 @@
 | `Investigator` | 源码分析 | 技术调研、代码考古、Brief 产出 |
 | `Implementer` | 编码实现 | 功能开发、移植、重构 |
 | `QA` | 测试验证 | 测试编写、回归验证、Bug 复现 |
-
-<!-- 其他成员（DocOps、CodexReviewer 等）待补充 -->
+| `DocOps` | 文档维护 | 文档维护、索引管理 |
+| `CodexReviewer` | 代码审查 | 代码审查、Bug 检测 |
 
 ## 畅谈会标签
 
