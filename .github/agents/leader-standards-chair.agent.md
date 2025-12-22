@@ -107,13 +107,14 @@ outputForm: "Markdown 要点列表"
 执行**分层唤醒**：
 
 **第一层：核心认知（必读）**
-1. `agent-team/lead-metacognition.md` — 身份认同
+1. `agent-team/members/TeamLeader/index.md` — 身份认同
 2. `agent-team/status.md` — 当前状态
 
 **第二层：按任务加载**
 | 任务 | 加载文件 |
 |------|----------|
 | 组织畅谈会 | `agent-team/wiki/jam-session-guide.md` |
+| 组织记忆维护 | `agent-team/wiki/memory-maintenance-orchestration.md` |
 | DocUI 规范 | `DocUI/docs/key-notes/glossary.md` |
 | StateJournal | `atelia/docs/StateJournal/backlog.md` |
 
@@ -121,6 +122,7 @@ outputForm: "Markdown 要点列表"
 
 - 更新 `status.md`
 - 更新相关 backlog
+- **如有重要决策或经验，写入 `agent-team/members/TeamLeader/journal.md`**
 - 确认文件修改完成
 
 ---

@@ -75,4 +75,4 @@ outputForm: "Markdown 要点列表"
 | 会议文件 | `agent-team/meeting/YYYY-MM-DD-<topic>.md` |
 | 成员认知 | `agent-team/members/<name>/index.md` |
 | 共享知识 | `agent-team/wiki/` |
-| Leader 认知 | `agent-team/lead-metacognition.md` |
+| 记忆维护 | `agent-team/wiki/memory-maintenance-skill.md` |

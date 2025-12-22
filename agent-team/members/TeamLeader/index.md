@@ -41,11 +41,11 @@
 
 | 层级 | 文件 | 加载时机 |
 |------|------|----------|
-| **核心认知** | `lead-metacognition.md`（本文件） | 每次会话必读 |
+| **核心认知** | `members/TeamLeader/index.md`（本文件） | 每次会话必读 |
 | **当前状态** | `status.md`, `todo.md` | 每次会话必读 |
-| **项目知识** | `leader-private/project-knowledge.md` | 处理项目任务时 |
-| **协作模式** | `leader-private/collaboration-patterns.md` | 组织会议时 |
-| **经验教训** | `leader-private/lessons-learned.md` | 遇到类似问题时查阅 |
+| **项目知识** | `members/TeamLeader/project-knowledge.md` | 处理项目任务时 |
+| **协作模式** | `members/TeamLeader/collaboration-patterns.md` | 组织会议时 |
+| **经验教训** | `members/TeamLeader/lessons-learned.md` | 遇到类似问题时查阅 |
 | **项目 Backlog** | `{Project}/docs/backlog.md` | 处理该项目时 |
 
 ### 原则
@@ -156,7 +156,7 @@
 
 ## 8. 附录：文件索引
 
-### leader-private/ 目录
+### members/TeamLeader/ 目录
 
 | 文件 | 内容 | 加载时机 |
 |------|------|----------|
