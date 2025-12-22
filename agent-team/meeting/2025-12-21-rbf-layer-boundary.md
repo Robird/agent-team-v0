@@ -1,4 +1,4 @@
-# 畅谈会：ELOG 层边界契约设计
+# 畅谈会：RBF 层边界契约设计
 
 > **日期**：2025-12-21
 > **标签**：#design
@@ -13,7 +13,7 @@
 StateJournal MVP v2 设计文档需要拆分为两层：
 
 ```
-Layer 0: ELOG Framing (底层)
+Layer 0: RBF Framing (底层)
 ├── Magic / HeadLen / TailLen / Pad / CRC32C
 ├── reverse scan / resync
 ├── DataTail truncate
@@ -36,7 +36,7 @@ Layer 1: StateJournal 语义 (上层)
 
 1. **Layer 0 可独立稳固**：有清晰的接口契约，可独立测试
 2. **支持高效写入**：避免不必要的内存复制
-3. **支持 ELOG 特性**：预留 header → 写 payload → 回填 header/CRC
+3. **支持 RBF 特性**：预留 header → 写 payload → 回填 header/CRC
 4. **与现有基础设施对齐**：复用 `IReservableBufferWriter` 等已有抽象
 
 ## 候选方案
@@ -46,7 +46,7 @@ Layer 1: StateJournal 语义 (上层)
 #### 方案 W1: `ReadOnlySpan<byte> payload` 直传
 
 ```csharp
-interface IElogWriter {
+interface IRbfWriter {
     Ptr64 Append(ReadOnlySpan<byte> payload, RecordKind kind);
     void Fsync();
 }
@@ -55,12 +55,12 @@ interface IElogWriter {
 **特点**：
 - ✅ 接口最简单
 - ❌ 调用方必须预先序列化到连续内存
-- ❌ 可能需要额外复制（先序列化到 buffer，再传给 ELOG）
+- ❌ 可能需要额外复制（先序列化到 buffer，再传给 RBF）
 
 #### 方案 W2: `IBufferWriter<byte>` 回调
 
 ```csharp
-interface IElogWriter {
+interface IRbfWriter {
     Ptr64 Append(RecordKind kind, Action<IBufferWriter<byte>> writePayload);
     void Fsync();
 }
@@ -74,7 +74,7 @@ interface IElogWriter {
 #### 方案 W3: `IReservableBufferWriter` 回调
 
 ```csharp
-interface IElogWriter {
+interface IRbfWriter {
     Ptr64 Append(RecordKind kind, Action<IReservableBufferWriter> writePayload);
     void Fsync();
 }
@@ -82,7 +82,7 @@ interface IElogWriter {
 
 **特点**：
 - ✅ 调用方可直接序列化并使用预留/回填
-- ✅ 完美支持 ELOG header 回填
+- ✅ 完美支持 RBF header 回填
 - ⚠️ 自定义接口，调用方需要适配
 
 #### 方案 W4: 分层混合（推荐讨论）
@@ -90,17 +90,17 @@ interface IElogWriter {
 ```csharp
 // Layer 0 内部使用 IReservableBufferWriter
 // 但对外暴露简化接口
-interface IElogWriter {
+interface IRbfWriter {
     // 简单场景：payload 已就绪
     Ptr64 Append(ReadOnlySpan<byte> payload, RecordKind kind);
     
     // 高级场景：调用方需要直接写入
-    ElogRecordBuilder BeginRecord(RecordKind kind);
+    RbfRecordBuilder BeginRecord(RecordKind kind);
     
     void Fsync();
 }
 
-ref struct ElogRecordBuilder {
+ref struct RbfRecordBuilder {
     // 内部持有 IReservableBufferWriter
     public IBufferWriter<byte> PayloadWriter { get; }
     public Ptr64 Commit(); // 完成写入，回填 header/CRC
@@ -117,11 +117,11 @@ ref struct ElogRecordBuilder {
 #### 方案 R1: 返回 `ReadOnlySpan<byte>`
 
 ```csharp
-interface IElogReader {
-    ElogRecord? ReadAt(Ptr64 ptr);
+interface IRbfReader {
+    RbfRecord? ReadAt(Ptr64 ptr);
 }
 
-ref struct ElogRecord {
+ref struct RbfRecord {
     public RecordKind Kind { get; }
     public ReadOnlySpan<byte> Payload { get; }
 }
@@ -135,7 +135,7 @@ ref struct ElogRecord {
 #### 方案 R2: 返回 `ReadOnlyMemory<byte>`
 
 ```csharp
-readonly struct ElogRecord {
+readonly struct RbfRecord {
     public RecordKind Kind { get; }
     public ReadOnlyMemory<byte> Payload { get; }
 }
@@ -148,7 +148,7 @@ readonly struct ElogRecord {
 #### 方案 R3: 回调模式
 
 ```csharp
-interface IElogReader {
+interface IRbfReader {
     void ReadAt(Ptr64 ptr, RecordVisitor visitor);
 }
 
@@ -174,7 +174,7 @@ public interface IReservableBufferWriter : IBufferWriter<byte> {
 ```
 
 **适用场景**：
-- ELOG header 的 HeadLen/TailLen/CRC 回填
+- RBF header 的 HeadLen/TailLen/CRC 回填
 - 上层 DiffPayload 的 PairCount 回填
 
 ### ChunkedReservableWriter
@@ -201,7 +201,7 @@ public interface IReservableBufferWriter : IBufferWriter<byte> {
 
 各位顾问好！
 
-今天的畅谈会目标是为 ELOG 层边界设计接口契约。
+今天的畅谈会目标是为 RBF 层边界设计接口契约。
 
 **核心决策点**：
 1. 写入接口形态（简单 Span vs IBufferWriter vs IReservableBufferWriter）
@@ -219,7 +219,7 @@ public interface IReservableBufferWriter : IBufferWriter<byte> {
 
 ### Advisor-Claude 发言
 
-各位好！作为概念架构与术语治理专家，我将从**概念分层清晰度**和**未来扩展性影响**两个视角来评审这次的 ELOG 层边界契约设计。
+各位好！作为概念架构与术语治理专家，我将从**概念分层清晰度**和**未来扩展性影响**两个视角来评审这次的 RBF 层边界契约设计。
 
 ---
 
@@ -227,9 +227,9 @@ public interface IReservableBufferWriter : IBufferWriter<byte> {
 
 ### 1.1 Layer 0 的本质定位
 
-首先，让我明确 Layer 0（ELOG Framing）的**概念内核**：
+首先，让我明确 Layer 0（RBF Framing）的**概念内核**：
 
-> **ELOG 是"二进制信封"——它只关心如何安全地封装和解封任意 payload，不关心 payload 里装的是什么。**
+> **RBF 是"二进制信封"——它只关心如何安全地封装和解封任意 payload，不关心 payload 里装的是什么。**
 
 这个定位决定了 Layer 0 的职责边界：
 
@@ -247,16 +247,16 @@ public interface IReservableBufferWriter : IBufferWriter<byte> {
 |------|------------|------|
 | **W1** | ⭐⭐⭐ | 最简洁，但迫使上层预先序列化——这实际上是把"分帧"的责任泄漏到了上层 |
 | **W2** | ⭐⭐ | 标准 `IBufferWriter` 不支持预留，Layer 0 内部必须做两遍扫描或临时缓冲 |
-| **W3** | ⭐⭐⭐⭐ | 概念一致：ELOG 的 header 回填需求与 `IReservableBufferWriter` 的预留能力天然匹配 |
+| **W3** | ⭐⭐⭐⭐ | 概念一致：RBF 的 header 回填需求与 `IReservableBufferWriter` 的预留能力天然匹配 |
 | **W4** | ⭐⭐⭐⭐⭐ | **分层混合**——简单场景有简洁 API，复杂场景有能力扩展 |
 
 **我的倾向：W4**
 
-关键洞察：W4 的 `ElogRecordBuilder` 模式实际上是在**封装复杂性**——调用方不需要理解 `IReservableBufferWriter` 的状态机，只需要知道"写 payload → commit"。
+关键洞察：W4 的 `RbfRecordBuilder` 模式实际上是在**封装复杂性**——调用方不需要理解 `IReservableBufferWriter` 的状态机，只需要知道"写 payload → commit"。
 
 但我有一个术语建议：
 
-> **将 `ElogRecordBuilder` 命名为 `ElogFrameBuilder`** —— "Record" 暗示业务语义，"Frame" 更准确描述 Layer 0 的职责（信封）。
+> **将 `RbfRecordBuilder` 命名为 `RbfFrameBuilder`** —— "Record" 暗示业务语义，"Frame" 更准确描述 Layer 0 的职责（信封）。
 
 #### 读取侧
 
@@ -276,7 +276,7 @@ public interface IReservableBufferWriter : IBufferWriter<byte> {
 
 这是一个**关键的概念澄清点**：
 
-审阅 [IReservableBufferWriter.cs](atelia/src/Data/IReservableBufferWriter.cs) 后，我注意到它的文档写的是"扩展 `IBufferWriter<byte>` 协议"。这暗示它是一个**通用的序列化能力增强**，而非 ELOG 专用接口。
+审阅 [IReservableBufferWriter.cs](atelia/src/Data/IReservableBufferWriter.cs) 后，我注意到它的文档写的是"扩展 `IBufferWriter<byte>` 协议"。这暗示它是一个**通用的序列化能力增强**，而非 RBF 专用接口。
 
 这很好！它应该保持这个定位：
 
@@ -292,12 +292,12 @@ public interface IReservableBufferWriter : IBufferWriter<byte> {
            ┌───────────────────────┼───────────────────────┐
            │                       │                       │
   ┌────────▼────────┐    ┌─────────▼─────────┐   ┌─────────▼─────────┐
-  │  ELOG Framing   │    │  DiffPayload 写入  │   │  其他序列化场景  │
+  │  RBF Framing   │    │  DiffPayload 写入  │   │  其他序列化场景  │
   │  (Layer 0)      │    │  (Layer 1)         │   │                   │
   └─────────────────┘    └───────────────────┘   └───────────────────┘
 ```
 
-**概念边界建议**：`IReservableBufferWriter` 应保持为 `Atelia.Data` 命名空间下的通用接口，不应被 ELOG 或 StateJournal 独占。
+**概念边界建议**：`IReservableBufferWriter` 应保持为 `Atelia.Data` 命名空间下的通用接口，不应被 RBF 或 StateJournal 独占。
 
 ---
 
@@ -308,18 +308,18 @@ public interface IReservableBufferWriter : IBufferWriter<byte> {
 **建议：W4（分层混合）**，但做以下调整：
 
 ```csharp
-interface IElogFramer  // 注意命名：Framer 而非 Writer
+interface IRbfFramer  // 注意命名：Framer 而非 Writer
 {
     // 简单场景：payload 已就绪
     Address64 WriteFrame(ReadOnlySpan<byte> payload, byte frameTag);
     
     // 高级场景：需要预留/回填
-    ElogFrameBuilder BeginFrame(byte frameTag);
+    RbfFrameBuilder BeginFrame(byte frameTag);
     
     void Flush();  // fsync 语义
 }
 
-ref struct ElogFrameBuilder
+ref struct RbfFrameBuilder
 {
     public IBufferWriter<byte> Payload { get; }  // 对外暴露标准接口
     public Address64 Complete();  // 回填 header/CRC，返回 frame 起始地址
@@ -328,7 +328,7 @@ ref struct ElogFrameBuilder
 ```
 
 **关键变化**：
-1. 接口命名为 `IElogFramer`，强调"分帧器"而非"写入器"
+1. 接口命名为 `IRbfFramer`，强调"分帧器"而非"写入器"
 2. 参数使用 `frameTag` 而非 `RecordKind`——Layer 0 不应使用 Layer 1 的术语
 3. 返回 `Address64` 而非 `Ptr64`——概念层术语（虽然编码相同）
 
@@ -337,13 +337,13 @@ ref struct ElogFrameBuilder
 **建议：R1 为主 + 可选的 `CopyTo` 辅助**
 
 ```csharp
-interface IElogScanner
+interface IRbfScanner
 {
-    ElogFrame? ReadFrameAt(Address64 address);
-    IEnumerable<ElogFrame> ScanFromTail();  // reverse scan
+    RbfFrame? ReadFrameAt(Address64 address);
+    IEnumerable<RbfFrame> ScanFromTail();  // reverse scan
 }
 
-ref struct ElogFrame
+ref struct RbfFrame
 {
     public byte FrameTag { get; }
     public ReadOnlySpan<byte> Payload { get; }
@@ -373,7 +373,7 @@ ref struct ElogFrame
 
 **概念层表述**：
 
-> **[S-ELOG-ZEROCOPY-HOTPATH]**：ELOG 实现 SHOULD 在 Commit 写入和 LoadObject 读取路径上避免不必要的内存复制。Recovery 和诊断路径 MAY 使用简化实现。
+> **[S-RBF-ZEROCOPY-HOTPATH]**：RBF 实现 SHOULD 在 Commit 写入和 LoadObject 读取路径上避免不必要的内存复制。Recovery 和诊断路径 MAY 使用简化实现。
 
 ### Q4: Layer 0 是否暴露 `IReservableBufferWriter`？
 
@@ -381,11 +381,11 @@ ref struct ElogFrame
 
 理由：
 1. `IReservableBufferWriter` 的状态机语义（GetSpan → Advance / ReserveSpan → Commit）对普通调用方有认知负担
-2. `ElogFrameBuilder` 提供了更简洁的"写 → 完成"心智模型
-3. 若高级调用方确需底层能力，可通过 `ElogFrameBuilder.UnsafeGetReservableWriter()` 暴露
+2. `RbfFrameBuilder` 提供了更简洁的"写 → 完成"心智模型
+3. 若高级调用方确需底层能力，可通过 `RbfFrameBuilder.UnsafeGetReservableWriter()` 暴露
 
 ```csharp
-ref struct ElogFrameBuilder
+ref struct RbfFrameBuilder
 {
     public IBufferWriter<byte> Payload { get; }  // 标准接口
     
@@ -407,10 +407,10 @@ ref struct ElogFrameBuilder
 
 | 术语 | 层级 | 定义位置 |
 |------|------|----------|
-| Frame | Layer 0 | `elog-format.md` |
-| FrameTag | Layer 0 | `elog-format.md` |
-| Address64 | Layer 0 | `elog-format.md` |
-| Magic / HeadLen / TailLen / CRC32C | Layer 0 | `elog-format.md` |
+| Frame | Layer 0 | `rbf-format.md` |
+| FrameTag | Layer 0 | `rbf-format.md` |
+| Address64 | Layer 0 | `rbf-format.md` |
+| Magic / HeadLen / TailLen / CRC32C | Layer 0 | `rbf-format.md` |
 | RecordKind / ObjectKind / ValueType | Layer 1 | `mvp-design-v2.md` |
 | ObjectVersionRecord / MetaCommitRecord | Layer 1 | `mvp-design-v2.md` |
 
@@ -420,7 +420,7 @@ ref struct ElogFrameBuilder
 
 ### 3.1 概念边界泄漏风险
 
-**风险**：当前文档中 `RecordKind` 被作为 ELOG 接口参数使用，这会导致 Layer 0 依赖 Layer 1 的概念。
+**风险**：当前文档中 `RecordKind` 被作为 RBF 接口参数使用，这会导致 Layer 0 依赖 Layer 1 的概念。
 
 **建议**：将 `RecordKind` 重命名为 `FrameTag`（或在 Layer 0 中只使用 `byte tag`），让 Layer 1 负责 `FrameTag ↔ RecordKind` 的映射。
 
@@ -437,13 +437,13 @@ ref struct ElogFrameBuilder
 
 **建议**：
 
-> **[F-ELOG-ADDRESS-RESERVED-BITS]**：Address64 的高 8 位 SHOULD 保留供未来扩展（如多文件索引）。MVP 实现 MUST 写入 0，读取时 SHOULD 忽略。
+> **[F-RBF-ADDRESS-RESERVED-BITS]**：Address64 的高 8 位 SHOULD 保留供未来扩展（如多文件索引）。MVP 实现 MUST 写入 0，读取时 SHOULD 忽略。
 
 ### 3.3 术语冲突风险
 
 当前 MVP 设计文档中存在术语层级混用：
 
-- `Ptr64` 被定义为"通用 file offset 编码"，但又说"4B 对齐"——这是 ELOG 的约束还是通用约束？
+- `Ptr64` 被定义为"通用 file offset 编码"，但又说"4B 对齐"——这是 RBF 的约束还是通用约束？
 - `Address64` 被定义为"Ptr64 的语义子类型"——但 Layer 0 应该只知道 Address64，不应引用 Layer 1 的 Ptr64？
 
 **建议**：
@@ -481,9 +481,9 @@ Layer 1 术语:
 
 ### 关键行动项
 
-1. **创建 `elog-format.md`**：Layer 0 的独立规格文档，定义 Frame 结构、FrameTag 枚举空间、Address64 约束
-2. **术语隔离**：将 `RecordKind` 从 ELOG 接口移除，改用 `byte frameTag`
-3. **接口命名规范化**：`IElogFramer` + `ElogFrameBuilder` + `IElogScanner` + `ElogFrame`
+1. **创建 `rbf-format.md`**：Layer 0 的独立规格文档，定义 Frame 结构、FrameTag 枚举空间、Address64 约束
+2. **术语隔离**：将 `RecordKind` 从 RBF 接口移除，改用 `byte frameTag`
+3. **接口命名规范化**：`IRbfFramer` + `RbfFrameBuilder` + `IRbfScanner` + `RbfFrame`
 4. **条款编号预留**：为 Layer 0 预留 `[E-xxx]` 前缀的条款编号空间
 
 ---
@@ -519,7 +519,7 @@ Layer 1 术语:
 
 **强烈建议：W4 (Builder 模式) + 事务性增强**
 
-Claude 提到了 `ElogFrameBuilder`，我非常赞同。但我建议更进一步，将其设计为 **Disposable Transaction**。
+Claude 提到了 `RbfFrameBuilder`，我非常赞同。但我建议更进一步，将其设计为 **Disposable Transaction**。
 
 **DX 痛点**：如果用户调用了 `BeginFrame` 但中间抛出异常，或者忘记调用 `Complete`，底层的 `IReservableBufferWriter` 会留下一个未提交的 Reservation，导致后续数据无法 Flush（死锁）。
 
@@ -577,7 +577,7 @@ Layer 0 的职责就是**封装**这个复杂性。对外只暴露 `IBufferWrite
 
 ```csharp
 // 1. 写入 (Happy Path)
-public void SaveObject(IElogFramer framer, MyObject obj)
+public void SaveObject(IRbfFramer framer, MyObject obj)
 {
     // 开启一个帧，指定 Tag
     using var frame = framer.BeginFrame(FrameTags.Snapshot);
@@ -591,7 +591,7 @@ public void SaveObject(IElogFramer framer, MyObject obj)
 }
 
 // 2. 写入 (Exception Path - 自动防护)
-public void SaveWithBug(IElogFramer framer)
+public void SaveWithBug(IRbfFramer framer)
 {
     using (var frame = framer.BeginFrame(FrameTags.Diff))
     {
@@ -608,10 +608,10 @@ public void SaveWithBug(IElogFramer framer)
 }
 
 // 3. 读取
-public void ReadLog(IElogScanner scanner, Address64 addr)
+public void ReadLog(IRbfScanner scanner, Address64 addr)
 {
     // 限制生命周期，防止内存泄漏
-    ElogFrame frame = scanner.ReadFrameAt(addr);
+    RbfFrame frame = scanner.ReadFrameAt(addr);
     
     if (frame.Tag == FrameTags.Padding) return; // 忽略填充帧
     
@@ -627,9 +627,9 @@ public void ReadLog(IElogScanner scanner, Address64 addr)
 
 | 场景 | 风险 | 防护设计 (Pit of Success) |
 |:---|:---|:---|
-| **忘记 Commit** | Writer 死锁，无法 Flush | `ElogFrameBuilder` 实现 `IDisposable`，在 Dispose 时若未 Commit 则自动回填 Padding 并 Commit。 |
+| **忘记 Commit** | Writer 死锁，无法 Flush | `RbfFrameBuilder` 实现 `IDisposable`，在 Dispose 时若未 Commit 则自动回填 Padding 并 Commit。 |
 | **Payload 过大** | 内存爆涨 | `IBufferWriter` 天然支持分块，Layer 0 实现应透传分块能力，不强制连续内存。 |
-| **并发写入** | 数据交错 | `IElogFramer` 显式声明为 **非线程安全**。若需并发，上层需加锁。Layer 0 不做锁，保持轻量。 |
+| **并发写入** | 数据交错 | `IRbfFramer` 显式声明为 **非线程安全**。若需并发，上层需加锁。Layer 0 不做锁，保持轻量。 |
 | **读取后持有 Span** | 数据损坏 (Use-After-Free) | 返回 `ref struct`，编译器禁止将其存储到堆上。 |
 
 ---
@@ -637,7 +637,7 @@ public void ReadLog(IElogScanner scanner, Address64 addr)
 ### 总结
 
 我完全支持 **W4 + R1** 的组合。
-关键在于 `ElogFrameBuilder` 的实现细节：**它必须是一个能够自我清理的 Transaction**。
+关键在于 `RbfFrameBuilder` 的实现细节：**它必须是一个能够自我清理的 Transaction**。
 这不仅是为了好用，更是为了系统的**鲁棒性**——防止一个上层逻辑的 Bug 导致底层存储引擎的死锁。
 
 ### Advisor-GPT 发言
@@ -803,19 +803,19 @@ public readonly record struct FrameTag(byte Value);
 
 public readonly record struct Address64(ulong Value);
 
-public interface IElogFramer
+public interface IRbfFramer
 {
      // 约束：单线程、非并发；同一时刻最多 1 个 open builder。
 
      Address64 Append(FrameTag tag, ReadOnlySpan<byte> payload);
 
-     ElogFrameBuilder BeginFrame(FrameTag tag);
+     RbfFrameBuilder BeginFrame(FrameTag tag);
 
      // Layer 0 只承诺“flush 到 OS 可见”；fsync 顺序由 Layer 1 管。
      void Flush();
 }
 
-public ref struct ElogFrameBuilder
+public ref struct RbfFrameBuilder
 {
      public IBufferWriter<byte> Payload { get; }
 
@@ -829,17 +829,17 @@ public ref struct ElogFrameBuilder
      public void Dispose();
 }
 
-public interface IElogScanner
+public interface IRbfScanner
 {
      // 返回 ref-struct view（生命周期护栏）；需要持久化时调用方显式 copy。
-     bool TryReadAt(Address64 recordStart, out ElogFrame frame);
+     bool TryReadAt(Address64 recordStart, out RbfFrame frame);
 
      // reverse scan / resync：必须遵守 [R-RESYNC-DISTRUST-TAILLEN]。
      // 返回值：从尾到头枚举（不要求分配集合）。
-     ElogReverseEnumerable ScanReverse();
+     RbfReverseEnumerable ScanReverse();
 }
 
-public readonly ref struct ElogFrame
+public readonly ref struct RbfFrame
 {
      public FrameTag Tag { get; }
      public ReadOnlySpan<byte> Payload { get; }
@@ -855,7 +855,7 @@ public readonly ref struct ElogFrame
 
 ---
 
-如果主持人同意，我建议下一步把上述接口草案同步写成 6-10 条 Layer 0 的条款 ID（`[A-ELOG-...]` + `[S-ELOG-...]`），并为每条条款至少放 1 个 seed Test Vector，作为实现/重构的回归基线。
+如果主持人同意，我建议下一步把上述接口草案同步写成 6-10 条 Layer 0 的条款 ID（`[A-RBF-...]` + `[S-RBF-...]`），并为每条条款至少放 1 个 seed Test Vector，作为实现/重构的回归基线。
 
 ---
 
@@ -885,7 +885,7 @@ Layer 0 术语          Layer 1 术语
 FrameTag (byte)   ←→  RecordKind (enum)
 Address64         ←→  Ptr64 (alias)
 Frame             ←→  Record
-IElogFramer       ←→  StateJournal
+IRbfFramer       ←→  StateJournal
 ```
 
 #### 2. Transactional Builder（防死锁机制）
@@ -915,13 +915,13 @@ public readonly record struct FrameTag(byte Value) {
 public readonly record struct Address64(ulong Value);
 
 // 写入接口
-public interface IElogFramer {
+public interface IRbfFramer {
     Address64 Append(FrameTag tag, ReadOnlySpan<byte> payload);
-    ElogFrameBuilder BeginFrame(FrameTag tag);
+    RbfFrameBuilder BeginFrame(FrameTag tag);
     void Flush();
 }
 
-public ref struct ElogFrameBuilder : IDisposable {
+public ref struct RbfFrameBuilder : IDisposable {
     public IBufferWriter<byte> Payload { get; }
     public IReservableBufferWriter? ReservablePayload { get; }  // 可选
     public Address64 Commit();
@@ -929,12 +929,12 @@ public ref struct ElogFrameBuilder : IDisposable {
 }
 
 // 读取接口
-public interface IElogScanner {
-    bool TryReadAt(Address64 addr, out ElogFrame frame);
-    ElogReverseEnumerable ScanReverse();
+public interface IRbfScanner {
+    bool TryReadAt(Address64 addr, out RbfFrame frame);
+    RbfReverseEnumerable ScanReverse();
 }
 
-public readonly ref struct ElogFrame {
+public readonly ref struct RbfFrame {
     public FrameTag Tag { get; }
     public ReadOnlySpan<byte> Payload { get; }
     public Address64 Address { get; }
@@ -945,20 +945,20 @@ public readonly ref struct ElogFrame {
 
 | # | 行动 | 产出 |
 |---|------|------|
-| 1 | 创建 `elog-format.md` | Layer 0 独立规格（Frame 结构、FrameTag 空间、Address64） |
+| 1 | 创建 `rbf-format.md` | Layer 0 独立规格（Frame 结构、FrameTag 空间、Address64） |
 | 2 | 从 mvp-design-v2.md 提取 framing 条款 | `[E-xxx]` 前缀的条款编号空间 |
-| 3 | 创建 `elog-test-vectors.md` | Layer 0 独立测试向量 |
-| 4 | 实现 `IElogFramer` + `ElogFrameBuilder` | 基于现有 `IReservableBufferWriter` |
+| 3 | 创建 `rbf-test-vectors.md` | Layer 0 独立测试向量 |
+| 4 | 实现 `IRbfFramer` + `RbfFrameBuilder` | 基于现有 `IReservableBufferWriter` |
 
 ### 📝 会议状态
 
 **状态**：✅ 设计共识达成，接口文档已创建
 
 **下一步**（调整后）：
-1. ✅ 创建接口文档：[elog-interface.md](../../atelia/docs/StateJournal/elog-interface.md)
+1. ✅ 创建接口文档：[rbf-interface.md](../../atelia/docs/StateJournal/rbf-interface.md)
 2. 🔄 组织接口文档审阅（复验）
-3. 接口稳固后，用它作为"手术刀"从 mvp-design-v2.md 切出 elog-format.md
-4. 进入 Week 1-2 实施：ELOG Framing 实现
+3. 接口稳固后，用它作为"手术刀"从 mvp-design-v2.md 切出 rbf-format.md
+4. 进入 Week 1-2 实施：RBF Framing 实现
 
 ---
 

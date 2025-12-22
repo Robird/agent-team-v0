@@ -64,7 +64,7 @@
 
 三位顾问建议的实施优先级高度一致：
 ```
-Week 1-2: 格式层基座（ELOG Framing, VarInt, Ptr64）
+Week 1-2: 格式层基座（RBF Framing, VarInt, Ptr64）
 Week 3-4: 存储层语义（DurableDict, DiffPayload, Materialize）
 Week 5-6: 协议层集成（Workspace, 二阶段提交, Open/Recovery）
 Week 7:   可诊断性（Error Affordance, 边缘情况）

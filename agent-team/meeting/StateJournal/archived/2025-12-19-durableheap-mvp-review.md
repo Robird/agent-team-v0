@@ -371,7 +371,7 @@ stateDiagram-v2
     - 你们把“低 4 bit 是 `ValueType`”塞进了一个叫 `KeyValuePairType` 的 byte，这个命名容易让读者误以为它包含 key 的类型。
     - 建议改名为 `ValueTag`（或 `ValueKindTag`），并直接说：`ValueTag: byte`，低 4 bit 为 `ValueType`。
 
-#### 2) 编码规范（P0）：ELOG framing + Magic 哨兵的定义目前存在“算法级歧义”
+#### 2) 编码规范（P0）：RBF framing + Magic 哨兵的定义目前存在“算法级歧义”
 
 我重点审了 4.2.1 的 framing + reverse scan。
 

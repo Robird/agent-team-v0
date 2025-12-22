@@ -174,7 +174,7 @@ graph LR
 
 ```
 Week 1-2
-├── ELOG Framing (reader/writer)
+├── RBF Framing (reader/writer)
 │   ├── HeadLen/TailLen/Pad/Magic
 │   ├── CRC32C 计算与校验
 │   └── reverse scan + resync
@@ -187,7 +187,7 @@ Week 1-2
     └── null 判定
 ```
 
-**产出物**：可独立运行的 `ElogReader`/`ElogWriter` + `VarIntCodec`，配套 Test Vectors。
+**产出物**：可独立运行的 `RbfReader`/`RbfWriter` + `VarIntCodec`，配套 Test Vectors。
 
 ##### 第二阶段：存储层语义（依赖第一阶段）
 
@@ -272,14 +272,14 @@ Week 7
 | 1 | atelia/docs/StateJournal/mvp-test-vectors.md（“条款编号映射”表） vs atelia/docs/StateJournal/mvp-design-v2.md（语义锚点） | 测试向量仍使用旧的数字型条款 ID（如 `[F-02]`），而规范已迁移到语义锚点（如 `[F-MAGIC-RECORD-SEPARATOR]`）。这会破坏“条款 ↔ 测试”闭环：实现者无法据 ID 精确追踪，且未来自动化抽取/CI 无法机械校验。 | P0（阻塞） | 统一以语义锚点为唯一 SSOT：把测试向量映射表中的所有 `[F-xx]/[S-xx]/[A-xx]/[R-xx]` 全量替换为 `mvp-design-v2.md` 的语义锚点；如需保留旧编号仅作为展示索引，必须提供“旧编号 → 新锚点”的单独迁移表并声明“旧编号不再用于测试引用”。 |
 | 2 | atelia/docs/StateJournal/mvp-test-vectors.md：`DICT-BAD-001 (PairCount=0)` vs atelia/docs/StateJournal/mvp-design-v2.md：§3.4.2（允许 Checkpoint Base `PairCount==0`） | 测试向量要求“存在 dict diff record 且 `PairCount=0` 必须拒绝”，但规范允许 `PairCount==0` 作为 Checkpoint Base/full-state 的“空字典”表示。该冲突会导致 reader 行为实现分叉（accept vs reject），并直接影响回放/封顶策略。 | P0（阻塞） | 把规则写成可判定条件并补条款：例如“`PairCount==0` 仅在 `PrevVersionPtr==0`（Base/Checkpoint）时合法；若 `PrevVersionPtr!=0` 则 MUST reject（或 MUST treat as no-op 且 writer MUST NOT emit）”。随后把 `DICT-BAD-001` 改为“Overlay diff 中 PairCount=0”或新增一个正例向量“Base empty snapshot accepted”。 |
 | 3 | atelia/docs/StateJournal/mvp-test-vectors.md：DIRTY-001/002/003 用例文字与代码片段 | 测试用例混用 `Delete`/`Remove`（而规范正文强调 .NET 命名 `Remove`）。这会诱导实现者做两套 API 或在测试里引入别名，从而增加分叉面。 | P1（重要） | 统一测试用例文本与示例代码为 `Remove`（或统一使用规范对外 API 名）；如确需保留 `Delete` 作为别名，必须在 API 条款区显式写 `Delete` 的地位（alias/obsolete）并给出兼容策略。 |
-| 4 | atelia/docs/StateJournal/mvp-test-vectors.md：章节结构 | 文件中存在重复/并列的 “ELOG framing” 章节块（同一主题多处叙述），且编号结构不稳定，容易造成 drift（测试向量与条款映射表互相脱节）。 | P2（中等） | 将测试向量按“主题 → 向量列表 → 断言（含条款锚点）”重排为单一目录树；每个向量只出现一次；允许在末尾附“黄金文件目录建议”作为附录。 |
+| 4 | atelia/docs/StateJournal/mvp-test-vectors.md：章节结构 | 文件中存在重复/并列的 “RBF framing” 章节块（同一主题多处叙述），且编号结构不稳定，容易造成 drift（测试向量与条款映射表互相脱节）。 | P2（中等） | 将测试向量按“主题 → 向量列表 → 断言（含条款锚点）”重排为单一目录树；每个向量只出现一次；允许在末尾附“黄金文件目录建议”作为附录。 |
 | 5 | atelia/docs/StateJournal/mvp-test-vectors.md：`PTR-OK-001` 的前置条件描述 | 用例描述写成“ptr 指向处 Magic 匹配”，但规范中 Magic 是 record 分隔符且不属于 record；Ptr64 指向 `HeadLen` 起点（其前 4B 才是 Magic）。描述易让实现者把校验点放错位置。 | P2（中等） | 将向量断言改为“`ptr-4..ptr-1` 为 Magic（域匹配），且 `ptr` 处 `HeadLen` 可读并满足对齐/长度/CRC 条款”。 |
 | 6 | atelia/docs/StateJournal/mvp-design-v2.md：全篇（元规则） | 元规则声明“（MVP 固定）规范性约束应有条款编号”，但仍建议做一次机械审计：是否存在用“（MVP 固定）/必须/不得”等措辞表达硬约束却未绑定语义锚点的句子（会形成不可测试的暗契约）。 | P2（中等） | 运行一次“关键字扫描”（MUST/MUST NOT/（MVP 固定））并补齐缺失锚点；或明确把该句元规则改成 SHOULD 并解释例外。 |
 
 #### 实施优先级建议
 
 1) **P0：格式/编解码底座（可直接驱动测试向量）**
-- ELOG framing writer/reader（`HeadLen/TailLen/Pad/Magic`）+ `CRC32C` 覆盖范围校验
+- RBF framing writer/reader（`HeadLen/TailLen/Pad/Magic`）+ `CRC32C` 覆盖范围校验
 - `varuint/varint(ZigZag)` canonical 编解码 + fail-fast 错误分类
 - `Ptr64` 对齐/Null 规则与“指向 record 起点”解引用工具
 
@@ -387,7 +387,7 @@ StateJournal 的设计在概念上非常扎实，但 `DurableDict` 作为 MVP �
     - 先解决 FixList #1-#4（Detached 访问层级、失败通道、LoadObject 返回、TryGetValue 形态），否则实现与测试会在 API 语义层直接分叉。
 
 2) **P0：格式层/恢复层基座（最强 ROI，天然适配向量测试）**
-    - ELOG framing（Magic/Len/CRC32C/Pad/4B 对齐）+ reverse scan + resync
+    - RBF framing（Magic/Len/CRC32C/Pad/4B 对齐）+ reverse scan + resync
     - varint canonical + fail-fast
     - meta reverse scan（含 meta-ahead-of-data backtrack）+ DataTail truncate
 
@@ -458,7 +458,7 @@ StateJournal 的设计在概念上非常扎实，但 `DurableDict` 作为 MVP �
 三位顾问的优先级建议高度一致：
 
 ```
-Week 1-2: 格式层基座（ELOG Framing, VarInt, Ptr64）
+Week 1-2: 格式层基座（RBF Framing, VarInt, Ptr64）
 Week 3-4: 存储层语义（DurableDict, DiffPayload, Materialize）
 Week 5-6: 协议层集成（Workspace, 二阶段提交, Open/Recovery）
 Week 7:   可诊断性（Error Affordance, 边缘情况）

@@ -51,7 +51,7 @@
   - A4: 给 MUST/SHOULD 条款编号（32 条）
   - A5: 伪代码移到 Appendix A
   - A6: Test Vectors 引用独立文件 `mvp-test-vectors.md`
-  - A7: 添加 Wire Format ASCII 图（ELOG 文件结构、Record Layout、VarInt 编码）
+  - A7: 添加 Wire Format ASCII 图（RBF 文件结构、Record Layout、VarInt 编码）
   - A9: 章节编号从 4.x 调整为 3.x
 - **验证结果**: 所有规范性条款完整保留，语义一致
 - **报告**: [handoffs/QA-2025-12-20-semantic-drift-audit.md](../../handoffs/QA-2025-12-20-semantic-drift-audit.md)
@@ -67,7 +67,7 @@
   - **P0-5**: Dirty Set 卡住由 #1 解决：通过 `_dirtyKeys` 机制实现 ✓
   - **P0-6**: Commit API 改名为 `CommitAll(newRootId)`：4.4.5 章节标题（L1056, L1060）✓
   - **P0-7**: 首次 commit 空仓库 Epoch=0, NextObjectId=1：4.1.1（L299-302）、4.3.1（L658-659）、4.4.6 新章节（L1100-1118）✓
-- **测试向量新增**：DIRTY-001~005、FIRST-COMMIT-001~003、VALUE-OK/BAD、COMMIT-ALL-001~002、ELOG-EMPTY/SINGLE/DOUBLE ✓
+- **测试向量新增**：DIRTY-001~005、FIRST-COMMIT-001~003、VALUE-OK/BAD、COMMIT-ALL-001~002、RBF-EMPTY/SINGLE/DOUBLE ✓
 
 ### 2025-12-19: B-4/B-5/B-6 批量修订验证
 - **状态**: ✅ 全部通过

@@ -215,7 +215,7 @@ public bool WritePendingDiff(IRecordWriter writer) {
 | 首次 Commit 语义（FIRST-COMMIT-xxx） | ✅ 新增 | 3 个用例 |
 | Value 类型边界（VALUE-xxx） | ✅ 新增 | 2 组用例（OK/BAD） |
 | CommitAll API 语义（COMMIT-ALL-xxx） | ✅ 新增 | 2 个用例 |
-| ELOG framing（ELOG-xxx） | ✅ 更新 | 多个用例（Magic-as-Separator 语义） |
+| RBF framing（RBF-xxx） | ✅ 更新 | 多个用例（Magic-as-Separator 语义） |
 
 ---
 

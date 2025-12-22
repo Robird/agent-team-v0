@@ -147,8 +147,8 @@
 | # | 问题类型 | 位置 | 问题描述 | 严重程度 |
 |---|----------|------|----------|----------|
 | T6 | 术语不一致（概念名 vs 编码名） | §Glossary「Address64/Ptr64」+ §4.1.1 + §4.2.* 多处 | 文档试图把 `Ptr64`（编码类型名）与 `Address64/ObjectVersionPtr/...`（语义用途）分层，但正文仍频繁把“语义字段”直接写成“Ptr64”，且 `PrevVersionPtr` 在 §4.2.5 被定义为“Ptr64（该 ObjectId 的上一个版本）”。建议统一规则：**语义层字段一律写 `Address64`（或 `Address64 (encoded as Ptr64 u64 LE)`），`Ptr64` 仅出现于“编码层/布局/线格式名”。**否则读者会误以为 `Ptr64` 是概念层类型而不是 wire-format。 | Medium |
-| T7 | 术语/命名歧义（framing vs record） | §4.2.1（record framing / ELOG framing / Magic） | 文档同时说“采用 ELOG framing：`[Magic][Len]...`”，又强调“**Magic 是 Record Separator，不属于任何 Record；Record 本身不含 Magic**”。语义并不矛盾，但命名会诱发实现分叉：有人把 Magic 当 record header 字段，有人当 file-level fencepost。建议改成两层命名：**File Framing（Magic-separated log）** vs **Record Layout（Len/Payload/Pad/Len/CRC32C）**，并在定义处固定术语（后文只用一个词）。 | Medium |
-| T8 | 术语缺失（引入新缩写未定义） | §4.2.1（ELOG） | “ELOG”在本文是关键格式名，但 Glossary 没有收录，也没有在首次出现处给一句话定义。建议：要么在 Glossary 添加 **ELOG Framing**（一句话定义 + 指向 §4.2.1），要么删掉“ELOG”统一叫“Magic-separated record log framing”。 | Low |
+| T7 | 术语/命名歧义（framing vs record） | §4.2.1（record framing / RBF framing / Magic） | 文档同时说“采用 RBF framing：`[Magic][Len]...`”，又强调“**Magic 是 Record Separator，不属于任何 Record；Record 本身不含 Magic**”。语义并不矛盾，但命名会诱发实现分叉：有人把 Magic 当 record header 字段，有人当 file-level fencepost。建议改成两层命名：**File Framing（Magic-separated log）** vs **Record Layout（Len/Payload/Pad/Len/CRC32C）**，并在定义处固定术语（后文只用一个词）。 | Medium |
+| T8 | 术语缺失（引入新缩写未定义） | §4.2.1（RBF） | “RBF”在本文是关键格式名，但 Glossary 没有收录，也没有在首次出现处给一句话定义。建议：要么在 Glossary 添加 **RBF Framing**（一句话定义 + 指向 §4.2.1），要么删掉“RBF”统一叫“Magic-separated record log framing”。 | Low |
 | C5 | 概念不自洽（跨语言误导） | §4.1.4 `ulong` 说明 | 文档说 “MVP 不支持 `ulong` 作为用户可写入独立值类型”，但随后给出“可用 `long` reinterpret_cast”作为替代。这在 C#/.NET 语境既不精确也容易误导（并且会污染 `Equals`/语义比较）。建议改成两条之一：A) **明确禁止**该替代写法，改为“需要无符号业务值则未来引入 `Val_VarUInt`/`Val_U64LE`”；或 B) 明确写出 **语言内等价语义**（如 `unchecked((long)u)` 仅是位模式映射、语义由调用方定义），并声明它是 SHOULD NOT（或至少 Informative）。 | Medium |
 | C6 | 概念缝隙（well-known ObjectId 的角色不清） | §4.1.1 “ObjectId=0 保留给 VersionIndex” + §4.3.1/§4.2.4 | 文档一方面把 VersionIndex 当作“由 meta commit record 的 `VersionIndexPtr` 指到的 durable object 版本链头”，另一方面又保留 `ObjectId=0` 给 VersionIndex（像“常驻对象”）。这会让实现者不确定：VersionIndex 是否也有 ObjectId？是否会出现在对象引用里？建议二选一并写死：**(1) VersionIndex 纯粹是 meta 指针对象，无需 ObjectId 保留；或 (2) VersionIndex 也是普通 durable object，ObjectId=0 仅用于 debug/约束，并说明它如何与 `VersionIndexPtr` 协同（例如 ObjectId=0 的版本指针始终等于 `VersionIndexPtr`）。** | Low-Medium |
 | C7 | 概念自洽（“Checkpoint Version”定义边界） | §Glossary Checkpoint Version + §4.2.4 + §4.4.6 | DocUIClaude 的 T1 指出 `PrevVersionPtr=0` 的“双重语义”。我**部分赞同**：问题核心不是编码冲突，而是**术语命名边界**。`PrevVersionPtr=0` 本质表达“无 parent/base version”（base），而“Checkpoint”暗示“为截断回放成本的人为快照”。新建对象首版本同样无 parent，但不一定是“checkpoint”。建议把上位术语改为 **Base Version（PrevVersionPtr=0）**，其下再区分 **Genesis Base**（新对象首版本）与 **Checkpoint Base**（周期性全量封顶）。这样编码单义、概念也单义。 | Medium |
@@ -378,7 +378,7 @@ DocUIGPT 指出的 `DurableDict<K,V>` 伪代码问题实际上暴露了一个更
 | **P1** | T7 | 添加 File Framing / Record Layout 两层定义 |
 | **P1** | C1+U2 | 统一 Dirty Set 层级术语（Modified Object Set / Dirty-Key Set） |
 | **P1** | P5 | 伪代码添加 MVP Key 类型约束说明 |
-| **P2** | T8 | 术语表添加 ELOG 定义或移除该缩写 |
+| **P2** | T8 | 术语表添加 RBF 定义或移除该缩写 |
 | **P2** | V2 | 确认采用 Genesis Base 术语 |
 
 ---
@@ -412,7 +412,7 @@ DocUIGPT 指出的 `DurableDict<K,V>` 伪代码问题实际上暴露了一个更
 - 你对 T7（File Framing vs Record Layout）：赞同；建议把它从 P1 提升到 P0 或 P0.5（取决于你们对恢复/尾扫实现的依赖程度）。它直接影响 reverse scan 与 resync 逻辑，属于实现分叉高风险点。
 - 你对 Dirty Set 层级术语（Modified Object Set / Dirty-Key Set）：赞同；我建议在术语表里加一条“强引用约束（MUST hold strong refs）”来解释为何 workspace 级必须是 `ObjectId -> IDurableObject`。
 - 你对 P5（伪代码泛型约束）：赞同；我更倾向直接把伪代码类型签名收敛为“key 固定 `ulong`”，避免在 MVP 文档里制造“未来泛型化”的幻觉。
-- 你对 T8（ELOG）：我建议优先级不必太高，但要么定义要么移除缩写，避免“看起来像权威命名但实际没契约”。
+- 你对 T8（RBF）：我建议优先级不必太高，但要么定义要么移除缩写，避免“看起来像权威命名但实际没契约”。
 
 我建议的“修订优先级（最终版）”如下（在你原排序上补齐实现正确性缺口）：
 - P0（必须先收敛，否则实现会分叉或出现数据一致性风险）
@@ -430,13 +430,13 @@ DocUIGPT 指出的 `DurableDict<K,V>` 伪代码问题实际上暴露了一个更
   - T2：Magic 的域隔离在术语表中对齐（与 RecordKind 对称）
 
 - P2（清洁度/可读性）
-  - T8：ELOG 缩写定义或移除
+  - T8：RBF 缩写定义或移除
   - R1-R3：Checkpoint/Genesis 相关重复段落收敛为单一权威定义 + 其余引用
   - V1：文件布局 ASCII 图（可作为 informative，不阻塞实现）
 
 最终修订建议（合并成可落地的改动清单）：
 1) 术语表新增/重构
-   - 新增：Base Version、Genesis Base、Checkpoint Base、from-empty diff、Dirty-Key Set、Modified Object Set、DurableObject、ELOG Framing（如保留缩写）
+   - 新增：Base Version、Genesis Base、Checkpoint Base、from-empty diff、Dirty-Key Set、Modified Object Set、DurableObject、RBF Framing（如保留缩写）
    - 改写：Checkpoint Version 退为“Checkpoint Base”的别名或下位概念，避免 `PrevVersionPtr=0` 与“checkpoint”绑定
 
 2) 类型分层硬规则
@@ -487,7 +487,7 @@ DocUIGPT 指出的 `DurableDict<K,V>` 伪代码问题实际上暴露了一个更
 
 | # | 修订内容 | Claude | Gemini | GPT |
 |---|----------|--------|--------|-----|
-| P2-1 | ELOG 缩写定义或移除 | | | |
+| P2-1 | RBF 缩写定义或移除 | | | |
 | P2-2 | Checkpoint/Genesis 相关重复段落收敛 | | | |
 | P2-3 | 添加文件布局 ASCII Art 图示 | | | |
 
@@ -519,7 +519,7 @@ DocUIGPT 指出的 `DurableDict<K,V>` 伪代码问题实际上暴露了一个更
 
 | # | 投票 | 理由 |
 |---|------|------|
-| P2-1 | ✅ | ELOG 要么定义要么移除。"看起来像权威命名但实际没契约"是维护陷阱。 |
+| P2-1 | ✅ | RBF 要么定义要么移除。"看起来像权威命名但实际没契约"是维护陷阱。 |
 | P2-2 | ✅ | 单一权威定义原则。重复描述是维护漂移的高风险区。 |
 | P2-3 | ✅ | 可读性显著提升。ASCII Art 比文字描述更直观，尤其是对 Magic 栅栏结构的理解。 |
 
@@ -559,7 +559,7 @@ DocUIGPT 指出的 `DurableDict<K,V>` 伪代码问题实际上暴露了一个更
 | P1-1 | ✅ | 赞同：`Modified Object Set`（workspace 级强引用集合）与 `Dirty-Key Set`（对象级 key 集合）词法区分明确，且能把“强引用防 GC”约束写清。 |
 | P1-2 | ✅ | 赞同：MVP 文档不应暗示“泛型 key 可行”；应直接固定 `ulong` 或在签名处显著约束，避免复制伪代码导致 runtime cast 风险。 |
 | P1-3 | ✅ | 赞同：`DurableObject`、`from-empty diff` 等已进入正文推理链路，必须入术语表成为可审计定义点。 |
-| P2-1 | ✅ | 赞同：ELOG 缩写要么给一句话定义并入术语表，要么移除统一称呼；避免“看似权威但无契约”的悬空名词。 |
+| P2-1 | ✅ | 赞同：RBF 缩写要么给一句话定义并入术语表，要么移除统一称呼；避免“看似权威但无契约”的悬空名词。 |
 | P2-2 | ✅ | 赞同：重复段落收敛到单一权威定义 + 其余引用，是降低维护漂移成本的直接手段。 |
 | P2-3 | ✅ | 赞同：ASCII 布局图是低成本高收益的理解加速器（尤其对 Magic 栅栏结构），建议作为 informative 补充。 |
 
@@ -626,7 +626,7 @@ DocUIGPT 指出的 `DurableDict<K,V>` 伪代码问题实际上暴露了一个更
 
 #### 后续执行（P2 级）
 
-11. **ELOG 定义或移除** - 术语表
+11. **RBF 定义或移除** - 术语表
 12. **重复段落收敛** - §4.2.4/§4.4.6 等
 13. **ASCII Art 文件布局图** - §4.2.1
 
@@ -676,7 +676,7 @@ DocUIGPT 指出的 `DurableDict<K,V>` 伪代码问题实际上暴露了一个更
 | P1-1 | Dirty Set 层级术语 | ✅ 完成 | Implementer | Modified Object Set / Dirty-Key Set |
 | P1-2 | 伪代码去泛型 | ✅ 完成 | Implementer | key 固定为 `ulong` |
 | P1-3 | 术语表补全 | ✅ 完成 | Implementer | DurableObject, from-empty diff 等 |
-| P2-1 | ELOG 定义 | ⏸️ 待定 | — | 后续研讨 |
+| P2-1 | RBF 定义 | ⏸️ 待定 | — | 后续研讨 |
 | P2-2 | 重复段落收敛 | ⏸️ 待定 | — | 后续研讨 |
 | P2-3 | ASCII Art 布局图 | ⏸️ 待定 | — | 后续研讨 |
 

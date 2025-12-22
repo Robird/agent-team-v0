@@ -244,20 +244,20 @@
 
 | # | 问题类型 | 严重度 | 描述 | 位置（章节） |
 |---|----------|--------|------|--------------|
-| 1 | 逻辑自洽 / 崩溃恢复 | Major | `ELOG reverse scan` 的“空文件边界”判定与 `RecordEnd/MagicPos` 定义不一致，存在 off-by-4 风险 | 4.2.1（反向扫尾不变量） |
+| 1 | 逻辑自洽 / 崩溃恢复 | Major | `RBF reverse scan` 的“空文件边界”判定与 `RecordEnd/MagicPos` 定义不一致，存在 off-by-4 风险 | 4.2.1（反向扫尾不变量） |
 | 2 | 规范一致性 / 概念定义 | Major | `Dirty Set` 被描述为 `Set<ObjectId>` 且“强引用”，但 ObjectId 无法阻止对象被 GC；与 4.3.2 的动机（防丢改动）矛盾 | 4.1.0（术语与读取阶段）+ 4.3.2 |
 | 3 | 可实现性 / API 语义 | Major | `RecordKind` 在 data/meta 两域都使用 `0x01`，但未声明是“按文件域隔离”的枚举，易导致实现者误用同一枚举表 | 4.2.1 + 4.2.2 + 4.2.5 |
 | 4 | 数值/枚举完整性 | Major | “MVP 支持的整数类型包含 `ulong`”，但值编码只有 `Val_VarInt`（ZigZag），无法无损覆盖 `ulong` 全域；需补 `Val_VarUInt` 或收紧类型表 | 4.1.4 + 4.2.0.1 + 4.4.2 |
 | 5 | 代码示例准确性 | Major | `DurableDict<K,V>` 伪代码在类型系统上不可编译/不成立：`HashSet<ulong>` + `(ulong)(object)key`、`Comparer<K>.Default`、未定义的 `DiffEntry`/`IRecordWriter`，且与“key 固定为 ulong”的 MVP 取舍冲突 | 4.4.4 |
 | 6 | 规范语言 | Major | 文中大量使用 MUST/SHOULD，但未声明采用 RFC 2119/8174 语义；缺少“Normative Language”小节会让审计与实现一致性变弱 | 4.4.3（不变式）及全文 |
-| 7 | 命名约定 / 术语边界 | Minor | `ELOG framing` 作为术语被频繁使用但未在术语表注册；“framing/record separator/frame separator”表述混用，建议 SSOT 统一 | 2.6 Q20 + 4.2.1 |
+| 7 | 命名约定 / 术语边界 | Minor | `RBF framing` 作为术语被频繁使用但未在术语表注册；“framing/record separator/frame separator”表述混用，建议 SSOT 统一 | 2.6 Q20 + 4.2.1 |
 | 8 | 命名约定 / 一致性 | Minor | 概念层 `Address64` / `ObjectVersionPtr` 与编码名 `Ptr64` 在正文中交替出现，读者难以判断何处是“语义类型”何处是“线格式名” | 术语表 + 4.2.1 + 4.2.5 |
 | 9 | 文档结构 | Minor | “决策表”内含被后续决策覆盖/作废的条目（例如 Q4 被 Q16 覆盖），但没有“Superseded/Deprecated Question”标记规则，降低可追溯性 | 3（决策表） |
 | 10 | 格式/可查找性 | Minor | “关键常量/编码表”分散：`Magic`、`RecordKind`、`ObjectKind`、`ValueType` 的值域与域隔离规则没有集中表格，影响实现与测试向量编写 | 4.2.1/4.2.2/4.2.5/4.4.2 |
 
 #### 详细说明
 
-**#1 `ELOG reverse scan` 的空文件边界不一致 [Major]**
+**#1 `RBF reverse scan` 的空文件边界不一致 [Major]**
 
 4.2.1 的反向扫尾不变量写到：
 - 初始 `MagicPos = FileLength - 4`（尾部分隔符位置）。
@@ -324,11 +324,11 @@
 **建议修复**：增加一个简短小节：
 > 本文使用 RFC 2119/8174 的关键字（MUST/SHOULD/MAY…），并说明“SHOULD 的可偏离条件必须在实现文档中明确说明”。
 
-**#7 `ELOG`/framing/分隔符术语未收口 [Minor]**
+**#7 `RBF`/framing/分隔符术语未收口 [Minor]**
 
-“ELOG framing”与“Record Separator / frame separator”在正文作为准术语使用，但未在术语表注册，不利于全文 SSOT。
+“RBF framing”与“Record Separator / frame separator”在正文作为准术语使用，但未在术语表注册，不利于全文 SSOT。
 
-建议把 4.2.1 的 framing 作为一个正式术语块（例如 **ELOG Framing**：`[Magic][Len][Payload][Pad][Len][CRC32C][Magic]`），并把“Magic 不属于 record”作为 MUST 不变式写入。
+建议把 4.2.1 的 framing 作为一个正式术语块（例如 **RBF Framing**：`[Magic][Len][Payload][Pad][Len][CRC32C][Magic]`），并把“Magic 不属于 record”作为 MUST 不变式写入。
 
 **#8 `Address64`/`Ptr64`/`ObjectVersionPtr` 的层次标注不足 [Minor]**
 
@@ -374,7 +374,7 @@
 1. **P0（开工前必须修）**：修正 reverse scan 空文件判定；把 `Dirty Set` 设计写死为“强引用对象实例”；明确 `RecordKind` 域隔离。
 2. **P1（强烈建议修）**：解决 `ulong` value 编码缺口（新增 `Val_VarUInt` 或收紧支持类型）；将 4.4.4 伪代码改为可编译 MVP 版本或显著标注“伪代码”。
 3. **P1（文档硬质量）**：增加 “Normative Language (RFC2119/8174)” 小节；新增 Appendix 集中枚举表/常量表。
-4. **P2（可后置）**：统一 `ELOG framing` 作为正式术语并收口 framing/分隔符措辞；给决策表增加 Superseded 机制。
+4. **P2（可后置）**：统一 `RBF framing` 作为正式术语并收口 framing/分隔符措辞；给决策表增加 Superseded 机制。
 
 ---
 
@@ -419,7 +419,7 @@
 | P2-1 | `RecordKind` 枚举值表分散 | Claude + GPT | 4.2.x |
 | P2-2 | `ValueType` 枚举与用户类型表不完全对齐 | Claude | 4.1.4 + 4.4.2 |
 | P2-3 | `Deserialize`/`Materialize` 术语表未收录 | Claude | 术语表 |
-| P2-4 | `ELOG framing` 术语未注册 | GPT | 4.2.1 |
+| P2-4 | `RBF framing` 术语未注册 | GPT | 4.2.1 |
 | P2-5 | 决策表缺少 Superseded 标记机制 | GPT | 第 3 节 |
 
 #### 交叉验证与共识点
@@ -717,7 +717,7 @@ MVP 取舍上，我更倾向“先收紧”，避免格式分叉与额外兼容�
 #### P2 级修复（可延后）
 
 - 新增 Appendix 集中枚举表/常量表
-- 统一 `ELOG framing` 作为正式术语
+- 统一 `RBF framing` 作为正式术语
 - 给决策表增加 Superseded 机制
 - 补充 `Deserialize`/`Materialize` 术语表条目
 

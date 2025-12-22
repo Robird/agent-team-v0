@@ -36,7 +36,7 @@
 - On-Disk Diff / state diff / DiffPayload
 - HEAD / workspace / identity map
 - snapshot / overlay / base
-- data file / meta file / record framing / ELOG framing
+- data file / meta file / record framing / RBF framing
 - tombstone / Val_Tombstone
 - ObjectKind / RecordKind / MetaKind
 
@@ -402,7 +402,7 @@ EpochRecord（逻辑） ──实现为──→ MetaCommitRecord（meta file �
 
 ##### 2.5 Framing 术语未形成闭包
 
-`Magic`/`ELOG`/`separator`/`sentinel` 在不同段落换词。
+`Magic`/`RBF`/`separator`/`sentinel` 在不同段落换词。
 
 **建议**建立 Framing Glossary：
 - **Record Framing**：记录封装格式
@@ -469,7 +469,7 @@ EpochRecord（逻辑） ──实现为──→ MetaCommitRecord（meta file �
 
 1. **概念术语**：统一 Title Case，全文一致
 2. **实现标识符**：仅在 Implementation Mapping 出现，用代码格式
-3. **缩写大写**：`HEAD`、`CRC32C`、`ELOG` 全文同形
+3. **缩写大写**：`HEAD`、`CRC32C`、`RBF` 全文同形
 4. **编码名 vs 语义名**：`Ptr64` 只作编码格式名；概念层用 `Address64`
 
 ---

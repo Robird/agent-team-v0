@@ -11,8 +11,8 @@
 ## 背景
 
 从 `mvp-design-v2.md.bak` 切分出 Layer 0 文档：
-- `elog-format.md`（二进制格式规范）
-- `elog-interface.md`（接口契约）
+- `rbf-format.md`（二进制格式规范）
+- `rbf-interface.md`（接口契约）
 
 需要复核这两个文档是否完整覆盖原版中的 Layer 0 内容。
 
@@ -25,8 +25,8 @@
 ## 目标文件
 
 - 原版：`atelia/docs/StateJournal/mvp-design-v2.md.bak`
-- 新版：`atelia/docs/StateJournal/elog-format.md`
-- 新版：`atelia/docs/StateJournal/elog-interface.md`
+- 新版：`atelia/docs/StateJournal/rbf-format.md`
+- 新版：`atelia/docs/StateJournal/rbf-interface.md`
 
 ## 💬 畅谈记录
 
@@ -52,13 +52,13 @@
 
 | 原版条款 ID | 原版位置 | 新版条款 ID | 新版位置 | 状态 |
 |-------------|----------|-------------|----------|------|
-| `[F-MAGIC-IS-FENCE]` | §3.2.1 | `[E-MAGIC-IS-FENCE]` | elog-format.md §5.1 | ✅ 已迁移 |
-| `[F-MAGIC-RECORD-SEPARATOR]` | §3.2.1 | `[E-MAGIC-FRAME-SEPARATOR]` | elog-format.md §5.2 | ✅ 已迁移（术语更新 Record→Frame）|
-| `[F-HEADLEN-TAILLEN-SYMMETRY]` | §3.2.1 | `[E-HEADLEN-TAILLEN-SYMMETRY]` | elog-format.md §3.2 | ✅ 已迁移 |
-| `[F-RECORD-4B-ALIGNMENT]` | §3.2.1 | `[E-FRAME-4B-ALIGNMENT]` | elog-format.md §3.2 | ✅ 已迁移（术语更新 Record→Frame）|
-| `[F-CRC32C-PAYLOAD-COVERAGE]` | §3.2.1 | `[E-CRC32C-COVERAGE]` | elog-format.md §4.1 | ✅ 已迁移 |
-| `[F-RECORD-WRITE-SEQUENCE]` | §3.2.1 | `[E-FRAME-WRITE-SEQUENCE]` | elog-format.md §6 | ✅ 已迁移（术语更新 Record→Frame）|
-| `[F-PTR64-NULL-AND-ALIGNMENT]` | §3.2.1 | `[E-PTR64-NULL-AND-ALIGNMENT]` | elog-format.md §9.2 | ✅ 已迁移 |
+| `[F-MAGIC-IS-FENCE]` | §3.2.1 | `[E-MAGIC-IS-FENCE]` | rbf-format.md §5.1 | ✅ 已迁移 |
+| `[F-MAGIC-RECORD-SEPARATOR]` | §3.2.1 | `[E-MAGIC-FRAME-SEPARATOR]` | rbf-format.md §5.2 | ✅ 已迁移（术语更新 Record→Frame）|
+| `[F-HEADLEN-TAILLEN-SYMMETRY]` | §3.2.1 | `[E-HEADLEN-TAILLEN-SYMMETRY]` | rbf-format.md §3.2 | ✅ 已迁移 |
+| `[F-RECORD-4B-ALIGNMENT]` | §3.2.1 | `[E-FRAME-4B-ALIGNMENT]` | rbf-format.md §3.2 | ✅ 已迁移（术语更新 Record→Frame）|
+| `[F-CRC32C-PAYLOAD-COVERAGE]` | §3.2.1 | `[E-CRC32C-COVERAGE]` | rbf-format.md §4.1 | ✅ 已迁移 |
+| `[F-RECORD-WRITE-SEQUENCE]` | §3.2.1 | `[E-FRAME-WRITE-SEQUENCE]` | rbf-format.md §6 | ✅ 已迁移（术语更新 Record→Frame）|
+| `[F-PTR64-NULL-AND-ALIGNMENT]` | §3.2.1 | `[E-PTR64-NULL-AND-ALIGNMENT]` | rbf-format.md §9.2 | ✅ 已迁移 |
 | `[F-VARINT-CANONICAL-ENCODING]` | §3.2.0.1 | — | — | ⚪ 未迁移（属于 Layer 1）|
 | `[F-DECODE-ERROR-FAILFAST]` | §3.2.0.1 | — | — | ⚪ 未迁移（属于 Layer 1）|
 | `[F-RECORDKIND-DOMAIN-ISOLATION]` | §3.2.1 | — | — | ⚪ 未迁移（属于 Layer 1）|
@@ -72,19 +72,19 @@
 
 | 原版条款 ID | 原版位置 | 新版条款 ID | 新版位置 | 状态 |
 |-------------|----------|-------------|----------|------|
-| `[R-RESYNC-DISTRUST-TAILLEN]` | §3.2.1 | `[E-RESYNC-DISTRUST-TAILLEN]` | elog-format.md §8.2 | ✅ 已迁移 |
+| `[R-RESYNC-DISTRUST-TAILLEN]` | §3.2.1 | `[E-RESYNC-DISTRUST-TAILLEN]` | rbf-format.md §8.2 | ✅ 已迁移 |
 | `[R-META-AHEAD-BACKTRACK]` | §3.2.2 | — | — | ⚪ 未迁移（属于 Layer 1）|
-| `[R-META-RESYNC-SAME-AS-DATA]` | §3.2.2 | 隐含覆盖 | elog-format.md §8 统一定义 | ✅ 隐含覆盖 |
+| `[R-META-RESYNC-SAME-AS-DATA]` | §3.2.2 | 隐含覆盖 | rbf-format.md §8 统一定义 | ✅ 隐含覆盖 |
 | `[R-COMMIT-FSYNC-ORDER]` | §3.2.2 | — | — | ⚪ 未迁移（属于 Layer 1）|
 | `[R-COMMIT-POINT-META-FSYNC]` | §3.2.2 | — | — | ⚪ 未迁移（属于 Layer 1）|
-| `[R-DATATAIL-TRUNCATE-GARBAGE]` | §3.5 | `[E-DATATAIL-TRUNCATE]` | elog-format.md §10.2 | ✅ 已迁移 |
+| `[R-DATATAIL-TRUNCATE-GARBAGE]` | §3.5 | `[E-DATATAIL-TRUNCATE]` | rbf-format.md §10.2 | ✅ 已迁移 |
 | `[R-ALLOCATOR-SEED-FROM-HEAD]` | §3.5 | — | — | ⚪ 未迁移（属于 Layer 1）|
 
 ### 1.3 评估结论
 
 **Layer 0 相关条款迁移完整性：✅ 完整**
 
-原版中属于 Layer 0（ELOG Framing）的条款已全部迁移：
+原版中属于 Layer 0（RBF Framing）的条款已全部迁移：
 - Frame 结构（HeadLen/TailLen/CRC32C/Magic/Pad）
 - 写入顺序
 - Ptr64 编码与对齐
@@ -105,8 +105,8 @@
 
 | 元素 | 原版位置 | 新版位置 | 状态 |
 |------|----------|----------|------|
-| File 产生式 | §3.2.1 | elog-format.md §2.2 | ✅ 已迁移（改进：明确 Genesis 概念）|
-| Record/Frame 产生式 | §3.2.1 | elog-format.md §2.2 | ✅ 已迁移（术语 Record→Frame）|
+| File 产生式 | §3.2.1 | rbf-format.md §2.2 | ✅ 已迁移（改进：明确 Genesis 概念）|
+| Record/Frame 产生式 | §3.2.1 | rbf-format.md §2.2 | ✅ 已迁移（术语 Record→Frame）|
 
 **评估**：新版 EBNF 与原版一致，且更清晰地区分了 Genesis Header 与 Frame。
 
@@ -127,7 +127,7 @@
 
 | 内容 | 原版 | 新版 | 状态 |
 |------|------|------|------|
-| Magic 作为文件头 | §3.2.1 步骤 0 隐含 | elog-format.md §2.1 显式定义 | ✅ 新版更清晰 |
+| Magic 作为文件头 | §3.2.1 步骤 0 隐含 | rbf-format.md §2.1 显式定义 | ✅ 新版更清晰 |
 | 空文件语义 | 隐含（FileLength==4） | `[E-GENESIS-EMPTY-FILE]` 显式定义 | ✅ 新版更清晰 |
 | Magic 值定义 | "DHD3"/"DHM3" | 相同 | ✅ 一致 |
 
@@ -152,7 +152,7 @@
 
 | 内容 | 原版 | 新版 | 状态 |
 |------|------|------|------|
-| 扫描算法描述 | §3.2.1 散落 | elog-format.md §7 集中 | ✅ 新版更清晰 |
+| 扫描算法描述 | §3.2.1 散落 | rbf-format.md §7 集中 | ✅ 新版更清晰 |
 | 地址计算公式 | 散落 | §7.3 集中 | ✅ 新版更清晰 |
 | 图示 | 无 | §7.3 有 | ✅ 新版改进 |
 
@@ -188,7 +188,7 @@
 **问题 1：Pad 长度计算公式表述差异**
 
 - **原版**（§3.2.1 EBNF 注释）：`Pad := 0..3 bytes (* align to 4B *)`
-- **新版**（elog-format.md §3.2）：
+- **新版**（rbf-format.md §3.2）：
   - `PadLen = (4 - ((PayloadLen + 4) % 4)) % 4`
   - 或等价地：`PadLen = (4 - (PayloadLen % 4)) % 4`
 
@@ -200,14 +200,14 @@
 
 ---
 
-**问题 2：elog-interface.md 的 FrameTag 0x01/0x02 与原版 RecordKind 的映射**
+**问题 2：rbf-interface.md 的 FrameTag 0x01/0x02 与原版 RecordKind 的映射**
 
 - **原版**：`RecordKind = 0x01` 在 data file 表示 `ObjectVersionRecord`，在 meta file 表示 `MetaCommitRecord`（域隔离）
-- **新版 elog-interface.md §5.1**：`FrameTag 0x01 = DataRecord.ObjectVersion`，`FrameTag 0x02 = MetaRecord.Commit`
+- **新版 rbf-interface.md §5.1**：`FrameTag 0x01 = DataRecord.ObjectVersion`，`FrameTag 0x02 = MetaRecord.Commit`
 
 **分析**：新版使用不同 FrameTag 值区分，而非域隔离。这是 **设计变更** 而非迁移问题。
 
-**建议**：需在 mvp-design-v2.md 中同步更新，或在 elog-interface.md 注明"待对齐"。
+**建议**：需在 mvp-design-v2.md 中同步更新，或在 rbf-interface.md 注明"待对齐"。
 
 ---
 
@@ -223,16 +223,16 @@
 
 | # | 问题 | 位置 | 建议修复 |
 |---|------|------|----------|
-| 1 | Pad 长度公式有两个版本，表述冗余 | elog-format.md §3.2 `[E-HEADLEN-FORMULA]` | 删除公式 1 或添加推导说明 |
-| 2 | FrameTag 值与原版 RecordKind 域隔离设计不一致 | elog-interface.md §5.1 | 添加注释说明设计变更，或与 mvp-design-v2.md 对齐 |
+| 1 | Pad 长度公式有两个版本，表述冗余 | rbf-format.md §3.2 `[E-HEADLEN-FORMULA]` | 删除公式 1 或添加推导说明 |
+| 2 | FrameTag 值与原版 RecordKind 域隔离设计不一致 | rbf-interface.md §5.1 | 添加注释说明设计变更，或与 mvp-design-v2.md 对齐 |
 
 ### P2（Nice to Have）
 
 | # | 问题 | 位置 | 建议修复 |
 |---|------|------|----------|
-| 3 | 原版的 CRC32C 校验失败处理未迁移 | elog-format.md | 添加 `[E-CRC-FAIL-REJECT]` 条款 |
-| 4 | 逆向扫描终止条件（遇到损坏数据时的策略）未明确 | elog-format.md §7 / elog-interface.md §9 | 在 §7 添加"扫描终止"子节 |
-| 5 | 测试向量 §12 缺少 CRC32C 实际值 | elog-format.md §12.1 | 补充实际 CRC32C 计算结果 |
+| 3 | 原版的 CRC32C 校验失败处理未迁移 | rbf-format.md | 添加 `[E-CRC-FAIL-REJECT]` 条款 |
+| 4 | 逆向扫描终止条件（遇到损坏数据时的策略）未明确 | rbf-format.md §7 / rbf-interface.md §9 | 在 §7 添加"扫描终止"子节 |
+| 5 | 测试向量 §12 缺少 CRC32C 实际值 | rbf-format.md §12.1 | 补充实际 CRC32C 计算结果 |
 
 ---
 
@@ -260,17 +260,17 @@
 
 | 原版条款前缀 | 归属层 | 迁移目标 |
 |--------------|--------|----------|
-| `[F-MAGIC-*]` | Layer 0 | elog-format.md ✅ |
-| `[F-HEADLEN-*]` | Layer 0 | elog-format.md ✅ |
-| `[F-RECORD-*]` | Layer 0 | elog-format.md ✅ |
-| `[F-CRC32C-*]` | Layer 0 | elog-format.md ✅ |
-| `[F-PTR64-*]` | Layer 0 | elog-format.md ✅ |
+| `[F-MAGIC-*]` | Layer 0 | rbf-format.md ✅ |
+| `[F-HEADLEN-*]` | Layer 0 | rbf-format.md ✅ |
+| `[F-RECORD-*]` | Layer 0 | rbf-format.md ✅ |
+| `[F-CRC32C-*]` | Layer 0 | rbf-format.md ✅ |
+| `[F-PTR64-*]` | Layer 0 | rbf-format.md ✅ |
 | `[F-VARINT-*]` | Layer 1 | 待迁移到 record-format.md |
 | `[F-RECORDKIND-*]` | Layer 1 | 待迁移到 record-format.md |
 | `[F-OBJECTKIND-*]` | Layer 1 | 待迁移到 record-format.md |
 | `[F-KVPAIR-*]` | Layer 1 | 待迁移到 record-format.md |
-| `[R-RESYNC-*]` | Layer 0 | elog-format.md ✅ |
-| `[R-DATATAIL-*]` | Layer 0 | elog-format.md ✅ |
+| `[R-RESYNC-*]` | Layer 0 | rbf-format.md ✅ |
+| `[R-DATATAIL-*]` | Layer 0 | rbf-format.md ✅ |
 | `[R-COMMIT-*]` | Layer 1 | 待迁移 |
 | `[R-META-*]` | Layer 1 | 待迁移 |
 | `[R-ALLOCATOR-*]` | Layer 1 | 待迁移 |
@@ -288,13 +288,13 @@
 ### 1.1 确认项（Claude 判断正确）
 
 1) **Pad 公式表述冗余**（P1）
-- 现状：`elog-format.md` 在 `[E-HEADLEN-FORMULA]` 同时给出 `PadLen = (4 - ((PayloadLen + 4) % 4)) % 4` 与 `PadLen = (4 - (PayloadLen % 4)) % 4` 并声称等价。
+- 现状：`rbf-format.md` 在 `[E-HEADLEN-FORMULA]` 同时给出 `PadLen = (4 - ((PayloadLen + 4) % 4)) % 4` 与 `PadLen = (4 - (PayloadLen % 4)) % 4` 并声称等价。
 - 结论：两式数学上等价（`+4` 对 mod 4 无影响），但“+4 来源”不自证，容易误导实现者。
 - 建议：保留更直观的 `PadLen = (4 - (PayloadLen % 4)) % 4`，删除另一个或补一行推导。
 
 2) **FrameTag 映射与原版 RecordKind 域隔离不一致**（P1）
 - 结论：这确实是“设计变更 / 分层重构”而非“迁移遗漏”。
-- 关键风险：若 `mvp-design-v2.md`（或后续 Layer 1 record-format 文档）仍假定 payload 首字节是 `RecordKind` 且 data/meta 通过“域隔离”复用数值 `0x01`，则与 `elog-interface.md` 里“通过 FrameTag 取值区分 data/meta”会产生双轨实现。
+- 关键风险：若 `mvp-design-v2.md`（或后续 Layer 1 record-format 文档）仍假定 payload 首字节是 `RecordKind` 且 data/meta 通过“域隔离”复用数值 `0x01`，则与 `rbf-interface.md` 里“通过 FrameTag 取值区分 data/meta”会产生双轨实现。
 
 ### 1.2 需要修正 Claude 结论的点
 
@@ -306,7 +306,7 @@ Claude 的 FixList 中把“逆向扫描终止条件不明确”归为 P2。基�
 
 ### 2.1 CRC32C 多项式表述错误（P0）
 
-`elog-format.md` 的 `[E-CRC32C-ALGORITHM]` 写道：
+`rbf-format.md` 的 `[E-CRC32C-ALGORITHM]` 写道：
 - “多项式：`0x1EDC6F41`（反射形式）”
 
 问题：`0x1EDC6F41` 是 CRC32C（Castagnoli）的**常规（normal / non-reflected）**多项式表示；常见的**反射（reflected）**表示是 `0x82F63B78`。
@@ -319,7 +319,7 @@ Claude 的 FixList 中把“逆向扫描终止条件不明确”归为 P2。基�
 
 ### 2.2 Reverse Scan 算法首帧边界条件错误（P0）
 
-`elog-format.md` 的 `[E-REVERSE-SCAN-ALGORITHM]` 步骤 f：
+`rbf-format.md` 的 `[E-REVERSE-SCAN-ALGORITHM]` 步骤 f：
 - “验证 `RecordStart >= 8` 且 `RecordStart % 4 == 0`”
 
 这与本格式的文件布局冲突：Genesis Magic 长度为 4B，因此**第一条 Frame 的 `RecordStart` 合法值应为 4**（紧随 Genesis）。
@@ -333,7 +333,7 @@ Claude 的 FixList 中把“逆向扫描终止条件不明确”归为 P2。基�
 
 ### 2.3 Magic 的 Hex 表示存在端序歧义（P1）
 
-`elog-format.md` 在 §2.1 的 Magic 表里写了：
+`rbf-format.md` 在 §2.1 的 Magic 表里写了：
 - `DHD3` → `0x44484433`
 
 若把该数值理解为“u32 LE 写入文件”，写出的字节序会变成 `33 44 48 44`（非 ASCII）。
@@ -346,17 +346,17 @@ Claude 的 FixList 中把“逆向扫描终止条件不明确”归为 P2。基�
 
 ## 3) 可测试性审计（条款是否可判定）
 
-### 3.1 `elog-format.md` 未定义 FrameTag 的 wire encoding（P0）
+### 3.1 `rbf-format.md` 未定义 FrameTag 的 wire encoding（P0）
 
-`elog-interface.md` 把 Frame 抽象为 `(FrameTag, Payload)`，且 `IElogScanner` 必须读出 `Tag`。
+`rbf-interface.md` 把 Frame 抽象为 `(FrameTag, Payload)`，且 `IRbfScanner` 必须读出 `Tag`。
 
-但 `elog-format.md` 的 Frame 布局没有出现 `Tag` 字段：仅有 `HeadLen/Payload/Pad/TailLen/CRC32C/Magic`。
+但 `rbf-format.md` 的 Frame 布局没有出现 `Tag` 字段：仅有 `HeadLen/Payload/Pad/TailLen/CRC32C/Magic`。
 
 没有 Tag 的 wire 定义，将导致：
 - 无法写“黑盒可判定测试”：scanner 如何从文件解码出 `Tag`？
 - interface 与 format 无法对齐：实现者会自发选择“Tag=Payload[0]”或“Tag 在 header”等，造成兼容性分叉。
 
-建议：在 `elog-format.md` 加一个 P0 条款，明确 Tag 的编码位置（推荐：**Tag 作为 Payload 的第 1 个字节**，ELOG 负责读写但不解释语义；这与“ELOG 是信封”并不冲突）。并同步更新：
+建议：在 `rbf-format.md` 加一个 P0 条款，明确 Tag 的编码位置（推荐：**Tag 作为 Payload 的第 1 个字节**，RBF 负责读写但不解释语义；这与“RBF 是信封”并不冲突）。并同步更新：
 - CRC 覆盖范围仍然正确（Tag 属于 Payload，自然被覆盖）。
 - `HeadLen`/`PayloadLen` 的定义是否将 Tag 计入 PayloadLen（应计入）。
 
@@ -383,43 +383,43 @@ Claude 建议添加 `[E-CRC-FAIL-REJECT]`（P2）。从可测试性角度我建�
 ### P0（Must Fix：会导致实现分叉或规范自相矛盾）
 
 1) **CRC32C 多项式“反射形式”表述错误**
-- 位置：`elog-format.md` `[E-CRC32C-ALGORITHM]`
+- 位置：`rbf-format.md` `[E-CRC32C-ALGORITHM]`
 - 修复：纠正为 normal/reflected 的正确数值与约定（或直接引用 `.NET System.IO.Hashing.Crc32C` 语义）。
 
 2) **Reverse Scan 算法首帧边界条件错误（RecordStart>=8）**
-- 位置：`elog-format.md` `[E-REVERSE-SCAN-ALGORITHM]` 步骤 f
+- 位置：`rbf-format.md` `[E-REVERSE-SCAN-ALGORITHM]` 步骤 f
 - 修复：改为 `RecordStart >= 4`（或 `>= GenesisLen`），并用最小单帧文件作为回归向量。
 
 3) **FrameTag 的 wire encoding 缺失**
-- 位置：`elog-format.md`（整体：Frame 布局未包含 Tag）与 `elog-interface.md`（Scanner 需要 Tag）之间
-- 修复：在 `elog-format.md` 明确 Tag 的编码位置（推荐 `Tag = Payload[0]`），并把 PayloadLen/测试向量一并对齐。
+- 位置：`rbf-format.md`（整体：Frame 布局未包含 Tag）与 `rbf-interface.md`（Scanner 需要 Tag）之间
+- 修复：在 `rbf-format.md` 明确 Tag 的编码位置（推荐 `Tag = Payload[0]`），并把 PayloadLen/测试向量一并对齐。
 
 ### P1（Should Fix：歧义/误导，会降低可实现一致性）
 
 4) **Magic 的 Hex 表达端序歧义**
-- 位置：`elog-format.md` §2.1 Magic 表
+- 位置：`rbf-format.md` §2.1 Magic 表
 - 修复：改为字节序列表示（`44 48 44 33`），或明确“ASCII bytes 写入，不是 u32 端序写入”。
 
 5) **PadLen 公式冗余且 `+4` 来源不清**
-- 位置：`elog-format.md` `[E-HEADLEN-FORMULA]`
+- 位置：`rbf-format.md` `[E-HEADLEN-FORMULA]`
 - 修复：保留简式、删冗余或补推导。
 
 6) **FrameTag 取值与原版 RecordKind 域隔离的对齐说明不足**
-- 位置：`elog-interface.md` §5.1
+- 位置：`rbf-interface.md` §5.1
 - 修复：要么同步更新上层（`mvp-design-v2.md` / Layer1 record-format），要么在 interface 中明确“这是新设计，原版 RecordKind 仅存在于 payload、且未来将被 FrameTag 取代”的迁移注记。
 
 7) **CRC/Framing 失败策略条款化**（把 Claude 的 P2#3 提升为 P1）
-- 位置：`elog-format.md`
+- 位置：`rbf-format.md`
 - 修复：增加 `[E-CRC-FAIL-REJECT]` / `[E-FRAMING-FAIL-REJECT]` 最小条款，保证测试可判定。
 
 ### P2（Nice to Have：质量/可维护性提升）
 
 8) **ScanReverse 损坏数据时的终止条件与“单调推进”约束**
-- 位置：`elog-format.md` §7 / `elog-interface.md` §9
+- 位置：`rbf-format.md` §7 / `rbf-interface.md` §9
 - 建议：写明“resync 每步 MagicPos -= 4，必须终止”。
 
 9) **测试向量补齐 CRC32C 具体数值**
-- 位置：`elog-format.md` §12
+- 位置：`rbf-format.md` §12
 - 建议：给 1-2 个固定 payload 的 CRC32C 常量，便于跨语言互验。
 
 （以上为本轮 #review 的补充结论。）
@@ -453,11 +453,11 @@ Claude 建议添加 `[E-CRC-FAIL-REJECT]`（P2）。从可测试性角度我建�
 | P1-1 | Magic 端序歧义 | 改为字节序列表示 `44 48 44 33`，新增 `[E-MAGIC-BYTE-SEQUENCE]` 条款 | ✅ |
 | P1-2 | PadLen 公式冗余 | 简化为单一公式，添加推导说明，新增 `[E-PADLEN-FORMULA]` 条款 | ✅ |
 | P1-3 | CRC/Framing 失败策略 | 新增 `[E-CRC-FAIL-REJECT]` 和 `[E-FRAMING-FAIL-REJECT]` 条款 | ✅ |
-| P1-4 | FrameTag/RecordKind 对齐 | 在 elog-interface.md §5.1 添加设计变更说明 | ✅ |
+| P1-4 | FrameTag/RecordKind 对齐 | 在 rbf-interface.md §5.1 添加设计变更说明 | ✅ |
 
 **文件变更**：
-- `atelia/docs/StateJournal/elog-format.md` — 版本 0.2 → 0.3
-- `atelia/docs/StateJournal/elog-interface.md` — §5.1 更新
+- `atelia/docs/StateJournal/rbf-format.md` — 版本 0.2 → 0.3
+- `atelia/docs/StateJournal/rbf-interface.md` — §5.1 更新
 
 **新增条款**：4 条（E-MAGIC-BYTE-SEQUENCE, E-PADLEN-FORMULA, E-CRC-FAIL-REJECT, E-FRAMING-FAIL-REJECT）
 

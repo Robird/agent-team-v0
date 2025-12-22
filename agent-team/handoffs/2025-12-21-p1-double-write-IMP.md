@@ -13,7 +13,7 @@
 | 图表 | 附近文字 | 是否双写 | 处理 |
 |------|----------|----------|------|
 | VarInt Encoding | [F-07]/[F-08] 条款 | **否**（互补） | 保留 |
-| ELOG File Structure | 分层定义文字 | **是** | 替换为 EBNF |
+| RBF File Structure | 分层定义文字 | **是** | 替换为 EBNF |
 | Record Layout | 分层定义文字 | **是** | 替换为 EBNF |
 | Two-Phase Commit Flow | 二阶段提交表格 | **否**（互补） | 保留 |
 
@@ -56,7 +56,7 @@ CRC32C  := u32 LE        (* covers Payload + Pad + TailLen *)
 
 ## 已知差异
 
-- 删除了 2 个 ASCII 图表（ELOG File Structure、Record Layout）
+- 删除了 2 个 ASCII 图表（RBF File Structure、Record Layout）
 - 这些图表的信息已完全包含在 EBNF 中，且 EBNF 更精确
 - 保留了 VarInt 图（编码示例）和 Two-Phase Commit 图（流程可视化）
 

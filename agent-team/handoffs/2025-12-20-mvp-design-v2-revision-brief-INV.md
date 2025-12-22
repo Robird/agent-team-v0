@@ -282,7 +282,7 @@
   ```markdown
   record framing（Q20=A；data/meta 统一）：
 
-  - data 与 meta 统一采用 `ELOG` framing：
+  - data 与 meta 统一采用 `RBF` framing：
   	- `[Magic(4)] [Len(u32 LE)] [Payload bytes] [Pad(0..3)] [Len(u32 LE)] [CRC32C(u32 LE)]`
   	- `Len`（也称 `HeadLen`/`TailLen`）表示从 `Magic` 开始到 `CRC32C` 结束的 **整条 record 总字节长度**。
   	- ...
@@ -397,7 +397,7 @@
   ```markdown
   关于"尾部 `Magic` 哨兵"（MVP 采纳）：
 
-  - 不改变单条 record 的 ELOG framing（`Len/CRC32C/Pad` 规则不变），只是文件级额外要求"以 `Magic` 结束"。
+  - 不改变单条 record 的 RBF framing（`Len/CRC32C/Pad` 规则不变），只是文件级额外要求"以 `Magic` 结束"。
   - 收益：fast-path 可 O(1) 命中 `MagicPos = FileLength-4`；尾部损坏时 resync 与 fast-path 复用同一套"命中 `Magic` → 校验 `Len/CRC32C`"流程。
   - 代价：每条 record 额外 4 bytes；writer 需维护哨兵不变量（对 MVP 单 writer + append-only 可接受）。
   ```

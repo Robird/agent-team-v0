@@ -1,11 +1,18 @@
 # Implementer 认知索引
 
-> 最后更新: 2025-12-22 (P0 RecordKind vs FrameTag 判别器冲突修复)
+> 最后更新: 2025-12-22 (RBF 测试向量 Magic 修复)
 > 
 > ⚠️ **更名通知**：DurableHeap → StateJournal（2025-12-21）
 > - 新路径：`atelia/docs/StateJournal/`
 > - 代码目标：`atelia/src/StateJournal/`
 > - 下方历史记录中的 "DurableHeap" 章节标题保留原名（作为历史事实）
+>
+> ⚠️ **更名通知**：ELOG → RBF（2025-12-22）
+> - 格式名：ELOG (Extensible Log Framing) → **RBF (Reversible Binary Framing)**
+> - Magic：`DHD3`/`DHM3` → `RBF1` (`52 42 46 31`)
+> - 扩展名：`.rbf` → `.rbf`
+> - 文档：`rbf-*.md` → `rbf-*.md`（2025-12-22 已重命名）
+> - 类型名：`IElogFramer` → `IRbfFramer` 等（2025-12-22 已更新）
 
 ## 我是谁
 编码实现专家，负责根据设计进行代码实现、移植和修复。
@@ -16,13 +23,276 @@
 - [ ] PieceTreeSharp
 - [x] PipeMux — 实现管理命令 `:list`, `:ps`, `:stop`, `:help`
 - [ ] atelia-copilot-chat
-- [x] StateJournal — 设计文档修订（共 23 轮）+ 文档瘦身（A1-A9）+ Rationale Stripping + 语义锚点重构 + 决策诊疗室落文 + **ELOG 层拆分（elog-format.md）** + **P0 判别器冲突修复**
+- [x] StateJournal — 设计文档修订（共 23 轮）+ 文档瘦身（A1-A9）+ Rationale Stripping + 语义锚点重构 + 决策诊疗室落文 + **RBF 层拆分（rbf-format.md）** + **P0 判别器冲突修复** + **规范约定引用更新** + **测试向量拆分** + **RBF 命名重构** + **文档重命名**
   - 📍 **2025-12-21 更名**：DurableHeap → StateJournal，迁入 `atelia/docs/StateJournal/`
-  - 📍 **2025-12-22 拆分**：从 mvp-design-v2.md 提取 ELOG 二进制格式规范到 elog-format.md
+  - 📍 **2025-12-22 拆分**：从 mvp-design-v2.md 提取 RBF 二进制格式规范到 rbf-format.md
   - 📍 **2025-12-22 P0 修复**：RecordKind vs FrameTag 判别器冲突修复
+  - 📍 **2025-12-22 规范约定**：创建 spec-conventions.md 并更新各文档引用
+  - 📍 **2025-12-22 测试向量拆分**：Layer 0 → rbf-test-vectors.md，Layer 1 → mvp-test-vectors.md（精简版）
+  - 📍 **2025-12-22 RBF 命名**：ELOG → RBF (Reversible Binary Framing)，Magic 统一为 `RBF1`
+  - 📍 **2025-12-22 文档重命名**：`rbf-*.md` → `rbf-*.md`
 - [x] Atelia.Primitives — 基础类型库（AteliaResult、AteliaError、AteliaException）
 
 ## 当前关注
+
+### 命名技能指南更新 (2025-12-22) ✅
+
+**任务来源**：用户指令 — 根据畅谈会 `2025-12-22-naming-methodology-jam.md` 共识更新 `naming-skill-guide.md`
+
+**融入内容**：
+
+1. **统一视角**（新增 §0）：
+   - 所有方法都是"在损失函数下搜索"
+   - 表格对比各方法的搜索策略和损失定义
+
+2. **适用边界框架**（新增 §4）：
+   - 二维坐标：候选空间开放度 × 约束复杂度
+   - 选择启发式表格
+
+3. **类比锚定法**（新增方法 D）：
+   - 适用：有明确的"领域前辈"
+   - 步骤：找前辈 → 分析命名风格 → 同风格构造
+   - 示例：VersionIndex 借用 Git 的 Index
+
+4. **反向排斥法**（新增方法 E）：
+   - 适用："不要什么"比"要什么"更清晰
+   - 步骤：列排斥条件 → 过滤 → 在幸存者中选择
+   - 优势：快速收敛，避免完美主义陷阱
+
+5. **4 个可审计产物模板**（方法 C 增强）：
+   - Name Surface Matrix（名字表面矩阵）
+   - Constraint Table（约束表）
+   - Candidate Scorecard（候选评分卡）
+   - Decision Record（决策记录）
+
+**文件变更**：
+- 修改：`agent-team/wiki/naming-skill-guide.md`（+约 120 行）
+
+---
+
+**任务来源**：用户指令 — 实施畅谈会 RBF 命名决策
+
+**决策内容**：
+| 决策点 | 旧值 | 新值 |
+|--------|------|------|
+| 格式名 | RBF (Extensible Log Framing) | **RBF (Reversible Binary Framing)** |
+| Magic | `DHD3`/`DHM3` (双 Magic) | `RBF1` (`52 42 46 31`) 统一 |
+| 扩展名 | `.rbf` | `.rbf` |
+
+**"Reversible" 的含义**：不是加密/可逆变换，而是 backward scan / resync 能力。
+
+**执行内容**：
+
+1. **rbf-format.md 更新**（版本 0.3 → 0.4）：
+   - 标题：ELOG 二进制格式规范 → **RBF 二进制格式规范**
+   - 概述：ELOG (Extensible Log Framing) → RBF (Reversible Binary Framing)
+   - Magic 定义：双 Magic (DHD3/DHM3) → 统一 Magic `RBF1`
+   - 文档层次图更新
+   - 测试向量 Magic 值更新
+   - 变更日志添加 v0.4 记录
+
+2. **rbf-interface.md 更新**（版本 0.2 → 0.3）：
+   - 标题：ELOG Layer Interface Contract → **RBF Layer Interface Contract**
+   - 概述更新
+   - 术语表说明更新
+   - API 注释更新
+   - 变更日志添加 v0.3 记录
+
+3. **HISTORY.md 更新**：
+   - 新增"RBF → RBF 命名重构"章节
+   - 记录决策背景、新命名、含义说明
+   - 变更日志添加记录
+
+**统计**：
+| 文件 | 修改处数 | 版本变更 |
+|------|----------|----------|
+| rbf-format.md | 8 处 | 0.3 → 0.4 |
+| rbf-interface.md | 9 处 | 0.2 → 0.3 |
+| HISTORY.md | 2 处 | — |
+
+**遗留**：文档文件名（rbf-*.md）暂时保留，作为后续清理任务。
+
+---
+
+### mvp-test-vectors.md Layer 0 内容移除 (2025-12-22) ✅
+
+**任务来源**：用户指令 — 精简 mvp-test-vectors.md，移除已提取到 rbf-test-vectors.md 的 Layer 0 内容
+
+**背景**：
+- Layer 0 测试向量已提取到独立文件 `rbf-test-vectors.md`
+- mvp-test-vectors.md 需要移除重复的 Layer 0 内容，只保留 Layer 1 内容
+
+**执行内容**：
+1. 更新文档头部：
+   - 标题改为"StateJournal MVP 测试向量（Layer 1）"
+   - 版本升级为 v3
+   - 添加对 rbf-test-vectors.md 的引用
+   - 添加对 spec-conventions.md 的引用
+2. 移除以下 Layer 0 内容：
+   - 原 §0 约定（Magic-as-Separator、Frame 格式、Ptr64、varint 规则）
+   - 原 §5 RBF framing（Magic-as-Separator，P0-2 修订）
+   - 原重复 §1 RBF framing（data/meta）
+   - 原重复 §2 Meta 恢复与撕裂提交
+   - 原重复 §3 Ptr64（4B unit pointer）
+   - 原重复 §4 varint（canonical）
+3. 保留 Layer 1 内容：
+   - §1 `_dirtyKeys` 不变式测试（P0-1）
+   - §2 首次 Commit 语义（P0-7）
+   - §3 Value 类型边界（P0-4）
+   - §4 CommitAll API 语义（P0-6）
+   - §5 DurableDict diff payload（delta-of-prev）
+   - §6 DurableDict snapshot/base（链长封顶）
+   - §7 推荐的黄金文件组织方式
+4. 更新条款映射表：
+   - 移除 Layer 0 条款（F-MAGIC-RECORD-SEPARATOR 等 14 条）
+   - 保留 Layer 1 条款（22 条）
+   - 添加对 rbf-test-vectors.md 的引用
+5. 更新黄金文件组织方式章节：
+   - 移除 RBF/varint 路径（已移到 rbf-test-vectors.md）
+   - 添加对 rbf-test-vectors.md 的引用
+6. 添加变更日志
+
+**统计**：
+| 指标 | 值 |
+|------|-----|
+| 原文件行数 | 432 |
+| 新文件行数 | 287 |
+| 净减少 | 145 行（约 34%）|
+| 保留章节 | 7 个 |
+| 保留条款 | 22 条 |
+
+**文件变更**：
+- 修改：`atelia/docs/StateJournal/mvp-test-vectors.md`（-145 行，版本 v2 → v3）
+
+---
+
+### rbf-test-vectors.md 创建 (2025-12-22) ✅
+
+**任务来源**：用户指令 — 从 mvp-test-vectors.md 提取 Layer 0 测试向量到独立文件
+
+**背景**：
+- `mvp-test-vectors.md` 包含 Layer 0 (RBF) 和 Layer 1 (StateJournal) 混合内容
+- 为配合 rbf-format.md 的独立规范，需要独立的测试向量文档
+
+**执行内容**：
+1. 创建 `atelia/docs/StateJournal/rbf-test-vectors.md`
+2. 提取以下 Layer 0 内容：
+   - §0 约定（Magic-as-Separator、Frame 格式、Ptr64、varint）
+   - RBF framing 测试向量（空文件、单条/双条 Frame、HeadLen/TailLen 计算）
+   - 有效/损坏 Frame 测试向量
+   - 截断测试向量
+   - Meta 恢复与撕裂提交测试向量
+   - Ptr64 校验测试向量
+   - varint canonical 测试向量
+3. 重新组织章节结构，消除原文件的重复编号问题
+4. 术语更新：Record → Frame（与 rbf-format.md 一致）
+
+**文档结构**（6 个主要章节）：
+| 章节 | 内容 |
+|------|------|
+| §0 约定 | Magic-as-Separator、Frame 格式、Ptr64、varint 规则 |
+| §1 Frame 编码 | 空文件、单条/双条 Frame、HeadLen/TailLen 计算、Magic in Payload |
+| §2 损坏与恢复 | 有效 Frame、损坏 Frame、截断测试、Meta 恢复与撕裂提交 |
+| §3 Ptr64 校验 | 指针可解析、越界、非对齐 |
+| §4 varint (canonical) | canonical 编码、非 canonical、溢出、EOF |
+| §5 条款映射 | 10 条测试向量到规范条款的映射 |
+
+**测试用例统计**：
+| 类别 | 用例数 |
+|------|--------|
+| Frame 编码 | 5 |
+| 有效 Frame | 1 |
+| 损坏 Frame | 4 |
+| 截断测试 | 2 |
+| Meta 恢复 | 3 |
+| Ptr64 校验 | 3 |
+| varint | 4 |
+| **总计** | **22** |
+
+**文件变更**：
+- 新建：`atelia/docs/StateJournal/rbf-test-vectors.md`（约 200 行）
+
+---
+
+### rbf-format.md 条款前缀统一 (2025-12-22) ✅
+
+**任务来源**：用户指令 — 将 `[E-*]` 条款前缀改回 `[F-*]`（格式条款）或 `[R-*]`（恢复条款）
+
+**背景**：统一使用原有的条款编号规则，不再为 Layer 0 单独使用 `[E-*]` 前缀。
+
+**执行内容**：
+
+1. **rbf-format.md 格式条款**（共 19 条，`[E-*]` → `[F-*]`）：
+   - `[F-GENESIS-HEADER]`、`[F-GENESIS-EMPTY-FILE]`
+   - `[F-FRAME-LAYOUT]`、`[F-FRAMETAG-WIRE-ENCODING]`
+   - `[F-HEADLEN-TAILLEN-SYMMETRY]`、`[F-HEADLEN-FORMULA]`
+   - `[F-PADLEN-FORMULA]`、`[F-FRAME-4B-ALIGNMENT]`
+   - `[F-PAD-ZERO-FILL]`
+   - `[F-CRC32C-COVERAGE]`、`[F-CRC32C-ALGORITHM]`
+   - `[F-CRC-FAIL-REJECT]`、`[F-FRAMING-FAIL-REJECT]`
+   - `[F-MAGIC-BYTE-SEQUENCE]`、`[F-MAGIC-IS-FENCE]`、`[F-MAGIC-FRAME-SEPARATOR]`
+   - `[F-FRAME-WRITE-SEQUENCE]`
+   - `[F-PTR64-ENCODING]`、`[F-PTR64-NULL-AND-ALIGNMENT]`
+
+2. **rbf-format.md 恢复条款**（共 5 条，`[E-*]` → `[R-*]`）：
+   - `[R-REVERSE-SCAN-ALGORITHM]`
+   - `[R-RESYNC-DISTRUST-TAILLEN]`、`[R-RESYNC-SCAN-MAGIC]`
+   - `[R-DATATAIL-DEFINITION]`、`[R-DATATAIL-TRUNCATE]`
+
+3. **rbf-interface.md 条款引用**（共 5 条，`[E-*]` → `[F-*]`）：
+   - `[F-FRAMETAG-DEFINITION]`、`[F-FRAMETAG-PADDING-VISIBLE]`
+   - `[F-ADDRESS64-DEFINITION]`、`[F-ADDRESS64-ALIGNMENT]`、`[F-ADDRESS64-NULL]`
+
+4. **条款索引表格更新**：
+   - rbf-format.md §11.1：格式条款标题从 `[E-xxx]` 改为 `[F-xxx]`
+   - rbf-format.md §11.2：恢复条款标题从 `[E-xxx]` 改为 `[R-xxx]`，并移动 DATATAIL 条款到此分组
+   - rbf-interface.md §6：条款索引表格更新
+
+**统计**：
+| 文件 | [F-*] 条款 | [R-*] 条款 | 总计 |
+|------|-----------|-----------|------|
+| rbf-format.md | 19 | 5 | 24 |
+| rbf-interface.md | 5 | 0 | 5 |
+| **总计** | **24** | **5** | **29** |
+
+**文件变更**：
+- 修改：`atelia/docs/StateJournal/rbf-format.md`（24 处条款替换 + 索引表格重组）
+- 修改：`atelia/docs/StateJournal/rbf-interface.md`（11 处条款替换）
+
+---
+
+### 设计文档引用 spec-conventions.md (2025-12-22) ✅
+
+**任务来源**：用户指令 — 更新各设计文档引用公共规范约定
+
+**执行内容**：
+1. 更新 `mvp-design-v2.md`：
+   - 将"规范语言（Normative Language）"和"条款编号（Requirement IDs）"章节替换为简短引用
+   - 净减少约 28 行
+2. 更新 `rbf-format.md`：在概述前添加规范约定引用
+3. 更新 `rbf-interface.md`：在概述前添加规范约定引用
+
+**文件变更**：
+- 修改：`atelia/docs/StateJournal/mvp-design-v2.md`（-28 行）
+- 修改：`atelia/docs/StateJournal/rbf-format.md`（+2 行）
+- 修改：`atelia/docs/StateJournal/rbf-interface.md`（+2 行）
+
+---
+
+### spec-conventions.md 创建 (2025-12-22) ✅
+
+**任务来源**：用户指令 — 将规范语言和条款编号章节提取为公共文件
+
+**执行内容**：
+1. 从 `atelia/docs/StateJournal/mvp-design-v2.md` 提取：
+   - "规范语言（Normative Language）" 章节
+   - "条款编号（Requirement IDs）" 章节
+2. 创建 `atelia/docs/spec-conventions.md`
+
+**文件变更**：
+- 新建：`atelia/docs/spec-conventions.md`（约 50 行）
+
+---
 
 ### P0: varint 精确定义 SSOT 缺失修复 (2025-12-22) ✅
 
@@ -30,8 +300,8 @@
 
 **问题描述**：
 1. 原版 `mvp-design-v2.md.bak` 有完整的 varint 定义（§3.2.0 和 §3.2.0.1）
-2. 新版 `mvp-design-v2.md` 将"编码基础"改为引用 `elog-format.md`
-3. 但 `elog-format.md` 是 ELOG framing 文档，**不包含 varint 定义**
+2. 新版 `mvp-design-v2.md` 将"编码基础"改为引用 `rbf-format.md`
+3. 但 `rbf-format.md` 是 RBF framing 文档，**不包含 varint 定义**
 4. 结果：varint 规范无处可寻
 
 **影响**：
@@ -43,7 +313,7 @@
 
 **执行内容**：
 
-1. 移除错误的引用：`> **编码基础**：本节使用的变长整数编码（varint）定义见 [elog-format.md](elog-format.md)。`
+1. 移除错误的引用：`> **编码基础**：本节使用的变长整数编码（varint）定义见 [rbf-format.md](rbf-format.md)。`
 2. 恢复 §3.2.0 变长编码（varint）决策章节
 3. 恢复 §3.2.0.1 varint 的精确定义章节（包含 VarInt Encoding 图示）
 4. 保留条款：`[F-VARINT-CANONICAL-ENCODING]`、`[F-DECODE-ERROR-FAILFAST]`
@@ -75,8 +345,8 @@
 
 **问题描述**：
 三份文档对"判别器"的定义冲突：
-1. **elog-format.md**：定义 `FrameTag` 是 Payload 的第 1 个字节
-2. **elog-interface.md §5.1**：定义 `FrameTag 0x01` = ObjectVersion, `FrameTag 0x02` = MetaCommit
+1. **rbf-format.md**：定义 `FrameTag` 是 Payload 的第 1 个字节
+2. **rbf-interface.md §5.1**：定义 `FrameTag 0x01` = ObjectVersion, `FrameTag 0x02` = MetaCommit
 3. **mvp-design-v2.md**：仍然使用 `RecordKind` 作为 payload 内第一字节，且 data/meta 都复用 `0x01`（域隔离）
 
 **冲突后果**：
@@ -112,21 +382,21 @@
 6. **更新命名规则示例**：
    - 将 `[F-RECORDKIND-DOMAIN-ISOLATION]` 示例改为 `[F-OBJECTKIND-STANDARD-RANGE]`
 
-7. **更新 elog-interface.md §5.1**：
+7. **更新 rbf-interface.md §5.1**：
    - 确认 FrameTag 映射表正确
    - 移除"待与 mvp-design-v2.md 完成最终对齐"注释
    - 添加"FrameTag 是唯一判别器"说明
 
 **文件变更**：
 - 修改：`atelia/docs/StateJournal/mvp-design-v2.md`（6 处修改）
-- 修改：`atelia/docs/StateJournal/elog-interface.md`（1 处修改）
+- 修改：`atelia/docs/StateJournal/rbf-interface.md`（1 处修改）
 
 **废弃条款**：
 - `[F-RECORDKIND-DOMAIN-ISOLATION]`：域隔离条款废弃，FrameTag 统一值空间
 
 ---
 
-### elog-format.md P1 问题修复 (2025-12-22) ✅
+### rbf-format.md P1 问题修复 (2025-12-22) ✅
 
 **任务来源**：用户指令 — 修复 Layer 0 对齐复核发现的 4 个 P1 级问题
 
@@ -154,19 +424,19 @@
    - 新增条款 `[E-FRAMING-FAIL-REJECT]`：枚举 5 种 Framing 失败情况
 
 4. **P1-4: FrameTag 与 RecordKind 域隔离对齐说明**
-   - 位置：elog-interface.md §5.1 FrameTag ↔ RecordKind 映射
+   - 位置：rbf-interface.md §5.1 FrameTag ↔ RecordKind 映射
    - 添加"设计变更说明"：解释原版域隔离 vs 新版统一 FrameTag 空间的差异
    - 标注"待与 mvp-design-v2.md 完成最终对齐"
 
 **文件变更**：
-- 修改：`atelia/docs/StateJournal/elog-format.md`
+- 修改：`atelia/docs/StateJournal/rbf-format.md`
   - 版本：0.2 → 0.3
   - Magic 编码约定新增
   - PadLen 公式简化
   - 新增 §4.3 校验失败处理
   - 条款索引更新（新增 4 条）
   - 变更日志添加 P1 修订记录
-- 修改：`atelia/docs/StateJournal/elog-interface.md`
+- 修改：`atelia/docs/StateJournal/rbf-interface.md`
   - §5.1 添加设计变更说明
 
 **新增条款汇总**（4 条）：
@@ -179,7 +449,7 @@
 
 ---
 
-### elog-format.md P0 问题修复 (2025-12-22) ✅
+### rbf-format.md P0 问题修复 (2025-12-22) ✅
 
 **任务来源**：用户指令 — 修复 Layer 0 对齐复核发现的 3 个 P0 级问题
 
@@ -199,13 +469,13 @@
 
 3. **P0-3: FrameTag wire encoding 补充**
    - 位置：§3.1 Frame 二进制布局
-   - 问题：FrameTag 在 elog-interface.md 定义但 elog-format.md 未说明其 wire 位置
+   - 问题：FrameTag 在 rbf-interface.md 定义但 rbf-format.md 未说明其 wire 位置
    - 修复：更新 Frame 布局图，明确 Tag 是 Payload 的第 1 字节
    - 新增条款：`[E-FRAMETAG-WIRE-ENCODING]`
    - 更新表格：Payload 分拆为 Tag + PayloadBody
 
 **文件变更**：
-- 修改：`atelia/docs/StateJournal/elog-format.md`
+- 修改：`atelia/docs/StateJournal/rbf-format.md`
   - 版本：0.1 → 0.2
   - CRC32C 算法章节重写
   - 逆向扫描算法条件修正
@@ -220,12 +490,12 @@
 **任务来源**：用户指令 — 简化 mvp-design-v2.md 术语表中的 Ptr64/Address64 定义
 
 **背景**：
-- Ptr64/Address64 的详细定义已在 elog-interface.md §2.2 中
+- Ptr64/Address64 的详细定义已在 rbf-interface.md §2.2 中
 - mvp-design-v2.md 术语表应简化为引用，避免重复维护
 
 **执行内容**：
 1. 合并"标识与指针"表格中的 Ptr64 和 Address64 两行为一行
-2. 简化定义为引用：`详见 [elog-interface.md](elog-interface.md) §2.2`
+2. 简化定义为引用：`详见 [rbf-interface.md](rbf-interface.md) §2.2`
 3. 更新"命名约定"章节中的第 4 条，改为简短引用
 
 **修改前**：
@@ -236,7 +506,7 @@
 
 **修改后**：
 ```markdown
-| **Ptr64** / **Address64** | 8 字节文件偏移量。详见 [elog-interface.md](elog-interface.md) §2.2 | — | `ulong` |
+| **Ptr64** / **Address64** | 8 字节文件偏移量。详见 [rbf-interface.md](rbf-interface.md) §2.2 | — | `ulong` |
 ```
 
 **文件变更**：
@@ -249,8 +519,8 @@
 **任务来源**：用户指令 — 精简 mvp-design-v2.md 的崩溃恢复章节
 
 **背景**：
-- ELOG Layer 0 内容已提取到 elog-format.md
-- §3.5 崩溃恢复章节需要添加对 elog-format.md 的引用
+- RBF Layer 0 内容已提取到 rbf-format.md
+- §3.5 崩溃恢复章节需要添加对 rbf-format.md 的引用
 - **实际检查发现**：该章节已经是精简状态，无需移除内容
 
 **章节现状**（已精简）：
@@ -261,7 +531,7 @@
 
 **添加的引用**：
 ```markdown
-> **帧级恢复**：Frame 级别的逆向扫描、CRC 校验、Resync 机制详见 [elog-format.md](elog-format.md)。
+> **帧级恢复**：Frame 级别的逆向扫描、CRC 校验、Resync 机制详见 [rbf-format.md](rbf-format.md)。
 > 本节描述 StateJournal 的 **Record 级恢复语义**。
 ```
 
@@ -276,11 +546,11 @@
 **任务来源**：用户指令 — 精简 mvp-design-v2.md 的 Meta 文件章节
 
 **背景**：
-- ELOG Layer 0 内容已提取到 elog-format.md
+- RBF Layer 0 内容已提取到 rbf-format.md
 - mvp-design-v2.md §3.2.2 Meta 文件章节仍保留了重复的 Layer 0 内容
 - 需要移除重复内容，保留 Layer 1 特有内容
 
-**移除的内容（Layer 0，已在 elog-format.md）**：
+**移除的内容（Layer 0，已在 rbf-format.md）**：
 - `**Framing**：与 data 相同（§3.2.1 EBNF），Magic = DHM3。` — 帧格式描述
 - `[R-META-RESYNC-SAME-AS-DATA]` 条款 — meta 文件 resync 策略
 
@@ -293,7 +563,7 @@
 
 **添加的引用**：
 ```markdown
-> **帧格式**：Meta 文件与 Data 文件使用相同的 ELOG 帧格式，详见 [elog-format.md](elog-format.md)。
+> **帧格式**：Meta 文件与 Data 文件使用相同的 RBF 帧格式，详见 [rbf-format.md](rbf-format.md)。
 ```
 
 **新增小节标题**：
@@ -310,11 +580,11 @@
 **任务来源**：用户指令 — 精简 mvp-design-v2.md 的 Data 文件章节
 
 **背景**：
-- ELOG Layer 0 内容已提取到 elog-format.md
+- RBF Layer 0 内容已提取到 rbf-format.md
 - mvp-design-v2.md §3.2.1 Data 文件章节仍保留了重复的 Layer 0 内容
 - 需要移除重复内容，保留 Layer 1 特有内容
 
-**移除的内容（Layer 0，已在 elog-format.md）**：
+**移除的内容（Layer 0，已在 rbf-format.md）**：
 - EBNF 语法定义（`File := Magic (Record Magic)*` 等）
 - `[F-MAGIC-IS-FENCE]` 术语约束
 - `[F-MAGIC-RECORD-SEPARATOR]` Magic 是 Record Separator
@@ -336,7 +606,7 @@
 
 **添加的引用**：
 ```markdown
-> **帧格式**：Frame 结构（HeadLen/TailLen/Pad/CRC32C/Magic）、逆向扫描算法、Resync 机制详见 [elog-format.md](elog-format.md)。
+> **帧格式**：Frame 结构（HeadLen/TailLen/Pad/CRC32C/Magic）、逆向扫描算法、Resync 机制详见 [rbf-format.md](rbf-format.md)。
 ```
 
 **新增小节标题**：
@@ -348,31 +618,31 @@
 
 ---
 
-### ELOG 二进制格式规范提取 (2025-12-22) ✅
+### RBF 二进制格式规范提取 (2025-12-22) ✅
 
-**任务来源**：用户指令 — 从 mvp-design-v2.md 提取 ELOG 内容创建独立文档
+**任务来源**：用户指令 — 从 mvp-design-v2.md 提取 RBF 内容创建独立文档
 
 **背景**：
 - 正在将 `mvp-design-v2.md` 拆分为两层文档
-- Layer 0: `elog-format.md`（ELOG 二进制格式规范）
+- Layer 0: `rbf-format.md`（ELOG 二进制格式规范）
 - Layer 1: `mvp-design-v2.md`（StateJournal 语义）
-- 接口文档 `elog-interface.md` 已作为两层的对接契约
+- 接口文档 `rbf-interface.md` 已作为两层的对接契约
 
 **交付物**：
-- 新建：`atelia/docs/StateJournal/elog-format.md`（约 450 行）
+- 新建：`atelia/docs/StateJournal/rbf-format.md`（约 450 行）
 
 **后续任务（2025-12-22）**：
 - 从 mvp-design-v2.md 移除 §3.2.0 和 §3.2.0.1 varint 章节
-- 添加对 elog-format.md 的引用
+- 添加对 rbf-format.md 的引用
 
 **移除 varint 章节**：
 - 已移除 §3.2.0 变长编码（varint）决策（10 行）
 - 已移除 §3.2.0.1 varint 的精确定义（Q22=A）（26 行 + 代码块）
-- 已添加引用：`> **编码基础**：本节使用的变长整数编码（varint）定义见 [elog-format.md](elog-format.md)。`
+- 已添加引用：`> **编码基础**：本节使用的变长整数编码（varint）定义见 [rbf-format.md](rbf-format.md)。`
 - 净移除：**约 36 行**（从 1492 行降至 1455 行）
 
 **文档结构**：
-1. 概述（与 elog-interface.md 的关系、文档层次图）
+1. 概述（与 rbf-interface.md 的关系、文档层次图）
 2. 文件结构（Genesis Header、整体布局、EBNF 语法）
 3. Frame 结构（二进制布局、长度字段、Pad 填充）
 4. CRC32C 校验（覆盖范围、算法）
@@ -607,7 +877,7 @@
 
 1. **分层定义章节重构**（-31 行）
    - 将冗余的 File Framing/Record Layout 文字描述替换为 EBNF 语法
-   - 原：分层定义文字（13 行）+ ELOG 图（11 行）+ Record 图（11 行）= 35 行
+   - 原：分层定义文字（13 行）+ RBF 图（11 行）+ Record 图（11 行）= 35 行
    - 新：EBNF 语法（13 行）+ 简化的术语约束（1 行）= 14 行
    - 删除重复的 ASCII 图表（图表信息已包含在 EBNF 中）
 
@@ -687,16 +957,16 @@ HeadLen := u32 LE        (* == TailLen, record total bytes *)
 
 **执行内容**：
 1. 在 §3.2.0.1 varint 定义章节末尾添加 **VarInt 编码示例图**（Line 346-360）
-2. 在 §3.2.1 分层定义与 File Framing 详细规范之间添加 **ELOG 文件结构图**（Line 403-414）
-3. 在 §3.2.1 ELOG 图之后添加 **Record 内部结构图**（Line 417-428）
+2. 在 §3.2.1 分层定义与 File Framing 详细规范之间添加 **RBF 文件结构图**（Line 403-414）
+3. 在 §3.2.1 RBF 图之后添加 **Record 内部结构图**（Line 417-428）
 4. 在 §3.4.4 二阶段提交设计表格之后添加 **二阶段提交流程图**（Line 968-993）
 
 **图表详情**：
 | 图表 | 插入位置 | 新增行数 | 说明 |
 |------|----------|----------|------|
 | VarInt Encoding | §3.2.0.1 F-08 之后 | 15 行 | 展示 Base-128 编码原理，包含值 300 的编码示例和边界示例 |
-| ELOG File Structure | §3.2.1 术语约束之后 | 12 行 | 展示 Magic-as-Separator 的文件布局，标注 Ptr64 指向位置 |
-| Record Layout | ELOG 图之后 | 12 行 | 展示单条 Record 的内部结构，标注 CRC32C 覆盖范围 |
+| RBF File Structure | §3.2.1 术语约束之后 | 12 行 | 展示 Magic-as-Separator 的文件布局，标注 Ptr64 指向位置 |
+| Record Layout | RBF 图之后 | 12 行 | 展示单条 Record 的内部结构，标注 CRC32C 覆盖范围 |
 | Two-Phase Commit Flow | §3.4.4 表格之后 | 26 行 | 展示 Prepare → Finalize 流程，标注 Commit Point 位置 |
 
 **统计**：

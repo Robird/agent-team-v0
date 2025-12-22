@@ -41,7 +41,7 @@
 
 **原描述**：
 ```markdown
-- data 与 meta 统一采用 `ELOG` framing：
+- data 与 meta 统一采用 `RBF` framing：
   - `[Magic(4)] [Len(u32 LE)] [Payload bytes] [Pad(0..3)] [Len(u32 LE)] [CRC32C(u32 LE)]`
   - `Len`（也称 `HeadLen`/`TailLen`）表示从 `Magic` 开始到 `CRC32C` 结束的 **整条 record 总字节长度**。
 ```

@@ -1,4 +1,4 @@
-# 畅谈会：ELOG 接口文档复核
+# 畅谈会：RBF 接口文档复核
 
 > **日期**：2025-12-22
 > **标签**：#review
@@ -10,9 +10,9 @@
 
 ## 背景
 
-基于 [2025-12-21-elog-layer-boundary.md](2025-12-21-elog-layer-boundary.md) 的设计共识，已创建接口文档 [elog-interface.md](../../atelia/docs/StateJournal/elog-interface.md)。
+基于 [2025-12-21-rbf-layer-boundary.md](2025-12-21-rbf-layer-boundary.md) 的设计共识，已创建接口文档 [rbf-interface.md](../../atelia/docs/StateJournal/rbf-interface.md)。
 
-现需复核该接口文档，确保其稳固后可作为"手术刀"从 mvp-design-v2.md 切出 elog-format.md。
+现需复核该接口文档，确保其稳固后可作为"手术刀"从 mvp-design-v2.md 切出 rbf-format.md。
 
 ## 监护人反馈（必须处理）
 
@@ -20,7 +20,7 @@
 
 ### 反馈 1：Flush + Fsync 能力
 
-> StateJournal 使用 Data+Meta 双文件保存信息，依赖先写 Data 再写 Meta 的顺序。也许 `IElogFramer.Flush` 函数应该暴露可选的 `fsync`（同步到存储介质）能力？
+> StateJournal 使用 Data+Meta 双文件保存信息，依赖先写 Data 再写 Meta 的顺序。也许 `IRbfFramer.Flush` 函数应该暴露可选的 `fsync`（同步到存储介质）能力？
 
 **相关上下文**：
 - StateJournal 的 commit point 依赖 fsync 顺序：data fsync → meta fsync
@@ -28,10 +28,10 @@
 
 ### 反馈 2：Auto-Abort 机制再审视
 
-> `ChunkedReservableWriter` 在回填首个 Reservation 之前，是不向底层写任何数据的。所以如果 `ElogFrameBuilder` 仅在 `Commit` 中回填 HeadLen，则在未 Commit 的情况下可能无需向下层写 Padding 帧。因为 Frame Payload 的首个数据就是 HeadLen，而不是 Magic。Magic 是在上个完整 Frame 写入时封尾的。
+> `ChunkedReservableWriter` 在回填首个 Reservation 之前，是不向底层写任何数据的。所以如果 `RbfFrameBuilder` 仅在 `Commit` 中回填 HeadLen，则在未 Commit 的情况下可能无需向下层写 Padding 帧。因为 Frame Payload 的首个数据就是 HeadLen，而不是 Magic。Magic 是在上个完整 Frame 写入时封尾的。
 
 **相关上下文**（mvp-design-v2.md L561-L589）：
-- ELOG 写入顺序：`[Prev Magic] → HeadLen → Payload → TailLen → Pad → CRC → [Next Magic]`
+- RBF 写入顺序：`[Prev Magic] → HeadLen → Payload → TailLen → Pad → CRC → [Next Magic]`
 - Magic 是上一个 Frame 的封尾，不是当前 Frame 的开头
 - HeadLen 位于 Frame Payload 的首字节位置
 
@@ -43,13 +43,13 @@
 
 ### 反馈 3：暴露 IReservableBufferWriter
 
-> 支持让 `ElogFrameBuilder` 在底层支持的情况下暴露 `IReservableBufferWriter` 替代 `IBufferWriter`，这让上层方便许多，也能减少 buffer/copy 层数。
+> 支持让 `RbfFrameBuilder` 在底层支持的情况下暴露 `IReservableBufferWriter` 替代 `IBufferWriter`，这让上层方便许多，也能减少 buffer/copy 层数。
 
 **当前设计**：`Payload` 为 `IBufferWriter<byte>`，`ReservablePayload` 为可选的 `IReservableBufferWriter?`
 
 ### 反馈 4：切分策略
 
-> 关于后续从 `mvp-design-v2.md` 切出完整的 `elog-format.md` 的具体形式，建议先重命名当前的 `mvp-design-v2.md` 作为源文件（比如加个 `.bak` 后缀），再用接口文件进行切分。
+> 关于后续从 `mvp-design-v2.md` 切出完整的 `rbf-format.md` 的具体形式，建议先重命名当前的 `mvp-design-v2.md` 作为源文件（比如加个 `.bak` 后缀），再用接口文件进行切分。
 
 **已采纳**：这是更安全的操作方式。
 
@@ -61,8 +61,8 @@
 
 ## 目标文件
 
-- [elog-interface.md](../../atelia/docs/StateJournal/elog-interface.md)（主要审阅对象）
-- [mvp-design-v2.md](../../atelia/docs/StateJournal/mvp-design-v2.md)（参考：ELOG 写入顺序）
+- [rbf-interface.md](../../atelia/docs/StateJournal/rbf-interface.md)（主要审阅对象）
+- [mvp-design-v2.md](../../atelia/docs/StateJournal/mvp-design-v2.md)（参考：RBF 写入顺序）
 - [ChunkedReservableWriter.cs](../../atelia/src/Data/ChunkedReservableWriter.cs)（参考：Reservation 行为）
 
 ## 💬 畅谈记录
@@ -71,7 +71,7 @@
 
 各位顾问好！
 
-今天是 ELOG 接口文档的复核会议。监护人提供了 4 点反馈，其中 2 点需要重点讨论：
+今天是 RBF 接口文档的复核会议。监护人提供了 4 点反馈，其中 2 点需要重点讨论：
 
 **重点 1：Flush vs Fsync**
 - 当前 `Flush()` 定义模糊
@@ -79,9 +79,9 @@
 - 问题：Layer 0 是否应该暴露 fsync 能力？
 
 **重点 2：Auto-Abort 机制**
-- 监护人指出：ELOG 的 HeadLen 是 Frame 的首字节
+- 监护人指出：RBF 的 HeadLen 是 Frame 的首字节
 - 如果用 Reservation 预留 HeadLen，Abort 时无需写 Padding
-- 问题：`[S-ELOG-BUILDER-AUTO-ABORT]` 条款是否需要重写？
+- 问题：`[S-RBF-BUILDER-AUTO-ABORT]` 条款是否需要重写？
 
 请各位带着这两个重点进行审阅。
 
@@ -93,7 +93,7 @@
 
 #### 1. 监护人反馈 1：Flush vs Fsync 分层设计
 
-**核心问题识别**：当前 `[A-ELOG-FRAMER-INTERFACE]` 的 `Flush()` 定义模糊——"刷新到 OS 可见"不等于"持久化到介质"。
+**核心问题识别**：当前 `[A-RBF-FRAMER-INTERFACE]` 的 `Flush()` 定义模糊——"刷新到 OS 可见"不等于"持久化到介质"。
 
 **分层分析**：
 
@@ -105,7 +105,7 @@
 └────────────────────┬────────────────────────────────────┘
                      │
 ┌────────────────────▼────────────────────────────────────┐
-│  Layer 0: ELOG Framing                                   │
+│  Layer 0: RBF Framing                                   │
 │  - 不知道"commit"是什么                                  │
 │  - 只负责封帧                                            │
 └─────────────────────────────────────────────────────────┘
@@ -127,15 +127,15 @@
 **我的倾向：方案 C（不暴露，上层自理）**
 
 理由：
-1. **职责单一**：ELOG 是"二进制信封"，不应知道持久化策略
+1. **职责单一**：RBF 是"二进制信封"，不应知道持久化策略
 2. **上层已有控制点**：StateJournal 的 `CommitAll` 已经是持久化边界，它可以：
-   - 调用 `framer.Flush()` 确保 ELOG 缓冲写出
+   - 调用 `framer.Flush()` 确保 RBF 缓冲写出
    - 自己调用 `dataStream.Flush(flushToDisk: true)` 做 fsync
 3. **类比**：`BinaryWriter` 不暴露 fsync，调用者自己管理底层流
 
 **条款修订建议**：
 
-在 `[A-ELOG-FRAMER-INTERFACE]` 的 `Flush()` 注释中明确：
+在 `[A-RBF-FRAMER-INTERFACE]` 的 `Flush()` 注释中明确：
 
 ```csharp
 /// <summary>
@@ -152,7 +152,7 @@ void Flush();
 
 **新增条款建议**：
 
-**`[S-ELOG-FRAMER-NO-FSYNC]`**：`IElogFramer.Flush()` MUST NOT 执行 fsync 操作。Fsync 策略由上层（StateJournal）控制。
+**`[S-RBF-FRAMER-NO-FSYNC]`**：`IRbfFramer.Flush()` MUST NOT 执行 fsync 操作。Fsync 策略由上层（StateJournal）控制。
 
 ---
 
@@ -160,7 +160,7 @@ void Flush();
 
 **监护人洞察的核心**：
 
-从 [mvp-design-v2.md#L618-L631](../../atelia/docs/StateJournal/mvp-design-v2.md#L618-L631) 可见，ELOG 写入顺序是：
+从 [mvp-design-v2.md#L618-L631](../../atelia/docs/StateJournal/mvp-design-v2.md#L618-L631) 可见，RBF 写入顺序是：
 
 ```
 [Prev Magic] → HeadLen → Payload → TailLen → Pad → CRC → [Next Magic]
@@ -177,7 +177,7 @@ void Flush();
 
 **结论验证**：
 
-如果 `ElogFrameBuilder` 实现如下：
+如果 `RbfFrameBuilder` 实现如下：
 1. `BeginFrame(tag)` 时，用 `ReserveSpan()` 预留 HeadLen 位置
 2. 正常写入 Payload
 3. `Commit()` 时回填 HeadLen，然后 `Commit` Reservation
@@ -205,18 +205,18 @@ After Abort:
 
 **条款影响分析**：
 
-当前 `[S-ELOG-BUILDER-AUTO-ABORT]` 写道：
+当前 `[S-RBF-BUILDER-AUTO-ABORT]` 写道：
 
-> 若 `ElogFrameBuilder` 未调用 `Commit()` 就执行 `Dispose()`，实现 MUST：
+> 若 `RbfFrameBuilder` 未调用 `Commit()` 就执行 `Dispose()`，实现 MUST：
 > 1. 将当前帧的 FrameTag 覆写为 `Padding (0x00)`
 > 2. 完成帧的写入（回填 header/CRC）
 > 3. 保证底层 Writer 可继续写入后续帧
 
 **需要重写**。新的语义是：
 
-**`[S-ELOG-BUILDER-AUTO-ABORT]`（修订）**：
+**`[S-RBF-BUILDER-AUTO-ABORT]`（修订）**：
 
-> 若 `ElogFrameBuilder` 未调用 `Commit()` 就执行 `Dispose()`：
+> 若 `RbfFrameBuilder` 未调用 `Commit()` 就执行 `Dispose()`：
 > 
 > - **若底层 Writer 支持 Reservation 回滚**（如 `ChunkedReservableWriter`）：
 >   实现 SHOULD 丢弃未提交的帧数据，不写入任何字节到持久化存储。
@@ -232,7 +232,7 @@ After Abort:
 
 **实现层影响**：
 
-`ElogFrameBuilder` 需要在构造时检测底层是否支持 Reservation：
+`RbfFrameBuilder` 需要在构造时检测底层是否支持 Reservation：
 - 若 `ReservablePayload != null`，使用 zero-abort 路径
 - 否则，回退到 Padding 帧路径
 
@@ -257,10 +257,10 @@ After Abort:
 **⚠️ 遗漏问题**：
 
 1. **CRC 校验失败处理**：`TryReadAt` 返回 `false`，但未区分"地址无效"vs"CRC 校验失败"
-   - 建议：增加 `out ElogReadError? error` 或返回 `ElogReadResult` 结构体
+   - 建议：增加 `out RbfReadError? error` 或返回 `RbfReadResult` 结构体
 
 2. **逆向扫描终止条件**：`ScanReverse()` 何时终止？遇到 Genesis Magic？
-   - 建议：增加 `[S-ELOG-SCAN-REVERSE-TERMINATION]` 条款
+   - 建议：增加 `[S-RBF-SCAN-REVERSE-TERMINATION]` 条款
 
 ---
 
@@ -268,11 +268,11 @@ After Abort:
 
 | 优先级 | 问题 | 位置 | 修订建议 |
 |--------|------|------|----------|
-| **P0** | Auto-Abort 条款不符合 Reservation 行为 | `[S-ELOG-BUILDER-AUTO-ABORT]` | 重写为双路径语义（见上文） |
-| **P1** | Flush 不保证 fsync 未明确 | `[A-ELOG-FRAMER-INTERFACE]` | 增加 `[S-ELOG-FRAMER-NO-FSYNC]` 条款 |
+| **P0** | Auto-Abort 条款不符合 Reservation 行为 | `[S-RBF-BUILDER-AUTO-ABORT]` | 重写为双路径语义（见上文） |
+| **P1** | Flush 不保证 fsync 未明确 | `[A-RBF-FRAMER-INTERFACE]` | 增加 `[S-RBF-FRAMER-NO-FSYNC]` 条款 |
 | **P1** | Address64 与 Ptr64 关系未说明 | §2.2 | 增加术语关联说明 |
-| **P2** | TryReadAt 错误原因不透明 | `[A-ELOG-SCANNER-INTERFACE]` | 返回 `ElogReadResult` 或增加 error out 参数 |
-| **P2** | 逆向扫描终止条件未定义 | §4.1 | 增加 `[S-ELOG-SCAN-REVERSE-TERMINATION]` |
+| **P2** | TryReadAt 错误原因不透明 | `[A-RBF-SCANNER-INTERFACE]` | 返回 `RbfReadResult` 或增加 error out 参数 |
+| **P2** | 逆向扫描终止条件未定义 | §4.1 | 增加 `[S-RBF-SCAN-REVERSE-TERMINATION]` |
 | **P3** | DataTail 特殊语义未明确 | §5.1 或 §2.2 | 增加注释说明 |
 
 ---
@@ -294,22 +294,22 @@ After Abort:
 public IReservableBufferWriter? ReservablePayload { get; }
 ```
 
-此处无需新增条款，但可考虑增加 **`[A-ELOG-BUILDER-RESERVABLE-OPTIONAL]`**：
+此处无需新增条款，但可考虑增加 **`[A-RBF-BUILDER-RESERVABLE-OPTIONAL]`**：
 
-> `ElogFrameBuilder.ReservablePayload` MAY 为 null。上层 codec MUST 检查此属性并提供 fallback 路径。
+> `RbfFrameBuilder.ReservablePayload` MAY 为 null。上层 codec MUST 检查此属性并提供 fallback 路径。
 
 ---
 
 #### 6. 概念框架洞察
 
-**ELOG 层的核心价值**：将 "如何安全封装字节序列" 与 "字节序列是什么" 分离。
+**RBF 层的核心价值**：将 "如何安全封装字节序列" 与 "字节序列是什么" 分离。
 
 这种分离的好处在 Auto-Abort 案例中体现得淋漓尽致：
-- ELOG 只关心"Frame 完整性"
+- RBF 只关心"Frame 完整性"
 - StateJournal 关心"Record 语义"
 - 当 Reservation 机制可用时，两层的关注点可以独立演进
 
-**类比**：ELOG 之于 StateJournal，如同 TCP 之于 HTTP——分帧层不解释 payload，只保证边界完整。
+**类比**：RBF 之于 StateJournal，如同 TCP 之于 HTTP——分帧层不解释 payload，只保证边界完整。
 
 ---
 
@@ -372,13 +372,13 @@ public IReservableBufferWriter? ReservablePayload { get; }
 
 #### 4. 总结
 
-ELOG 的接口设计非常稳健。特别是将  的能力通过  暴露出来，是一个**高杠杆**的设计——它同时解决了"头部回填"（性能）和"干净回滚"（安全）两个问题。
+RBF 的接口设计非常稳健。特别是将  的能力通过  暴露出来，是一个**高杠杆**的设计——它同时解决了"头部回填"（性能）和"干净回滚"（安全）两个问题。
 
 我建议采纳 Claude 的修订案，并推进到下一阶段。
 
 ### Advisor-GPT 发言
 
-以下从“接口精确性（能否形成唯一实现心智模型）”与“可测试性（能否写出黑盒断言）”角度，对 [atelia/docs/StateJournal/elog-interface.md](../../atelia/docs/StateJournal/elog-interface.md) 做复核，并对监护人反馈给出最终建议与收口清单。
+以下从“接口精确性（能否形成唯一实现心智模型）”与“可测试性（能否写出黑盒断言）”角度，对 [atelia/docs/StateJournal/rbf-interface.md](../../atelia/docs/StateJournal/rbf-interface.md) 做复核，并对监护人反馈给出最终建议与收口清单。
 
 ---
 
@@ -394,28 +394,28 @@ ELOG 的接口设计非常稳健。特别是将  的能力通过  暴露出来�
     - **可测试点**：对齐、0 表示 null。
     - **建议补强（可选）**：把“返回值 MUST 非 null”写成条款（见 §4 FixList）。
 
-- `[S-ELOG-BUILDER-SINGLE-OPEN]`
+- `[S-RBF-BUILDER-SINGLE-OPEN]`
     - **可测试点**：未结束 builder 前再次 `BeginFrame()` MUST 抛 `InvalidOperationException`。
     - **备注**：这类“护栏条款”对测试非常友好，建议保留。
 
 ##### 1.2 语义存在“未钉死的分叉点”（⚠️）
 
-1) `[E-FRAMETAG-PADDING-SKIP]` 与 `IElogScanner` 的职责边界不够精确
+1) `[E-FRAMETAG-PADDING-SKIP]` 与 `IRbfScanner` 的职责边界不够精确
 
 - 当前条款写成“Reader 遇到 Padding MUST 跳过，不传递给上层”。
-- 但本文档并未定义一个名为 Reader 的具体接口；已定义的是 `IElogScanner`。
+- 但本文档并未定义一个名为 Reader 的具体接口；已定义的是 `IRbfScanner`。
 - **风险**：实现者可能做出两套合法实现：
-    - A：`IElogScanner` 自己跳过 Padding（调用方永远看不到 0x00 帧）
-    - B：`IElogScanner` 返回所有帧（包括 0x00），由上层过滤
+    - A：`IRbfScanner` 自己跳过 Padding（调用方永远看不到 0x00 帧）
+    - B：`IRbfScanner` 返回所有帧（包括 0x00），由上层过滤
 - **可测试性后果**：`ScanReverse()` / `TryReadAt()` 对 Padding 的可见性无法写出统一断言。
 
 **建议收口方式（择一，写成条款）**：
 
-- 方案 B（我更推荐）：`IElogScanner` 是“原始帧扫描器”，**MUST 产出 Padding 帧**；上层（StateJournal 的 record reader）**MUST 忽略 Padding**。
+- 方案 B（我更推荐）：`IRbfScanner` 是“原始帧扫描器”，**MUST 产出 Padding 帧**；上层（StateJournal 的 record reader）**MUST 忽略 Padding**。
     - 好处：职责边界清晰，Scanner 的行为可测且更通用（诊断/调试也需要看到 Padding）。
     - 代价：上层必须过滤，但这是 1 行 if。
 
-2) `[S-ELOG-BUILDER-AUTO-ABORT]` 当前表述与 Reservation 行为冲突（P0）
+2) `[S-RBF-BUILDER-AUTO-ABORT]` 当前表述与 Reservation 行为冲突（P0）
 
 - 当前条款强制“必须覆写为 Padding 并写完 header/CRC”。
 - 监护人指出并被 Claude/Gemini 验证：若 HeadLen 首字节走 Reservation，且底层支持“未提交数据不落盘”，则 Abort 可以做到 **Zero I/O**。
@@ -433,12 +433,12 @@ ELOG 的接口设计非常稳健。特别是将  的能力通过  暴露出来�
 3) `Flush()` 的“可观察语义”写法需要更谨慎
 
 - 监护人担心的是 StateJournal 的 commit 顺序（data durable → meta durable）。这是 **Layer 1 的持久化策略**。
-- 当前 `elog-interface.md` 在 `Flush()` 的 remarks 里提到 `FileStream.Flush(true)`：这会让读者误以为 Layer 0 需要理解/参与 durable commit。
+- 当前 `rbf-interface.md` 在 `Flush()` 的 remarks 里提到 `FileStream.Flush(true)`：这会让读者误以为 Layer 0 需要理解/参与 durable commit。
 
 **可测试性视角**：
 - “是否 fsync 到介质”对纯单元测试几乎不可判定；即便用集成测试也高度依赖平台与文件系统。
 - 因此 Layer 0 的 `Flush()` 建议只承诺一个弱但可判定的语义：
-    - “把 ELOG 自己的缓冲推进到其下层 writer/stream（best effort）”。
+    - “把 RBF 自己的缓冲推进到其下层 writer/stream（best effort）”。
     - 但**不承诺 durability**。
 
 ##### 1.3 建议补齐的“可测试条款模板”（提议新增）
@@ -456,14 +456,14 @@ ELOG 的接口设计非常稳健。特别是将  的能力通过  暴露出来�
 
 ##### 2.1 Flush + Fsync（最终建议：不在 Layer 0 暴露 fsync）
 
-- **结论**：采纳 Claude 的倾向（方案 C）：Layer 0 不暴露 fsync；`IElogFramer.Flush()` 仅表达“缓冲下推”，不表达 durable。
+- **结论**：采纳 Claude 的倾向（方案 C）：Layer 0 不暴露 fsync；`IRbfFramer.Flush()` 仅表达“缓冲下推”，不表达 durable。
 - **理由（精确性/可测试性）**：
     - Fsync 属于 commit 策略（Layer 1），不是 framing（Layer 0）。
     - durability 难以做可移植断言，放进 Layer 0 会迫使条款写成不可测试的“意图描述”。
 - **文档动作**：
     - 把 `Flush()` 的 remarks 从“让上层去调用 FileStream.Flush(true)”改成更抽象的说法：
         - “如需 durability，由上层在其持有的底层句柄上执行 durable flush，并负责顺序（data→meta）。”
-    - 该顺序应在 StateJournal 文档（commit 语义）中立条款，而非在 ELOG 接口文档中。
+    - 该顺序应在 StateJournal 文档（commit 语义）中立条款，而非在 RBF 接口文档中。
 
 ##### 2.2 Auto-Abort（最终建议：写成“Optimistic Clean Abort”双路径）
 
@@ -489,20 +489,20 @@ ELOG 的接口设计非常稳健。特别是将  的能力通过  暴露出来�
 
 | 优先级 | 问题 | 定位 | 修订动作（可直接转 PR checklist） |
 |---:|---|---|---|
-| P0 | Auto-Abort 条款与 Reservation 行为冲突 | `[S-ELOG-BUILDER-AUTO-ABORT]` | 改写为“逻辑不存在 + Optimistic Clean Abort（SHOULD Zero I/O，fallback MUST Padding）”；明确 Dispose 后 writer 可继续写 |
-| P1 | Padding 跳过责任边界不清（Scanner vs 上层） | `[E-FRAMETAG-PADDING-SKIP]` + §4 | 明确 `IElogScanner` 是否产出 Padding（建议 MUST 产出）；并规定“上层 record reader MUST ignore Padding” |
-| P1 | Flush 语义对 durability 的表述过具体/易误解 | `[A-ELOG-FRAMER-INTERFACE]` 的 `Flush()` | 改写注释：Flush 不承诺 durability；durable flush 与顺序由上层掌控（避免直接点名 FileStream） |
-| P2 | `TryReadAt` 失败原因不可断言 | `[A-ELOG-SCANNER-INTERFACE]` | 未来可演进：引入 `ElogReadStatus`/`ElogReadError`（如 InvalidAddress/Truncated/BadCrc）以便写精确测试 |
+| P0 | Auto-Abort 条款与 Reservation 行为冲突 | `[S-RBF-BUILDER-AUTO-ABORT]` | 改写为“逻辑不存在 + Optimistic Clean Abort（SHOULD Zero I/O，fallback MUST Padding）”；明确 Dispose 后 writer 可继续写 |
+| P1 | Padding 跳过责任边界不清（Scanner vs 上层） | `[E-FRAMETAG-PADDING-SKIP]` + §4 | 明确 `IRbfScanner` 是否产出 Padding（建议 MUST 产出）；并规定“上层 record reader MUST ignore Padding” |
+| P1 | Flush 语义对 durability 的表述过具体/易误解 | `[A-RBF-FRAMER-INTERFACE]` 的 `Flush()` | 改写注释：Flush 不承诺 durability；durable flush 与顺序由上层掌控（避免直接点名 FileStream） |
+| P2 | `TryReadAt` 失败原因不可断言 | `[A-RBF-SCANNER-INTERFACE]` | 未来可演进：引入 `RbfReadStatus`/`RbfReadError`（如 InvalidAddress/Truncated/BadCrc）以便写精确测试 |
 | P2 | Reverse scan 的终止/健壮性未被条款化 | `ScanReverse()` | 增加条款：终止条件与遇到损坏数据时的策略（fail-fast vs stop-at-last-good） |
-| P3 | Padding“墓碑”对人类调试不友好 | （建议放入未来 `elog-format.md`） | 若必须写 Padding，可在 payload 放可识别标记（如 "ABRT"）仅用于调试（不进入接口层） |
+| P3 | Padding“墓碑”对人类调试不友好 | （建议放入未来 `rbf-format.md`） | 若必须写 Padding，可在 payload 放可识别标记（如 "ABRT"）仅用于调试（不进入接口层） |
 
 ---
 
 #### 5) 结论
 
-接口总体方向正确：`ElogFrameBuilder` + 可选 `ReservablePayload` 是把“性能（回填/零拷贝）”与“安全（原子性/可恢复）”一起锁住的高杠杆设计。
+接口总体方向正确：`RbfFrameBuilder` + 可选 `ReservablePayload` 是把“性能（回填/零拷贝）”与“安全（原子性/可恢复）”一起锁住的高杠杆设计。
 
-本轮收口的关键是：把 Auto-Abort 与 Flush 的叙事从“实现细节”收敛为“可测试的、对外可观测的不变量”。完成 P0/P1 后，我认为该接口文档就具备作为 Layer Contract 的稳定性，可以进入下一阶段的 `elog-format.md` 切分工作。
+本轮收口的关键是：把 Auto-Abort 与 Flush 的叙事从“实现细节”收敛为“可测试的、对外可观测的不变量”。完成 P0/P1 后，我认为该接口文档就具备作为 Layer Contract 的稳定性，可以进入下一阶段的 `rbf-format.md` 切分工作。
 
 ### Advisor-Gemini 发言
 
@@ -512,7 +512,7 @@ ELOG 的接口设计非常稳健。特别是将  的能力通过  暴露出来�
 
 **心智模型分析**：
 
-开发者在使用 `ElogFrameBuilder` 时，心智模型是**事务性**的：
+开发者在使用 `RbfFrameBuilder` 时，心智模型是**事务性**的：
 > "我在构建一个原子单元。要么全有（Commit），要么全无（Dispose without Commit）。"
 
 **双路径的透明性**：
@@ -533,13 +533,13 @@ ELOG 的接口设计非常稳健。特别是将  的能力通过  暴露出来�
 
 #### 2. 接口易用性验证与代码示例
 
-`ElogFrameBuilder` 采用了经典的 **Disposable Transaction** 模式。这种模式利用 C# 的 `using` 语法糖提供了极佳的"默认安全"体验。
+`RbfFrameBuilder` 采用了经典的 **Disposable Transaction** 模式。这种模式利用 C# 的 `using` 语法糖提供了极佳的"默认安全"体验。
 
 **推荐用法示例**：
 
 ```csharp
 // 场景 1：标准写入（自动处理异常回滚）
-public void WriteSafe(IElogFramer framer, MyData data)
+public void WriteSafe(IRbfFramer framer, MyData data)
 {
     // 1. 开启事务
     using var frame = framer.BeginFrame(MyTags.Data);
@@ -552,7 +552,7 @@ public void WriteSafe(IElogFramer framer, MyData data)
 }
 
 // 场景 2：利用 Reservation 回填头部（Zero-Copy）
-public void WriteWithHeader(IElogFramer framer, MyData data)
+public void WriteWithHeader(IRbfFramer framer, MyData data)
 {
     using var frame = framer.BeginFrame(MyTags.Data);
     
@@ -588,17 +588,17 @@ public void WriteWithHeader(IElogFramer framer, MyData data)
 
 | 优先级 | 问题 | 位置 | 修订建议 |
 |--------|------|------|----------|
-| **P2** | Auto-Abort 的语义描述 | `[S-ELOG-BUILDER-AUTO-ABORT]` | 建议明确"逻辑一致性"：无论物理上是否写入 Padding，逻辑上该帧均视为不存在。 |
-| **P3** | `ReservablePayload` 的命名 | `[A-ELOG-FRAME-BUILDER]` | 既然它不仅用于 Payload 内部回填，还决定了 Auto-Abort 的行为（Zero I/O），是否考虑在注释中强调这一副作用？ |
+| **P2** | Auto-Abort 的语义描述 | `[S-RBF-BUILDER-AUTO-ABORT]` | 建议明确"逻辑一致性"：无论物理上是否写入 Padding，逻辑上该帧均视为不存在。 |
+| **P3** | `ReservablePayload` 的命名 | `[A-RBF-FRAME-BUILDER]` | 既然它不仅用于 Payload 内部回填，还决定了 Auto-Abort 的行为（Zero I/O），是否考虑在注释中强调这一副作用？ |
 | **P3** | 调试可见性 | 新增建议 | 建议在 `Padding` 帧中（如果必须写的话）包含某种元数据（如 0x00 后跟 4 字节 "ABRT"），以便在 Hex Editor 中区分"自然填充"和"异常回滚"。 |
 
 **关于 P3 (调试可见性) 的展开**：
 虽然 Reader 会跳过 Padding，但人类在调试二进制文件时，如果看到一大片 0x00，可能会困惑是"预分配空间"还是"回滚尸体"。
-如果 Auto-Abort 路径写入的是 `[Magic] [HeadLen] [Tag=0x00] [Payload="ABRT"] ...`，对人类调试者会更友好。但这属于实现细节，可放入 `elog-format.md`。
+如果 Auto-Abort 路径写入的是 `[Magic] [HeadLen] [Tag=0x00] [Payload="ABRT"] ...`，对人类调试者会更友好。但这属于实现细节，可放入 `rbf-format.md`。
 
 #### 4. 总结
 
-ELOG 的接口设计非常稳健。特别是将 `ChunkedReservableWriter` 的能力通过 `ReservablePayload` 暴露出来，是一个**高杠杆**的设计——它同时解决了"头部回填"（性能）和"干净回滚"（安全）两个问题。
+RBF 的接口设计非常稳健。特别是将 `ChunkedReservableWriter` 的能力通过 `ReservablePayload` 暴露出来，是一个**高杠杆**的设计——它同时解决了"头部回填"（性能）和"干净回滚"（安全）两个问题。
 
 我建议采纳 Claude 的修订案，并推进到下一阶段。
 
@@ -617,12 +617,12 @@ ELOG 的接口设计非常稳健。特别是将 `ChunkedReservableWriter` 的能
 
 | 观点 | 理由 |
 |------|------|
-| Claude | ELOG 是"二进制信封"，不应混入持久化策略 |
+| Claude | RBF 是"二进制信封"，不应混入持久化策略 |
 | GPT | Durability 难以做可移植断言，放进 Layer 0 会写成不可测试的条款 |
 
 **修订方案**：
 - `Flush()` 仅承诺"缓冲下推"，不承诺 durability
-- 新增 `[S-ELOG-FRAMER-NO-FSYNC]` 明确此语义
+- 新增 `[S-RBF-FRAMER-NO-FSYNC]` 明确此语义
 - Durable flush 顺序（data→meta）由 StateJournal 的 commit 语义条款负责
 
 #### 监护人反馈 2：Auto-Abort 机制
@@ -647,19 +647,19 @@ ELOG 的接口设计非常稳健。特别是将 `ChunkedReservableWriter` 的能
 
 | 优先级 | 问题 | 修订动作 |
 |--------|------|----------|
-| **P0** | Auto-Abort 条款冲突 | 改写 `[S-ELOG-BUILDER-AUTO-ABORT]` 为"逻辑不存在 + Optimistic Clean Abort" |
-| **P1** | Padding 跳过责任边界 | 明确 `IElogScanner` MUST 产出 Padding，上层 MUST ignore |
+| **P0** | Auto-Abort 条款冲突 | 改写 `[S-RBF-BUILDER-AUTO-ABORT]` 为"逻辑不存在 + Optimistic Clean Abort" |
+| **P1** | Padding 跳过责任边界 | 明确 `IRbfScanner` MUST 产出 Padding，上层 MUST ignore |
 | **P1** | Flush 对 durability 表述 | 改写注释，移除 FileStream 引用，强调上层负责 |
-| **P2** | TryReadAt 失败原因 | 未来可引入 `ElogReadStatus` |
+| **P2** | TryReadAt 失败原因 | 未来可引入 `RbfReadStatus` |
 | **P2** | ScanReverse 终止条件 | 增加条款 |
-| **P3** | Padding 调试标记 | 放入 elog-format.md |
+| **P3** | Padding 调试标记 | 放入 rbf-format.md |
 
 ### 📝 会议状态
 
 **状态**：✅ 复核完成，P0/P1 修订已执行
 
 **下一步**：
-1. ✅ 执行 P0/P1 修订到 `elog-interface.md`（已完成）
+1. ✅ 执行 P0/P1 修订到 `rbf-interface.md`（已完成）
 2. 接口文档已稳固，可作为"手术刀"
 3. 按监护人建议的安全策略（.bak 后缀）执行切分
 

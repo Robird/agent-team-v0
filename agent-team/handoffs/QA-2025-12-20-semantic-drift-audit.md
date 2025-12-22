@@ -196,7 +196,7 @@
 ### 新增内容
 1. **条款编号系统**：32 条编号条款（[F-xx], [A-xx], [S-xx], [R-xx]）
 2. **ASCII 图**：
-   - ELOG File Structure (L403-412)
+   - RBF File Structure (L403-412)
    - Record Layout (L418-426)
    - VarInt Encoding (L346-359)
    - Two-Phase Commit Flow (L969-993)

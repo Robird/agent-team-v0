@@ -215,7 +215,7 @@ agent-team/members/DocUIGPT/
 
 > **2025-12-20 StateJournal MVP v2：规范可实现性审计（关键坑位清单）**
 >
-> - `ELOG reverse scan` 的空文件边界判定存在 off-by-4 风险：若定义 `MagicPos = FileLength-4` 且 `RecordEnd = MagicPos`，则“仅 `[Magic]`”时应判定 `RecordEnd == 0` 而非 `4`。
+> - `RBF reverse scan` 的空文件边界判定存在 off-by-4 风险：若定义 `MagicPos = FileLength-4` 且 `RecordEnd = MagicPos`，则“仅 `[Magic]`”时应判定 `RecordEnd == 0` 而非 `4`。
 > - `Dirty Set` 若只存 `ObjectId` 不能防 GC，无法满足“防丢改动”的动机；必须强引用对象实例（或引入独立强引用表）。
 > - `RecordKind` 在 data/meta 两域都用 `0x01` 时必须声明“域隔离”，否则实现者很容易误用单一枚举表。
 > - `ulong` 作为值类型与 `Val_VarInt(ZigZag)` 不匹配：要么新增 `Val_VarUInt`，要么收紧值类型为有符号。
@@ -438,5 +438,5 @@ agent-team/members/DocUIGPT/
 
 > **2025-12-22 StateJournal：Layer 1 瘦身后的“判别器双轨/SSOT 断链”风险**
 >
-> - 将 Layer 0/1 framing 抽离到 `elog-format.md`/`elog-interface.md` 后，如果 Layer 1 规范仍保留旧的 payload 判别字段（如 `RecordKind`）或旧的条款 ID（如 `[F-*]`）引用，会造成 **判别器双轨**（FrameTag vs RecordKind）与 **测试映射断裂**（Test Vectors 无法机械对齐 SSOT）。
+> - 将 Layer 0/1 framing 抽离到 `rbf-format.md`/`rbf-interface.md` 后，如果 Layer 1 规范仍保留旧的 payload 判别字段（如 `RecordKind`）或旧的条款 ID（如 `[F-*]`）引用，会造成 **判别器双轨**（FrameTag vs RecordKind）与 **测试映射断裂**（Test Vectors 无法机械对齐 SSOT）。
 > - 修复排序应以“可测试闭环”优先：先收敛唯一判别器与编码 SSOT（尤其 varint 的精确定义落点），再做文案与结构优化。
