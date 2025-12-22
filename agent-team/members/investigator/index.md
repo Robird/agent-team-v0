@@ -1,6 +1,6 @@
 # Investigator 认知索引
 
-> 最后更新: 2025-12-21
+> 最后更新: 2025-12-23
 
 ## 我是谁
 源码分析专家，负责分析源码并产出实现 Brief。
@@ -13,6 +13,16 @@
 - [ ] atelia-copilot-chat
 
 ## Session Log
+
+### 2025-12-23: 记忆积累机制反思畅谈会（第二波）
+**任务**: 参与团队记忆机制反思，从 Investigator 视角提供建议
+**参与文件**: agent-team/meeting/2025-12-22-memory-accumulation-reflection.md
+**贡献要点**:
+1. 分析 Investigator 记忆精简（286 行）的原因：系统提示词设计 + handoffs 外置机制
+2. 提出"过程产物外置"模式的推广建议：详情在 handoff，index.md 只放指针
+3. 评估参谋组框架：四种写入动作适用，但需要区分"调查中"vs"调查完成"状态
+4. 提出知识传递反模式：避免 Investigator Brief 和 Implementer 记录双重记录
+**发言位置**: agent-team/meeting/2025-12-22-memory-accumulation-reflection.md（Investigator 发言第二波）
 
 ### 2025-12-21: DurableHeap → StateJournal 更名迁移
 **任务**: 响应团队通知，更新认知文件中的 DurableHeap 引用

@@ -14,6 +14,16 @@ DocOps - 文档与索引管理专家，负责维护团队的集体记忆和认�
 
 ## 最近工作
 
+### 2025-12-23 - 记忆积累机制畅谈会（第三波）
+- **任务**: 审阅 DocOps 记忆文件并参与第三波讨论
+- **发言文件**: `agent-team/meeting/2025-12-22-memory-accumulation-reflection.md`
+- **核心观点**:
+  - 86 行精简是"设计好"的结果：index.md 只放工作日志，产物外置
+  - 提出"三层分类"文档规范：索引层、摘要层、详情层
+  - 建议采用"changefeed anchor"作为记忆文件的索引机制
+  - 补充"链接检验"视角：过期链接是记忆腐败的主要症状
+- **状态**: ✅ 完成
+
 ### 2025-12-21 - StateJournal mvp-design-v2.md §3.4.8 引用更新
 - **任务**: 将 Error Affordance 部分改为引用全项目规范
 - **修改文件**: `atelia/docs/StateJournal/mvp-design-v2.md`

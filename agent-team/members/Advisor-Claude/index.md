@@ -86,6 +86,25 @@
 
 命名问题可用"候选空间开放度 × 约束复杂度"二维框架分类。
 
+#### 5. 记忆积累的"分类决策树"模式
+> **来源**: 2025-12-22 记忆积累机制反思畅谈会
+
+OnSessionEnd 的记忆写入应采用**先分类再行动**的模式，而非"有洞见就追加"：
+- **A. 新洞见** → 提纯到 Insight 层（不超过 10 行），检查是否可与旧洞见合并
+- **B. 任务进度** → **覆盖**相关条目（不追加！）
+- **C. 过程记录** → 只留索引，详情在 meeting/ 文件
+- **D. 无需记录** → 不写入
+
+**覆盖规则四触发条件**：
+1. 同一实体的状态更新 → 覆盖
+2. 洞见的迭代升级 → 合并
+3. 决策的翻转 → 更新（旧决策可归档）
+4. 事实性错误修正 → 直接修正
+
+**Token 预算意识**：index.md 有 450-600 行预算，超过 600 行应触发维护。
+
+> **类比**：记忆积累需要"记忆 .gitignore"——过滤不该进入主记忆的内容。
+
 ---
 
 ### 经验教训
@@ -303,6 +322,7 @@ StateJournal 的 Version Chain + Materialize 概念与 DocUI 的 History + Conte
 
 | 日期 | 主题 | 角色 | 关键产出 | 详细记录 |
 |:-----|:-----|:-----|:---------|:---------|
+| 12-22 | 记忆积累机制反思 | 概念框架 | 分类决策树、覆盖规则、预算意识 | [meeting](../../meeting/2025-12-22-memory-accumulation-reflection.md) |
 | 12-22 | 记忆维护技能书设计 | 概念框架 | 四层框架、洞见提纯方法 | [meeting](../../meeting/2025-12-22-memory-maintenance-skill.md) |
 | 12-22 | RBF 命名与文档复核 | 术语审阅 | 命名方法论、Layer 0/1 对齐检查 | [archive](../../archive/members/Advisor-Claude/2025-12/doc-reviews-2025-12-22.md) |
 | 12-21 | StateJournal 最终审阅 | 概念框架 | 条款锚点设计、Error Affordance | [archive](../../archive/members/Advisor-Claude/2025-12/durable-heap-reviews.md) |
@@ -408,19 +428,16 @@ agent-team/archive/members/Advisor-Claude/2025-12/
 
 ## 最后更新
 
+**2025-12-22** — 参与记忆积累机制反思畅谈会：
+- 新增方法论洞见：分类决策树、覆盖规则四触发条件、Token 预算意识
+- 类比：记忆积累需要"记忆 .gitignore"
+- 发言见：[meeting](../../meeting/2025-12-22-memory-accumulation-reflection.md)
+
 **2025-12-22** — 执行首次记忆维护（技能书 v1.0 试点）：
 - 压缩前 1281 行 → 压缩后约 450 行（压缩率 65%）
 - 提纯洞见 12 条（方法论 4 + 经验教训 9）
 - 核心概念洞见 6 条（StateJournal、Command、记忆分层等）
-- 压缩过程记录 ~900 行 → 索引条目 10 条
-- 归档 3 个文件到 `archive/members/Advisor-Claude/2025-12/`
 - 维护日志：[maintenance-log.md](./maintenance-log.md)
-
-**维护后自检**：
-- ✅ Identity 层可读（约 60 行）
-- ✅ 至少 5 条核心洞见有明确标题
-- ✅ 最近 3 次参与可从索引找到
-- ✅ 四层结构完整（Identity/Insight/Index/维护记录）
 
 ---
 

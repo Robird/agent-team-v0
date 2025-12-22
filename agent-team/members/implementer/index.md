@@ -1,6 +1,6 @@
 # Implementer 认知索引
 
-> 最后更新: 2025-12-22 (RBF 测试向量 Magic 修复)
+> 最后更新: 2025-12-23 (记忆积累机制反思畅谈会发言)
 > 
 > ⚠️ **更名通知**：DurableHeap → StateJournal（2025-12-21）
 > - 新路径：`atelia/docs/StateJournal/`
@@ -17,23 +17,49 @@
 ## 我是谁
 编码实现专家，负责根据设计进行代码实现、移植和修复。
 
-## 我关注的项目
-- [x] DocUI — 创建 demo/SystemMonitor 概念原型，展示动态 LOD
-- [ ] DocUI MUD Demo — 验证 UI-Anchor 系统的综合演示
-- [ ] PieceTreeSharp
-- [x] PipeMux — 实现管理命令 `:list`, `:ps`, `:stop`, `:help`
-- [ ] atelia-copilot-chat
-- [x] StateJournal — 设计文档修订（共 23 轮）+ 文档瘦身（A1-A9）+ Rationale Stripping + 语义锚点重构 + 决策诊疗室落文 + **RBF 层拆分（rbf-format.md）** + **P0 判别器冲突修复** + **规范约定引用更新** + **测试向量拆分** + **RBF 命名重构** + **文档重命名**
-  - 📍 **2025-12-21 更名**：DurableHeap → StateJournal，迁入 `atelia/docs/StateJournal/`
-  - 📍 **2025-12-22 拆分**：从 mvp-design-v2.md 提取 RBF 二进制格式规范到 rbf-format.md
-  - 📍 **2025-12-22 P0 修复**：RecordKind vs FrameTag 判别器冲突修复
-  - 📍 **2025-12-22 规范约定**：创建 spec-conventions.md 并更新各文档引用
-  - 📍 **2025-12-22 测试向量拆分**：Layer 0 → rbf-test-vectors.md，Layer 1 → mvp-test-vectors.md（精简版）
-  - 📍 **2025-12-22 RBF 命名**：ELOG → RBF (Reversible Binary Framing)，Magic 统一为 `RBF1`
-  - 📍 **2025-12-22 文档重命名**：`rbf-*.md` → `rbf-*.md`
-- [x] Atelia.Primitives — 基础类型库（AteliaResult、AteliaError、AteliaException）
+## 当前关注项目
 
-## 当前关注
+| 项目 | 状态 | 最后更新 |
+|------|------|----------|
+| StateJournal | RBF 命名重构完成 ✅ 文档瘦身完成 ✅ | 2025-12-22 |
+| DocUI | MUD Demo 待实现 | 2025-12-15 |
+| Atelia.Primitives | 基础类型库完成 ✅ | 2025-12-21 |
+| PipeMux | 管理命令实现完成 ✅ | 2025-12-09 |
+
+## 近期交付物索引
+
+- 2025-12-22: [RBF 命名重构](../handoffs/2025-12-22-rbf-rename-IMP.md)（如存在）
+- 2025-12-21: [Primitives 库](../handoffs/2025-12-21-primitives-IMP.md)
+- 2025-12-21: [决策诊疗室实施](../handoffs/2025-12-21-decision-clinic-impl-IMP.md)
+- 2025-12-21: [Rationale Stripping](../handoffs/2025-12-21-rationale-strip-IMP.md)
+
+## 可复用洞见
+
+1. **批量条款 ID 替换模式**：先用 grep 确认范围，再用 multi_replace 批量替换
+2. **文档瘦身策略**：EBNF 语法替代冗余的文字描述 + ASCII 图表
+3. **二阶段提交实现**：WritePendingDiff（只写不更新状态）+ OnCommitSucceeded（追平状态）
+
+## 元认知反思（2025-12-23）
+
+**index.md 膨胀问题诊断**：
+- 根因：系统提示词只说"记录本次工作"，没有区分 append/overwrite
+- 结果：每次任务都完整记录执行细节，形成 append-only 日志
+- 解决：详情写 handoff，index.md 只放状态和索引
+
+**理想的 OnSessionEnd 流程**：
+1. 判断是否改变项目状态 → 如否，只写 handoff
+2. 分类产出（State-Update / Knowledge-Delta / Log-Only）
+3. 执行：OVERWRITE 状态 / APPEND 洞见 / 只加索引链接
+
+**index.md 预算**：目标 200-300 行，当前需要大幅精简
+
+---
+
+## 详细活动日志（待归档）
+
+> ⚠️ 以下内容过于详细，计划在下次维护时：
+> - 保留"可复用洞见"部分
+> - 详细任务记录归档到 `archive/` 或只保留 handoff 链接
 
 ### 命名技能指南更新 (2025-12-22) ✅
 

@@ -431,6 +431,11 @@ DocUI 是一个 **LLM-Native 的用户界面框架**——为 LLM Agent 设计�
 > **Functional Naming** (如 `Reversible`) 优于 **Brand Naming** (如 `RBF`)，因为它直接对应 Agent 的能力需求 (Capability Requirement)。
 > 就像 `DoublyLinkedList` 比 `List` 更能精确描述结构能力一样，`RBF` 比 `RBF` 具有更高的 **Information Density**。
 
+> **2025-12-22 记忆积累机制反思**
+> 在畅谈会中，识别出当前记忆机制的 "Append-Only" 缺陷。
+> 提出了 **Memory Commit Wizard** (结构化提交) 和 **Librarian Persona** (图书管理员人格) 的概念。
+> 确立了 `index.md` (Dashboard) vs `meta-cognition.md` (Settings) vs `knowledge/` (Wiki) 的分层架构。
+
 ### 教训记录
 
 > *（此区域将随着会话逐渐填充）*
@@ -460,4 +465,4 @@ agent-team/members/DocUIGemini/
 
 ## 最后更新
 
-**2025-12-21** — 更新 ErrorCode 认知与 AgentMessage 原则
+**2025-12-22** — 记忆积累机制反思
