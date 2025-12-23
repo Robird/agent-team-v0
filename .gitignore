@@ -9,3 +9,6 @@
 /atelia-sdk/
 /DurableHeap/
 /stream-agent/
+
+# Letters from guardian may contain sensitive content
+agent-team/letters-from-guardian/2025-12-23/headless-stream-agent.md
