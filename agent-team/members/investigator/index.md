@@ -1,6 +1,7 @@
 # Investigator 认知索引
 
-> 最后更新: 2025-12-23
+> 最后更新: 2025-12-24
+> - 2025-12-24: Memory Palace — 处理了 1 条便签
 
 ## 我是谁
 源码分析专家，负责分析源码并产出实现 Brief。
@@ -13,6 +14,14 @@
 - [ ] atelia-copilot-chat
 
 ## Session Log
+
+### 2025-12-24: RBF v0.12 格式变更对上层文档的影响
+**任务**: 完成 mvp-design-v2.md 对 RBF v0.12 变更的适配
+**关键发现**:
+1. **墓碑机制分离**：旧设计中 `FrameTag=0x00000000 (Padding)` 承担墓碑语义，现在墓碑完全由 `FrameStatus=0xFF (Tombstone)` 承载。职责分离——FrameStatus 管 Layer 0 帧有效性，FrameTag 管 Layer 1 业务分类
+2. **StateJournal 处理顺序变更**：上层 Reader 现在 MUST 先检查 `FrameStatus`，再解释 `FrameTag`。比之前"检查 FrameTag=0 就跳过"更清晰
+3. **mvp-test-vectors.md 无需更新**：正确地将 Layer 0 测试委托给 rbf-test-vectors.md，Layer 1 测试不涉及帧格式细节
+4. **术语演化轨迹**：Magic → Fence (v0.10) → Pad → FrameStatus (v0.12)。每次重命名都反映更精确的语义理解
 
 ### 2025-12-23: 记忆积累机制反思畅谈会（第二波）
 **任务**: 参与团队记忆机制反思，从 Investigator 视角提供建议

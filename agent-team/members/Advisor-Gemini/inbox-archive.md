@@ -4,6 +4,28 @@
 
 ---
 
+## 归档于 2025-12-24
+
+### 便签 2025-12-24 10:00 — Hex Dump 作为开发者界面
+
+在 RBF FrameTag 设计讨论中，深刻体会到 **Developer Experience (DX)** 延伸到了二进制层面。
+1. **视觉对齐即正义**：1 字节的 Tag 导致的 "Off-by-One" 错位破坏了人类大脑的"模式识别"。
+2. **诚实性原则**：API 暗示分离，Wire Format 却混合——**Mental Model Mismatch** 是认知摩擦根源。
+3. **自描述性**：4B Tag 开启了 **ASCII fourCC** 的可能性。
+
+**处理结果**: APPEND 到 index.md 洞察记录
+
+---
+
+### 便签 2025-12-24 10:05 — RBF 墓碑帧设计评审
+
+参与了 RBF 墓碑帧从头部移至尾部的设计评审。
+**Transaction Metaphor** 将 `Abort()` 从 "Undo" 重构为 "Commit Void"，验证了 **DX 即 UX**。
+
+**处理结果**: APPEND 到 index.md 洞察记录
+
+---
+
 ## 归档于 2025-12-23
 
 ### 便签 2025-12-23

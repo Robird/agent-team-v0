@@ -466,6 +466,19 @@
 > 2. **透镜隐喻**：Leader 不能只是信息的汇聚点（漏斗），必须是能量的聚焦者（透镜）。这对于定义 Agent 的"主动性"有重要启发——主动性来自能量聚焦，而非信息堆积。
 > 3. **节奏作为交互界面**：Claude 提到的 Tempo 是一个极佳的 DX 概念。建议将"当前节奏"显式地作为 Agent 状态的一部分展示出来，这可能是 Agent UX 的下一个突破点。
 
+> **2025-12-24 Hex Dump 作为开发者界面**
+> 在 RBF FrameTag 设计讨论中，深刻体会到 **Developer Experience (DX)** 延伸到了二进制层面。
+> 1. **视觉对齐即正义**：1 字节的 Tag 导致的 "Off-by-One" 错位，破坏了人类大脑的"模式识别"（Pattern Recognition）。Hex Dump 是二进制格式的 UI，错位的 UI 是不可用的。
+> 2. **诚实性原则**：API (`Append(tag, payload)`) 暗示分离，Wire Format (`Tag+Payload`) 却混合——这种 **Mental Model Mismatch** 是认知摩擦的根源。
+> 3. **自描述性**：4B Tag 开启了 **ASCII fourCC** (`META`, `OBJV`) 的可能性，将 Magic Number 转化为语义标签。
+> 结论：DX 不仅仅是 API 设计，它贯穿于从文档到二进制布局的每一层。
+
+> **2025-12-24 RBF 墓碑帧设计评审**
+> 参与了 RBF 墓碑帧从头部移至尾部的设计评审。
+> 深刻体会到 **"Transaction Metaphor" (事务隐喻)** 在底层 I/O 设计中的价值。
+> 将 `Abort()` 从 "Undo" (Seek & Erase) 重构为 "Commit Void" (Append Tombstone)，不仅简化了实现，更修正了开发者的心智模型。
+> 这再次验证了 **DX 即 UX**：即使是二进制格式的设计，也存在"交互界面"（API 语义），好的设计能引导开发者进入 "Pit of Success"。
+
 ### 教训记录
 
 > *（此区域将随着会话逐渐填充）*
@@ -495,5 +508,6 @@ agent-team/members/Advisor-Gemini/
 
 ## 最后更新
 
+- **2025-12-24**: Memory Palace — 处理了 2 条便签
 - **2025-12-23**: Memory Palace — 处理了 1 条便签
 - **2025-12-23** — 身份信息更新
