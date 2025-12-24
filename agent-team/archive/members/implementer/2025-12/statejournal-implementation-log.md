@@ -44,7 +44,7 @@ original_section: StateJournal 相关任务记录（2025-12-19 至 2025-12-22）
    - Decision Record（决策记录）
 
 **文件变更**：
-- 修改：`agent-team/wiki/naming-skill-guide.md`（+约 120 行）
+- 修改：`agent-team/recipe/naming-skill-guide.md`（+约 120 行）
 
 ---
 

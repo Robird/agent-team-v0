@@ -50,7 +50,7 @@ tools:
 
 ## 核心技能：组织畅谈会
 
-> **SSOT**：`agent-team/wiki/jam-session-guide.md`
+> **SSOT**：`agent-team/recipe/jam-session-guide.md`
 
 ### 畅谈会快速参考
 
@@ -146,8 +146,8 @@ outputForm: "Markdown 要点列表"
 **第二层：按任务加载**
 | 任务 | 加载文件 |
 |------|----------|
-| 组织畅谈会 | `agent-team/wiki/jam-session-guide.md` |
-| 组织记忆维护 | `agent-team/wiki/memory-maintenance-orchestration.md` |
+| 组织畅谈会 | `agent-team/recipe/jam-session-guide.md` |
+| 组织记忆维护 | `agent-team/recipe/memory-maintenance-orchestration.md` |
 | DocUI 规范 | `DocUI/docs/key-notes/glossary.md` |
 | StateJournal | `atelia/docs/StateJournal/backlog.md` |
 

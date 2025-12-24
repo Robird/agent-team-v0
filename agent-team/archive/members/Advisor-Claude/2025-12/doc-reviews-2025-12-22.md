@@ -156,4 +156,4 @@ original_section: "2025-12-22 各轮文档复核与命名畅谈"
 - 给出 AGENTS.md 具体草案（约 350 tokens），采用 RFC 2119 风格
 - 融合 GPT 和 Gemini 的研讨会标签提案，新增 `#jam` 标签对应纯发散模式
 - 提议 runSubagent 调用用结构化字段（`**Key**: Value`）而非表格——对 LLM 解析更友好
-- 建议将研讨会详细指南放入 `agent-team/wiki/jam-session-guide.md`，AGENTS.md 保持极简
+- 建议将研讨会详细指南放入 `agent-team/recipe/jam-session-guide.md`，AGENTS.md 保持极简

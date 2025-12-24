@@ -510,8 +510,8 @@ extension.js 是 minified JavaScript，系统提示词作为字符串存储。
 - 第二轮：技能书初稿审阅（FixList + Open Questions 决议）
 
 **产出物**：
-1. [memory-maintenance-skill.md](../../../wiki/memory-maintenance-skill.md) — 成员执行维护的技能书 v1.0
-2. [memory-maintenance-orchestration.md](../../../wiki/memory-maintenance-orchestration.md) — Leader 组织维护的指南
+1. [memory-maintenance-skill.md](../../../recipe/memory-maintenance-skill.md) — 成员执行维护的技能书 v1.0
+2. [memory-maintenance-orchestration.md](../../../recipe/memory-maintenance-orchestration.md) — Leader 组织维护的指南
 3. [2025-12-22-memory-maintenance-skill.md](../../meeting/2025-12-22-memory-maintenance-skill.md) — 畅谈会记录
 
 **试点**：Advisor-Claude 成功完成首次维护

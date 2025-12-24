@@ -1,7 +1,7 @@
 # Advisor-Claude 维护日志
 
 > 本文件记录 Advisor-Claude 认知文件的维护历史。
-> 格式遵循 [memory-maintenance-skill.md](../../wiki/memory-maintenance-skill.md)
+> 格式遵循 [memory-maintenance-skill.md](../../recipe/memory-maintenance-skill.md)
 
 ---
 

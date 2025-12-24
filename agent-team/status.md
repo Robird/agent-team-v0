@@ -9,12 +9,12 @@
 - **畅谈会完成**：`agent-team/meeting/2025-12-21-meta-cognition-refactor-jam.md`
 - **参谋组改名**：DocUIClaude/Gemini/GPT → Advisor-Claude/Gemini/GPT
 - **AGENTS.md 创建**：`/repos/focus/AGENTS.md`（全局协议入口）
-- **畅谈会指南**：`agent-team/wiki/jam-session-guide.md`
+- **畅谈会指南**：`agent-team/recipe/jam-session-guide.md`
 
 | 产出 | 位置 |
 |------|------|
 | AGENTS.md | `/repos/focus/AGENTS.md` |
-| 畅谈会指南 | `agent-team/wiki/jam-session-guide.md` |
+| 畅谈会指南 | `agent-team/recipe/jam-session-guide.md` |
 | 会议记录 | `agent-team/meeting/2025-12-21-meta-cognition-refactor-jam.md` |
 | 重命名的 Agent 文件 | `.github/agents/advisor-*.agent.md` |
 

@@ -210,7 +210,7 @@
 
 **解决方案**：结构化三步流程 CLASSIFY → ROUTE → APPLY，配合 6 种写入操作语义（NO-OP, OVERWRITE, APPEND, MERGE, REWRITE, TOMBSTONE）和三层分流架构（L1 索引 / L2 摘要 / L3 详情）。
 
-**来源**：[全员畅谈会](../../meeting/2025-12-22-memory-accumulation-reflection.md) → [规范文档](../../wiki/memory-accumulation-spec.md)
+**来源**：[全员畅谈会](../../meeting/2025-12-22-memory-accumulation-reflection.md) → [规范文档](../../recipe/memory-accumulation-spec.md)
 
 ### 8.2 二阶段解耦模式 (2025-12-23)
 

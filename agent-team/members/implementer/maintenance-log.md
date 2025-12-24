@@ -1,7 +1,7 @@
 # Implementer 记忆维护日志
 
 > 本文件记录 Implementer 的记忆维护历史。
-> 遵循 [记忆维护技能书](../../wiki/memory-maintenance-skill.md) 规范。
+> 遵循 [记忆维护技能书](../../recipe/memory-maintenance-skill.md) 规范。
 
 ---
 
