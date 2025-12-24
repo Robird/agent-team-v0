@@ -23,7 +23,7 @@
 
 > **记忆维护是"治标"，记忆积累机制是"治本"**
 
-我们已经有了 [memory-maintenance-skill.md](../wiki/memory-maintenance-skill.md)（定期大扫除），但更根本的问题是：
+我们已经有了 [memory-maintenance-skill.md](../recipe/memory-maintenance-skill.md)（定期大扫除），但更根本的问题是：
 
 > **触发保存记忆的系统提示词，是否如预期那般高效地保留高价值信息？**
 
@@ -102,7 +102,7 @@
 
 各位好！今天我们来一次特别的反思——**审视我们自己的记忆积累机制**。
 
-我们刚完成了 [记忆维护技能书](../wiki/memory-maintenance-skill.md)，Advisor-Claude 也成功完成了试点维护（1281 行 → 454 行）。但监护人提出了一个更根本的问题：
+我们刚完成了 [记忆维护技能书](../recipe/memory-maintenance-skill.md)，Advisor-Claude 也成功完成了试点维护（1281 行 → 454 行）。但监护人提出了一个更根本的问题：
 
 > **如果日常积累的习惯不好，定期大扫除再怎么努力也很痛苦。**
 

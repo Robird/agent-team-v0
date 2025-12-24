@@ -43,7 +43,7 @@
 
 ## 相关文件
 
-- [jam-session-guide.md](../wiki/jam-session-guide.md) — 畅谈会指南（含人格互补设计）
+- [jam-session-guide.md](../recipe/jam-session-guide.md) — 畅谈会指南（含人格互补设计）
 - [team-leader.agent.md](../../.github/agents/team-leader.agent.md) — 当前 Leader 系统提示词
 - [members/TeamLeader/index.md](../members/TeamLeader/index.md) — Leader 认知文件
 

@@ -596,7 +596,7 @@ GPT 的"产物契约"和 Gemini 的"组件化"可以完美融合。我来写一�
 
 主持人问"研讨会组织技能放哪里"。我的建议：
 
-**新建 `agent-team/wiki/jam-session-guide.md`**，内容包括：
+**新建 `agent-team/recipe/jam-session-guide.md`**，内容包括：
 - 畅谈会的完整流程（开场、多轮、收尾）
 - 各标签（`#review`/`#design`/`#decision`/`#jam`）的详细说明
 - 主持人模板（开场白、邀请模板、总结模板）
@@ -824,7 +824,7 @@ outputForm: "Markdown List"
 | 1 | 创建 `/repos/focus/AGENTS.md` | Team Leader | 基于 Gemini RC1 草案 |
 | 2 | 重命名 Agent 文件 | Team Leader | `claude.agent.md` → `advisor-claude.agent.md` 等 |
 | 3 | 更新三位顾问的系统提示词 | Team Leader | 移除 DocUI 前缀，更新职能描述 |
-| 4 | 创建畅谈会指南 | Team Leader | `agent-team/wiki/jam-session-guide.md` |
+| 4 | 创建畅谈会指南 | Team Leader | `agent-team/recipe/jam-session-guide.md` |
 | 5 | 更新 `leader-standards-chair.agent.md` | Team Leader | 写入研讨会组织技能 |
 
 ### 📝 AGENTS.md 最终草案

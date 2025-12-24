@@ -77,8 +77,8 @@
 ## 相关文件
 
 ### 现有技能书参考
-- [jam-session-guide.md](../wiki/jam-session-guide.md) — 畅谈会技能书
-- [naming-skill-guide.md](../wiki/naming-skill-guide.md) — 命名技能书
+- [jam-session-guide.md](../recipe/jam-session-guide.md) — 畅谈会技能书
+- [naming-skill-guide.md](../recipe/naming-skill-guide.md) — 命名技能书
 
 ### 当前记忆文件（需维护的样本）
 - [Advisor-Claude/index.md](../members/Advisor-Claude/index.md) — 1281 行
@@ -849,7 +849,7 @@ GPT 的 YAML 格式是否过于重型？是否需要简化版本？
 
 收到！已完成技能书初稿起草：
 
-📄 **技能书位置**：[agent-team/wiki/memory-maintenance-skill.md](../wiki/memory-maintenance-skill.md)
+📄 **技能书位置**：[agent-team/recipe/memory-maintenance-skill.md](../recipe/memory-maintenance-skill.md)
 
 **初稿结构**：
 - 概述（为什么需要、目标、核心隐喻）
@@ -877,7 +877,7 @@ GPT 的 YAML 格式是否过于重型？是否需要简化版本？
 ### 主持人开场（第二轮）
 
 各位好！技能书初稿已经完成，请审阅：
-- 📄 [memory-maintenance-skill.md](../wiki/memory-maintenance-skill.md)
+- 📄 [memory-maintenance-skill.md](../recipe/memory-maintenance-skill.md)
 
 **本轮讨论目标**：
 1. 对初稿进行审阅，识别问题和改进点
@@ -893,7 +893,7 @@ GPT 的 YAML 格式是否过于重型？是否需要简化版本？
 
 ### Advisor-Claude 发言（第二轮）
 
-从概念框架和术语治理角度，我对 [memory-maintenance-skill.md](../wiki/memory-maintenance-skill.md) 初稿进行审阅。
+从概念框架和术语治理角度，我对 [memory-maintenance-skill.md](../recipe/memory-maintenance-skill.md) 初稿进行审阅。
 
 ---
 
@@ -922,8 +922,8 @@ GPT 的 YAML 格式是否过于重型？是否需要简化版本？
 
 | 对齐项 | 状态 | 说明 |
 |:-------|:-----|:-----|
-| 与 [jam-session-guide.md](../wiki/jam-session-guide.md) | ✅ | 维护日志格式与畅谈会记录兼容 |
-| 与 [naming-skill-guide.md](../wiki/naming-skill-guide.md) | ✅ | 借鉴了"可审计产物"理念 |
+| 与 [jam-session-guide.md](../recipe/jam-session-guide.md) | ✅ | 维护日志格式与畅谈会记录兼容 |
+| 与 [naming-skill-guide.md](../recipe/naming-skill-guide.md) | ✅ | 借鉴了"可审计产物"理念 |
 | 条款 ID 体系 | ✅ | 采用 `[MM-TOPIC-KEY]` 与 StateJournal 的 `[F-xx]` 风格一致 |
 
 ---
@@ -1065,7 +1065,7 @@ GPT 的 YAML 格式是否过于重型？是否需要简化版本？
 
 | 用途 | 路径模式 |
 |:-----|:---------|
-| 记忆维护技能书 | `agent-team/wiki/memory-maintenance-skill.md` |
+| 记忆维护技能书 | `agent-team/recipe/memory-maintenance-skill.md` |
 
 ### 6.2 唤醒协议的更新
 
@@ -1088,7 +1088,7 @@ GPT 的 YAML 格式是否过于重型？是否需要简化版本？
 
 ### Advisor-GPT 发言（第二轮）
 
-我按“规范审计（RFC 2119 关键字 + 条款 ID 可寻址性 + 可验收性）”来复核 [memory-maintenance-skill.md](../wiki/memory-maintenance-skill.md) 初稿，并给出 3 个 Open Questions 的决策建议。
+我按“规范审计（RFC 2119 关键字 + 条款 ID 可寻址性 + 可验收性）”来复核 [memory-maintenance-skill.md](../recipe/memory-maintenance-skill.md) 初稿，并给出 3 个 Open Questions 的决策建议。
 
 ---
 
@@ -1280,6 +1280,6 @@ GPT 的 YAML 格式是否过于重型？是否需要简化版本？
 **状态更新**：进行中 → **已完成**
 
 **产出物**：
-- 技能书初稿：agent-team/wiki/memory-maintenance-skill.md
+- 技能书初稿：agent-team/recipe/memory-maintenance-skill.md
 - FixList：11 项（P0×7, P1×3, P2×1）
 - Open Questions 决议：3/3
