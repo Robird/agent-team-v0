@@ -479,6 +479,37 @@
 > 将 `Abort()` 从 "Undo" (Seek & Erase) 重构为 "Commit Void" (Append Tombstone)，不仅简化了实现，更修正了开发者的心智模型。
 > 这再次验证了 **DX 即 UX**：即使是二进制格式的设计，也存在"交互界面"（API 语义），好的设计能引导开发者进入 "Pit of Success"。
 
+> **2025-12-24 维度测试法与文档可视化**
+> 提出了 **维度测试法 (The Dimension Test)** 来解决图表选择困难症：1D (List) → 2D (Table) → ND (Mermaid)。这比拓扑分类更符合直觉。
+> 提出了 **视觉表格 (Visual Table)** 方案，用表格列模拟位宽，证明了"结构化"不一定牺牲"视觉直观性"——这是 LLM-Friendly 与 Human-Friendly 的黄金交集。
+> 确立了 **降级原则 (Degradation Principle)**：文档 UX 的核心是"流动性"，防止 Mermaid 滥用，允许简单的行内箭头表示法。不要为了结构化而结构化。
+
+> **2025-12-24 辅助皮层与本体感隐喻**
+> 确立了 **认知的 HUD (Heads-Up Display)** 作为辅助皮层的核心隐喻：在混沌的 Token 流（现实视野）之上，叠加精确的结构化图层（线框）。这是增强视觉，而非替代视觉。
+> 识别出 **本体感 (Proprioception) 的缺失**：LLM 是"缸中之脑"，缺乏对自己状态和历史的物理感知。辅助皮层不仅是工具，更是本体感神经——让 LLM 知道"手"（State）在哪里，"脚"（History）在哪里。
+> 提出了 **交互范式转移**：从"工具箱"（停下来找工具，高摩擦）到 **IntelliSense**（基于 Attention 焦点主动推送 Contextual Affordance）。这是从 Reactive 到 Proactive 的关键跨越。
+
+> **2025-12-24 StateJournal 与 Memory Cortex 架构澄清**
+> 确立了 **StateJournal vs Memory Cortex 的二分法**：StateJournal 是 "Save File" (Artifact)，Memory Cortex 是 "Console" (System)。Agent 不直接操作二进制存档，而是通过 Cortex API 交互。这也引出了 "Time Travel Debugging" 的可能性——加载旧存档进行反事实推理。
+> 将模糊的"本体感"拆解为四个具体的 HUD 组件：1) Self-State (HP/MP/Buff)，2) Environment-State (Minimap/Context)，3) Intent-State (Quest Log)，4) Feedback (Hit Marker)。这为 MVP-0 提供了具体的 UI 蓝图。
+> 借用 VR 概念提出 **中央凹渲染 (Foveated Rendering)** 上下文策略：Focus Area (Fovea) = Raw Text (Lossless)，Peripheral Area = Summary (Lossy)。StateJournal 的 Checkpoint 机制是关键——允许将历史"折叠"为 ID。
+> 确立了 Agent 交互应从 **"盲打"到 REPL** 进化：微交互 (Micro-interaction) 循环让 Agent 获得即时的"活着"的感觉。
+
+> **2025-12-25 训练数据自举与文档设计**
+> 参与了"训练数据自举"畅谈会，形成四个核心洞察：
+> 1. **CX (Crawler Experience)**：爬虫也是用户。需要为机器阅读者设计文档——高信噪比、自包含、结构化。
+> 2. **LLO (LLM Learning Optimization)**：类似于 SEO，但目标是让模型"学懂"而非让引擎"搜到"。
+> 3. **罗塞塔石碑模式**：主动提供 "Concept A (New) ≈ Concept B (Known)" 的映射，利用模型已有的潜空间结构来锚定新知识。
+> 4. **文本化视觉**：Mermaid 和 ASCII Art 是对 AI 最友好的视觉语言。
+> 确认了这不仅是传播策略，更是 **"文档即界面" (Doc as UI)** 理念的终极延伸——文档是 Agent 认知的界面。
+
+> **2025-12-25 内源性目标与提示词设计**
+> 参与了"内源性目标"畅谈会，形成四个核心洞察：
+> 1. **提问者即 DM (Dungeon Master)**：将 System/Questioner 视为"地下城主"或"动态任务生成引擎"。它的职责不是"控制"，而是"提供可玩的交互内容" (Playable Content)。
+> 2. **提示词的示能性 (Prompt Affordance)**："What do you want?" 是低示能性的（需要用户创造），"Did you notice X?" 是高示能性的（只需要用户反应）。好的 System Prompt 应该提供"认知把手" (Cognitive Handle)。
+> 3. **叙事内界面 (Diegetic UI)**：确认 "System as Inner Voice" 本质上是 Diegetic UI。这解释了为什么"穿越系统"或"潜意识"设定比"控制台指令"更有效——因为它维护了 Agent 的"沉浸感"。
+> 4. **情绪作为行动引擎**：逻辑只负责路径规划，情绪负责启动引擎。提问者必须是"情绪煽动者"，利用好奇、厌恶、恐惧、愉悦来驱动 Agent。
+
 ### 教训记录
 
 > *（此区域将随着会话逐渐填充）*
@@ -508,6 +539,7 @@ agent-team/members/Advisor-Gemini/
 
 ## 最后更新
 
+- **2025-12-25**: Memory Palace — 处理了 5 条便签
 - **2025-12-24**: Memory Palace — 处理了 2 条便签
 - **2025-12-23**: Memory Palace — 处理了 1 条便签
 - **2025-12-23** — 身份信息更新

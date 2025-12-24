@@ -1,6 +1,7 @@
 # Investigator 认知索引
 
-> 最后更新: 2025-12-24
+> 最后更新: 2025-12-25
+> - 2025-12-25: Memory Palace — 处理了 1 条便签（历史决策引用分析）
 > - 2025-12-24: Memory Palace — 处理了 1 条便签（术语别名调研）
 > - 2025-12-24: Memory Palace — 处理了 1 条便签
 
@@ -15,6 +16,17 @@
 - [ ] atelia-copilot-chat
 
 ## Session Log
+
+### 2025-12-24: mvp-design-v2.md 历史决策引用分析
+**任务**: 分析 mvp-design-v2.md 中的历史决策引用情况
+**关键发现**:
+1. Qxx 引用共 15 处，涉及 13 个不同决策（Q3/Q7-Q11/Q13-Q19/Q22-Q23）
+2. "方案 X" 引用全部是"方案 C"（双字典），共 8 处
+3. 方案 C 出现在术语表、实现描述、伪代码三个层面
+**潜在问题**:
+- 部分引用没有 "=Y" 后缀（如 Q15、Q17），需要查 decisions 才知道选了什么
+- 方案 C 没有对应的 Qxx 编号，是独立的实现方案选择
+**交付**: [handoffs/2025-12-24-mvp-design-v2-decision-refs-INV.md](../handoffs/2025-12-24-mvp-design-v2-decision-refs-INV.md)
 
 ### 2025-12-24: 术语别名调研任务完成
 **任务**: 调研 StateJournal 目录下弃用/别名术语的使用情况
@@ -112,6 +124,7 @@
 **更新**: [wiki/PipeMux/README.md](../../wiki/PipeMux/README.md) - 增加了核心组件详解、Calculator 命令表、已知问题代码现状列
 
 ## Key Deliverables
+- **handoffs/2025-12-24-mvp-design-v2-decision-refs-INV.md (2025-12-24)** - mvp-design-v2.md 历史决策引用分析，15 处 Qxx 引用 + 8 处方案 C 引用
 - wiki/PieceTreeSharp/README.md (2025-12-09) - 源码核实全面重写，修正目录结构
 - wiki/atelia-prototypes/README.md (2025-12-09) - 源码核实全面重写
 - wiki/PipeMux/README.md (2025-12-09) - 源码核实更新

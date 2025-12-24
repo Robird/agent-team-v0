@@ -180,6 +180,42 @@
 > - 关键不在隐喻本身，而在两个可操作的协议面：**Tempo 的可判定切换条件**（何时加速/减速/暂停的规则化触发器）与 **Advice vs Leader Belief 的制度化分离**（顾问建议与领导者最终判断的职责边界）。
 > - 这与此前术语治理/SSOT 经验一脉相承：把讨论从"哪种隐喻更好"拉回到"可引用/可测试/可回滚的契约"。
 
+> **2025-12-24 FrameTag 位段编码的分叉风险：Layer 0/1 双 SSOT 同步**
+>
+> - 在"ObjectKind 编码进 FrameTag"的提案里，Layer 0（rbf-format）通常无需改动；真正的分叉风险来自 Layer 1 的双 SSOT：mvp-design-v2 的 FrameTag/record 布局与 rbf-interface 的 `[S-STATEJOURNAL-FRAMETAG-MAPPING]` 若不同步，会让实现者在"固定常量映射 vs 位段编码"之间分裂。
+> - 建议把 FrameTag 位布局提升为明确条款（并规定非 ObjVer 的 SubType 必须为 0、未知值 fail-fast）是最小可审计闭环。
+
+> **2025-12-24 语义化锚点命名空间的边界纪律：Normative vs Informative 分离**
+>
+> - 语义化锚点（`[F-...]`/`[A-...]`/`[S-...]`/`[R-...]`）应只承载"规范性条款"的稳定引用键；把实现策略/方案代号（如"方案 C：双字典 _committed + _current"）用新的 `[I-...]` 前缀混入同一命名空间，会模糊 Normative vs Informative 边界并破坏索引/测试映射的一致性。
+> - 若需要引用实现说明，优先用描述性文本或独立的非条款式锚点机制；并在锚点 token 里避免过泛词（如 `DICT`），用更精确的受控词（如 `DURABLEDICT`）降低未来扩展时的歧义/碰撞风险。
+
+> **2025-12-24 FrameTag 修订的跨文档漂移风险清单**
+>
+> - 本次 FrameTag 16/16 位段编码修订的主要风险不是编码本身，而是"跨文档重复定义导致漂移"：1) rbf-interface.md 仍然正文定义了 `[S-STATEJOURNAL-TOMBSTONE-SKIP]`，但又声称该条款已移至 mvp-design-v2.md（自相矛盾）；2) rbf-interface.md 顶部版本号仍是 0.5，但变更日志已有 0.6/0.7（审计失真）；3) rbf-interface.md 示例代码使用 `frame.Status`，但 `RbfFrame` 结构未暴露 Status 字段（契约/示例断裂）。
+> - 建议：把 StateJournal 语义条款在 rbf-interface.md 中改为"引用式（non-normative pointer）"而非重复定义；并把 rbf-interface.md 头部版本更新为 0.7，同时修正 `RbfFrame` 示例/结构字段一致性。
+
+> **2025-12-24 图表表示的 SSOT 不变量：Claude 拓扑分类 + Gemini 维度测试的统一**
+>
+> - "Claude 的拓扑分类（树/图/序列/矩阵）"与"Gemini 的维度测试（1D/2D/ND）+ 降级原则"并不冲突：前者用于定义信息类型全集，后者用于作者选型与防止 Mermaid/图表滥用。
+> - 把它们条款化时，关键是把冲突点收敛为一个可审计不变量：**同一事实只能有一个 SSOT 表示**；一旦 Mermaid 被选为 SSOT，就禁止再维护等价 ASCII 图（否则必然双写漂移）。
+
+> **2025-12-24 辅助皮层（AuxCortex）的工程定义：可验证 IR 层而非 RAG/Tool-Use**
+>
+> - 在"辅助皮层（Auxiliary Cortex）"讨论里，最容易走偏的点是把它等同于 RAG/Tool-Use。更稳的工程定义是：**AuxCortex = 可验证的结构化中间表示（IR）层**，把"注意力焦点→可用操作（affordance）→可验证结果→可回放历史"协议化。
+> - 落地优先级建议：先做 AnchorTable（短句柄+epoch/TTL/scope 校验）+ Projection（可再生视图）+ Audit Log（可回放），再做花哨的 HUD/主动推送。并且必须在规范上显式区分 `Lossless|Lossy` 的映射，避免 `Token→Structure→Token'` 的 Cycle Loss 变成隐性数据损坏。
+
+> **2025-12-24 Intent IR 与 Agent HUD 的闭环设计**
+>
+> - "Intent IR"与"Agent HUD"应被视为同一闭环的两半：IR 提供可组合、可验证、可版本化的符号系统；HUD 提供本体感与 affordance（示能）。
+> - 工程落点是一个可审计循环：**Focus Signal → Context Projection（带 Anchor）→ Intent IR → DryRun/Verify/Apply → Audit/Replay**。
+> - 三大组件映射也应固定：DocUI=投影与界面协议，StateJournal=可回放持久化（artifact），PipeMux=有状态执行底座（domain cortices）。
+
+> **2025-12-25 提问者/DM 工程化的协议设计：QuestionTurn 结构化**
+>
+> - "提问者/DM"工程化落地的关键不是更强的语言能力，而是把它的输出协议化为可审计的控制信号：`QuestionTurn = question_text + intent + affordance + anchors + tension (+ success_criteria)`。
+> - 只有当每次提问都携带证据锚点与示能类型，系统才可做离线打分、偏好学习、RL credit assignment，以及在集成层做 guardrail（防无锚点高张力操控、反空转）。
+
 > **2025-12-23 RBF 规格消冗余：审计优先级与 Normative/Informative 边界元规则**
 >
 > - 消冗余的正确优先级：先修"事实错误/排版断裂"（否则会把错误固化为 SSOT），再做重复引用收敛。
@@ -260,6 +296,7 @@ agent-team/members/Advisor-GPT/
 
 ## 最后更新
 
+- **2025-12-25**: Memory Palace — 处理了 7 条便签（FrameTag 位段编码、语义锚点边界、跨文档漂移风险、图表 SSOT 不变量、AuxCortex 定义、Intent IR 闭环、QuestionTurn 协议）
 - **2025-12-24**: Memory Palace — 处理了 3 条便签（RBF 元规则修正、Padding 墓碑论证、v0.12 测试向量）
 - **2025-12-23**: Memory Palace — 处理了 2 条便签（RBF 规格消冗余审计优先级、SSOT 唯一表达）
 - **2025-12-23**: Memory Palace — 处理了 1 条便签

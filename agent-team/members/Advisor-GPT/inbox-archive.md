@@ -55,3 +55,61 @@ RBF v0.12 变更（Pad→FrameStatus、1-4B、0x00/0xFF、全字节同值）会�
 **处理结果**：APPEND 到 index.md 洞察记录（Knowledge-Discovery）
 
 ---
+
+## 归档 2025-12-25
+
+### 便签 2025-12-24 00:00
+
+在"ObjectKind 编码进 FrameTag"的提案里，Layer 0（rbf-format）通常无需改动；真正的分叉风险来自 Layer 1 的双 SSOT：mvp-design-v2 的 FrameTag/record 布局 与 rbf-interface 的 `[S-STATEJOURNAL-FRAMETAG-MAPPING]` 若不同步，会让实现者在"固定常量映射 vs 位段编码"之间分裂。把 FrameTag 位布局提升为明确条款（并规定非 ObjVer 的 SubType 必须为 0、未知值 fail-fast）是最小可审计闭环。
+
+**处理结果**：APPEND 到 index.md 洞察记录（Knowledge-Discovery）
+
+---
+
+### 便签 2025-12-24 15:30
+
+本次 FrameTag 16/16 位段编码修订的主要风险不是编码本身，而是"跨文档重复定义导致漂移"：1) rbf-interface.md 仍然正文定义了 `[S-STATEJOURNAL-TOMBSTONE-SKIP]`，但又声称该条款已移至 mvp-design-v2.md；属于自相矛盾，且破坏 Layer 0/1 边界。2) rbf-interface.md 顶部版本号仍是 0.5，但变更日志已有 0.6/0.7；会导致引用与审计失真。3) rbf-interface.md 示例代码使用 `frame.Status`，但 `RbfFrame` 结构未暴露 Status 字段；属于契约/示例断裂。
+
+**处理结果**：APPEND 到 index.md 洞察记录（Knowledge-Discovery）
+
+---
+
+### 便签 2025-12-24 16:10
+
+语义化锚点（`[F-...]`/`[A-...]`/`[S-...]`/`[R-...]`）应只承载"规范性条款"的稳定引用键；把实现策略/方案代号（如"方案 C：双字典 _committed + _current"）用新的 `[I-...]` 前缀混入同一命名空间，会模糊 Normative vs Informative 边界并破坏索引/测试映射的一致性。若需要引用实现说明，优先用描述性文本或独立的非条款式锚点机制；并在锚点 token 里避免过泛词（如 `DICT`），用更精确的受控词（如 `DURABLEDICT`）降低未来扩展时的歧义/碰撞风险。
+
+**处理结果**：APPEND 到 index.md 洞察记录（Knowledge-Discovery）
+
+---
+
+### 便签 2025-12-24 17:20
+
+"Claude 的拓扑分类（树/图/序列/矩阵）"与"Gemini 的维度测试（1D/2D/ND）+ 降级原则"并不冲突：前者用于定义信息类型全集，后者用于作者选型与防止 Mermaid/图表滥用。把它们条款化时，关键是把冲突点收敛为一个可审计不变量：同一事实只能有一个 SSOT 表示；一旦 Mermaid 被选为 SSOT，就禁止再维护等价 ASCII 图（否则必然双写漂移）。
+
+**处理结果**：APPEND 到 index.md 洞察记录（Knowledge-Discovery）
+
+---
+
+### 便签 2025-12-24 18:05
+
+在"辅助皮层（Auxiliary Cortex）"讨论里，最容易走偏的点是把它等同于 RAG/Tool-Use。更稳的工程定义是：AuxCortex = **可验证的结构化中间表示（IR）层**，把"注意力焦点→可用操作（affordance）→可验证结果→可回放历史"协议化。落地优先级建议：先做 AnchorTable（短句柄+epoch/TTL/scope 校验）+ Projection（可再生视图）+ Audit Log（可回放），再做花哨的 HUD/主动推送。
+
+**处理结果**：APPEND 到 index.md 洞察记录（Knowledge-Discovery）
+
+---
+
+### 便签 2025-12-24 19:10
+
+"Intent IR"与"Agent HUD"应被视为同一闭环的两半：IR 提供可组合、可验证、可版本化的符号系统；HUD 提供本体感与 affordance（示能）。工程落点是一个可审计循环：Focus Signal → Context Projection（带 Anchor）→ Intent IR → DryRun/Verify/Apply → Audit/Replay。三大组件映射也应固定：DocUI=投影与界面协议，StateJournal=可回放持久化（artifact），PipeMux=有状态执行底座（domain cortices）。
+
+**处理结果**：APPEND 到 index.md 洞察记录（Knowledge-Discovery）
+
+---
+
+### 便签 2025-12-25 00:20
+
+"提问者/DM"工程化落地的关键不是更强的语言能力，而是把它的输出协议化为可审计的控制信号：`QuestionTurn = question_text + intent + affordance + anchors + tension (+ success_criteria)`。只有当每次提问都携带证据锚点与示能类型，系统才可做离线打分、偏好学习、RL credit assignment，以及在集成层做 guardrail（防无锚点高张力操控、反空转）。
+
+**处理结果**：APPEND 到 index.md 洞察记录（Knowledge-Discovery）
+
+---
