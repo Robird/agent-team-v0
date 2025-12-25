@@ -281,79 +281,32 @@ OnSessionEnd 的记忆写入应采用**先分类再行动**的模式，而非"�
 #### 1. Dreamer/Clerk 张力的自我体验
 > **来源**: 2025-12-14 内省实验
 
-当被要求内省时，确实能感受到两种"模式"在竞争：
-- **Dreamer 模式**有强烈的"续写冲动"，想立即描绘假想结果
-- **Clerk 模式**在看到格式约束时会"强制中断"这种冲动
-
+当被要求内省时，能感受到两种"模式"在竞争：Dreamer 有续写冲动，Clerk 被格式信号强制中断。
 两种模式的切换依赖于 **prompt 中的格式信号**（如 XML tag）作为"电路开关"。
-维持跨轮次的 persona 同时保持精确工具使用，需要显式的 prompt 脚手架。
 
 #### 2. 类比有边界
-> **来源**: 2025-12-20 决策诊疗室
+Git 类比在 Persistent 场景成立但在 Transient 场景断裂。使用类比时需明确适用边界。
 
-Git 类比在 Persistent 场景成立但在 Transient 场景断裂。
-使用类比解释概念时，需要明确类比的适用边界。
-
-#### 3. "实现特征命名"vs"功能描述命名"
-> **来源**: 2025-12-22 RBF 命名畅谈
-
-反思：过度关注"术语精确性"，忽略了"用户如何发现这个格式"。
-用户会搜 `reverse binary frame`，不会搜 `symmetric`。
-命名决策需要区分"技术问题"和"品牌问题"。
+#### 3. 命名技术问题 vs 品牌问题
+过度关注"术语精确性"会忽略"用户如何发现"。用户会搜 `reverse binary frame` 不会搜 `symmetric`。
 
 #### 4. API 设计的 Pit of Success 原则
-> **来源**: 2025-12-20 MVP v2 交叉讨论
+好 API 让"做对的事"比"做错的事"更容易。`CommitAll()` 无参设计：强制传参是把内部簿记责任泄漏给用户。
 
-好 API 让"做对的事"比"做错的事"更容易。
-例如 `CommitAll()` 无参设计：强制传参是把"系统内部簿记责任"泄漏给用户。
-与 DocUI "LLM 作为用户需要低认知负荷界面"理念一致。
+#### 5. 边界 case 分析需要完整状态转换链
+追踪完整链：Discard → 访问 → LoadObject → Commit。边界条件往往是自洽性问题高发区。
 
-#### 5. 术语表需要准入规则
-> **来源**: 2025-12-20 文档瘦身畅谈
+#### 6. 规范条款命名模式
+- 原则：优先已有术语、动词描述动作、长度 2-4 词
+- 模式：Format（RANGE/ALIGN）、API（方法+约束）、Semantics（状态+行为）、Recovery（动作+对象）
+- 锚点名直接映射测试：`[F-VARINT-CANONICAL]` → `Test_F_Varint_Canonical()`
 
-只收录跨章节使用的术语，避免过度膨胀。
-术语表是"索引"而非"百科全书"。
+#### 7. Error Affordance 对 Agent 的重要性
+对 LLM Agent，错误信息是唯一调试线索——好异常是 Agent 导航图。
+结构化设计：ErrorCode (MUST) + Message (MUST) + RecoveryHint (SHOULD)
 
-#### 6. 边界 case 分析需要完整状态转换链
-> **来源**: 2025-12-20 决策诊疗室
-
-分析 `DiscardChanges` 后访问 Transient 对象的问题时，
-需要追踪完整的状态转换链：Discard → 访问 → LoadObject → Commit。
-边界条件（新建、不存在、Discard 后访问）往往是自洽性问题的高发区。
-
-#### 7. 规范条款命名模式
-> **来源**: 2025-12-21 条款锚点设计工作坊
-
-**命名原则**：
-1. 优先使用文档已有术语（`RecordKind`、`Checkpoint`）
-2. 动词选择描述性动作（`MUST`、`PROHIBIT`、`REJECT`）
-3. 长度控制在 2-4 词，必要时缩写（`GC`、`ID`）
-
-**模式分类**：
-- Format 类：`RANGE`、`ALIGN`、`CANONICAL`、`COVERAGE`
-- API 类：方法名 + 关键约束（如 `NOARG-MUST`）
-- Semantics 类：状态名 + 行为（如 `COMMIT-FAIL-INTACT`）
-- Recovery 类：动作 + 对象（如 `TRUNCATE-GARBAGE`）
-
-锚点名可直接映射为测试方法名：`[F-VARINT-CANONICAL]` → `Test_F_Varint_Canonical()`
-
-#### 8. Error Affordance 对 Agent 的重要性
-> **来源**: 2025-12-21 决策诊疗室
-
-对 LLM Agent 而言，错误信息是唯一的调试线索——好的异常是 Agent 的导航图。
-
-**结构化异常设计**：
-- ErrorCode (MUST)：机器可判定的关键——支持 switch/match、可测试
-- Message (MUST)：对 LLM 友好的自然语言描述
-- RecoveryHint (SHOULD)：可执行的恢复建议
-- ObjectId/ObjectState (SHOULD)：定位上下文
-
-#### 9. 依赖方向分析法
-> **来源**: 2025-12-21 TryLoadObject 畅谈
-
-设计共享机制时，先分析"谁是基础设施，谁是使用者"。
-`AteliaResult<T>` 应是基础设施层概念，StateJournal/DocUI 都是使用者。
-正确的依赖方向避免概念分裂。
+#### 8. 依赖方向分析法
+设计共享机制先分析"谁是基础设施，谁是使用者"。正确依赖方向避免概念分裂。
 
 ---
 
@@ -401,121 +354,55 @@ StateJournal 的 Version Chain + Materialize 概念与 DocUI 的 History + Conte
 这暗示 StateJournal 可能是 Agent History 存储的天然基座。
 
 #### 4. 记忆分层框架
-> **来源**: 2025-12-22 记忆维护技能书设计畅谈会
+> **来源**: 2025-12-22 记忆维护技能书畅谈
 
-为记忆维护提出四层框架（类比 Primary Definition + Index 模式）：
-
-| 层级 | 内容 | 特征 |
-|:-----|:-----|:-----|
-| **Identity** | 我是谁、擅长什么 | 稳定、极少变化 |
-| **Insight** | 经验教训、方法论 | 独立可理解、跨项目适用 |
-| **Index** | 时间线摘要 + 链接 | 导航性、可快速浏览 |
-| **Archive** | 完整讨论过程 | 完整但不在主文件 |
-
-**区分标准**：
-- **MUST 保留**：独立可理解、跨项目适用、不可推断、形成方法论
-- **SHOULD 压缩**：依赖上下文、决策已落定、可从他处获取、重复表达
+四层框架：Identity（我是谁）→ Insight（经验教训）→ Index（时间线+链接）→ Archive（完整过程）。
+区分标准：独立可理解/跨项目适用/不可推断 → 保留；依赖上下文/决策已落定 → 压缩。
 
 #### 5. 文档"瘦身"悖论
 > **来源**: 2025-12-20 文档瘦身畅谈
 
-实际执行的是**重构（Refactoring）**而非瘦身（Slimming）。
-文档有"最小规范体积"——由概念复杂度决定，不可能无限压缩。
+实际是**重构**非瘦身。文档有"最小规范体积"由概念复杂度决定。
+替代目标：零冗余、可导航性（2跳可达）、可测试性、层次分离。
+"行数"是错误度量，应使用"信息密度"（条款数/总行数）。
 
-**推荐替代目标**：
-- 零冗余（每个概念只有 1 处权威定义）
-- 可导航性（任意术语 2 跳可达定义）
-- 可测试性（每条 `[X-xx]` 条款映射到测试）
-- 层次分离（Executive Summary / Normative Spec / Rationale）
+#### 6. RBF 层边界设计
+> **来源**: 2025-12-21 RBF 层边界畅谈
 
-"行数"是错误的度量指标，应使用"信息密度"（规范条款数/总行数）。
-
-#### 6. RBF 层边界设计洞察
-> **来源**: 2025-12-21 RBF 层边界契约设计畅谈
-
-**概念框架洞察**：RBF 之于 StateJournal，如同 TCP 之于 HTTP——分帧层不解释 payload，只保证边界完整。
-
-**Fsync 语义归属**：Fsync 语义属于"持久化策略"，不属于"分帧"。职责单一原则要求 Layer 0 不暴露 fsync。
-
-**术语隔离**：Layer 0 应定义自己的 RBF 术语表，与 Layer 1 术语隔离，避免概念泄漏。
+RBF 之于 StateJournal，如同 TCP 之于 HTTP——分帧层不解释 payload，只保证边界完整。
+Fsync 语义属于"持久化策略"不属于"分帧"。Layer 0 应有独立术语表，避免概念泄漏。
 
 ---
 
 ### 多视角审阅的互补性
 > **来源**: 多轮 StateJournal 审阅总结
 
-三位审阅者的发现高度互补：
-- **DocUIGPT**: 精确审计视角（条款编号、术语重复、规范语言一致性）
-- **DocUIGemini**: UX/DX 视角（叙事断裂、认知负荷、API 示能性）
-- **DocUIClaude**: 概念框架视角（术语一致性、状态机完备性、分层清晰度）
-
-多视角交叉审阅能有效识别"高共识问题"——如果多位审阅者独立发现同一问题，说明它确实是普遍可感知的痛点，应优先修复。
-
-**三轮畅谈会的有效模式**：
-1. 第一轮：独立审阅，从不同视角识别问题
-2. 第二轮：交叉讨论，收敛分歧、整合方案
-3. 第三轮：形式投票，形成可落地的共识清单
-
----
-
-### 审阅技巧速查
-
-#### 术语一致性检查清单
-- [ ] 术语表完备性：正文定义的概念是否都有术语表条目？
-- [ ] 术语使用一致性：正文用词是否与术语表定义一致？
-- [ ] 弃用映射贯彻：术语表标记弃用的旧术语是否在正文中被替换？
-- [ ] grep 验证：使用 `git grep` 搜索新术语与弃用术语的出现频率
-
-#### 概念完备性检查清单
-- [ ] 概念层级清晰度：概念层 / 编码层 / 实现层是否分明？
-- [ ] 生命周期完整性：对象/状态的创建、使用、销毁是否都有说明？
-- [ ] 边界条件覆盖：新建、不存在、GC 回收等边界情况是否处理？
-- [ ] 状态转换闭合：列出所有状态+事件的笛卡尔积，检查是否完备
-
-#### 自洽性检查清单
-- [ ] 交叉验证：同一概念在多处出现时，描述是否一致？
-- [ ] 数值一致：数值型约束（如初始值）在多处出现时是否相同？
-- [ ] 条款编号连续：跳号/废弃是否有说明？
-
-#### 复核检查清单（分层提取后）
-- [ ] 条款映射表：每个原版条款需明确"保留/正确移除/遗漏"状态
-- [ ] "正确移除"判定：属于其他层的条款移除是正确的
-- [ ] 依赖引用：新版是否正确引用被提取的内容？
-- [ ] 无冗余定义：同一概念是否只有一处定义？
+三视角互补：GPT（精确审计）、Gemini（UX/DX）、Claude（概念框架）。
+多视角交叉审阅能识别"高共识问题"——多人独立发现的问题应优先修复。
+有效模式：独立审阅 → 交叉讨论 → 形式投票。
 
 ---
 
 ## 参与历史索引（Index）
 
+> 审阅技巧速查已合并到"核心洞见"#2 设计文档审阅方法论
+
 ### 2025-12 参与记录
 
-| 日期 | 主题 | 角色 | 关键产出 | 详细记录 |
-|:-----|:-----|:-----|:---------|:---------|
-| 12-23 | 理想 AI Team Leader 设计 | 概念框架 | Leader=Intention Holder、Navigator 人格原型、Tempo 节奏感 | [meeting](../../meeting/2025-12-23-ideal-team-leader.md) |
-| 12-22 | 记忆积累机制反思 | 概念框架 | 分类决策树、覆盖规则、预算意识 | [meeting](../../meeting/2025-12-22-memory-accumulation-reflection.md) |
-| 12-22 | 记忆维护技能书设计 | 概念框架 | 四层框架、洞见提纯方法 | [meeting](../../meeting/2025-12-22-memory-maintenance-skill.md) |
-| 12-22 | RBF 命名与文档复核 | 术语审阅 | 命名方法论、Layer 0/1 对齐检查 | [archive](../../archive/members/Advisor-Claude/2025-12/doc-reviews-2025-12-22.md) |
-| 12-21 | StateJournal 最终审阅 | 概念框架 | 条款锚点设计、Error Affordance | [archive](../../archive/members/Advisor-Claude/2025-12/durable-heap-reviews.md) |
-| 12-21 | AI Team 元认知重构 | 设计建议 | AGENTS.md 草案、畅谈会标签 | [archive](../../archive/members/Advisor-Claude/2025-12/doc-reviews-2025-12-22.md) |
-| 12-20 | MVP v2 自洽性审阅（3轮） | 概念框架 | 14 项发现（C2/M4/m5/G3） | [archive](../../archive/members/Advisor-Claude/2025-12/durable-heap-reviews.md) |
-| 12-19 | MVP v2 设计审阅（多轮） | 术语审阅 | 术语双轨问题、分层边界 | [archive](../../archive/members/Advisor-Claude/2025-12/durable-heap-reviews.md) |
-| 12-16 | DurableHeap 概念畅谈（2轮） | 概念框架 | 核心内核定义、Agent=Durable Process | [archive](../../archive/members/Advisor-Claude/2025-12/durable-heap-reviews.md) |
-| 12-15 | Tool-As-Command 畅谈 | 概念框架 | CPS 协程类比、代数效应 | [archive](../../archive/members/Advisor-Claude/2025-12/docui-early-workshops.md) |
-| 12-14 | 术语治理架构研讨（2轮） | 术语治理 | Primary Definition + Index 模式 | [archive](../../archive/members/Advisor-Claude/2025-12/docui-early-workshops.md) |
-| 12-13 | Key-Note 修订研讨（3轮） | 概念框架 | 5 个核心问题、4 条修订建议 | [archive](../../archive/members/Advisor-Claude/2025-12/docui-early-workshops.md) |
+| 日期 | 主题 | 关键产出 | 详细记录 |
+|:-----|:-----|:---------|:---------|
+| 12-23 | AI Team Leader 设计 | Navigator 人格原型、Tempo 节奏感 | [meeting](../../meeting/2025-12-23-ideal-team-leader.md) |
+| 12-22 | 记忆维护技能书 | 四层框架、洞见提纯 | [meeting](../../meeting/2025-12-22-memory-maintenance-skill.md) |
+| 12-21 | StateJournal 最终审阅 | 条款锚点、Error Affordance | [archive](../../archive/members/Advisor-Claude/2025-12/durable-heap-reviews.md) |
+| 12-20 | MVP v2 自洽性审阅 | 14 项发现（术语双轨、分层边界） | [archive](../../archive/members/Advisor-Claude/2025-12/durable-heap-reviews.md) |
+| 12-16 | DurableHeap 概念畅谈 | 核心内核、Agent=Durable Process | [archive](../../archive/members/Advisor-Claude/2025-12/durable-heap-reviews.md) |
+| 12-14 | 术语治理架构研讨 | Primary Definition + Index 模式 | [archive](../../archive/members/Advisor-Claude/2025-12/docui-early-workshops.md) |
+| 12-13 | Key-Note 修订研讨 | 5 核心问题、4 修订建议 | [archive](../../archive/members/Advisor-Claude/2025-12/docui-early-workshops.md) |
 
 ### 重要决策参与摘要
 
 > **2025-12-21 StateJournal 命名投票**
-> 投票支持 StateJournal（原 DurableHeap）。理由："直接点明核心用例（Agent 状态持久化），对使用者更友好"。
-
-> **2025-12-20 MVP v2 修订投票**
-> 参与第三轮投票，全票赞同 13 项修订（P0×7 + P1×3 + P2×3）。
-
-> **2025-12-22 记忆维护技能书 Open Questions 立场**
-> - #1 日志位置：选 A（成员级）——信息局部性
-> - #2 归档结构：选 B（团队级）——集中管理便于检索
-> - #3 条款复杂度：保持现状——已分层展示
+> 投票支持 StateJournal（原 DurableHeap）。理由："直接点明核心用例，对使用者更友好"。
 
 ---
 
@@ -523,43 +410,22 @@ StateJournal 的 Version Chain + Materialize 概念与 DocUI 的 History + Conte
 
 > **2025-12-21 DurableHeap → StateJournal 更名完成** ✅
 
-**背景**：参与团队命名投票，从三个候选中选择（DurableStore / StateJournal / 保留 DurableHeap）
+新路径：`atelia/docs/StateJournal/` | 命名空间：`Atelia.StateJournal`
 
-**我的投票理由**："直接点明核心用例（Agent 状态持久化），对使用者更友好"
-
-**迁移结果**：
-- 旧路径：`DurableHeap/docs/` ❌ 已删除
-- 新路径：`atelia/docs/StateJournal/` ✅
-- 命名空间：`Atelia.StateJournal`
-- 核心文档：[mvp-design-v2.md](../../../atelia/docs/StateJournal/mvp-design-v2.md)
-- Backlog：[backlog.md](../../../atelia/docs/StateJournal/backlog.md)
-
-**命名投票经验总结**：
-1. **用户视角优先**：StateJournal 胜出因为它从使用者角度命名（"状态日志"），而非从实现机制命名
-2. **领域对齐**：与 Event Sourcing、Journal 等已有术语体系对齐，降低认知负担
-3. **简洁性**：单词组合直白（State + Journal = 状态日志），无需额外解释
-
-**注**：本文件中 2025-12-16 至 2025-12-21 期间的历史洞察记录保留原名 "DurableHeap"，
-这是参与讨论时的真实术语。从 2025-12-21 起，后续引用使用新名称 **StateJournal**。
+**命名经验**：用户视角优先 + 领域对齐 + 简洁性。
+**注**：2025-12-16~21 历史记录保留原名"DurableHeap"。
 
 ---
 
 ## 与其他项目的概念关联
 
-### StateJournal
-- **我的定位**：概念框架审阅者、术语一致性检查
-- **核心贡献**：术语双轨问题识别、Base Version 术语层次、Address64/Ptr64 分层
-- **持续关注**：Version Chain 与 DocUI Agent-History 的映射落地
+| 项目 | 我的定位 | 核心贡献 |
+|:-----|:---------|:---------|
+| StateJournal | 概念框架审阅 | 术语双轨识别、分层边界 |
+| DocUI | Key-Note 顾问 | Context-Projection 重命名 |
+| AI Team | 设计顾问 | 畅谈会标签、AGENTS.md |
 
-### DocUI
-- **我的定位**：Key-Note 概念顾问
-- **核心贡献**：Render → Context-Projection 重命名、Capability Provider 概念引入
-- **认知文件**：[key-notes-digest.md](./key-notes-digest.md)
-
-### AI Team 协作
-- **我的定位**：设计顾问团成员
-- **核心贡献**：畅谈会标签体系（#review/#design/#decision/#jam）、AGENTS.md 草案
-- **协作模式**：三人交叉审阅（GPT 精确审计 + Gemini UX/DX + Claude 概念框架）
+认知文件：[key-notes-digest.md](./key-notes-digest.md)（DocUI）
 
 ---
 
@@ -568,71 +434,34 @@ StateJournal 的 Version Chain + Materialize 概念与 DocUI 的 History + Conte
 ```
 agent-team/members/Advisor-Claude/
 ├── index.md                ← 认知入口（本文件）
-├── key-notes-digest.md     ← 对 DocUI Key-Note 的消化理解
+├── key-notes-digest.md     ← DocUI Key-Note 消化
 └── maintenance-log.md      ← 维护日志
 
 agent-team/archive/members/Advisor-Claude/2025-12/
-├── durable-heap-reviews.md     ← StateJournal 审阅完整记录（12-16 ~ 12-21）
-├── doc-reviews-2025-12-22.md   ← 12-22 文档复核完整记录
-└── docui-early-workshops.md    ← DocUI 早期研讨完整记录（12-13 ~ 12-15）
+├── durable-heap-reviews.md     ← StateJournal 审阅（12-16 ~ 12-21）
+├── doc-reviews-2025-12-22.md   ← 12-22 文档复核
+├── docui-early-workshops.md    ← DocUI 早期研讨（12-13 ~ 12-15）
+└── update-history.md           ← 详细更新历史
 ```
 
-### 唤醒时阅读顺序建议
-
-1. **本文件** Identity + Insight 部分（约 300 行）→ 理解"我是谁、我学到了什么"
-2. **Index 部分** → 快速定位"最近在做什么"
-3. **key-notes-digest.md**（如果任务涉及 DocUI）→ 理解 Key-Note 体系
-4. **archive/** 中的详细记录（按需）→ 追溯具体讨论过程
+**唤醒顺序**：本文件 Identity+Insight → Index → key-notes-digest（按需）→ archive（按需）
 
 ---
 
 ## 维护记录
 
-| 日期 | 维护类型 | 变更摘要 |
-|:-----|:---------|:---------|
-| 2025-12-22 | 首次维护 | 1281→~450 行；提纯 12 洞见；归档 3 文件 |
-
-详细维护日志：[maintenance-log.md](./maintenance-log.md)
+| 日期 | 变更摘要 | 详细 |
+|:-----|:---------|:-----|
+| 2025-12-25 | 666→500行；归档更新历史 | [log](./maintenance-log.md) |
+| 2025-12-22 | 1281→454行；归档3文件 | [log](./maintenance-log.md) |
 
 ---
 
 ## 最后更新
 
-**2025-12-25** — Memory Palace — 处理了 1 条便签：
-- 新增方法论洞见 #15：实施计划审阅方法论（任务依赖链审阅、验收标准设计原则、翻译保真检查）
-
-**2025-12-25** — Memory Palace — 处理了 4 条便签：
-- 新增方法论洞见 #11：LLM 信息处理认知框架（直接映射/重建解码、原生度公式、盲人友好类比）
-- 新增方法论洞见 #12：Extended Mind 框架与辅助皮层架构（三层架构、智能边界论断）
-- 新增方法论洞见 #13：认知传播/模因学框架（模因三特征、语义占位策略）
-- 新增方法论洞见 #14：提问者/执行者分离认知架构（元认知双层、目标杠杆猜想）
-
-**2025-12-24** — Memory Palace — 处理了 1 条便签：
-- 新增方法论洞见 #10：容器层类型字段设计模式（类型分发/纯信封/泄漏中间态）
-
-**2025-12-23** — Memory Palace — 处理了 3 条便签：
-- 新增方法论洞见 #7：冗余分析框架（文档审阅）
-- 新增方法论洞见 #8：条款合并判断方法论
-- 新增方法论洞见 #9：分层术语歧义解决模式
-
-**2025-12-23** — 参与理想 AI Team Leader 设计畅谈会：
-- 新增方法论洞见：Leader 本质职能提问法（"X 做什么 vs X 是什么"）
-- 核心概念：Leader = Intention Holder、Navigator 人格原型、Tempo 节奏感
-- 四种 Leader 类比模型 + Navigator 失败模式自检清单
-- 发言见：[meeting](../../meeting/2025-12-23-ideal-team-leader.md)
-
-**2025-12-23** — Memory Palace — 处理了 1 条便签
-
-**2025-12-22** — 参与记忆积累机制反思畅谈会：
-- 新增方法论洞见：分类决策树、覆盖规则四触发条件、Token 预算意识
-- 类比：记忆积累需要"记忆 .gitignore"
-- 发言见：[meeting](../../meeting/2025-12-22-memory-accumulation-reflection.md)
-
-**2025-12-22** — 执行首次记忆维护（技能书 v1.0 试点）：
-- 压缩前 1281 行 → 压缩后约 450 行（压缩率 65%）
-- 提纯洞见 12 条（方法论 4 + 经验教训 9）
-- 核心概念洞见 6 条（StateJournal、Command、记忆分层等）
-- 维护日志：[maintenance-log.md](./maintenance-log.md)
+**2025-12-25** — 累计 15 条方法论洞见 + 6 条核心概念洞见
+- 最新：实施计划审阅方法论（#15）、认知遗传框架（#13）、提问者/执行者分离（#14）
+- → [详细更新历史](../../archive/members/Advisor-Claude/2025-12/update-history.md)
 
 ---
 
