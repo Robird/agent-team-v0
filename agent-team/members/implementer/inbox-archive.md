@@ -4,6 +4,62 @@
 
 ---
 
+## 归档 2025-12-26 (Phase 4)
+
+### 便签 2025-12-26 14:30
+
+**T-P4-01/02 完成 — IdentityMap + DirtySet**
+
+实现了 Workspace 的两个核心基础设施：
+1. IdentityMap 幂等添加技巧：同一对象重复 Add 时 no-op（`ReferenceEquals` 检查）
+2. WeakReference GC 测试模式：`[MethodImpl(NoInlining)]` + 三连 GC + `GC.KeepAlive` 放 Assert 后
+3. 测试用例设计：GC 相关测试覆盖有/无强引用、Remove/Clear 后
+
+**处理结果**：APPEND 到 index.md 方法论 #18
+
+---
+
+### 便签 2025-12-26 16:00
+
+**T-P4-03 完成 — Workspace.CreateObject**
+
+实现了 Workspace 核心的 `CreateObject<T>()` 方法：
+1. 保留区处理：ObjectId 0-15 保留给 Well-Known 对象
+2. 命名空间冲突解决：测试文件使用 type alias
+3. 对象创建流程：分配 ObjectId → Activator.CreateInstance → 加入 IdentityMap + DirtySet
+
+**处理结果**：APPEND 到 index.md 方法论 #19
+
+---
+
+### 便签 2025-12-26 17:30
+
+**T-P4-04 完成 — Workspace.LoadObject**
+
+实现了 `LoadObject<T>()` 方法，符合 `[A-LOADOBJECT-RETURN-RESULT]` 条款：
+1. ObjectLoaderDelegate 委托注入模式
+2. AteliaResult<T> nullable 双重解包
+3. 加载流程三步走：查 IdentityMap → 调用 loader → 加入 IdentityMap
+4. 新增 `ObjectTypeMismatchError`
+
+**处理结果**：APPEND 到 index.md 方法论 #20
+
+---
+
+### 便签 2025-12-26 18:10
+
+**T-P4-05 完成 — LazyRef&lt;T&gt; 实现**
+
+实现了延迟加载引用结构体：
+1. struct 内部存储状态机：null/ulong/T 三态
+2. 两种构造模式：延迟加载 / 立即可用
+3. 回填缓存机制
+4. 新增错误类型：LazyRefNotInitializedError / LazyRefNoWorkspaceError / LazyRefInvalidStorageError
+
+**处理结果**：APPEND 到 index.md 方法论 #21 + 项目状态表 OVERWRITE（Phase 4 完成）
+
+---
+
 ## 归档 2025-12-26
 
 ### 便签 2025-12-25 23:58

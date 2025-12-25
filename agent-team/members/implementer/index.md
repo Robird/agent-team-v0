@@ -29,7 +29,7 @@
 
 | 项目 | 状态 | 最后更新 | 备注 |
 |------|------|----------|------|
-| StateJournal | Phase 3 完成 ✅ | 2025-12-26 | P2: 基础类型 / P3: DiffPayload+DurableDict |
+| StateJournal | Phase 4 完成 ✅ | 2025-12-26 | P4: Workspace+LazyRef |
 | DocUI | MUD Demo 待实现 | 2025-12-15 | MVP-0 阶段规划完成 |
 | Atelia.Primitives | 基础类型库完成 ✅ | 2025-12-21 | AteliaResult/Error 体系 |
 | PipeMux | 管理命令实现完成 ✅ | 2025-12-09 | SDK 模式迁移完成 |
@@ -129,6 +129,28 @@
     - Set 恢复语义：Remove 后 Set 同键需从 `_removedFromCommitted` 移除
     - `_dirtyKeys` 精确追踪：`HasChanges ⟺ _dirtyKeys.Count > 0`
     - DiscardChanges 状态机：四种状态四种行为（Clean→Clean, PersistentDirty→Clean, TransientDirty→Detached, Detached→throw）
+
+18. **IdentityMap + DirtySet 实现**（2025-12-26, T-P4-01/02）
+    - IdentityMap 幂等添加：同一对象重复 Add 时 no-op（`ReferenceEquals` 检查）
+    - WeakReference GC 测试：`[MethodImpl(NoInlining)]` + 三连 GC + `GC.KeepAlive` 放 Assert 后
+    - GC 测试覆盖：有强引用不回收 / 无强引用可回收 / Remove/Clear 后允许 GC
+
+19. **Workspace.CreateObject 实现**（2025-12-26, T-P4-03）
+    - 保留区处理：ObjectId 0-15 保留给 Well-Known 对象，NextObjectId 从 16 开始
+    - 命名空间冲突：测试文件使用 type alias `using WorkspaceClass = Atelia.StateJournal.Workspace`
+    - 创建流程：分配 ObjectId → `Activator.CreateInstance` → 加入 IdentityMap + DirtySet
+
+20. **Workspace.LoadObject 实现**（2025-12-26, T-P4-04）
+    - ObjectLoaderDelegate 委托注入：MVP 阶段通过委托注入存储加载逻辑
+    - AteliaResult nullable 双重解包：`loadResult.Value.IsFailure` / `loadResult.Value.Value`
+    - 加载流程三步走：查 IdentityMap → 调用 loader → 成功后加入 IdentityMap（不加 DirtySet）
+    - 新增 `ObjectTypeMismatchError(objectId, expectedType, actualType)`
+
+21. **LazyRef<T> 延迟加载引用**（2025-12-26, T-P4-05）
+    - struct 内部状态机：`null`/`ulong`/`T` 三态，统一 `object? _storage` 存储
+    - 两种构造模式：延迟加载（objectId + workspace）/ 立即可用（instance）
+    - 回填缓存：加载成功后 `_storage = result.Value`，后续访问直接返回
+    - 新增错误：`LazyRefNotInitializedError` / `LazyRefNoWorkspaceError` / `LazyRefInvalidStorageError`
 
 ### 经验教训
 
@@ -369,6 +391,7 @@ agent-team/archive/members/implementer/
 
 ## 最后更新
 
+- **2025-12-26**: Memory Palace — 处理了 4 条便签（Phase 4 实现洞见：IdentityMap/DirtySet/CreateObject/LoadObject/LazyRef）
 - **2025-12-26**: Memory Palace — 处理了 8 条便签（Phase 2&3 实现洞见：VarInt/Address64/FrameTag/IDurableObject/DiffPayload/DurableDict）
 - **2025-12-25**: Memory Palace — 处理了 4 条便签（StatusLen根因、逆向扫描、Builder实现、ASCII art修订）
 - **2025-12-24**: Memory Palace — 处理了 2 条便签（文档精简技巧、表格合并策略）
