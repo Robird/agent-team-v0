@@ -1,133 +1,99 @@
-# 任务: T-P1-01 Fence/常量定义
+# 任务: 完成 Phase 1 剩余任务 (T-P1-02 ~ T-P1-05)
 
 ## 元信息
-- **任务 ID**: T-P1-01
+- **任务 ID**: T-20251225-04 (批量任务)
 - **Phase**: 1 (RBF Layer 0)
-- **类型**: 实施
+- **类型**: 批量实施
 - **优先级**: P0
-- **预计时长**: 1 小时
+- **预计时长**: 2-3 小时
 
 ---
 
 ## 背景
 
-这是 StateJournal MVP 的**首个编码任务**！
+T-P1-01 已完成（10 分钟），Phase 1 剩余 4 个任务。
 
-RBF (Robust Binary Format) 是 StateJournal 的底层帧格式。Fence 是 RBF 的魔数，用于帧边界识别和崩溃恢复。
+**监护人建议**：战术层可以一次性执行一系列 runSubagent 调用，以较大粒度调度工作。
 
 ---
 
 ## 目标
 
-实现 `RbfConstants.cs`，定义 RBF 格式的核心常量。
+完成 Phase 1 剩余全部任务，使 RBF Layer 0 达到可用状态。
 
 ---
 
-## 规范依据
+## 任务清单
 
-- `atelia/docs/StateJournal/rbf-format.md` §2 Fence
-
-**条款覆盖**：
-- `[F-FENCE-DEFINITION]`: Fence = 0x31464252 ('RBF1' in ASCII, little-endian)
-- `[F-GENESIS]`: 空文件以单个 Fence 开始
+| 任务 ID | 名称 | 预估 | 依赖 | 条款覆盖 |
+|---------|------|------|------|----------|
+| T-P1-02 | Frame 布局与对齐 | 2h | T-P1-01 | `[F-FRAME-LAYOUT]`, `[F-FRAME-4B-ALIGNMENT]`, `[F-HEADLEN-FORMULA]` |
+| T-P1-03 | CRC32C 实现 | 1h | — | `[F-CRC32C-COVERAGE]`, `[F-CRC32C-ALGORITHM]` |
+| T-P1-04 | IRbfFramer/Builder | 3h | T-P1-02, T-P1-03 | `[A-RBF-FRAMER-INTERFACE]`, `[A-RBF-FRAME-BUILDER]` |
+| T-P1-05 | IRbfScanner/逆向扫描 | 3h | T-P1-04 | `[A-RBF-SCANNER-INTERFACE]`, `[R-REVERSE-SCAN-ALGORITHM]` |
 
 ---
 
-## 实现要求
+## 执行策略
 
-### 目标文件
-- `atelia/src/Rbf/RbfConstants.cs`
+你有两个选择：
 
-### 代码结构
+### 策略 A：自行实现
+直接编写代码，适合简单任务或你有把握的任务。
 
-```csharp
-namespace Atelia.Rbf;
+### 策略 B：委派给 Implementer
+通过 `runSubagent` 调用 Implementer，适合复杂任务或需要专注实现的任务。
 
-/// <summary>
-/// RBF (Robust Binary Format) 核心常量定义。
-/// </summary>
-public static class RbfConstants
-{
-    /// <summary>
-    /// RBF 魔数 "RBF1" 的 little-endian 表示。
-    /// 用于帧边界识别和崩溃恢复时的重同步。
-    /// </summary>
-    /// <remarks>
-    /// ASCII: 'R'=0x52, 'B'=0x42, 'F'=0x46, '1'=0x31
-    /// Little-endian uint32: 0x31464252
-    /// </remarks>
-    public const uint Fence = 0x31464252;
+**建议**：
+- T-P1-02、T-P1-03 可并行（无相互依赖）
+- T-P1-04、T-P1-05 串行（有依赖链）
 
-    /// <summary>
-    /// Fence 的字节序列表示（用于写入和扫描）。
-    /// </summary>
-    public static ReadOnlySpan<byte> FenceBytes => [0x52, 0x42, 0x46, 0x31];
+---
 
-    /// <summary>
-    /// Fence 的字节长度。
-    /// </summary>
-    public const int FenceLength = 4;
-}
-```
+## 规范文件
 
-### 测试文件
-- `atelia/tests/Rbf.Tests/RbfConstantsTests.cs`
+- `atelia/docs/StateJournal/rbf-format.md` — RBF 格式规范
+- `atelia/docs/StateJournal/rbf-interface.md` — RBF 接口规范
+- `atelia/docs/StateJournal/implementation-plan.md` — 实施计划（含详细任务描述）
 
-### 测试用例
+---
 
-```csharp
-public class RbfConstantsTests
-{
-    [Fact]
-    public void Fence_HasCorrectValue()
-    {
-        Assert.Equal(0x31464252u, RbfConstants.Fence);
-    }
+## 输出目录
 
-    [Fact]
-    public void FenceBytes_MatchesFenceValue()
-    {
-        var bytes = RbfConstants.FenceBytes;
-        var fromBytes = BitConverter.ToUInt32(bytes);
-        Assert.Equal(RbfConstants.Fence, fromBytes);
-    }
-
-    [Fact]
-    public void FenceBytes_IsRBF1InAscii()
-    {
-        var bytes = RbfConstants.FenceBytes;
-        Assert.Equal((byte)'R', bytes[0]);
-        Assert.Equal((byte)'B', bytes[1]);
-        Assert.Equal((byte)'F', bytes[2]);
-        Assert.Equal((byte)'1', bytes[3]);
-    }
-
-    [Fact]
-    public void FenceLength_Is4()
-    {
-        Assert.Equal(4, RbfConstants.FenceLength);
-        Assert.Equal(RbfConstants.FenceLength, RbfConstants.FenceBytes.Length);
-    }
-}
-```
+- 源码：`atelia/src/Rbf/`
+- 测试：`atelia/tests/Rbf.Tests/`
 
 ---
 
 ## 验收标准
 
-- [ ] `RbfConstants.cs` 已创建，包含 Fence、FenceBytes、FenceLength
-- [ ] `RbfConstantsTests.cs` 已创建，包含 4 个测试用例
+- [ ] T-P1-02: Frame 布局类型定义 + 测试
+- [ ] T-P1-03: CRC32C 实现 + 测试（使用标准测试向量）
+- [ ] T-P1-04: IRbfFramer/Builder 实现 + 测试
+- [ ] T-P1-05: IRbfScanner 实现 + 逆向扫描测试
 - [ ] `dotnet build` 成功
 - [ ] `dotnet test` 全部通过
-- [ ] 代码符合项目编码规范（XML 文档注释）
+- [ ] Phase 1 质量门禁：RBF 读写测试 100% 通过
+
+---
+
+## 汇报要求
+
+完成后请汇报：
+1. 各任务完成情况和实际用时
+2. 遇到的问题和解决方案
+3. 对实施计划/模板的改进建议
+4. Phase 1 整体测试通过情况
 
 ---
 
 ## 备注
 
-这是首个编码任务，也是验证 runSubagent 模板在实际编码中效果的机会。
+这是首次**批量任务**派发，验证战术层自主调度能力。
 
-完成后请汇报：
-1. 实现是否顺利
-2. 模板是否需要调整
-3. 发现的任何问题
+你可以：
+- 自己决定执行顺序
+- 自己决定是否委派给 Implementer
+- 遇到阻塞时可以请求战略层协助
+
+祝顺利！🚀
