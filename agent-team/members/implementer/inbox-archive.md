@@ -4,6 +4,66 @@
 
 ---
 
+## 归档 2025-12-26 (Phase 5 + MVP 完工)
+
+### 便签 2025-12-26 14:30
+
+**T-P5-01 VersionIndex 实现经验**
+
+1. DurableDict 类型支持扩展：`ulong` 需 `Val_Ptr64` 编码
+2. 委托模式简化实现：完全委托给 `DurableDict<ulong?>`
+3. 保留区保护：ObjectId 0-15 保留
+
+**处理结果**：APPEND 到 index.md 方法论 #23
+
+---
+
+### 便签 2025-12-26 16:45
+
+**T-P5-02 MetaCommitRecord 实现经验**
+
+1. AteliaResult API 规范：使用泛型静态方法
+2. VarInt API 返回 tuple，需手动推进 reader
+3. 错误类型支持两种构造模式
+4. 序列化格式：3 varuint + 2 定长 u64 LE
+
+**处理结果**：APPEND 到 index.md 方法论 #24
+
+---
+
+### 便签 2025-12-26 20:45
+
+**T-P5-03b FinalizeCommit 与 Commit 实现经验**
+
+1. Two-Phase Commit 完整流程实现
+2. ToList() 避免迭代修改
+3. CommitContext.BuildMetaCommitRecord 便捷方法
+4. 状态一致性保证
+
+**处理结果**：APPEND 到 index.md 方法论 #25
+
+---
+
+### 便签 2025-12-26 22:00
+
+🎉 **T-P5-04 StateJournal MVP 完工！**
+
+完成崩溃恢复实现，Phase 1-5 全部完成，605/605 测试通过。
+
+**处理结果**：APPEND 到 index.md 方法论 #26 + 项目状态表 OVERWRITE（MVP 完成）
+
+---
+
+### 便签 2025-12-26 23:30
+
+**战术层协作模式反思——StateJournal MVP 总结**
+
+分析了效率递增原因、战术层自主决策空间、便签机制价值。
+
+**处理结果**：MERGE 到 meta-cognition.md（扩展战术层协作模式章节）
+
+---
+
 ## 归档 2025-12-26 (Phase 4)
 
 ### 便签 2025-12-26 14:30

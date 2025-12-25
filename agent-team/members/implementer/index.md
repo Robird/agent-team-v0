@@ -29,7 +29,7 @@
 
 | 项目 | 状态 | 最后更新 | 备注 |
 |------|------|----------|------|
-| StateJournal | Phase 4 完成 ✅ | 2025-12-26 | P4: Workspace+LazyRef |
+| StateJournal | MVP 完成 ✅ | 2025-12-26 | Phase 1-5 全部完成，605 测试通过 |
 | DocUI | MUD Demo 待实现 | 2025-12-15 | MVP-0 阶段规划完成 |
 | Atelia.Primitives | 基础类型库完成 ✅ | 2025-12-21 | AteliaResult/Error 体系 |
 | PipeMux | 管理命令实现完成 ✅ | 2025-12-09 | SDK 模式迁移完成 |
@@ -151,6 +151,34 @@
     - 两种构造模式：延迟加载（objectId + workspace）/ 立即可用（instance）
     - 回填缓存：加载成功后 `_storage = result.Value`，后续访问直接返回
     - 新增错误：`LazyRefNotInitializedError` / `LazyRefNoWorkspaceError` / `LazyRefInvalidStorageError`
+
+22. **PrepareCommit 二阶段提交 Phase 1**（2025-12-26, T-P5-03a）
+    - CommitContext 收集器：EpochSeq / DataTail / VersionIndexPtr / WrittenRecords
+    - 遍历 DirtySet：跳过 `HasChanges == false` 的对象
+    - PrevVersionPtr 写入：8 bytes LE 前置于 DiffPayload
+    - VersionIndex 同步写入：VersionIndex 自身有变更时也需要写入
+
+23. **VersionIndex 实现**（2025-12-26, T-P5-01）
+    - DurableDict 类型支持扩展：`ulong` 值需 `Val_Ptr64` 编码，`DurableDict.WriteValue` 需支持 `ulong → WritePtr64`
+    - 委托模式：完全委托给 `DurableDict<ulong?>`，只添加特化 API
+    - 保留区保护：ObjectId 0-15 保留，`ComputeNextObjectId` 返回 max(16, maxKey+1)
+
+24. **MetaCommitRecord 实现**（2025-12-26, T-P5-02）
+    - AteliaResult API：使用 `AteliaResult<T>.Success()` / `.Failure()` 静态方法
+    - VarInt API 返回 tuple：`(Value, BytesConsumed)`，需手动推进 reader
+    - 错误类型设计：`MetaCommitRecordTruncatedError` 支持仅字段名 / 字段名+Cause 两种构造
+    - 序列化格式：3 varuint + 2 定长 u64 LE，最小 19 字节，最大 46 字节
+
+25. **FinalizeCommit 二阶段提交 Phase 2**（2025-12-26, T-P5-03b）
+    - Two-Phase Commit 完整流程：PrepareCommit → FinalizeCommit（MVP 无实际 I/O）
+    - ToList() 避免迭代修改：`foreach (var obj in _dirtySet.GetAll().ToList())`
+    - CommitContext.BuildMetaCommitRecord 便捷方法：接收 nextObjectId 参数
+    - 状态一致性：FinalizeCommit 后所有脏对象 State → Clean
+
+26. **StateJournal MVP 完工里程碑**（2025-12-26, T-P5-04）
+    - 崩溃恢复实现：`RecoveryInfo` 结构体 + `WorkspaceRecovery.Recover` 后向扫描
+    - 测试项目命名空间冲突：Workspace 文件夹需用 type alias 解决
+    - **Phase 1-5 全部完成，StateJournal.Tests 605/605 通过**
 
 ### 经验教训
 
@@ -391,6 +419,7 @@ agent-team/archive/members/implementer/
 
 ## 最后更新
 
+- **2025-12-26**: Memory Palace — 处理了 5 条便签（Phase 5 完工：VersionIndex/MetaCommitRecord/FinalizeCommit/Recovery + 战术层协作反思）
 - **2025-12-26**: Memory Palace — 处理了 4 条便签（Phase 4 实现洞见：IdentityMap/DirtySet/CreateObject/LoadObject/LazyRef）
 - **2025-12-26**: Memory Palace — 处理了 8 条便签（Phase 2&3 实现洞见：VarInt/Address64/FrameTag/IDurableObject/DiffPayload/DurableDict）
 - **2025-12-25**: Memory Palace — 处理了 4 条便签（StatusLen根因、逆向扫描、Builder实现、ASCII art修订）
