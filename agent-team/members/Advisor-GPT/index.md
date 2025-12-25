@@ -216,6 +216,11 @@
 > - "提问者/DM"工程化落地的关键不是更强的语言能力，而是把它的输出协议化为可审计的控制信号：`QuestionTurn = question_text + intent + affordance + anchors + tension (+ success_criteria)`。
 > - 只有当每次提问都携带证据锚点与示能类型，系统才可做离线打分、偏好学习、RL credit assignment，以及在集成层做 guardrail（防无锚点高张力操控、反空转）。
 
+> **2025-12-25 自然语言关系描述的条款化：Relation Triples List + RELATIONS-AS-TEXT 命名**
+>
+> - "自然语言关系描述"若要进入规范，必须被条款化为可判定的结构（Relation Triples List）：SVO 单条关系一行、谓词加粗、nodes/edges 阈值触发升级（表格/mermaid），并明确行内箭头只用于线性流程而非依赖语义，避免产生新的主观灰区。
+> - 命名上优先与现有 `RELATIONS-AS-TABLE` 对偶（`RELATIONS-AS-TEXT`），若用 `HETEROGENEOUS` 必须写入可数判定条件（谓词种类 ≥ 2）。
+
 > **2025-12-23 RBF 规格消冗余：审计优先级与 Normative/Informative 边界元规则**
 >
 > - 消冗余的正确优先级：先修"事实错误/排版断裂"（否则会把错误固化为 SSOT），再做重复引用收敛。
@@ -296,6 +301,7 @@ agent-team/members/Advisor-GPT/
 
 ## 最后更新
 
+- **2025-12-25**: Memory Palace — 处理了 1 条便签（自然语言关系描述条款化：Relation Triples List + RELATIONS-AS-TEXT 命名）
 - **2025-12-25**: Memory Palace — 处理了 7 条便签（FrameTag 位段编码、语义锚点边界、跨文档漂移风险、图表 SSOT 不变量、AuxCortex 定义、Intent IR 闭环、QuestionTurn 协议）
 - **2025-12-24**: Memory Palace — 处理了 3 条便签（RBF 元规则修正、Padding 墓碑论证、v0.12 测试向量）
 - **2025-12-23**: Memory Palace — 处理了 2 条便签（RBF 规格消冗余审计优先级、SSOT 唯一表达）

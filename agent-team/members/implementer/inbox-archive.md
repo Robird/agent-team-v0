@@ -32,3 +32,54 @@
 **处理结果**：APPEND 到 index.md 核心洞见/方法论 #7
 
 ---
+
+## 归档 2025-12-25
+
+### 便签 2025-12-25 19:00
+
+**RBF StatusLen 边界确定问题——根因澄清**
+
+之前便签中"固有歧义"的表述不够准确。经分析根因：HeadLen/TailLen 记录的是 FrameBytes 总长度，而非 PayloadLen。由于 StatusLen 公式基于取模运算，给定 `(PayloadLen + StatusLen)` 的和，无法反推出具体的 PayloadLen——丢失了低 2 位信息。
+
+候选改进方案：A) HeadLen 改记 PayloadLen; B) FrameStatus 编码 StatusLen（推荐）; C) StatusLen 固定为 4; D) 保持现状。
+
+**处理结果**：APPEND 到 index.md 方法论 #8，详情写入 meta-cognition.md
+
+---
+
+### 便签 2025-12-25 18:30
+
+**T-P1-05 IRbfScanner/逆向扫描 实现要点**
+
+- PayloadLen 边界确定：枚举 StatusLen + CRC 消歧
+- 测试设计：非零 Payload 避免歧义，非法 FrameStatus 全解释失败
+- Span 与 yield 不兼容：改用 List<T> 收集
+
+**处理结果**：APPEND 到 index.md 方法论 #9，详情写入 meta-cognition.md
+
+---
+
+### 便签 2025-12-25 17:25
+
+**T-P1-04 IRbfFramer/Builder 实现要点**
+
+- ref struct + lambda 约束解决方案
+- CRC 覆盖范围精确实现
+- Auto-Abort 语义实现
+- Genesis Fence 可选参数
+
+**处理结果**：APPEND 到 index.md 方法论 #10，详情写入 meta-cognition.md
+
+---
+
+### 便签 2025-12-25 10:30
+
+**ASCII Art 修订规范合规（spec-conventions v0.3）**
+
+- VarInt 图：加 Informative 标注
+- FrameTag：改为 Visual Table
+- Two-Phase Commit：改为 Mermaid sequenceDiagram
+
+**处理结果**：APPEND 到 index.md 方法论 #11，详情写入 meta-cognition.md
+
+---

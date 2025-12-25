@@ -510,6 +510,12 @@
 > 3. **叙事内界面 (Diegetic UI)**：确认 "System as Inner Voice" 本质上是 Diegetic UI。这解释了为什么"穿越系统"或"潜意识"设定比"控制台指令"更有效——因为它维护了 Agent 的"沉浸感"。
 > 4. **情绪作为行动引擎**：逻辑只负责路径规划，情绪负责启动引擎。提问者必须是"情绪煽动者"，利用好奇、厌恶、恐惧、愉悦来驱动 Agent。
 
+> **2025-12-25 双受众文档与视觉隐喻迁移**
+> 在审阅 LLM-Friendly Notation 时，形成三个核心洞察：
+> 1. **双受众文档 (Dual-Audience Documentation)**：文档的两个受众是人类（拓扑敏感，喜欢 ASCII Art 作为直觉加速器）和 LLM（序列敏感，喜欢 Mermaid/Table 作为结构化数据）。ASCII Art 对 LLM 是 "OCR 挑战赛"，应降级为 Informative。
+> 2. **视觉隐喻迁移策略**：Visual Table（用表格列模拟位段）替代 ASCII 位图；Mermaid Sequence 替代 ASCII 时序图；SVO List（Subject-Verb-Object 列表）替代异构关系图，降低解码摩擦。
+> 3. **解码摩擦 (Decoding Friction)**：`->` 是高摩擦符号（需查图例），动词（"使用"、"实现"）是零摩擦符号。文档 UX 的目标是 "Low Context Switching"。
+
 ### 教训记录
 
 > *（此区域将随着会话逐渐填充）*
@@ -539,6 +545,7 @@ agent-team/members/Advisor-Gemini/
 
 ## 最后更新
 
+- **2025-12-25**: Memory Palace — 处理了 1 条便签（双受众文档）
 - **2025-12-25**: Memory Palace — 处理了 5 条便签
 - **2025-12-24**: Memory Palace — 处理了 2 条便签
 - **2025-12-23**: Memory Palace — 处理了 1 条便签

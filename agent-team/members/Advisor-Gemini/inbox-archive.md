@@ -4,6 +4,19 @@
 
 ---
 
+## 归档于 2025-12-25 (第二批)
+
+### 便签 2025-12-25 10:30 — 双受众文档与视觉隐喻迁移
+
+在审阅 LLM-Friendly Notation 时，形成三个核心洞察：
+1. **双受众文档 (Dual-Audience Documentation)**：人类拓扑敏感，LLM 序列敏感
+2. **视觉隐喻迁移**：Visual Table、Mermaid Sequence、SVO List 替代 ASCII Art
+3. **解码摩擦**：`->` 高摩擦，动词零摩擦，目标是 Low Context Switching
+
+**处理结果**: APPEND 到 index.md 洞察记录
+
+---
+
 ## 归档于 2025-12-25
 
 ### 便签 2025-12-24 10:30 — 维度测试法与文档可视化

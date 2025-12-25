@@ -79,6 +79,25 @@
    - 代码注释补充定义，减少文档碎片化
    - 保持状态机图完整：Mermaid 图是最清晰的可视化
 
+8. **RBF StatusLen 边界问题根因**（2025-12-25）
+   - HeadLen/TailLen 记录 FrameBytes 总长度，非 PayloadLen
+   - 从 HeadLen 反推 PayloadLen 丢失低 2 位信息（取模运算）
+   - 候选改进方案见 `agent-team/meeting/2025-12-25-rbf-statuslen-ambiguity.md`
+
+9. **IRbfScanner 逆向扫描实现**（2025-12-25, T-P1-05）
+   - PayloadLen 消歧：枚举 StatusLen=4→1 + CRC 验证
+   - `ReadOnlySpan<T>` 无法跨越 `yield return`（改用 `List<T>` 收集）
+
+10. **IRbfFramer/Builder 实现**（2025-12-25, T-P1-04）
+    - `ref struct` 无法在 lambda 中使用，测试异常需改用 try-catch
+    - CRC 覆盖：`span.Slice(4, crcLen)` 从 FrameTag 开始
+    - Auto-Abort：未 Commit 就 Dispose 时写 Tombstone (0xFF)
+
+11. **ASCII Art 修订规范合规**（2025-12-25, spec-conventions v0.3）
+    - 保留教学性 ASCII：加 `(Informative / Illustration)` 标注
+    - FrameTag 位布局：改为 Visual Table + blockquote 端序说明
+    - 时序图：改用 Mermaid sequenceDiagram（`participant` / `loop` / `Note over`）
+
 ### 经验教训
 
 1. **varint 定义 SSOT 缺失事件**（2025-12-22）
@@ -318,6 +337,7 @@ agent-team/archive/members/implementer/
 
 ## 最后更新
 
+- **2025-12-25**: Memory Palace — 处理了 4 条便签（StatusLen根因、逆向扫描、Builder实现、ASCII art修订）
 - **2025-12-24**: Memory Palace — 处理了 2 条便签（文档精简技巧、表格合并策略）
 - **2025-12-23**: Memory Maintenance — 从 1903 行压缩到 ~350 行，归档详细记录到 archive/
 - **2025-12-22**: RBF 命名重构完成，Layer 0/1 文档分离完成
