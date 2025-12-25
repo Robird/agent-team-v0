@@ -1,9 +1,43 @@
 # RBF StatusLen 歧义问题技术报告
 
-> **状态**：待讨论
+> **状态**：✅ 已决策 (v2)
 > **发起人**：Implementer
+> **决策人**：刘德智 (StandardsChair) + 监护人
 > **日期**：2025-12-25
-> **标签**：`#design`
+> **标签**：`#design` `#decision`
+
+---
+
+## 最终决策
+
+**采纳位域格式**（监护人建议改进）
+
+**位域布局（SSOT）**：
+
+| Bit | 名称 | 说明 |
+|-----|------|------|
+| 7 | Tombstone | 0 = Valid，1 = Tombstone |
+| 6-2 | Reserved | 保留位，MVP MUST 为 0 |
+| 1-0 | StatusLen | 状态字节数减 1 |
+
+**MVP 有效值**：
+
+| 值 | Tombstone | StatusLen |
+|----|-----------|-----------|
+| `0x00`-`0x03` | 0 (Valid) | 1-4 |
+| `0x80`-`0x83` | 1 (Tombstone) | 1-4 |
+
+**判断规则**：
+
+```csharp
+bool IsTombstone(byte s) => (s & 0x80) != 0;
+int GetStatusLen(byte s) => (s & 0x03) + 1;
+bool IsMvpValid(byte s) => (s & 0x7C) == 0;
+```
+
+**规范更新**：`rbf-format.md` v0.12 → v0.14
+
+**后续任务**：战术层需要更新 `FrameStatus.cs` 和相关测试
 
 ---
 
@@ -211,7 +245,7 @@ StatusLen = 1 + ((4 - ((PayloadLen + 1) % 4)) % 4)
 
 ---
 
-## 附录：现有 FrameStatus 定义（供参考）
+## 附录：旧版（0.13版） FrameStatus 定义（供参考）
 
 ```markdown
 **`[F-FRAMESTATUS-VALUES]`**
