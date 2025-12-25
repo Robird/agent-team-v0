@@ -1,115 +1,136 @@
-# 任务: 完成 Phase 1 剩余任务 (T-P1-02 ~ T-P1-05)
+# 任务: 代码同步 rbf-format.md v0.14（FrameStatus 位域格式）
 
 ## 元信息
-- **任务 ID**: T-20251225-04 (批量任务)
-- **Phase**: 1 (RBF Layer 0)
-- **类型**: 批量实施
+- **任务 ID**: T-20251225-05
+- **类型**: 代码同步
 - **优先级**: P0
-- **预计时长**: 2-3 小时
+- **预计时长**: 30 分钟
 
 ---
 
 ## 背景
 
-T-P1-01 已完成（10 分钟），Phase 1 剩余 4 个任务。
+Phase 1 实施过程中发现 StatusLen 歧义问题，战略层与监护人共同决策：
 
-**监护人建议**：战术层可以一次性执行一系列 runSubagent 调用，以较大粒度调度工作。
+**rbf-format.md v0.12 → v0.14**
 
----
-
-## 目标
-
-完成 Phase 1 剩余全部任务，使 RBF Layer 0 达到可用状态。
+FrameStatus 采用**位域格式**，Bit 7 = Tombstone，Bit 0-1 = StatusLen-1。
 
 ---
 
-## 任务清单
+## 规范变更
 
-| 任务 ID | 名称 | 预估 | 依赖 | 条款覆盖 |
-|---------|------|------|------|----------|
-| T-P1-02 | Frame 布局与对齐 | 2h | T-P1-01 | `[F-FRAME-LAYOUT]`, `[F-FRAME-4B-ALIGNMENT]`, `[F-HEADLEN-FORMULA]` |
-| T-P1-03 | CRC32C 实现 | 1h | — | `[F-CRC32C-COVERAGE]`, `[F-CRC32C-ALGORITHM]` |
-| T-P1-04 | IRbfFramer/Builder | 3h | T-P1-02, T-P1-03 | `[A-RBF-FRAMER-INTERFACE]`, `[A-RBF-FRAME-BUILDER]` |
-| T-P1-05 | IRbfScanner/逆向扫描 | 3h | T-P1-04 | `[A-RBF-SCANNER-INTERFACE]`, `[R-REVERSE-SCAN-ALGORITHM]` |
+### 位域布局（SSOT）
+
+| Bit | 名称 | 说明 |
+|-----|------|------|
+| 7 | Tombstone | 0 = Valid，1 = Tombstone |
+| 6-2 | Reserved | 保留位，MVP MUST 为 0 |
+| 1-0 | StatusLen | 状态字节数减 1：`00`=1, `01`=2, `10`=3, `11`=4 |
+
+### MVP 有效值
+
+| 值 | 二进制 | Tombstone | StatusLen |
+|----|--------|-----------|-----------|
+| `0x00` | `0b0000_0000` | 0 | 1 |
+| `0x01` | `0b0000_0001` | 0 | 2 |
+| `0x02` | `0b0000_0010` | 0 | 3 |
+| `0x03` | `0b0000_0011` | 0 | 4 |
+| `0x80` | `0b1000_0000` | 1 | 1 |
+| `0x81` | `0b1000_0001` | 1 | 2 |
+| `0x82` | `0b1000_0010` | 1 | 3 |
+| `0x83` | `0b1000_0011` | 1 | 4 |
+
+### 判断规则
+
+```csharp
+bool IsTombstone(byte status) => (status & 0x80) != 0;
+bool IsValid(byte status) => (status & 0x80) == 0;
+int GetStatusLen(byte status) => (status & 0x03) + 1;
+bool IsMvpValid(byte status) => (status & 0x7C) == 0;  // Reserved bits must be zero
+```
 
 ---
 
-## 执行策略
+## 需要修改的文件
 
-你有两个选择：
+### 1. FrameStatus.cs
 
-### 策略 A：自行实现
-直接编写代码，适合简单任务或你有把握的任务。
+```csharp
+/// <summary>
+/// RBF 帧状态标记（位域格式）。
+/// </summary>
+/// <remarks>
+/// 位布局：
+/// - Bit 7: Tombstone (0=Valid, 1=Tombstone)
+/// - Bit 6-2: Reserved (MUST be 0 for MVP)
+/// - Bit 1-0: StatusLen - 1
+/// </remarks>
+public readonly struct FrameStatus
+{
+    private readonly byte _value;
 
-### 策略 B：委派给 Implementer
-通过 `runSubagent` 调用 Implementer，适合复杂任务或需要专注实现的任务。
+    private FrameStatus(byte value) => _value = value;
 
-**建议**：
-- T-P1-02、T-P1-03 可并行（无相互依赖）
-- T-P1-04、T-P1-05 串行（有依赖链）
+    public bool IsTombstone => (_value & 0x80) != 0;
+    public bool IsValid => (_value & 0x80) == 0;
+    public int StatusLen => (_value & 0x03) + 1;
+    public byte Value => _value;
 
----
+    /// <summary>
+    /// 检查是否为 MVP 合法值（保留位为 0）。
+    /// </summary>
+    public bool IsMvpValid => (_value & 0x7C) == 0;
 
-## 规范文件
+    public static FrameStatus CreateValid(int statusLen)
+        => new((byte)(statusLen - 1));
 
-- `atelia/docs/StateJournal/rbf-format.md` — RBF 格式规范
-- `atelia/docs/StateJournal/rbf-interface.md` — RBF 接口规范
-- `atelia/docs/StateJournal/implementation-plan.md` — 实施计划（含详细任务描述）
+    public static FrameStatus CreateTombstone(int statusLen)
+        => new((byte)(0x80 | (statusLen - 1)));
 
----
+    public static FrameStatus FromByte(byte value) => new(value);
+}
+```
 
-## 输出目录
+### 2. RbfLayout.cs
 
-- 源码：`atelia/src/Rbf/`
-- 测试：`atelia/tests/Rbf.Tests/`
+更新 `CalculateFrameStatus` 方法使用新值。
+
+### 3. RbfFramer.cs / RbfScanner.cs
+
+- Writer：根据 PayloadLen 计算 StatusLen，使用 `CreateValid`/`CreateTombstone`
+- Reader：直接从 FrameStatus 读取 StatusLen，**删除枚举消歧逻辑**
+
+### 4. 测试文件
+
+更新测试用例以使用新的 FrameStatus 值。
 
 ---
 
 ## 验收标准
 
-- [x] T-P1-02: Frame 布局类型定义 + 测试 ✅
-- [x] T-P1-03: CRC32C 实现 + 测试（使用标准测试向量） ✅
-- [x] T-P1-04: IRbfFramer/Builder 实现 + 测试 ✅
-- [x] T-P1-05: IRbfScanner 实现 + 逆向扫描测试 ✅
-- [x] `dotnet build` 成功 ✅
-- [x] `dotnet test` 全部通过 ✅ (208 tests: 133 Rbf.Tests + 75 Analyzers.Style.Tests)
-- [x] Phase 1 质量门禁：RBF 读写测试 100% 通过 ✅
+- [ ] FrameStatus.cs 更新为新值定义 + 扩展方法
+- [ ] RbfLayout 使用新的 FrameStatus 创建方法
+- [ ] RbfScanner 简化：直接从 FrameStatus 读取 StatusLen
+- [ ] 所有测试通过（可能需要更新测试数据）
+- [ ] `dotnet build` 成功
+- [ ] `dotnet test` 全部通过
 
 ---
 
-## 完成情况
+## 收益
 
-**状态**: ✅ Phase 1 全部完成
-
-| 任务 ID | 名称 | 预估 | 实际 | 状态 | Handoff |
-|---------|------|------|------|------|---------|
-| T-P1-01 | Fence/常量定义 | 30m | 10m | ✅ | session-state.md |
-| T-P1-02 | Frame 布局与对齐 | 2h | 1h | ✅ | (merged) |
-| T-P1-03 | CRC32C 实现 | 1h | 30m | ✅ | (merged) |
-| T-P1-04 | IRbfFramer/Builder | 3h | 2h | ✅ | 2025-12-25-T-P1-04-rbf-framer-IMP.md |
-| T-P1-05 | IRbfScanner/逆向扫描 | 3h | 2h | ✅ | 2025-12-25-T-P1-05-IRbfScanner-IMP.md |
-
-**总计**: 预估 9h → 实际 5.5h
-
----
-
-## 汇报要求
-
-完成后请汇报：
-1. 各任务完成情况和实际用时
-2. 遇到的问题和解决方案
-3. 对实施计划/模板的改进建议
-4. Phase 1 整体测试通过情况
+1. **简化 Scanner**：删除枚举 + CRC 消歧逻辑
+2. **自描述格式**：FrameStatus 直接告知 StatusLen
+3. **规范对齐**：代码与 rbf-format.md v0.13 一致
 
 ---
 
 ## 备注
 
-这是首次**批量任务**派发，验证战术层自主调度能力。
+这是规范驱动开发的典型场景：
+1. Implementer 发现问题
+2. StandardsChair 做出决策并更新规范
+3. 战术层同步代码
 
-你可以：
-- 自己决定执行顺序
-- 自己决定是否委派给 Implementer
-- 遇到阻塞时可以请求战略层协助
-
-祝顺利！🚀
+完成后 Phase 1 才真正 finalize！
