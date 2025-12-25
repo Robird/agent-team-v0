@@ -14,6 +14,14 @@
 
 ## Immediate (新会话优先)
 
+- **StateJournal Review** (2025-12-26 监护人指示)
+  - **明日重点**：审视 MVP 核心实现，确保扎实优雅。代码质量优先于功能扩展
+  - **类型扩展**（待设计）：
+    - 字符串类型支持
+    - 类 JArray 的数组类型
+    - ⚠️ **功能边界问题**：提供怎样的功能边界？需要畅谈会探讨
+  - **发布策略**：目前自用，草稿态→稳定态。性能测试可后置（实现合理自然性能合理）
+
 - **StateJournal MVP v2 文档修订** ✅ **全部完成** (2025-12-19)
   - 任务板: `agent-team/task-board.md`
   - 畅谈记录: `agent-team/meeting/2025-12-19-secret-base-durableheap-mvp-v2-review.md`
