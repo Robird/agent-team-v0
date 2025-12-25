@@ -1,123 +1,89 @@
-# 任务: 起草 StateJournal MVP 实施计划 v0.1
+# 任务: 组织实施计划审阅畅谈会
 
 ## 元信息
-- **任务 ID**: T-20251225-02
-- **类型**: 起草
+- **任务 ID**: T-20251225-03
+- **类型**: 畅谈会
 - **优先级**: P0
-- **预计时长**: 45-60 分钟
-- **状态**: ✅ 已完成
-- **完成时间**: 2025-12-25
-- **结果文件**: [task-result.md](task-result.md)
+- **预计时长**: 30-45 分钟
 
 ---
 
 ## 背景
 
-T-20251225-01 审计完成，确认规范质量高（80 条款，5 阶段依赖图）。现在需要将审计结果转化为可执行的实施计划。
+实施计划 v0.1 已起草完成（24 个任务，44-58h），现需组织参谋组审阅，发现潜在问题并产出 v0.2。
 
 ---
 
 ## 目标
 
-创建 `atelia/docs/StateJournal/implementation-plan.md`，包含：
+组织一次畅谈会，邀请 Advisor-Claude 和 Advisor-GPT 审阅实施计划，产出：
 
-1. **实施阶段定义**：基于审计的 Phase 0-5 划分
-2. **任务清单**：每个 Phase 的具体任务，粒度为 1-4 小时
-3. **runSubagent 调用模板**：每个任务的 Implementer 调用参数
-4. **验收标准**：每个任务对应的测试/验收点
+1. **问题清单**：发现的任务划分、依赖、验收标准等问题
+2. **改进建议**：针对每个问题的具体修改建议
+3. **v0.2 修订**：根据共识直接更新 implementation-plan.md
 
 ---
 
 ## 输入文件
 
-- `agent-team/handoffs/task-result.md` — 审计结果（条款清单 + 依赖图）
-- `atelia/docs/StateJournal/mvp-design-v2.md` — 主规范
-- `atelia/docs/StateJournal/mvp-test-vectors.md` — 测试向量（如存在）
-- `atelia/docs/StateJournal/rbf-format.md` — RBF 格式规范
-- `atelia/docs/StateJournal/rbf-interface.md` — RBF 接口规范
+- `atelia/docs/StateJournal/implementation-plan.md` — 待审阅的实施计划 v0.1
+- `agent-team/handoffs/task-result.md` — T-20251225-01 审计结果（参考）
 
 ---
 
-## 输出格式
+## 畅谈会配置
 
-```markdown
-# StateJournal MVP 实施计划
-
-> 版本: 0.1
-> 创建: 2025-12-25
-> 状态: 草案
-
-## 1. 概述
-<简要说明实施目标和方法>
-
-## 2. 实施阶段
-
-### Phase 1: RBF Layer 0
-- 目标: ...
-- 预估工时: ...
-- 前置依赖: ...
-
-### Phase 2: ...
-（以此类推）
-
-## 3. 任务清单
-
-| 任务 ID | Phase | 名称 | 预估 | 依赖 | 条款覆盖 | 验收标准 |
-|---------|-------|------|------|------|----------|----------|
-| T-01 | 1 | ... | 2h | — | [F-FENCE-*] | 测试通过 |
-
-## 4. runSubagent 调用模板
-
-### T-01: <任务名>
-
-（YAML 格式的调用参数）
-
-## 5. 质量门禁
-
-| 阶段 | 门禁条件 |
-|------|----------|
-| Phase 1 完成 | RBF 读写测试 100% 通过 |
-| ... | ... |
-
-## 附录: 条款-任务映射
-（可选：反向索引，便于追踪）
+```yaml
+taskTag: "#review"
+chatroomFile: "agent-team/meeting/2025-12-25-implementation-plan-review.md"
+participants:
+  - Advisor-Claude  # 任务粒度、依赖链、概念完整性
+  - Advisor-GPT     # 条款对齐、验收标准可测性
 ```
 
----
+### 审阅焦点
 
-## 约束
+请参谋们重点关注：
 
-- **篇幅控制**：如果某个 Phase 内容过多，可以拆分到独立文件（如 `implementation-plan-phase1.md`）
-- **粒度**：每个任务 1-4 小时，可独立验收
-- **测试优先**：每个任务必须有对应的验收标准
+1. **任务粒度**：1-4h 是否合适？有没有需要拆分/合并的？
+2. **依赖关系**：有没有遗漏的依赖？有没有可以并行的任务？
+3. **验收标准**：每个任务的验收标准是否可测试？
+4. **runSubagent 模板**：3 个示例是否足够清晰？格式是否需要调整？
+5. **风险点**：哪些任务可能比预估更复杂？
 
 ---
 
 ## 执行方式
 
-建议：
-1. 先根据审计结果的 Phase 划分，列出每个 Phase 的任务
-2. 为每个任务填写条款覆盖和验收标准
-3. 编写 runSubagent 调用模板（可以先写 2-3 个示例，后续补充）
+按照 `agent-team/recipe/jam-session-guide.md` 组织畅谈会：
 
-如果发现规范有遗漏，可以在报告中记录，不必立即修复。
+1. 创建聊天室文件
+2. 写开场白
+3. 依次邀请 Advisor-Claude 和 Advisor-GPT 发言
+4. 汇总共识，修订 implementation-plan.md
+5. 更新版本号为 v0.2
 
 ---
 
 ## 完成标准
 
-- [ ] 创建 `implementation-plan.md` 文件
-- [ ] 包含 Phase 1-5 的任务划分
-- [ ] 至少有 10 个具体任务定义
-- [ ] 至少有 3 个 runSubagent 调用模板示例
+- [ ] 创建畅谈会记录文件
+- [ ] Advisor-Claude 完成发言
+- [ ] Advisor-GPT 完成发言
+- [ ] 汇总共识，更新 implementation-plan.md 为 v0.2
 - [ ] 结果写入 `task-result.md`
 
 ---
 
 ## 备注
 
-这是实施计划的 v0.1 草案，后续会通过畅谈会审阅和迭代。不必追求完美，重点是：
+这是双会话自激振荡的第三次迭代！监护人扮演调度器角色，验证机制可行性。
 
-1. **结构完整**：覆盖所有 Phase
-2. **示例充分**：让 Implementer 看懂怎么用
-3. **可迭代**：留出修订空间
+完成后请在 Response 末尾使用标准格式请求转发：
+
+```markdown
+---
+## 📤 请转发至战略层会话
+
+{汇报内容}
+```
