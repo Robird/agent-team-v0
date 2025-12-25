@@ -1,107 +1,115 @@
-# 任务: 完成 Phase 2 全部任务（核心类型与编码）
+# 任务: 完成 Phase 3 全部任务（DurableDict 实现）
 
 ## 元信息
-- **任务 ID**: T-20251225-06 (批量任务)
-- **Phase**: 2 (核心类型与编码)
+- **任务 ID**: T-20251226-01 (批量任务)
+- **Phase**: 3 (DurableDict 实现)
 - **类型**: 批量实施
 - **优先级**: P0
-- **预计时长**: 2-3 小时（基于 Phase 1 效率）
+- **预计时长**: 2-3 小时（基于 Phase 1/2 效率）
 
 ---
 
 ## 背景
 
-Phase 1 (RBF Layer 0) 已完成，157 个测试全部通过！
+Phase 1 + Phase 2 已完成，380 个测试全部通过！
 
-现在进入 Phase 2，实现 StateJournal 的核心类型和编码。
+现在进入 Phase 3，实现 StateJournal 的核心容器类型 DurableDict。
 
 ---
 
 ## 目标
 
-完成 Phase 2 全部 6 个任务，输出到 `atelia/src/StateJournal/Core/`。
+完成 Phase 3 全部 6 个任务，输出到 `atelia/src/StateJournal/Objects/`。
 
 ---
 
 ## 任务清单
 
-| 任务 ID | 名称 | 预估 | 条款覆盖 | 验收标准 |
-|---------|------|------|----------|----------|
-| T-P2-00 | 错误类型定义 | 0.5h | `*-REJECT`, `*-FAILFAST` | `StateJournalError` 继承 `AteliaError` |
-| T-P2-01 | Address64/Ptr64 | 1h | `[F-ADDRESS64-*]`, `[F-PTR64-WIRE-FORMAT]` | 对齐测试 `value % 4 == 0` |
-| T-P2-02 | VarInt 编解码 | 2h | `[F-VARINT-CANONICAL-ENCODING]` | Canonical 编码测试通过 |
-| T-P2-03 | FrameTag 位段编码 | 2h | `[F-FRAMETAG-STATEJOURNAL-BITLAYOUT]` | FRAMETAG-OK-* 通过 |
-| T-P2-04 | DurableObjectState 枚举 | 1h | `[A-OBJECT-STATE-*]` | 4 个枚举值 |
-| T-P2-05 | IDurableObject 接口 | 2h | `[A-HASCHANGES-O1-COMPLEXITY]` | 存在 test double |
+| 任务 ID | 名称 | 预估 | 条款覆盖 | 依赖 |
+|---------|------|------|----------|------|
+| T-P3-01 | DiffPayload 格式 | 3h | `[F-KVPAIR-HIGHBITS-RESERVED]`, `[S-DIFF-KEY-SORTED-UNIQUE]` | T-P2-02 |
+| T-P3-02 | ValueType 编码 | 2h | `[F-UNKNOWN-VALUETYPE-REJECT]` | T-P3-01 |
+| T-P3-03a | DurableDict 基础结构 | 2h | `[A-DURABLEDICT-API-SIGNATURES]`, `[S-DURABLEDICT-KEY-ULONG-ONLY]` | T-P2-05, T-P3-02 |
+| T-P3-03b | DurableDict 序列化集成 | 2h | `[S-POSTCOMMIT-WRITE-ISOLATION]` | T-P3-03a |
+| T-P3-04 | _dirtyKeys 机制 | 2h | `[S-DIRTYKEYS-TRACKING-EXACT]`, `[S-WORKING-STATE-TOMBSTONE-FREE]` | T-P3-03b |
+| T-P3-05 | DiscardChanges | 2h | `[A-DISCARDCHANGES-REVERT-COMMITTED]`, `[S-TRANSIENT-DISCARD-DETACH]` | T-P3-04 |
+
+**总预估**：13h
 
 ---
 
-## 规范文件
+## 规范参考
 
-- `atelia/docs/StateJournal/mvp-design-v2.md` — 主规范
-- `atelia/docs/StateJournal/implementation-plan.md` — 实施计划（含详细条款映射）
+- `atelia/docs/StateJournal/mvp-design-v2.md` §4 DurableDict
+- `atelia/docs/StateJournal/implementation-plan.md` Phase 3 详情
+
+---
+
+## 核心概念
+
+### DurableDict 双字典模型
+
+```
+┌─────────────────────────────────────────────┐
+│ DurableDict<TValue>                         │
+├─────────────────────────────────────────────┤
+│ _committed: Dictionary<ulong, TValue?>      │  ← 已提交状态
+│ _working: Dictionary<ulong, TValue?>        │  ← 工作副本
+│ _dirtyKeys: HashSet<ulong>                  │  ← 脏键追踪
+├─────────────────────────────────────────────┤
+│ Get(key) → 先查 _working，再查 _committed   │
+│ Set(key, value) → 写 _working + 记录脏键    │
+│ Remove(key) → 写 null + 记录脏键            │
+├─────────────────────────────────────────────┤
+│ WritePendingDiff() → 序列化 _dirtyKeys      │
+│ OnCommitSucceeded() → 合并到 _committed     │
+│ DiscardChanges() → 清空 _working + 脏键     │
+└─────────────────────────────────────────────┘
+```
+
+### DiffPayload 格式
+
+```
+DiffPayload := PairCount (VarInt) + KVPair*
+
+KVPair := Key (VarUInt) + ValueType (1 byte) + Value (变长)
+
+ValueType:
+  0x00 = Tombstone (删除标记，无 Value)
+  0x01 = VarInt
+  0x02 = Ptr64
+  0x03 = ObjRef
+```
 
 ---
 
 ## 输出目录
 
-- 源码：`atelia/src/StateJournal/Core/`
-- 测试：`atelia/tests/StateJournal.Tests/Core/`
-
-**注意**：需要先创建 `Atelia.StateJournal` 项目骨架（如尚不存在）。
-
----
-
-## 项目结构建议
-
-```
-atelia/src/StateJournal/
-├── StateJournal.csproj      ← 新建
-├── Core/
-│   ├── StateJournalError.cs  ← T-P2-00
-│   ├── Address64.cs          ← T-P2-01
-│   ├── Ptr64.cs              ← T-P2-01
-│   ├── VarInt.cs             ← T-P2-02
-│   ├── StateJournalFrameTag.cs ← T-P2-03
-│   ├── DurableObjectState.cs ← T-P2-04
-│   └── IDurableObject.cs     ← T-P2-05
-```
-
----
-
-## 依赖关系
-
-```
-Atelia.Primitives ←── Atelia.Rbf ←── Atelia.StateJournal
-                      (Phase 1)      (Phase 2+)
-```
-
----
-
-## 执行策略
-
-你可以：
-1. 自行实现简单任务（T-P2-00, T-P2-04）
-2. 委派 Implementer 处理复杂任务（T-P2-02, T-P2-03, T-P2-05）
-3. 并行执行无依赖任务
-
-**建议执行顺序**：
-1. T-P2-00（错误类型）— 被所有其他任务依赖
-2. T-P2-01（Address64）— 被 T-P2-03 依赖
-3. T-P2-04（枚举）— 被 T-P2-05 依赖
-4. T-P2-02（VarInt）— 独立
-5. T-P2-03（FrameTag）— 依赖 T-P2-01
-6. T-P2-05（IDurableObject）— 依赖 T-P2-04
+- 源码：`atelia/src/StateJournal/Objects/`
+- 测试：`atelia/tests/StateJournal.Tests/Objects/`
 
 ---
 
 ## 验收标准
 
-- [ ] StateJournal 项目骨架创建
-- [ ] T-P2-00 ~ T-P2-05 全部完成
-- [ ] `dotnet build` 成功
-- [ ] `dotnet test` 全部通过
-- [ ] Phase 2 质量门禁：所有条款覆盖
+| 任务 | 验收标准 |
+|------|----------|
+| T-P3-01 | DiffPayload 往返序列化测试通过；Key 升序唯一 |
+| T-P3-02 | 未知 ValueType reject；所有类型往返测试通过 |
+| T-P3-03a | API 签名匹配规范；Set/Get/Remove 基础测试通过 |
+| T-P3-03b | WritePendingDiff 生成正确 payload；OnCommitSucceeded 追平状态 |
+| T-P3-04 | `HasChanges == (_dirtyKeys.Count > 0)`；Get 不污染脏键 |
+| T-P3-05 | Persistent 对象重置测试通过；Transient 对象 Detach 测试通过 |
+
+---
+
+## 执行策略建议
+
+1. **T-P3-01 + T-P3-02** 可以一起做（序列化基础）
+2. **T-P3-03a** 是 DurableDict 骨架
+3. **T-P3-03b + T-P3-04 + T-P3-05** 是状态管理
+
+可以委派 Implementer 处理复杂的序列化逻辑。
 
 ---
 
@@ -110,13 +118,13 @@ Atelia.Primitives ←── Atelia.Rbf ←── Atelia.StateJournal
 完成后请汇报：
 1. 各任务完成情况和实际用时
 2. 新增源文件和测试文件清单
-3. 测试统计
-4. 遇到的问题（如有）
+3. 测试统计（累计应 > 400）
+4. 遇到的问题或规范模糊点（如有）
 
 ---
 
 ## 备注
 
-Phase 1 预估 9-12h，实际 ~3h。Phase 2 预估 8.5h，期待类似效率！
+Phase 3 是 MVP 的核心——DurableDict 是所有持久化对象的基础。
 
-祝顺利！🚀
+保持前两个 Phase 的效率！🚀
