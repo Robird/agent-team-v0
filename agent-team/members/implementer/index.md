@@ -29,7 +29,7 @@
 
 | 项目 | 状态 | 最后更新 | 备注 |
 |------|------|----------|------|
-| StateJournal | RBF 命名重构完成 ✅ 文档瘦身完成 ✅ | 2025-12-22 | Layer 0/1 分离完成 |
+| StateJournal | Phase 3 完成 ✅ | 2025-12-26 | P2: 基础类型 / P3: DiffPayload+DurableDict |
 | DocUI | MUD Demo 待实现 | 2025-12-15 | MVP-0 阶段规划完成 |
 | Atelia.Primitives | 基础类型库完成 ✅ | 2025-12-21 | AteliaResult/Error 体系 |
 | PipeMux | 管理命令实现完成 ✅ | 2025-12-09 | SDK 模式迁移完成 |
@@ -97,6 +97,38 @@
     - 保留教学性 ASCII：加 `(Informative / Illustration)` 标注
     - FrameTag 位布局：改为 Visual Table + blockquote 端序说明
     - 时序图：改用 Mermaid sequenceDiagram（`participant` / `loop` / `Note over`）
+
+12. **VarInt 编码实现**（2025-12-25, T-P2-02）
+    - Canonical 校验：解码完成后统一验证 `bytesConsumed == GetVarUIntLength(result)`
+    - 第 10 字节特殊处理：uint64 前 9 字节覆盖 63 bit，第 10 字节只能有 1 bit 有效（0x00/0x01）
+    - ref struct lambda 限制：测试异常需改用 try-catch 而非 FluentAssertions
+
+13. **Address64/Ptr64 复用策略**（2025-12-25, T-P2-01）
+    - 复用优先：Rbf 层已有实现，StateJournal 层只需扩展（`Address64Extensions.TryFromOffset`）
+    - global using 限制：类型别名只在定义项目内生效，测试项目需本地定义
+    - 跨层依赖：返回 Result 的方法放在 StateJournal 层作为扩展（Rbf 不依赖 Primitives）
+
+14. **FrameTag 位段编码**（2025-12-25, T-P2-03）
+    - 解释器模式：RBF 层保留 `FrameTag(uint)`，StateJournal 层提供解释器（扩展方法）
+    - 位段公式：`FrameTag = (SubType << 16) | RecordType`
+    - 验证优先级：先检 RecordType 合法性，再根据 RecordType 决定是否检 SubType/ObjectKind
+
+15. **IDurableObject 接口设计**（2025-12-25, T-P2-05）
+    - HasChanges 语义：Detached 状态返回 false（"无法访问" ≠ "有变更"）
+    - DiscardChanges 幂等：Clean/Detached 状态调用是 No-op
+    - test double 技巧：`_wasTransient` 字段追踪历史状态
+
+16. **DiffPayload 编解码**（2025-12-26, T-P3-01/02）
+    - 两阶段 Writer：收集阶段 + 序列化阶段（先写 PairCount）
+    - ref struct 泛型限制：`AteliaResult<ReadOnlySpan<byte>>` 非法，改用 `out` 参数
+    - Key delta 唯一性：delta=0 意味着重复 key，Reader 检测并拒绝
+    - stackalloc 循环警告：CA2014，将 buffer 声明移到循环外
+
+17. **DurableDict 双字典模型**（2025-12-26, T-P3-03a/04/05）
+    - Remove 无 tombstone：用 `_removedFromCommitted` 集合追踪删除的 Committed 键
+    - Set 恢复语义：Remove 后 Set 同键需从 `_removedFromCommitted` 移除
+    - `_dirtyKeys` 精确追踪：`HasChanges ⟺ _dirtyKeys.Count > 0`
+    - DiscardChanges 状态机：四种状态四种行为（Clean→Clean, PersistentDirty→Clean, TransientDirty→Detached, Detached→throw）
 
 ### 经验教训
 
@@ -337,6 +369,7 @@ agent-team/archive/members/implementer/
 
 ## 最后更新
 
+- **2025-12-26**: Memory Palace — 处理了 8 条便签（Phase 2&3 实现洞见：VarInt/Address64/FrameTag/IDurableObject/DiffPayload/DurableDict）
 - **2025-12-25**: Memory Palace — 处理了 4 条便签（StatusLen根因、逆向扫描、Builder实现、ASCII art修订）
 - **2025-12-24**: Memory Palace — 处理了 2 条便签（文档精简技巧、表格合并策略）
 - **2025-12-23**: Memory Maintenance — 从 1903 行压缩到 ~350 行，归档详细记录到 archive/

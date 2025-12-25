@@ -4,6 +4,107 @@
 
 ---
 
+## 归档 2025-12-26
+
+### 便签 2025-12-25 23:58
+
+**T-P2-02 VarInt 实现洞见**
+
+1. Canonical 校验：解码完成后统一验证 `bytesConsumed == GetVarUIntLength(result)`
+2. 第 10 字节特殊处理：uint64 前 9 字节覆盖 63 bit，第 10 字节只能有 1 bit 有效
+3. ref struct lambda 限制：测试异常需改用 try-catch
+
+**处理结果**：APPEND 到 index.md 方法论 #12
+
+---
+
+### 便签 2025-12-25 11:00
+
+**T-P2-01 Address64/Ptr64 实现洞见**
+
+1. 复用优先：Rbf 层已有实现，StateJournal 层只需扩展
+2. global using 限制：类型别名只在定义项目内生效
+3. 跨层依赖：返回 Result 的方法放在 StateJournal 层
+
+**处理结果**：APPEND 到 index.md 方法论 #13
+
+---
+
+### 便签 2025-12-25 17:30
+
+**T-P2-03 FrameTag 位段编码实现洞见**
+
+1. 解释器模式：StateJournal 层提供解释器扩展方法
+2. 位段公式：`FrameTag = (SubType << 16) | RecordType`
+3. 验证优先级：先检 RecordType，再检 SubType/ObjectKind
+
+**处理结果**：APPEND 到 index.md 方法论 #14
+
+---
+
+### 便签 2025-12-25 22:30
+
+**T-P2-05 IDurableObject 接口设计洞见**
+
+1. HasChanges 语义：Detached 状态返回 false
+2. DiscardChanges 幂等：Clean/Detached 状态是 No-op
+3. test double 技巧：`_wasTransient` 字段追踪历史状态
+
+**处理结果**：APPEND 到 index.md 方法论 #15 + 项目状态表 OVERWRITE（Phase 2 完成）
+
+---
+
+### 便签 2025-12-26 10:30
+
+**T-P3-01/02 DiffPayload 实现洞见**
+
+1. 两阶段 Writer：收集阶段 + 序列化阶段
+2. ref struct 泛型限制：改用 `out` 参数
+3. Key delta 唯一性：delta=0 拒绝
+4. stackalloc 循环警告：buffer 声明移到循环外
+
+**处理结果**：APPEND 到 index.md 方法论 #16
+
+---
+
+### 便签 2025-12-26 15:00
+
+**T-P3-03a DurableDict 双字典模型洞见**
+
+1. Remove 无 tombstone：用 `_removedFromCommitted` 集合追踪
+2. Set 恢复语义：需从 `_removedFromCommitted` 移除
+3. 延迟枚举检查：拆分为 getter + Core 方法
+4. 泛型构造函数类型问题
+
+**处理结果**：MERGE 到 index.md 方法论 #17（DurableDict 综合）
+
+---
+
+### 便签 2025-12-26 16:00
+
+**T-P3-04 _dirtyKeys 精确追踪洞见**
+
+1. 语义一致性：`HasChanges ⟺ _dirtyKeys.Count > 0`
+2. EqualityComparer<T>.Default 值比较
+3. Remove 两种情况处理
+4. 状态转换时机控制
+
+**处理结果**：MERGE 到 index.md 方法论 #17（DurableDict 综合）
+
+---
+
+### 便签 2025-12-26 17:30
+
+**T-P3-05 DiscardChanges 实现洞见**
+
+1. 状态机：四种状态四种行为
+2. 资源清理差异
+3. State 属性 Detached 后仍可读
+
+**处理结果**：MERGE 到 index.md 方法论 #17（DurableDict 综合）+ 项目状态表 OVERWRITE（Phase 3 完成）
+
+---
+
 ## 归档 2025-12-24
 
 ### 便签 2025-12-24 10:30
