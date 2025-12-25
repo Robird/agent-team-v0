@@ -1,136 +1,122 @@
-# 任务: 代码同步 rbf-format.md v0.14（FrameStatus 位域格式）
+# 任务: 完成 Phase 2 全部任务（核心类型与编码）
 
 ## 元信息
-- **任务 ID**: T-20251225-05
-- **类型**: 代码同步
+- **任务 ID**: T-20251225-06 (批量任务)
+- **Phase**: 2 (核心类型与编码)
+- **类型**: 批量实施
 - **优先级**: P0
-- **预计时长**: 30 分钟
+- **预计时长**: 2-3 小时（基于 Phase 1 效率）
 
 ---
 
 ## 背景
 
-Phase 1 实施过程中发现 StatusLen 歧义问题，战略层与监护人共同决策：
+Phase 1 (RBF Layer 0) 已完成，157 个测试全部通过！
 
-**rbf-format.md v0.12 → v0.14**
-
-FrameStatus 采用**位域格式**，Bit 7 = Tombstone，Bit 0-1 = StatusLen-1。
+现在进入 Phase 2，实现 StateJournal 的核心类型和编码。
 
 ---
 
-## 规范变更
+## 目标
 
-### 位域布局（SSOT）
+完成 Phase 2 全部 6 个任务，输出到 `atelia/src/StateJournal/Core/`。
 
-| Bit | 名称 | 说明 |
-|-----|------|------|
-| 7 | Tombstone | 0 = Valid，1 = Tombstone |
-| 6-2 | Reserved | 保留位，MVP MUST 为 0 |
-| 1-0 | StatusLen | 状态字节数减 1：`00`=1, `01`=2, `10`=3, `11`=4 |
+---
 
-### MVP 有效值
+## 任务清单
 
-| 值 | 二进制 | Tombstone | StatusLen |
-|----|--------|-----------|-----------|
-| `0x00` | `0b0000_0000` | 0 | 1 |
-| `0x01` | `0b0000_0001` | 0 | 2 |
-| `0x02` | `0b0000_0010` | 0 | 3 |
-| `0x03` | `0b0000_0011` | 0 | 4 |
-| `0x80` | `0b1000_0000` | 1 | 1 |
-| `0x81` | `0b1000_0001` | 1 | 2 |
-| `0x82` | `0b1000_0010` | 1 | 3 |
-| `0x83` | `0b1000_0011` | 1 | 4 |
+| 任务 ID | 名称 | 预估 | 条款覆盖 | 验收标准 |
+|---------|------|------|----------|----------|
+| T-P2-00 | 错误类型定义 | 0.5h | `*-REJECT`, `*-FAILFAST` | `StateJournalError` 继承 `AteliaError` |
+| T-P2-01 | Address64/Ptr64 | 1h | `[F-ADDRESS64-*]`, `[F-PTR64-WIRE-FORMAT]` | 对齐测试 `value % 4 == 0` |
+| T-P2-02 | VarInt 编解码 | 2h | `[F-VARINT-CANONICAL-ENCODING]` | Canonical 编码测试通过 |
+| T-P2-03 | FrameTag 位段编码 | 2h | `[F-FRAMETAG-STATEJOURNAL-BITLAYOUT]` | FRAMETAG-OK-* 通过 |
+| T-P2-04 | DurableObjectState 枚举 | 1h | `[A-OBJECT-STATE-*]` | 4 个枚举值 |
+| T-P2-05 | IDurableObject 接口 | 2h | `[A-HASCHANGES-O1-COMPLEXITY]` | 存在 test double |
 
-### 判断规则
+---
 
-```csharp
-bool IsTombstone(byte status) => (status & 0x80) != 0;
-bool IsValid(byte status) => (status & 0x80) == 0;
-int GetStatusLen(byte status) => (status & 0x03) + 1;
-bool IsMvpValid(byte status) => (status & 0x7C) == 0;  // Reserved bits must be zero
+## 规范文件
+
+- `atelia/docs/StateJournal/mvp-design-v2.md` — 主规范
+- `atelia/docs/StateJournal/implementation-plan.md` — 实施计划（含详细条款映射）
+
+---
+
+## 输出目录
+
+- 源码：`atelia/src/StateJournal/Core/`
+- 测试：`atelia/tests/StateJournal.Tests/Core/`
+
+**注意**：需要先创建 `Atelia.StateJournal` 项目骨架（如尚不存在）。
+
+---
+
+## 项目结构建议
+
+```
+atelia/src/StateJournal/
+├── StateJournal.csproj      ← 新建
+├── Core/
+│   ├── StateJournalError.cs  ← T-P2-00
+│   ├── Address64.cs          ← T-P2-01
+│   ├── Ptr64.cs              ← T-P2-01
+│   ├── VarInt.cs             ← T-P2-02
+│   ├── StateJournalFrameTag.cs ← T-P2-03
+│   ├── DurableObjectState.cs ← T-P2-04
+│   └── IDurableObject.cs     ← T-P2-05
 ```
 
 ---
 
-## 需要修改的文件
+## 依赖关系
 
-### 1. FrameStatus.cs
-
-```csharp
-/// <summary>
-/// RBF 帧状态标记（位域格式）。
-/// </summary>
-/// <remarks>
-/// 位布局：
-/// - Bit 7: Tombstone (0=Valid, 1=Tombstone)
-/// - Bit 6-2: Reserved (MUST be 0 for MVP)
-/// - Bit 1-0: StatusLen - 1
-/// </remarks>
-public readonly struct FrameStatus
-{
-    private readonly byte _value;
-
-    private FrameStatus(byte value) => _value = value;
-
-    public bool IsTombstone => (_value & 0x80) != 0;
-    public bool IsValid => (_value & 0x80) == 0;
-    public int StatusLen => (_value & 0x03) + 1;
-    public byte Value => _value;
-
-    /// <summary>
-    /// 检查是否为 MVP 合法值（保留位为 0）。
-    /// </summary>
-    public bool IsMvpValid => (_value & 0x7C) == 0;
-
-    public static FrameStatus CreateValid(int statusLen)
-        => new((byte)(statusLen - 1));
-
-    public static FrameStatus CreateTombstone(int statusLen)
-        => new((byte)(0x80 | (statusLen - 1)));
-
-    public static FrameStatus FromByte(byte value) => new(value);
-}
+```
+Atelia.Primitives ←── Atelia.Rbf ←── Atelia.StateJournal
+                      (Phase 1)      (Phase 2+)
 ```
 
-### 2. RbfLayout.cs
+---
 
-更新 `CalculateFrameStatus` 方法使用新值。
+## 执行策略
 
-### 3. RbfFramer.cs / RbfScanner.cs
+你可以：
+1. 自行实现简单任务（T-P2-00, T-P2-04）
+2. 委派 Implementer 处理复杂任务（T-P2-02, T-P2-03, T-P2-05）
+3. 并行执行无依赖任务
 
-- Writer：根据 PayloadLen 计算 StatusLen，使用 `CreateValid`/`CreateTombstone`
-- Reader：直接从 FrameStatus 读取 StatusLen，**删除枚举消歧逻辑**
-
-### 4. 测试文件
-
-更新测试用例以使用新的 FrameStatus 值。
+**建议执行顺序**：
+1. T-P2-00（错误类型）— 被所有其他任务依赖
+2. T-P2-01（Address64）— 被 T-P2-03 依赖
+3. T-P2-04（枚举）— 被 T-P2-05 依赖
+4. T-P2-02（VarInt）— 独立
+5. T-P2-03（FrameTag）— 依赖 T-P2-01
+6. T-P2-05（IDurableObject）— 依赖 T-P2-04
 
 ---
 
 ## 验收标准
 
-- [ ] FrameStatus.cs 更新为新值定义 + 扩展方法
-- [ ] RbfLayout 使用新的 FrameStatus 创建方法
-- [ ] RbfScanner 简化：直接从 FrameStatus 读取 StatusLen
-- [ ] 所有测试通过（可能需要更新测试数据）
+- [ ] StateJournal 项目骨架创建
+- [ ] T-P2-00 ~ T-P2-05 全部完成
 - [ ] `dotnet build` 成功
 - [ ] `dotnet test` 全部通过
+- [ ] Phase 2 质量门禁：所有条款覆盖
 
 ---
 
-## 收益
+## 汇报要求
 
-1. **简化 Scanner**：删除枚举 + CRC 消歧逻辑
-2. **自描述格式**：FrameStatus 直接告知 StatusLen
-3. **规范对齐**：代码与 rbf-format.md v0.13 一致
+完成后请汇报：
+1. 各任务完成情况和实际用时
+2. 新增源文件和测试文件清单
+3. 测试统计
+4. 遇到的问题（如有）
 
 ---
 
 ## 备注
 
-这是规范驱动开发的典型场景：
-1. Implementer 发现问题
-2. StandardsChair 做出决策并更新规范
-3. 战术层同步代码
+Phase 1 预估 9-12h，实际 ~3h。Phase 2 预估 8.5h，期待类似效率！
 
-完成后 Phase 1 才真正 finalize！
+祝顺利！🚀
