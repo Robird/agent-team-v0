@@ -67,13 +67,29 @@ T-P1-01 已完成（10 分钟），Phase 1 剩余 4 个任务。
 
 ## 验收标准
 
-- [ ] T-P1-02: Frame 布局类型定义 + 测试
-- [ ] T-P1-03: CRC32C 实现 + 测试（使用标准测试向量）
-- [ ] T-P1-04: IRbfFramer/Builder 实现 + 测试
-- [ ] T-P1-05: IRbfScanner 实现 + 逆向扫描测试
-- [ ] `dotnet build` 成功
-- [ ] `dotnet test` 全部通过
-- [ ] Phase 1 质量门禁：RBF 读写测试 100% 通过
+- [x] T-P1-02: Frame 布局类型定义 + 测试 ✅
+- [x] T-P1-03: CRC32C 实现 + 测试（使用标准测试向量） ✅
+- [x] T-P1-04: IRbfFramer/Builder 实现 + 测试 ✅
+- [x] T-P1-05: IRbfScanner 实现 + 逆向扫描测试 ✅
+- [x] `dotnet build` 成功 ✅
+- [x] `dotnet test` 全部通过 ✅ (208 tests: 133 Rbf.Tests + 75 Analyzers.Style.Tests)
+- [x] Phase 1 质量门禁：RBF 读写测试 100% 通过 ✅
+
+---
+
+## 完成情况
+
+**状态**: ✅ Phase 1 全部完成
+
+| 任务 ID | 名称 | 预估 | 实际 | 状态 | Handoff |
+|---------|------|------|------|------|---------|
+| T-P1-01 | Fence/常量定义 | 30m | 10m | ✅ | session-state.md |
+| T-P1-02 | Frame 布局与对齐 | 2h | 1h | ✅ | (merged) |
+| T-P1-03 | CRC32C 实现 | 1h | 30m | ✅ | (merged) |
+| T-P1-04 | IRbfFramer/Builder | 3h | 2h | ✅ | 2025-12-25-T-P1-04-rbf-framer-IMP.md |
+| T-P1-05 | IRbfScanner/逆向扫描 | 3h | 2h | ✅ | 2025-12-25-T-P1-05-IRbfScanner-IMP.md |
+
+**总计**: 预估 9h → 实际 5.5h
 
 ---
 
