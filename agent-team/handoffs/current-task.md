@@ -1,89 +1,133 @@
-# 任务: 组织实施计划审阅畅谈会
+# 任务: T-P1-01 Fence/常量定义
 
 ## 元信息
-- **任务 ID**: T-20251225-03
-- **类型**: 畅谈会
+- **任务 ID**: T-P1-01
+- **Phase**: 1 (RBF Layer 0)
+- **类型**: 实施
 - **优先级**: P0
-- **预计时长**: 30-45 分钟
+- **预计时长**: 1 小时
 
 ---
 
 ## 背景
 
-实施计划 v0.1 已起草完成（24 个任务，44-58h），现需组织参谋组审阅，发现潜在问题并产出 v0.2。
+这是 StateJournal MVP 的**首个编码任务**！
+
+RBF (Robust Binary Format) 是 StateJournal 的底层帧格式。Fence 是 RBF 的魔数，用于帧边界识别和崩溃恢复。
 
 ---
 
 ## 目标
 
-组织一次畅谈会，邀请 Advisor-Claude 和 Advisor-GPT 审阅实施计划，产出：
-
-1. **问题清单**：发现的任务划分、依赖、验收标准等问题
-2. **改进建议**：针对每个问题的具体修改建议
-3. **v0.2 修订**：根据共识直接更新 implementation-plan.md
+实现 `RbfConstants.cs`，定义 RBF 格式的核心常量。
 
 ---
 
-## 输入文件
+## 规范依据
 
-- `atelia/docs/StateJournal/implementation-plan.md` — 待审阅的实施计划 v0.1
-- `agent-team/handoffs/task-result.md` — T-20251225-01 审计结果（参考）
+- `atelia/docs/StateJournal/rbf-format.md` §2 Fence
+
+**条款覆盖**：
+- `[F-FENCE-DEFINITION]`: Fence = 0x31464252 ('RBF1' in ASCII, little-endian)
+- `[F-GENESIS]`: 空文件以单个 Fence 开始
 
 ---
 
-## 畅谈会配置
+## 实现要求
 
-```yaml
-taskTag: "#review"
-chatroomFile: "agent-team/meeting/2025-12-25-implementation-plan-review.md"
-participants:
-  - Advisor-Claude  # 任务粒度、依赖链、概念完整性
-  - Advisor-GPT     # 条款对齐、验收标准可测性
+### 目标文件
+- `atelia/src/Rbf/RbfConstants.cs`
+
+### 代码结构
+
+```csharp
+namespace Atelia.Rbf;
+
+/// <summary>
+/// RBF (Robust Binary Format) 核心常量定义。
+/// </summary>
+public static class RbfConstants
+{
+    /// <summary>
+    /// RBF 魔数 "RBF1" 的 little-endian 表示。
+    /// 用于帧边界识别和崩溃恢复时的重同步。
+    /// </summary>
+    /// <remarks>
+    /// ASCII: 'R'=0x52, 'B'=0x42, 'F'=0x46, '1'=0x31
+    /// Little-endian uint32: 0x31464252
+    /// </remarks>
+    public const uint Fence = 0x31464252;
+
+    /// <summary>
+    /// Fence 的字节序列表示（用于写入和扫描）。
+    /// </summary>
+    public static ReadOnlySpan<byte> FenceBytes => [0x52, 0x42, 0x46, 0x31];
+
+    /// <summary>
+    /// Fence 的字节长度。
+    /// </summary>
+    public const int FenceLength = 4;
+}
 ```
 
-### 审阅焦点
+### 测试文件
+- `atelia/tests/Rbf.Tests/RbfConstantsTests.cs`
 
-请参谋们重点关注：
+### 测试用例
 
-1. **任务粒度**：1-4h 是否合适？有没有需要拆分/合并的？
-2. **依赖关系**：有没有遗漏的依赖？有没有可以并行的任务？
-3. **验收标准**：每个任务的验收标准是否可测试？
-4. **runSubagent 模板**：3 个示例是否足够清晰？格式是否需要调整？
-5. **风险点**：哪些任务可能比预估更复杂？
+```csharp
+public class RbfConstantsTests
+{
+    [Fact]
+    public void Fence_HasCorrectValue()
+    {
+        Assert.Equal(0x31464252u, RbfConstants.Fence);
+    }
+
+    [Fact]
+    public void FenceBytes_MatchesFenceValue()
+    {
+        var bytes = RbfConstants.FenceBytes;
+        var fromBytes = BitConverter.ToUInt32(bytes);
+        Assert.Equal(RbfConstants.Fence, fromBytes);
+    }
+
+    [Fact]
+    public void FenceBytes_IsRBF1InAscii()
+    {
+        var bytes = RbfConstants.FenceBytes;
+        Assert.Equal((byte)'R', bytes[0]);
+        Assert.Equal((byte)'B', bytes[1]);
+        Assert.Equal((byte)'F', bytes[2]);
+        Assert.Equal((byte)'1', bytes[3]);
+    }
+
+    [Fact]
+    public void FenceLength_Is4()
+    {
+        Assert.Equal(4, RbfConstants.FenceLength);
+        Assert.Equal(RbfConstants.FenceLength, RbfConstants.FenceBytes.Length);
+    }
+}
+```
 
 ---
 
-## 执行方式
+## 验收标准
 
-按照 `agent-team/recipe/jam-session-guide.md` 组织畅谈会：
-
-1. 创建聊天室文件
-2. 写开场白
-3. 依次邀请 Advisor-Claude 和 Advisor-GPT 发言
-4. 汇总共识，修订 implementation-plan.md
-5. 更新版本号为 v0.2
-
----
-
-## 完成标准
-
-- [ ] 创建畅谈会记录文件
-- [ ] Advisor-Claude 完成发言
-- [ ] Advisor-GPT 完成发言
-- [ ] 汇总共识，更新 implementation-plan.md 为 v0.2
-- [ ] 结果写入 `task-result.md`
+- [ ] `RbfConstants.cs` 已创建，包含 Fence、FenceBytes、FenceLength
+- [ ] `RbfConstantsTests.cs` 已创建，包含 4 个测试用例
+- [ ] `dotnet build` 成功
+- [ ] `dotnet test` 全部通过
+- [ ] 代码符合项目编码规范（XML 文档注释）
 
 ---
 
 ## 备注
 
-这是双会话自激振荡的第三次迭代！监护人扮演调度器角色，验证机制可行性。
+这是首个编码任务，也是验证 runSubagent 模板在实际编码中效果的机会。
 
-完成后请在 Response 末尾使用标准格式请求转发：
-
-```markdown
----
-## 📤 请转发至战略层会话
-
-{汇报内容}
-```
+完成后请汇报：
+1. 实现是否顺利
+2. 模板是否需要调整
+3. 发现的任何问题
