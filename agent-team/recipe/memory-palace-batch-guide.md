@@ -89,6 +89,7 @@ prompt: |
 | DocOps | `agent-team/members/docops/` |
 | CodexReviewer | `agent-team/members/codex-reviewer/` |
 | TeamLeader | `agent-team/members/TeamLeader/` |
+| MemoryPalaceKeeper | `agent-team/members/MemoryPalaceKeeper/` |
 
 ---
 
