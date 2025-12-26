@@ -7,11 +7,15 @@
 
 ## 最近更新 (2025-12-26)
 
-**DurableDict 非泛型改造完成** 🎉 — 畅谈会 #2 部分批准后实施。`DurableDict<TValue>` → `DurableDict`，引入 `ObjectId` 类型，605 测试全部通过。
+**四场畅谈会全部完成** 🎉 — StateJournal MVP-2 设计阶段完成：
+- #1 AteliaResult 边界（已实施规范 v1.1）
+- #2 DurableDict API（非泛型改造完成）
+- #3 Detached 语义（O1 规范确定）
+- #4 诊断作用域（O6 方案文档化，待需要时实施）
 
-**L1 全量审阅完成** 🎉 — StateJournal 4 模块 60 条款审阅完成。54C/2V/4U (90% 符合率)。两个 Violations 已全部解决（V-1 代码修复、V-2 规范修订）。
+**代码状态**：606 测试全部通过（+1 HasChanges Detached 测试）
 
-**AteliaResult 规范 v1.1** — 畅谈会产出三分类失败表达规范：`bool+out` / `AteliaResult` / 异常。明确了 `[ATELIA-BOOL-OUT-WHEN]` 适用边界。
+**DurableDict 非泛型改造完成** 🎉 — `DurableDict<TValue>` → `DurableDict`，引入 `ObjectId` 类型。
 
 ---
 
