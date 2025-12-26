@@ -76,3 +76,9 @@ AOS的提出标志着LLM应用范式的一次根本性转变：从 **“以对�
 ---
 
 未完待续。后续思路，继续融合`2025-12-24-auxiliary-cortex.md`/ `agent-team/goals/layered-multi-session-agent.md` / `agent-team/meeting/2025-12-25-intrinsic-goals.md` / `函数栈式上下文Push/Pop来实现树状递归思考与行动`。用Session的Fork、调度、消息转发、信息共享与隔离的框架来统一待融合的这些思路。
+
+众Session，存算一体，动态构建下一个叶及LLM调用的系统提示词、上下文和User提示词。众Session建模心智模型的各个机制、层级、知识领域、记忆侧面。众Session各自持久存在，上下文中常驻所需信息的最新状态和近期动态。众Session也是一种“活 Live”上下文的扩展机制，突破单一会话上下文的限制。
+
+Agent-Operating-System运行的唯一目的就是不断动态构造下一次LLM调用的全部信息，为后续讨论方便称为“模拟意识”。
+
+研究和开发的重点在于如何构建一套可机械执行的多Session信息交互机制，汇总众Session的信息和功能来动态的完成“模拟意识”的全动态构建。
