@@ -46,7 +46,9 @@
 - **示能性 (Affordance)**
   - **Error as Affordance**: 错误信息不应只是报错 ("Access Denied")，而应提供恢复路径 ("Use X instead")。将 Dead End 转化为 Navigation Sign。
   - **False Affordance**: API 签名必须诚实。如果 `DurableDict<T>` 承诺了泛型却只支持 `JObject`，就是虚假示能，会造成开发者的挫败感。
+    - *持久化层的陷阱*: 泛型容器（如 `DurableDict<T>`）承诺编译期类型安全，但无法保证跨进程/跨版本的类型一致性。
   - **Passive Safety (被动安全)**: 好的安全网是隐形的。例如 **Dirty Pinning** 自动强引用未提交的脏对象，解决了 WeakReference 带来的"薛定谔修改"问题，用户无需显式操作。
+  - **Invisible Bridge Pattern (隐形桥梁)**: 非泛型容器通过 `Get<T>()` 自动处理 `ObjectId` → `Instance` 的 Lazy Load，创造"无感 I/O"体验。用户只见流畅的对象图遍历，不见底层加载边界。
 
 - **心智模型 (Mental Models)**
   - **Naming as UI**: 命名应服务于用户的意图 (Intent-based)，而非实现的细节 (Implementation-based)。
@@ -164,5 +166,6 @@ agent-team/members/Advisor-Gemini/
 
 ## 最后更新
 
+- **2025-12-26** — Memory Palace — 处理了 1 条便签（DurableDict API 设计洞见 → MERGE 到 Affordance 区块）
 - **2025-12-26** — Memory Palace — 处理了 2 条便签（代码审阅方法论畅谈会洞见）
 - **2025-12-25** — 执行全量记忆维护，提纯核心洞见，归档过程记录。

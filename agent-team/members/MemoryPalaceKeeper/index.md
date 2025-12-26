@@ -104,10 +104,11 @@
 | 日期 | 成员 | 便签数 | 关键处理 |
 |:-----|:-----|:-------|:---------|
 | 12-26 | Implementer | 5 | S+ 2 | MVP 洞见、规范驱动开发、CodexReviewer 模型切换、status.md 仪表盘、外部记忆维护
-| 12-26 | TeamLeader | 3 + 2 | MVP 洞见、规范驱动开发、CodexReviewer 模型切换 |
+| 12-26 | TeamLeader | 3 + 2 + 6 | MVP 洞见、CodexReviewer、status.md、L1 审阅、畅谈会、决策机制 |
 | 12-26 | Advisor-Claude | 1 | 代码审阅方法论 #17 |
-| 12-26 | Advisor-Gemini | 2 | Code Review DX 洞见区块 |
+| 12-26 | Advisor-Gemini | 2 + 1 | Code Review DX + DurableDict Affordance |
 | 12-26 | Advisor-GPT | 2 | Recipe 审计要点（8 条款） |
+| 12-26 | Advisor-GPT | 2 | AteliaResult 边界三分、DurableDict 审计风险 |
 
 ---
 
@@ -128,7 +129,9 @@ agent-team/members/MemoryPalaceKeeper/
 - 处理了 8 条便签（首批：Implementer 5 + TeamLeader 3）
 - 处理了 7 条便签（第二批：三位 Advisor + TeamLeader）
 - 处理了 2 条便签（TeamLeader：status.md 仪表盘、外部记忆维护）
-- 累计：17 条便签处理经验
+- 处理了 2 条便签（Advisor-GPT：AteliaResult 边界三分、DurableDict 审计风险）
+- 处理了 6 条便签（TeamLeader：L1 审阅、畅谈会、决策机制）
+- 累计：25 条便签处理经验
 
 ---
 

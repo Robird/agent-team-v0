@@ -141,3 +141,21 @@ RBF v0.12 变更（Pad→FrameStatus、1-4B、0x00/0xFF、全字节同值）会�
 **处理结果**：MERGE 到 index.md 核心洞见（与便签 1 合并）
 
 ---
+
+## 归档 2025-12-26 (第二批)
+
+### 便签 2025-12-26 19:40
+
+AteliaResult 边界讨论的规范化落点应是：把 §5.1 从"Result vs 异常"二分改为"bool+out vs Result vs 异常"三分，并将判定基准改写为可机械判定维度（是否需要诊断 payload / 失败原因是否对调用方等价为单一语义 / 是否涉及基础设施故障）。同时必须条款化 `Try-` 前缀与签名的约束，否则 `TryX(out)` 与 `TryX(): Result` 并存会导致审阅与调用方心智模型分叉。
+
+**处理结果**：APPEND 到 index.md 核心洞见（Knowledge-Discovery）
+
+---
+
+### 便签 2025-12-26 21:15
+
+DurableDict 议题的核心审计风险有三点：规范/审阅简报/实现之间存在 API 签名漂移（Result+Enumerate vs bool+out+Entries vs 泛型/非泛型）；ObjRef 与 Ptr64 在 payload 层可区分但若在 CLR 层都落到 `ulong` 会造成语义不可判定（未来引入透明 lazy load 会有 silent corruption 风险）；LazyRef 需要 Workspace，故"透明加载"应条款化为 Accessor 层能力而非 DurableDict 本体职责。
+
+**处理结果**：APPEND 到 index.md 核心洞见（Knowledge-Discovery）
+
+---

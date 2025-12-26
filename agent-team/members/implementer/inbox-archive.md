@@ -4,6 +4,26 @@
 
 ---
 
+## 归档 2025-12-26 (DurableDict 非泛型改造)
+
+### 便签 2025-12-26 18:30
+
+**DurableDict 非泛型改造完成**
+
+根据畅谈会 #2 决策，完成了 DurableDict 从泛型到非泛型的改造：
+
+1. **代码改动**：`DurableDict<TValue>` → `DurableDict`（非泛型），内部 `Dictionary<ulong, object?>`
+2. **新增 ObjectId 类型**：`readonly record struct ObjectId(ulong Value)` 避免与 `Ptr64` 语义混淆
+3. **VersionIndex 适配**：模式匹配 `ptr is ulong ulongValue` 提取值
+4. **测试适配**：`ToObjectDict<T>()` 辅助方法，605 测试通过
+5. **规范更新**：`[A-DURABLEDICT-API-SIGNATURES]` 条款改为非泛型签名
+
+**经验**：非泛型简化实现，但序列化需根据运行时类型选择 ValueType 编码
+
+**处理结果**：APPEND 到 index.md 方法论 #27
+
+---
+
 ## 归档 2025-12-26 (Phase 5 + MVP 完工)
 
 ### 便签 2025-12-26 14:30

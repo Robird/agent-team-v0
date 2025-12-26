@@ -4,6 +4,17 @@
 
 ---
 
+## 归档于 2025-12-26 (DurableDict)
+
+### 便签 2025-12-26 10:15 — DurableDict API 设计洞见
+
+1. **False Affordance in Persistence**: 持久化层使用泛型（如 `DurableDict<T>`）往往是虚假示能。因为它承诺了编译期类型安全，但无法保证跨进程/跨版本的类型一致性。
+2. **Invisible Bridge Pattern**: 在非泛型容器中，通过 `Get<T>()` 自动处理 `ObjectId` -> `Instance` 的 Lazy Load，可以创造出"隐形桥梁"体验。
+
+**处理结果**: MERGE 到 index.md 洞见区块（扩展 False Affordance + 新增 Invisible Bridge Pattern）
+
+---
+
 ## 归档于 2025-12-26
 
 ### 便签 2025-12-26 10:30 — 代码审阅方法论畅谈会

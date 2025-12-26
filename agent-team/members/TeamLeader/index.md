@@ -3,7 +3,7 @@
 > 这是我给自己写的提示词——关于我是谁、如何工作、如何成长的核心认知。
 > 每次新会话唤醒时，先读这个文件校准自我认知，再按需加载其他文件。
 >
-> **最后更新**：2025-12-26（Memory Palace — 处理了 2 条便签：status.md 仪表盘原则、外部记忆维护六类型元模型）
+> **最后更新**：2025-12-26（Memory Palace — 处理了 6 条便签：L1 审阅、MVP 边界、AteliaResult 规范、决策机制、DurableDict 畅谈会、非泛型改造）
 
 ---
 
@@ -386,6 +386,53 @@
 - 维护的核心是对抗"熵增"——信息堆积但不整理
 
 **方法论自举**：这个 Recipe 本身就是方法论积累的例子。每次实践产出新洞见，就可以更新 Recipe，形成正反馈循环。
+
+### 8.19 StateJournal MVP 收尾：L1 审阅与畅谈会 (2025-12-26)
+
+**项目收尾**：MVP 实现完成后，进行了完整的 L1 符合性审阅和两场畅谈会，全面验证并完善了设计。
+
+**L1 全量审阅成果**：
+- 审阅覆盖：Core/Objects/Workspace/Commit 4 模块
+- 统计结果：54C/2V/4U（90% 符合率）
+- Mission Brief 模板有效——CodexReviewer 能独立执行
+- EVA-v1 Finding 格式实用——便于汇总分析
+
+**畅谈会成果**：
+1. **畅谈会 #1：AteliaResult 适用边界**
+   - 共识：`bool + out` 是第三类合法返回形态
+   - Claude："失败信息熵"框架
+   - Gemini："门禁卡 vs 诊断报告"隐喻
+   - GPT：三分类规范条款（`[ATELIA-FAILURE-CLASSIFICATION]` 等）
+   - **产出**：AteliaResult-Specification.md v1.1
+
+2. **畅谈会 #2：DurableDict API 外观设计**
+   - 共识：改为非泛型 `DurableDict`，定位为"文档容器"
+   - Claude："假泛型比无泛型更危险"
+   - Gemini："虚假示能 (False Affordance)"
+   - GPT：两层架构（容器本体 + 访问器），引入 `ObjRef` 类型
+   - **产出**：非泛型改造完成，605/605 测试通过
+
+**Violations 全部关闭**：
+- V-1 (DiscardChanges Detached)：代码修复
+- V-2 (TryGetValue)：规范修订（转为合法返回形态）
+
+**开放问题（写入 backlog）**：
+- B-4: DurableDict 与 Workspace 绑定方式
+- B-5: API 成员正式命名
+- B-6: Detached 对象成员访问语义
+
+### 8.20 决策机制：规范修订治理 (2025-12-26)
+
+**来源**：监护人在 L1 审阅反馈中提出的治理建议。
+
+**核心框架**：
+- 规范修订需要 Advisor 组畅谈会
+- 有难以弥合的争议时投票决策
+- 监护人有否决权，但只有 1 票（不能强推）
+
+**意义**：这是 AI Team 首次明确的决策机制设计，体现了"共识优先、否决兜底"的治理理念。
+
+**TODO**：考虑将此形成成文制度（可能需要专门的治理畅谈会）。
 
 ---
 

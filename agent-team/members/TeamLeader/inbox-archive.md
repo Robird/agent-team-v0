@@ -4,6 +4,68 @@
 
 ---
 
+## 归档 2025-12-26 下午晚间（由 MemoryPalaceKeeper 处理）
+
+### 便签 1: L1 全量审阅完成 (2025-12-26 14:30)
+
+**内容摘要**：完成 StateJournal 4 模块 L1 符合性审阅（54C/2V/4U，90%）。发现 2 个 Violations，验证了 Mission Brief 模板和 EVA Finding 格式的有效性。
+
+**处理结果**：
+- 分类：State-Update
+- 操作：MERGE → index.md §8.19（StateJournal MVP 收尾）
+
+---
+
+### 便签 2: MVP 边界划分与畅谈会组织 (2025-12-26 15:30)
+
+**内容摘要**：创建 mvp-boundary.md，组织畅谈会 #1（AteliaResult 适用边界），三位顾问达成共识：`bool + out` 是第三类合法返回形态。
+
+**处理结果**：
+- 分类：State-Update + Knowledge-Discovery
+- 操作：MERGE → index.md §8.19（畅谈会成果部分）
+
+---
+
+### 便签 3: AteliaResult 规范修订已实施 (2025-12-26 16:00)
+
+**内容摘要**：完成 AteliaResult-Specification.md v1.1，新增三分类规范和命名约定条款。两个 Violations 全部关闭。
+
+**处理结果**：
+- 分类：State-Update
+- 操作：MERGE → index.md §8.19（Violations 关闭部分）
+
+---
+
+### 便签 4: 监护人提出决策机制建议 (2025-12-26 16:15)
+
+**内容摘要**：规范修订需 Advisor 组畅谈会，争议时投票，监护人有否决权但只有 1 票。
+
+**处理结果**：
+- 分类：Knowledge-Discovery
+- 操作：APPEND → index.md §8.20（决策机制：规范修订治理）
+
+---
+
+### 便签 5: 畅谈会 #2 DurableDict API 外观设计 (2025-12-26 16:45)
+
+**内容摘要**：三位顾问达成共识：改为非泛型 DurableDict（"假泛型比无泛型更危险"），两层架构设计，引入 ObjRef 类型。
+
+**处理结果**：
+- 分类：Knowledge-Discovery
+- 操作：MERGE → index.md §8.19（畅谈会 #2 部分）
+
+---
+
+### 便签 6: DurableDict 非泛型改造完成 (2025-12-26 17:15)
+
+**内容摘要**：完成非泛型改造，新增 ObjectId 类型，605/605 测试通过。写入 backlog 的开放问题：B-4/B-5/B-6。
+
+**处理结果**：
+- 分类：State-Update
+- 操作：MERGE → index.md §8.19（非泛型改造完成部分）
+
+---
+
 ## 归档 2025-12-26 晚间（由 MemoryPalaceKeeper 处理）
 
 ### 便签 1: status.md 重构完成 (2025-12-26 14:30)

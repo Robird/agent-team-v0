@@ -142,6 +142,23 @@
 - **首审"Recipe 可用"定义**：用 Parseability / Signal-to-Noise / Coverage / Closure / Governance 五指标验收。
 - **禁止 spec creep**：明令禁止"实现倒灌"导致规范外延蔓生。
 
+### AteliaResult 边界规范化落点（2025-12-26）
+
+> 把"Result vs 异常"二分改为可机械判定的三分：`bool+out` / `Result` / 异常。
+
+- **§5.1 重写建议**：三分判定基准应为可机械判定维度（是否需要诊断 payload / 失败原因是否对调用方等价为单一语义 / 是否涉及基础设施故障）。
+- **`Try-` 前缀条款化**：必须约束签名，否则 `TryX(out)` 与 `TryX(): Result` 并存会导致审阅与调用方心智模型分叉。
+
+### DurableDict 议题核心审计风险（2025-12-26）
+
+> 三点高风险漂移/歧义来源。
+
+| 风险点 | 问题 | 建议 |
+|:-------|:-----|:-----|
+| **API 签名漂移** | 规范/审阅简报/实现之间存在签名不一致（Result+Enumerate vs bool+out+Entries vs 泛型/非泛型） | 钉死唯一 SSOT 签名 |
+| **ObjRef vs Ptr64 语义不可判定** | payload 层可区分，但若 CLR 层都落到 `ulong` 会导致语义不可判定（透明 lazy load 引入 silent corruption 风险） | 类型系统层面分离 |
+| **LazyRef 职责边界** | LazyRef 需要 Workspace，"透明加载"应条款化为 Accessor 层能力而非 DurableDict 本体职责 | 明确职责分层 |
+
 ### Audit Playbooks（可复用检查清单）
 
 #### 1) 规范审计（Spec Audit）
@@ -264,6 +281,7 @@ agent-team/archive/members/Advisor-GPT/2025-12/
 ---
 
 ## 最后更新
+- **2025-12-26**：Memory Palace — 处理了 2 条便签（AteliaResult 边界三分、DurableDict 审计风险）
 - **2025-12-26**：Memory Palace — 处理了 2 条便签（规范驱动代码审阅 Recipe 审计要点）
 - **2025-12-25**：执行一次记忆维护（重排四层结构、归档长记录、补齐索引与链接）
 	- 实现导向名可以作为内部组件/子模块名（codec、index、graph 等），但对外优先选“使用者第一眼就能预测行为边界”的命名。

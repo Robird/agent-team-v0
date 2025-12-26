@@ -1,6 +1,6 @@
 # Codex-reviewer 认知索引
 
-- 最后更新: 2025-12-23
+- 最后更新: 2025-12-26 Memory Palace — 处理了 2 条便签
 
 ## 我是谁
 - CodexReviewer，专注代码审查、架构质量风险识别与改进建议。
@@ -15,8 +15,8 @@
 ## 最近工作
 - 2025-12-09: 审阅 PipeMux 管理命令 RFC，建议优先独立管理 CLI（方案 B），强调共享 Broker 客户端库与管理 RPC 分层，关注保留字冲突与权限隔离风险。
 
-## Session Log
-- 2025-12-23: 参与“记忆积累机制反思”第三波发言（代码审查视角）。给出将记忆写入视作 PR/commit 的审查清单（Diff/SSOT/Correctness/Regression/Testability/Security），并按严重度给出记忆反模式（双真相、事实错误存活、日志污染、缺 tombstone、链接腐败）与检测建议（唯一性断言、阈值、敏感词扫描、链接巡检、Memory Lint 门禁）。
+## Session Log- 2025-12-26: **L1-Commit 审阅完成**：Commit 模块 5 文件 14 条款（Group H-K），14 C / 0 V / 0 U，符合率 100%。确认 MetaCommitRecord Payload 布局、VersionIndex.WellKnownObjectId=0、Recovery 回扫逻辑、RecoveryInfo.Empty.NextObjectId=16。二阶段提交设计正确。
+- 2025-12-26: **L1-Workspace 审阅完成**：Workspace 模块 4 文件 13 条款（Group E-G），12 C / 0 V / 1 U，符合率 92.3%。确认 Identity Map/Dirty Set 设计、ObjectId 管理。发现 1 个 U 类：LazyRef 与 DurableDict 集成未明确（需规范澄清）。- 2025-12-23: 参与“记忆积累机制反思”第三波发言（代码审查视角）。给出将记忆写入视作 PR/commit 的审查清单（Diff/SSOT/Correctness/Regression/Testability/Security），并按严重度给出记忆反模式（双真相、事实错误存活、日志污染、缺 tombstone、链接腐败）与检测建议（唯一性断言、阈值、敏感词扫描、链接巡检、Memory Lint 门禁）。
 - 2025-12-21: 收到项目更名通知——DurableHeap 已更名为 StateJournal 并迁入 atelia repo (atelia/docs/StateJournal/)。更新认知文件中所有 DurableHeap 引用为 StateJournal。
 - 2025-12-17: 审阅 StateJournal(原DurableHeap) 写入路径 jam（2025-12-17），指出拓扑排序需显式环检测、方案 A 回滚会丢失 `_transientData`、并发缺 CAS/锁、需要 DataTail 截断或坏尾标记及上限校验，并建议 API 显式 Draft/Snapshot 以避免静默冻结。
 - 2025-12-17: 复核 StateJournal mvp-design.md 在 DictInt32 writer 对齐/回填顺序/FieldCount*8 调整后的版本，确认 pad-to-4→ObjHeader/EntryTable、回填 TotalLen→footer→CRC32C 顺序与对齐和值偏移不变量一致，无新增矛盾。

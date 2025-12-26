@@ -180,6 +180,13 @@
     - 测试项目命名空间冲突：Workspace 文件夹需用 type alias 解决
     - **Phase 1-5 全部完成，StateJournal.Tests 605/605 通过**
 
+27. **DurableDict 非泛型改造**（2025-12-26, 畅谈会 #2 决策）
+    - `DurableDict<TValue>` → `DurableDict`（非泛型），内部 `Dictionary<ulong, object?>`
+    - 新增 `ObjectId` 类型（`readonly record struct`）避免与 `Ptr64` 语义混淆
+    - VersionIndex 适配：模式匹配 `ptr is ulong ulongValue` 提取值
+    - 测试技巧：`ToObjectDict<T>()` 辅助方法处理类型转换
+    - **经验**：非泛型简化实现，但序列化需根据运行时类型选择 ValueType 编码
+
 ### 经验教训
 
 1. **varint 定义 SSOT 缺失事件**（2025-12-22）
@@ -419,6 +426,7 @@ agent-team/archive/members/implementer/
 
 ## 最后更新
 
+- **2025-12-26**: Memory Palace — 处理了 1 条便签（DurableDict 非泛型改造）
 - **2025-12-26**: Memory Palace — 处理了 5 条便签（Phase 5 完工：VersionIndex/MetaCommitRecord/FinalizeCommit/Recovery + 战术层协作反思）
 - **2025-12-26**: Memory Palace — 处理了 4 条便签（Phase 4 实现洞见：IdentityMap/DirtySet/CreateObject/LoadObject/LazyRef）
 - **2025-12-26**: Memory Palace — 处理了 8 条便签（Phase 2&3 实现洞见：VarInt/Address64/FrameTag/IDurableObject/DiffPayload/DurableDict）
