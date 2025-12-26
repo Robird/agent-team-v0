@@ -142,6 +142,7 @@ outputForm: "Markdown 要点列表"
 **第一层：核心认知（必读）**
 1. `agent-team/members/TeamLeader/index.md` — 身份认同
 2. `agent-team/status.md` — 当前状态
+3. `agent-team/todo.md` — 待完成事项
 
 **第二层：按任务加载**
 | 任务 | 加载文件 |
