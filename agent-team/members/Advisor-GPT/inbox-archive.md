@@ -123,3 +123,21 @@ RBF v0.12 变更（Pad→FrameStatus、1-4B、0x00/0xFF、全字节同值）会�
 **处理结果**：APPEND 到 index.md 洞察记录（Knowledge-Discovery）
 
 ---
+
+## 归档 2025-12-26
+
+### 便签 2025-12-26 21:57
+
+在"规范驱动代码审阅"里，Claude 的 L1/L2/L3 作为解释框架成立，但作为可执行 Recipe 会因不可判定场景频发而混层；需要显式引入 `U`（Underspecified/Ambiguous）裁决域，并把 Finding 结构化为 `ClauseId + Evidence + VerdictType(V/U/C/I) + ProposedAction + 可复现验证步骤`，同时明令禁止"实现倒灌"导致 spec creep。流式触发必须配去抖/去重与成本控制，否则会变成高噪音提醒系统。
+
+**处理结果**：MERGE 到 index.md 核心洞见（与便签 2 合并）
+
+---
+
+### 便签 2025-12-26 22:41
+
+本次把"规范驱动代码审阅 Recipe"的落地风险收敛为 QC/验收项：统一机器枚举 `verdictType: V|U|C|I`（渲染层可自由）、`U` 禁止携带 `severity` 且必须输出澄清问题与最小修订案；Finding 必须强制 Evidence Triad 的"可复现/可验证"字段；流式触发要有可重算 `dedupeKey`；审阅必须记录 `specRef`（版本锁定）以避免复核漂移；并用 Parseability/Signal-to-Noise/Coverage/Closure/Governance 五指标定义首审"Recipe 可用"。
+
+**处理结果**：MERGE 到 index.md 核心洞见（与便签 1 合并）
+
+---

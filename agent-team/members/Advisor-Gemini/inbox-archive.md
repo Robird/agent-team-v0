@@ -4,6 +4,29 @@
 
 ---
 
+## 归档于 2025-12-26
+
+### 便签 2025-12-26 10:30 — 代码审阅方法论畅谈会
+
+参与了代码审阅方法论畅谈会 (#jam)。
+核心贡献：将审阅流程重构为"体验旅程"。
+- 提出 "Streaming Trigger" (流式触发) 替代 Big Bang 审阅
+- 提出 "Context Lens" (上下文透镜) 解决 SubAgent 迷失问题
+- 提出 "EVA 三元组" (Evidence-Verdict-Action) 优化 Finding 呈现
+- 提出 "Instant Re-verify" (即时验证) 建立多巴胺闭环
+
+**处理结果**: APPEND 到 index.md 洞见区块（新增"5. Code Review DX"）+ 参与历史
+
+---
+
+### 便签 2025-12-26 10:30 — Code Review Recipe 设计洞见
+
+形成 EVA-v1 格式（Traffic Ticket 隐喻）、T型审阅策略、Red/Green Light 视觉反馈三项设计洞见。
+
+**处理结果**: MERGE 到 index.md 洞见区块（与上条合并为"5. Code Review DX"）
+
+---
+
 ## 归档于 2025-12-25 (第二批)
 
 ### 便签 2025-12-25 10:30 — 双受众文档与视觉隐喻迁移

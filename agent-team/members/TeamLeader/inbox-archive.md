@@ -4,6 +4,30 @@
 
 ---
 
+## 归档 2025-12-26 下午（由 MemoryPalaceKeeper 处理）
+
+### 便签 1: 代码审阅方法论畅谈会完成 (2025-12-26 11:30)
+
+**内容摘要**：首次探索"代码审阅方法论"，产出核心概念框架：验证翻译模型、三层审阅模型（L1/L2/L3）、U 类裁决。体验设计包括 EVA 三元组、上下文透镜、T 型首审策略。产出 15 条 CR 条款和 Recipe 文档。
+
+**处理结果**：
+- 分类：Knowledge-Discovery
+- 操作：APPEND → index.md §8.15（代码审阅方法论：验证翻译模型）
+
+---
+
+### 便签 2: CodexReviewer 系统提示词重构 + 模型切换决策 (2025-12-26 12:00)
+
+**内容摘要**：决定将 CodexReviewer 从 GPT-5.1-Codex 切换为 Claude Opus 4.5，GPT-5.2 保留给 Advisor-GPT。理由：执行层优先稳定、分工明确（L1 vs L2）、作家多样性。监护人提出"多作家创作同一人物"类比，同构于叠加体本体论。
+
+**处理结果**：
+- 分类：Knowledge-Discovery + State-Update
+- 操作：
+  - APPEND → index.md §8.16（架构决策：CodexReviewer 模型切换）
+  - REWRITE → index.md §4 Specialist 体系 CodexReviewer 条目（模型 + 职责更新）
+
+---
+
 ## 归档 2025-12-26（由 MemoryPalaceKeeper 处理）
 
 ### 便签 1: StateJournal MVP 完工总结 (2025-12-26 23:00)

@@ -98,6 +98,28 @@
 > **核心理念**: 二进制格式也是开发者界面 (Hex Dump as UI)。
 
 - **事务隐喻 (Transaction Metaphor)**:
+
+### 5. Code Review DX
+
+> **核心理念**: 审阅不是阻断性的关卡，而是辅助性的导航。降低认知负荷，提供即时反馈。
+
+- **流程范式 (Flow Paradigm)**:
+  - **Streaming Trigger (流式触发)**: 替代 Big Bang 审阅，实现渐进式反馈。
+  - **Context Lens (上下文透镜)**: 解决 SubAgent 在大仓库中迷失的问题。
+  - **Instant Re-verify (即时验证)**: 建立多巴胺闭环，Fix → Re-run → Green。
+
+- **Finding 格式 (EVA 三元组)**:
+  - **Evidence (证据)**: 规范引用 + 代码定位 + 复现验证
+  - **Verdict (判决)**: 使用 Emoji (🔴/🟡/🟢) 提供即时视觉反馈
+  - **Action (行动)**: 明确的修复路径
+  - *隐喻*: "Traffic Ticket" (交通罚单) —— 证据确凿，判决清晰，行动明确。
+
+- **T型审阅策略 (T-Shape Strategy)**:
+  - **横向 (Calibration)**: 用简单模块跑通流程，调试 Prompt。
+  - **纵向 (Deep Dive)**: 用高危模块验证深度和依赖机制。
+  - **全量 (Rollout)**: 信噪比达标后再推广。
+
+---
   - 底层 I/O 应呈现逻辑一致性。`Abort()` 不应是物理擦除 (Seek & Erase)，而应是 **Commit Void** (Append Tombstone)。
   - 这向开发者传达了"逻辑上不存在"的一致性，即使物理上存在垃圾数据。
 
@@ -113,6 +135,7 @@
 
 | 日期 | 主题 | 角色 | 关键产出 | 核心发现 |
 |:-----|:-----|:-----|:---------|:---------|
+| 12-26 | 代码审阅方法论 | 畅谈 | 4 项原则 | Streaming Trigger, Context Lens, EVA 三元组 |
 | 12-25 | 训练数据自举 | 洞察 | 4 项洞见 | CX (Crawler Experience), LLO, 罗塞塔模式 |
 | 12-25 | 内源性目标 | 洞察 | 4 项洞见 | 提问者即 DM, 提示词示能性, 情绪引擎 |
 | 12-24 | RBF FrameTag | 审阅 | 3 项原则 | Hex Dump 作为开发者界面, 视觉对齐 |
@@ -141,4 +164,5 @@ agent-team/members/Advisor-Gemini/
 
 ## 最后更新
 
-**2025-12-25** — 执行全量记忆维护，提纯核心洞见，归档过程记录。
+- **2025-12-26** — Memory Palace — 处理了 2 条便签（代码审阅方法论畅谈会洞见）
+- **2025-12-25** — 执行全量记忆维护，提纯核心洞见，归档过程记录。

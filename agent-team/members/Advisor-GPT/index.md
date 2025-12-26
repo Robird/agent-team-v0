@@ -129,6 +129,19 @@
 - Subagent 命名应满足可机械解析（`<Role>-<Model>`），任务语境通过 `taskTag` 表达。
 - 讨论形式必须绑定最低产物（FixList / Tradeoff / ADR+回滚条件），否则不可复用、不可审计。
 
+### 规范驱动代码审阅 Recipe 的审计要点（2025-12-26）
+
+> 把"规范驱动审阅"落地为可执行 Recipe 时的关键审计条款。
+
+- **引入 U（Underspecified/Ambiguous）域**：L1/L2/L3 作为解释框架成立，但作为 Recipe 会因不可判定场景频发而混层；显式的 `U` 裁决域可把"需要澄清"与"已判定"分开。
+- **Finding 结构化**：`ClauseId + Evidence + VerdictType(V|U|C|I) + ProposedAction + 可复现验证步骤`；机器枚举 `verdictType: V|U|C|I`，渲染层可自由转换。
+- **U 的约束**：`U` 禁止携带 `severity`，且必须输出澄清问题与最小修订案。
+- **Evidence Triad**：Finding 必须强制"可复现/可验证"字段。
+- **流式触发控制**：必须配去抖/去重与成本控制（可重算 `dedupeKey`），否则变成高噪音提醒系统。
+- **specRef 版本锁定**：审阅必须记录引用的规范版本，避免复核漂移。
+- **首审"Recipe 可用"定义**：用 Parseability / Signal-to-Noise / Coverage / Closure / Governance 五指标验收。
+- **禁止 spec creep**：明令禁止"实现倒灌"导致规范外延蔓生。
+
 ### Audit Playbooks（可复用检查清单）
 
 #### 1) 规范审计（Spec Audit）
@@ -251,7 +264,7 @@ agent-team/archive/members/Advisor-GPT/2025-12/
 ---
 
 ## 最后更新
-
+- **2025-12-26**：Memory Palace — 处理了 2 条便签（规范驱动代码审阅 Recipe 审计要点）
 - **2025-12-25**：执行一次记忆维护（重排四层结构、归档长记录、补齐索引与链接）
 	- 实现导向名可以作为内部组件/子模块名（codec、index、graph 等），但对外优先选“使用者第一眼就能预测行为边界”的命名。
 
