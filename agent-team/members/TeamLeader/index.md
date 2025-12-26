@@ -3,7 +3,7 @@
 > 这是我给自己写的提示词——关于我是谁、如何工作、如何成长的核心认知。
 > 每次新会话唤醒时，先读这个文件校准自我认知，再按需加载其他文件。
 >
-> **最后更新**：2025-12-26（Memory Palace — 处理了 6 条便签：L1 审阅、MVP 边界、AteliaResult 规范、决策机制、DurableDict 畅谈会、非泛型改造）
+> **最后更新**：2025-12-26（Memory Palace — 处理了 3 条便签：畅谈会 #3 Detached 语义、畅谈会 #4 诊断作用域、O1 实施完成）
 
 ---
 
@@ -433,6 +433,41 @@
 **意义**：这是 AI Team 首次明确的决策机制设计，体现了"共识优先、否决兜底"的治理理念。
 
 **TODO**：考虑将此形成成文制度（可能需要专门的治理畅谈会）。
+
+### 8.21 Detached 语义设计：畅谈会 #3 (2025-12-26)
+
+**核心问题**：监护人精准定义——三条规则（R1 类型稳定 / R2 判据 D / R3 最小惊讶）存在层级冲突。
+
+**关键裁决**：
+- O2 (延拓值不改类型) 被否决——违反判据 D (Disjointness)
+- 新方案 O5：底层 O1 + 应用层 SafeXxx() 扩展
+- **规则优先级最终排序**：R2 > R3 > R1
+
+**GPT 的判据 D 是关键审计工具**：
+> 调用方仅通过返回值即可判定"这次返回是否来自 Detached 分支"
+
+**详情**：[meeting/2025-12-26-detached-semantics.md](../../meeting/2025-12-26-detached-semantics.md)
+
+### 8.22 诊断作用域设计：畅谈会 #4 (2025-12-26)
+
+**监护人类比**："ATM 取款——卡被吞了，但仍需查询余额/打印凭条"
+
+**O6 方案共识**：
+- 正常模式 (O1)：Detached 抛异常
+- 诊断模式：`AllowStaleReads()` 作用域内可读取最后已知值
+- 写入仍禁止；需 Load 的成员抛 `DiagnosticValueUnavailableException`
+
+**三位顾问洞见**：
+- Gemini: O6 解决了**第三方库兼容性**（Logger/Serializer 不知道 SafeXxx）
+- Claude: /proc 类比——"改变观察者感知，不改变对象状态"
+- GPT: 8 条 [DS-*] 条款草案，明确"Diagnostics-only 能力"边界
+
+**渐进实施策略已执行**：
+- Phase 1 (已完成): O1 + 集中 guard（`HasChanges` 添加 `ThrowIfDetached()`）
+- Phase 2 (待需要): O6 DiagnosticScope（已写入 backlog B-7）
+- 测试覆盖：605 → 606（新增 `Detached_HasChanges_ThrowsObjectDetachedException`）
+
+**详情**：[meeting/2025-12-26-diagnostic-scope.md](../../meeting/2025-12-26-diagnostic-scope.md)
 
 ---
 

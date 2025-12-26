@@ -159,6 +159,42 @@
 | **ObjRef vs Ptr64 语义不可判定** | payload 层可区分，但若 CLR 层都落到 `ulong` 会导致语义不可判定（透明 lazy load 引入 silent corruption 风险） | 类型系统层面分离 |
 | **LazyRef 职责边界** | LazyRef 需要 Workspace，"透明加载"应条款化为 Accessor 层能力而非 DurableDict 本体职责 | 明确职责分层 |
 
+### Detached 延拓值与 DiagnosticScope 可判定性审计（2025-12-26）
+
+> 评估 Detached 对象的"延拓值"方案与 DiagnosticScope 设计的可审计性。
+
+#### D 判据（Disjointness）
+
+Detached "延拓值"若沿用原返回类型域（如 `bool=false`、`int=0`），会造成**值域碰撞**：调用方仅凭成员返回无法区分"Detached 特判值"与真实值，错误会静默扩散，且规范层面不可判定/不可审计。
+
+**D 判据**：调用方仅凭成员返回（不额外读状态、不靠约定）就能判定"该返回是否来自 Detached 分支"。
+
+| 延拓值方案 | 是否满足 D | 说明 |
+|:-----------|:-----------|:-----|
+| 原值域内（`false`/`0`/空集合） | ❌ | 与正常值域碰撞，不可判定 |
+| nullable / tagged union / Result | ✅ | 返回类型表达互斥分支 |
+| 显式 `SafeXxx/TryXxx` | ✅ | 降级策略外移为显式 API |
+
+若要让延拓值可进入 Normative 规范，**必须**让返回类型表达与正常值域互斥的 Detached 分支。否则应维持"语义成员 Detached 必抛 `ObjectDetachedException`"的 fail-fast 体系。
+
+#### DiagnosticScope（O6）的可判定性问题
+
+"诊断作用域（DiagnosticScope）"如果让 Detached 的语义成员在 scope 内返回最后已知值，则它在成员返回层面**必然不满足 D 判据**。
+
+要把它写成可审计规范，必须把它明确**降格为 Diagnostics-only capability**，并用硬条款钉死边界：
+
+- 禁止隐式 Load/IO
+- 禁止写入
+- LastKnownValue 的可判定定义
+- 无值则抛 `DiagnosticValueUnavailableException`（而非默认值）
+
+#### O6 工程成本的真实来源
+
+评估 O6（DiagnosticScope）相对 O1（默认 fail-fast）的工程成本时，`AsyncLocal + IDisposable` 并不是主要成本。主要成本来自：
+
+1. **触达点数量**：若 Detached 读取逻辑能集中在单点 guard，则 O6 只需改单点；若每个属性散落 `if (IsActive)`，O6 成本和漏改风险会指数上升。
+2. **可证明的边界与测试**：O6 必须证明"诊断读取不触发隐式 Load/IO"，这会把测试向量扩展到 async 流转、嵌套 scope、序列化/ToString 的反射路径——这些才是 O6 的真实增量工作量。
+
 ### Audit Playbooks（可复用检查清单）
 
 #### 1) 规范审计（Spec Audit）
@@ -281,6 +317,7 @@ agent-team/archive/members/Advisor-GPT/2025-12/
 ---
 
 ## 最后更新
+- **2025-12-26**：Memory Palace — 处理了 4 条便签（Detached 延拓值 D 判据、DiagnosticScope 可判定性、O6 工程成本）
 - **2025-12-26**：Memory Palace — 处理了 2 条便签（AteliaResult 边界三分、DurableDict 审计风险）
 - **2025-12-26**：Memory Palace — 处理了 2 条便签（规范驱动代码审阅 Recipe 审计要点）
 - **2025-12-25**：执行一次记忆维护（重排四层结构、归档长记录、补齐索引与链接）

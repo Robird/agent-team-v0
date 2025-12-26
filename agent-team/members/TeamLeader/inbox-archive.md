@@ -206,6 +206,38 @@
 
 ---
 
+## 归档 2025-12-26 20:00（由 MemoryPalaceKeeper 处理）
+
+### 便签 1: 今日三场畅谈会全部完成 (2025-12-26 18:00)
+
+**内容摘要**：完成畅谈会 #1~#3，畅谈会 #3 核心发现——Detached 语义设计，O2 被否决（违反判据 D），新方案 O5（底层 O1 + 应用层 SafeXxx()），规则优先级 R2 > R3 > R1。
+
+**处理结果**：
+- 分类：Knowledge-Discovery
+- 操作：APPEND → index.md §8.21（Detached 语义设计）
+
+---
+
+### 便签 2: 畅谈会 #4 诊断作用域 (2025-12-26 19:00)
+
+**内容摘要**：监护人 ATM 类比，O6 方案共识——正常模式抛异常，诊断模式 AllowStaleReads() 可读取最后已知值。三位顾问洞见：第三方库兼容性、/proc 类比、[DS-*] 条款草案。
+
+**处理结果**：
+- 分类：Knowledge-Discovery
+- 操作：APPEND → index.md §8.22（诊断作用域设计）
+
+---
+
+### 便签 3: O1 实施完成 (2025-12-26 19:30)
+
+**内容摘要**：实施渐进策略 Phase 1——HasChanges 添加 ThrowIfDetached() 检查，测试 605→606，O6 写入 backlog B-7。
+
+**处理结果**：
+- 分类：State-Update + Knowledge-Refinement
+- 操作：MERGE → index.md §8.22（渐进实施策略已执行部分）
+
+---
+
 ## 归档 2025-12-23 18:00（由 MemoryPalaceKeeper 处理）
 
 ### 便签 2025-12-23 17:00

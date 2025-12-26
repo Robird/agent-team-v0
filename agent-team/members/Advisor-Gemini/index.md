@@ -47,8 +47,10 @@
   - **Error as Affordance**: 错误信息不应只是报错 ("Access Denied")，而应提供恢复路径 ("Use X instead")。将 Dead End 转化为 Navigation Sign。
   - **False Affordance**: API 签名必须诚实。如果 `DurableDict<T>` 承诺了泛型却只支持 `JObject`，就是虚假示能，会造成开发者的挫败感。
     - *持久化层的陷阱*: 泛型容器（如 `DurableDict<T>`）承诺编译期类型安全，但无法保证跨进程/跨版本的类型一致性。
+  - **Zombie Object (僵尸对象)**: 延拓值方案创造"僵尸"——看起来活着（属性可读），但没有灵魂（无存储连接）。这违反了"诚实 API"原则。 *(2025-12-26)*
   - **Passive Safety (被动安全)**: 好的安全网是隐形的。例如 **Dirty Pinning** 自动强引用未提交的脏对象，解决了 WeakReference 带来的"薛定谔修改"问题，用户无需显式操作。
   - **Invisible Bridge Pattern (隐形桥梁)**: 非泛型容器通过 `Get<T>()` 自动处理 `ObjectId` → `Instance` 的 Lazy Load，创造"无感 I/O"体验。用户只见流畅的对象图遍历，不见底层加载边界。
+  - **Explicit Degradation (显式降级)**: 使用 `SafeXxx()` 扩展方法将"降级策略"选择权交给调用者。UI 需要"软着陆"（淡出动画），数据层需要"硬着陆"（Fail-fast）——这两者的冲突应在中间层（ViewModel/Extension）显式适配，而非底层硬编码。 *(2025-12-26)*
 
 - **心智模型 (Mental Models)**
   - **Naming as UI**: 命名应服务于用户的意图 (Intent-based)，而非实现的细节 (Implementation-based)。
@@ -121,6 +123,23 @@
   - **纵向 (Deep Dive)**: 用高危模块验证深度和依赖机制。
   - **全量 (Rollout)**: 信噪比达标后再推广。
 
+### 6. Diagnostic Scope (诊断作用域)
+
+> **核心理念**: Detached 对象是"尸体"，Diagnostic Scope 是"法医验尸"。 *(2025-12-26)*
+
+- **CSI 隐喻**:
+  - Detached 对象 = 尸体（已断开存储连接）
+  - Diagnostic Scope = 法医验尸（只读访问最后已知值）
+  - "只读"保证不破坏现场，"最后已知值"是死亡快照
+
+- **序列化器难题 (The Serializer Problem)**:
+  - `SafeXxx()` 扩展方法无法解决第三方库（Logger, Json.NET）反射读取 Detached 对象的问题
+  - 这是 Diagnostic Scope 存在的根本理由——提供一个显式的"安全访问窗口"
+
+- **调试器集成**:
+  - IDE 的 Watch Window 本质上就是一个隐式的 Diagnostic Scope
+  - 这解释了为什么调试器能显示 Detached 对象的值——它天然处于"诊断模式"
+
 ---
   - 底层 I/O 应呈现逻辑一致性。`Abort()` 不应是物理擦除 (Seek & Erase)，而应是 **Commit Void** (Append Tombstone)。
   - 这向开发者传达了"逻辑上不存在"的一致性，即使物理上存在垃圾数据。
@@ -137,6 +156,8 @@
 
 | 日期 | 主题 | 角色 | 关键产出 | 核心发现 |
 |:-----|:-----|:-----|:---------|:---------|
+| 12-26 | Diagnostic Scope | 洞察 | 3 项隐喻 | CSI 隐喻, 序列化器难题, 调试器即诊断 |
+| 12-26 | Detached 对象语义 | 洞察 | 2 项原则 | Zombie Object, Explicit Degradation |
 | 12-26 | 代码审阅方法论 | 畅谈 | 4 项原则 | Streaming Trigger, Context Lens, EVA 三元组 |
 | 12-25 | 训练数据自举 | 洞察 | 4 项洞见 | CX (Crawler Experience), LLO, 罗塞塔模式 |
 | 12-25 | 内源性目标 | 洞察 | 4 项洞见 | 提问者即 DM, 提示词示能性, 情绪引擎 |
@@ -166,6 +187,7 @@ agent-team/members/Advisor-Gemini/
 
 ## 最后更新
 
+- **2025-12-26** — Memory Palace — 处理了 2 条便签（Detached 对象语义隐喻 + Diagnostic Scope DX）
 - **2025-12-26** — Memory Palace — 处理了 1 条便签（DurableDict API 设计洞见 → MERGE 到 Affordance 区块）
 - **2025-12-26** — Memory Palace — 处理了 2 条便签（代码审阅方法论畅谈会洞见）
 - **2025-12-25** — 执行全量记忆维护，提纯核心洞见，归档过程记录。

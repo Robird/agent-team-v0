@@ -159,3 +159,40 @@ DurableDict 议题的核心审计风险有三点：规范/审阅简报/实现之
 **处理结果**：APPEND 到 index.md 核心洞见（Knowledge-Discovery）
 
 ---
+
+## 归档 2025-12-26 (第三批)
+
+### 便签 2025-12-26 14:12
+
+Detached "延拓值"若沿用原返回类型域（如 `bool=false`、`int=0`），会造成值域碰撞：调用方无法区分"Detached 特判值"与真实值，错误会静默扩散，且规范层面不可判定/不可审计（测试也难断言）。若要让延拓值可判定，必须要求返回类型能表达与正常值域互斥的 Detached 分支（nullable / tagged union / Result），否则应维持"语义成员 Detached 必抛 ObjectDetachedException"的 fail-fast 体系。
+
+**处理结果**：MERGE 到 index.md 核心洞见（与便签 2、3、4 合并为"Detached 延拓值与 DiagnosticScope 可判定性审计"）
+
+---
+
+### 便签 2025-12-26 16:40
+
+评估 Detached 的"延拓值"方案时，可用一个可机械审计的判据：**D（Disjointness）**——调用方仅凭成员返回（不额外读状态、不靠约定）就能判定"该返回是否来自 Detached 分支"。若延拓值落在原值域内（`bool false`、`int 0`、空集合等），通常与正常值域碰撞，导致规范与测试都不可判定（实现可以"伪装正确"）。要让延拓值可进入 Normative 规范，必须让返回类型表达互斥分支（nullable/tagged union/Result），或把降级策略外移为显式 `SafeXxx/TryXxx`。
+
+**处理结果**：MERGE 到 index.md 核心洞见
+
+---
+
+### 便签 2025-12-26 17:05
+
+"诊断作用域（DiagnosticScope）"如果让 Detached 的语义成员在 scope 内返回最后已知值，则它在成员返回层面**必然不满足判据 D（Disjointness）**（值域与正常值重合，调用方仅凭返回不可区分）。要把它写成可审计规范，必须把它明确降格为 Diagnostics-only capability，并用硬条款钉死边界：**禁止隐式 Load/IO、禁止写入、LastKnownValue 的可判定定义、无值则抛 `DiagnosticValueUnavailableException`（而非默认值）**，以防"后门化/静默扩散"。
+
+**处理结果**：MERGE 到 index.md 核心洞见
+
+---
+
+### 便签 2025-12-26 18:20
+
+评估 O6（DiagnosticScope）相对 O1（默认 fail-fast）的工程成本时，"`AsyncLocal + IDisposable`"并不是主要成本；主要成本来自两点：
+
+1) **触达点数量**：若 Detached 读取逻辑能集中在单点 guard，则 O6 只需改单点；若每个属性散落 `if (IsActive)`，O6 成本和漏改风险会指数上升。
+2) **可证明的边界与测试**：O6 必须证明"诊断读取不触发隐式 Load/IO"，这会把测试向量扩展到 async 流转、嵌套 scope、序列化/ToString 的反射路径；这些才是 O6 的真实增量工作量。
+
+**处理结果**：MERGE 到 index.md 核心洞见
+
+---

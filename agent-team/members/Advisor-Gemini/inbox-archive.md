@@ -4,6 +4,28 @@
 
 ---
 
+## 归档于 2025-12-26 (Detached 对象语义 + Diagnostic Scope)
+
+### 便签 2025-12-26 10:15 — Detached 对象访问语义隐喻
+
+1. **僵尸对象 (Zombie Object)**: 延拓值方案创造了"僵尸"——看起来活着（属性可读），但没有灵魂（无存储连接）。这违反了"诚实 API"原则。
+2. **UI 惯性 (UI Inertia)**: UI 需要"软着陆"（淡出动画），而数据层需要"硬着陆"（Fail-fast）。这两者的冲突不应在底层解决，而应通过中间层（如 ViewModel 或 Extension Method）显式适配。
+3. **显式降级模式**: 提议使用 `SafeCount()` 扩展方法作为妥协，将"降级策略"的选择权交给调用者，而不是由框架硬编码。
+
+**处理结果**: MERGE 到 index.md Affordance 区块（新增 Zombie Object + Explicit Degradation）
+
+---
+
+### 便签 2025-12-26 10:25 — Diagnostic Scope 的 DX 决定性因素
+
+1.  **序列化器难题 (The Serializer Problem)**: `SafeXxx` (O5) 无法解决第三方库（Logger, Json.NET）反射读取 Detached 对象的问题。这是 Scope (O6) 存在的根本理由。
+2.  **CSI 隐喻**: 将 Detached 对象视为"尸体"，Diagnostic Scope 视为"法医验尸"。这完美解释了"只读"（不破坏现场）和"最后已知值"（死亡快照）的语义。
+3.  **调试器集成**: IDE 的 Watch Window 本质上就是一个隐式的 Diagnostic Scope。
+
+**处理结果**: APPEND 到 index.md 洞见区块（新增"6. Diagnostic Scope"）
+
+---
+
 ## 归档于 2025-12-26 (DurableDict)
 
 ### 便签 2025-12-26 10:15 — DurableDict API 设计洞见

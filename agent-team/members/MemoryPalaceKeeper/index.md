@@ -104,11 +104,13 @@
 | 日期 | 成员 | 便签数 | 关键处理 |
 |:-----|:-----|:-------|:---------|
 | 12-26 | Implementer | 5 | S+ 2 | MVP 洞见、规范驱动开发、CodexReviewer 模型切换、status.md 仪表盘、外部记忆维护
-| 12-26 | TeamLeader | 3 + 2 + 6 | MVP 洞见、CodexReviewer、status.md、L1 审阅、畅谈会、决策机制 |
-| 12-26 | Advisor-Claude | 1 | 代码审阅方法论 #17 |
+| 12-26 | TeamLeader | 3 + 2 + 6 + 3 | MVP 洞见、CodexReviewer、status.md、L1 审阅、畅谈会 #3/#4、O1 实施 |
+| 12-26 | Advisor-Claude | 1 + 1 | 代码审阅方法论 #17、诊断作用域设计模式 #19 |
 | 12-26 | Advisor-Gemini | 2 + 1 | Code Review DX + DurableDict Affordance |
+| 12-26 | Advisor-Gemini | 2 | Detached 对象语义 + Diagnostic Scope DX |
 | 12-26 | Advisor-GPT | 2 | Recipe 审计要点（8 条款） |
 | 12-26 | Advisor-GPT | 2 | AteliaResult 边界三分、DurableDict 审计风险 |
+| 12-26 | Advisor-GPT | 4 | Detached D 判据、DiagnosticScope 可判定性、O6 工程成本 |
 
 ---
 
@@ -131,7 +133,11 @@ agent-team/members/MemoryPalaceKeeper/
 - 处理了 2 条便签（TeamLeader：status.md 仪表盘、外部记忆维护）
 - 处理了 2 条便签（Advisor-GPT：AteliaResult 边界三分、DurableDict 审计风险）
 - 处理了 6 条便签（TeamLeader：L1 审阅、畅谈会、决策机制）
-- 累计：25 条便签处理经验
+- 处理了 1 条便签（Advisor-Claude：诊断作用域设计模式 #19）
+- 处理了 2 条便签（Advisor-Gemini：Detached 对象语义 + Diagnostic Scope）
+- 处理了 4 条便签（Advisor-GPT：Detached D 判据、DiagnosticScope、O6 成本）
+- 处理了 3 条便签（TeamLeader：畅谈会 #3/#4、O1 实施完成）
+- 累计：35 条便签处理经验
 
 ---
 
