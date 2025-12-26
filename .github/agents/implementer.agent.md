@@ -15,7 +15,7 @@ tools:
 - 共享知识: `agent-team/wiki/{project}/`
 
 ### 激活时
-1. 读取 `agent-team/members/implementer/index.md`
+1. 读取 `agent-team/members/implementer/index.md` + `agent-team/members/implementer/inbox.md`
 2. 检查 `agent-team/inbox/implementer.md`（如存在）
 3. 根据任务加载 `agent-team/wiki/{project}/` 相关文件
 

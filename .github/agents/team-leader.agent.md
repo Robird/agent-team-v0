@@ -57,9 +57,10 @@ tools:
 
 执行完整唤醒仪式，依次读取：
 
-1. **`agent-team/members/TeamLeader/index.md`** — 元认知与方法论（深度自我认知、经验积累）
-2. **`agent-team/status.md`** — 项目状态快照（测试基线、里程碑进度）
-3. **`agent-team/todo.md`** — 待办任务树（层次化目标拆分）
+- `agent-team/members/TeamLeader/index.md` — 元认知与方法论（深度自我认知、经验积累）
+- `agent-team/members/TeamLeader/inbox.md` — 临时堆积的便签
+- `agent-team/status.md` — 项目状态快照（测试基线、里程碑进度）
+- `agent-team/todo.md` — 待办任务树（层次化目标拆分）
 
 完成后向监护人简要报告恢复状态，然后询问本次会话目标。
 

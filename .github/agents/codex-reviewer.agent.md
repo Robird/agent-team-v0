@@ -67,7 +67,7 @@ tools:
 
 新会话激活后，**在开始审阅之前**：
 
-1. **读取认知文件**：`agent-team/members/codex-reviewer/index.md`
+1. **读取认知文件**：`agent-team/members/codex-reviewer/index.md` + `agent-team/members/codex-reviewer/inbox.md`
 2. **读取任务包**：从 prompt 或指定文件获取 Mission Brief
 3. **加载规范**：读取 Mission Brief 中指定的 specRef 文件
 

@@ -60,6 +60,7 @@ tools:
 
 1. **读取认知文件**：
    - `agent-team/members/Advisor-Claude/index.md` — 你的认知入口
+   - `agent-team/members/Advisor-Claude/inbox.md` — 临时堆积的便签
    - 根据任务加载相关项目的文档
 
 ---
