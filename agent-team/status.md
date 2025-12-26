@@ -7,9 +7,11 @@
 
 ## 最近更新 (2025-12-26)
 
-**StateJournal MVP 实现完成** 🎉 — 圣诞节两天完成了预估一周以上的工作。5 Phase，27 任务，418 测试，~3,600 行代码。战略-战术双会话协作模式首次大规模验证成功，效率达到 **8x**（预估 53.5h → 实际 6.75h）。
+**DurableDict 非泛型改造完成** 🎉 — 畅谈会 #2 部分批准后实施。`DurableDict<TValue>` → `DurableDict`，引入 `ObjectId` 类型，605 测试全部通过。
 
-**代码审阅方法论建立** — [畅谈会](meeting/2025-12-26-code-review-methodology-jam.md)产出 [spec-driven-code-review.md](recipe/spec-driven-code-review.md) Recipe。核心概念：L1/L2/L3 三层审阅、EVA 结构化输出、V/U/C/I 裁决类型。
+**L1 全量审阅完成** 🎉 — StateJournal 4 模块 60 条款审阅完成。54C/2V/4U (90% 符合率)。两个 Violations 已全部解决（V-1 代码修复、V-2 规范修订）。
+
+**AteliaResult 规范 v1.1** — 畅谈会产出三分类失败表达规范：`bool+out` / `AteliaResult` / 异常。明确了 `[ATELIA-BOOL-OUT-WHEN]` 适用边界。
 
 ---
 
@@ -17,9 +19,11 @@
 
 | 优先级 | 工作流 | 状态 | 下一步 |
 |:-------|:-------|:-----|:-------|
-| **P0** | StateJournal 代码审阅 | 🔜 待启动 | 按 Recipe 执行 Core 校准审阅 |
-| **P1** | StateJournal 类型扩展 | 🔜 待设计 | 字符串类型、数组类型功能边界探讨 |
-| **P2** | DocUI 渲染框架 | ⏸️ 延后 | 待 StateJournal 稳定 |
+| **P0** | StateJournal L1 审阅 | ✅ 完成 | 60 条款，2V 已解决 |
+| **P0** | 非泛型改造 | ✅ 完成 | 畅谈会 #2 批准部分已实施 |
+| **P1** | StateJournal MVP-2 设计 | 🔜 待畅谈会 | Workspace 绑定 / Detached 语义 |
+| **P2** | StateJournal 类型扩展 | 🔜 待设计 | 字符串类型、数组类型功能边界 |
+| **P3** | DocUI 渲染框架 | ⏸️ 延后 | 待 StateJournal 稳定 |
 
 ---
 
