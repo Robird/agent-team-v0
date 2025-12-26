@@ -46,10 +46,12 @@
 | 类型 | 信号词/模式 | 示例 |
 |:-----|:------------|:-----|
 | **State-Update** | "完成了"、"已实现"、状态变更 | "T-P5-04 已完成" |
-| **Knowledge-Discovery** | "发现"、"原来"、"洞见"、框架性总结 | "发现了 X 模式" |
+| **Knowledge-Discovery** | "发现"、"原来"、"洞见"、框架性总结、"元模型"、"框架"、"设计原则" | "发现了 X 模式"、"六种文件类型" |
 | **Knowledge-Refinement** | "补充"、"关于之前的"、扩展 | "关于 X，还有一点..." |
 | **Knowledge-Correction** | "之前错了"、"应该是"、否定 | "X 不是 Y，而是 Z" |
 | **Tombstone** | "废弃"、"不再使用"、替代 | "X 已废弃，改用 Y" |
+
+**经验**：包含"元模型"、"框架"、"设计原则"等术语的便签几乎总是 Knowledge-Discovery 类型——这类便签通常是对已有实践经验的**泛化抽象**。
 
 ### 路由决策经验
 
@@ -62,6 +64,7 @@
 | 同一主题多条便签 | MERGE | 避免重复，保持信息密度 |
 | 全新独立洞见 | APPEND | 新条目，不与旧内容混淆 |
 | 对已有洞见的扩展 | MERGE | 增强而非重复 |
+| 包含表格的便签（多列对比表） | APPEND | 表格本身就是压缩后的形式，信息密度高 |
 
 ### 压缩技巧
 
@@ -100,7 +103,7 @@
 
 | 日期 | 成员 | 便签数 | 关键处理 |
 |:-----|:-----|:-------|:---------|
-| 12-26 | Implementer | 5 | StateJournal MVP 完工、战术层协作反思 |
+| 12-26 | Implementer | 5 | S+ 2 | MVP 洞见、规范驱动开发、CodexReviewer 模型切换、status.md 仪表盘、外部记忆维护
 | 12-26 | TeamLeader | 3 + 2 | MVP 洞见、规范驱动开发、CodexReviewer 模型切换 |
 | 12-26 | Advisor-Claude | 1 | 代码审阅方法论 #17 |
 | 12-26 | Advisor-Gemini | 2 | Code Review DX 洞见区块 |
@@ -124,7 +127,8 @@ agent-team/members/MemoryPalaceKeeper/
 **2025-12-26** — 记忆目录初始化
 - 处理了 8 条便签（首批：Implementer 5 + TeamLeader 3）
 - 处理了 7 条便签（第二批：三位 Advisor + TeamLeader）
-- 累计：15 条便签处理经验
+- 处理了 2 条便签（TeamLeader：status.md 仪表盘、外部记忆维护）
+- 累计：17 条便签处理经验
 
 ---
 

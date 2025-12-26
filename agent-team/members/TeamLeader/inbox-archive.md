@@ -4,6 +4,28 @@
 
 ---
 
+## 归档 2025-12-26 晚间（由 MemoryPalaceKeeper 处理）
+
+### 便签 1: status.md 重构完成 (2025-12-26 14:30)
+
+**内容摘要**：将 356 行臃肿 status.md 重构为 167 行精简仪表盘。核心设计原则：仪表盘而非航行日志、快照原则、链接优于复制。经验：定期维护比积累后清理更高效。
+
+**处理结果**：
+- 分类：State-Update + Knowledge-Discovery
+- 操作：APPEND → index.md §8.17（status.md 仪表盘原则）
+
+---
+
+### 便签 2: 外部记忆维护 Recipe 完成 (2025-12-26 15:00)
+
+**内容摘要**：将 status.md 重构经验提炼为 Recipe。核心框架：六种文件类型元模型（Dashboard/Identity/TaskQueue/Inbox/Archive/Recipe）、五条维护原则、五阶段维护流程。关键洞见：不同文件类型有不同隐喻和写入模式，维护的核心是对抗熵增。
+
+**处理结果**：
+- 分类：Knowledge-Discovery
+- 操作：APPEND → index.md §8.18（外部记忆维护：六类型元模型）
+
+---
+
 ## 归档 2025-12-26 下午（由 MemoryPalaceKeeper 处理）
 
 ### 便签 1: 代码审阅方法论畅谈会完成 (2025-12-26 11:30)
