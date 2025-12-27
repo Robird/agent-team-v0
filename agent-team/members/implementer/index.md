@@ -29,7 +29,7 @@
 
 | 项目 | 状态 | 最后更新 | 备注 |
 |------|------|----------|------|
-| StateJournal | MVP 完成 ✅ | 2025-12-26 | Phase 1-5 全部完成，605 测试通过 |
+| StateJournal | M2 进行中 🔄 | 2025-12-28 | M1 完成（文件后端），M2 RecordReader 完成，659 测试通过 |
 | DocUI | MUD Demo 待实现 | 2025-12-15 | MVP-0 阶段规划完成 |
 | Atelia.Primitives | 基础类型库完成 ✅ | 2025-12-21 | AteliaResult/Error 体系 |
 | PipeMux | 管理命令实现完成 ✅ | 2025-12-09 | SDK 模式迁移完成 |
@@ -214,6 +214,25 @@
     - **设计意图清晰化**："由数据决定类型" — 非泛型 Core API 让这一设计意图更显式
     - **runSubagent 有效性验证**：100 处替换分解为 3 个 subagent 任务，继续验证分解大任务的模式
     - 测试结果：601/601 通过 ✅
+
+32. **M1 RBF 文件后端里程碑**（2025-12-27~28, T-M1-11/12a/12b/12c/12e）
+    - **分层架构**：`IRbfFileBackend`（I/O 抽象）→ `RbfFileBackend`（FileStream）→ `FileBackendBufferWriter`（IBufferWriter 适配）
+    - **FileBackendBufferWriter 性能重构**：ArrayPool 复用模式，单 outstanding buffer + `_hasOutstanding` 追踪
+    - **TryReadAt file-backed**：`RandomAccess.Read` 直接读取，无整帧分配（1MB 帧从 ~1MB 降到 ~64KB）
+    - **ScanReverse file-backed 关键突破**：CRC 分块策略（64KB chunk + `RbfCrc.Begin/Update/End` 增量计算），1GB 文件只需 ~64KB 内存
+    - **验证逻辑复用**：`TryValidateFrameFileBacked` 是核心校验原语，TryReadAt 与 ScanReverse 两条路径都调用它
+    - **语义对齐测试**：6 个验收测试（Truncate parity + CRC corruption parity），memory scanner vs file scanner 结果一致
+    - **M1 DoD 完成**：磁盘创建 .rbf + Append/ScanReverse roundtrip + TryReadAt/ScanReverse file-backed + Truncate + 173 测试全绿
+
+33. **M2 Record Writer/Reader 里程碑**（2025-12-28, T-M2-01~05）
+    - **FrameTags 设计**：`RbfFileKind` 枚举区分 Meta/Data，复用 `StateJournalFrameTag` 位段编码
+    - **ObjectVersionRecord payload layout**：极简设计 `PrevVersionPtr(u64 LE) + DiffPayload(剩余全部)`
+    - **DataRecordWriter/MetaRecordWriter**：封装 `IRbfFramer.BeginFrame` + payload 写入，返回 `Address64`
+    - **复用决策**：`MetaCommitRecord` payload 完整（5 字段），一次性完成避免后续迁移成本
+    - **DataRecordReader/MetaRecordReader 对称设计**：`ScanReverse()` 过滤+解析，`TryReadAt(Address64)` 随机读取
+    - **错误类型体系**：基类 `*RecordReaderError` 继承 `StateJournalError`，派生 `ReadError/FrameTagMismatchError/ParseError`
+    - **API 设计洞见**：`byte[]` 同时隐式转换为 `Span/Memory` 导致歧义，测试需显式 `.AsSpan()`
+    - **测试覆盖**：659/659 通过（Data 8 + Meta 9 + Reader 14 + 语义对齐 6 = 37 新增）
 
 ### 经验教训
 
@@ -454,9 +473,9 @@ agent-team/archive/members/implementer/
 
 ## 最后更新
 
+- **2025-12-28**: Memory Palace — 处理了 9 条便签（M1 RBF 文件后端里程碑完成 + M2 Record Writer/Reader 里程碑）
 - **2025-12-27**: Memory Palace — 处理了 2 条便签（Workspace 核心 API 非泛型化 + VersionIndex 重构完工状态）
 - **2025-12-27**: Memory Palace — 处理了 7 条便签（VersionIndex 重构经验 + DirtySet 同步 Bug + 测试文件拆分策略）
-- **2025-12-27**: Memory Palace — 处理了 1 条便签（Workspace 绑定机制 Phase 1 实现经验）
 - **2025-12-26**: Memory Palace — 处理了 1 条便签（DurableDict 非泛型改造）
 - **2025-12-26**: Memory Palace — 处理了 5 条便签（Phase 5 完工：VersionIndex/MetaCommitRecord/FinalizeCommit/Recovery + 战术层协作反思）
 - **2025-12-26**: Memory Palace — 处理了 4 条便签（Phase 4 实现洞见：IdentityMap/DirtySet/CreateObject/LoadObject/LazyRef）
