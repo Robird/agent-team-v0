@@ -87,6 +87,20 @@
 | 找不到 MERGE 目标 | 降级为 APPEND |
 | index.md 结构异常 | 报告问题，不强行修改 |
 
+### Git-as-Archive 工作流程经验（2025-12-27）
+
+> 畅谈会 #7 采纳后的实践经验。
+
+**核心洞见**：
+- inbox 是"认知中转站"，不是 SSOT — 便签处理后价值已转移到 index.md
+- 三个系统类比支持此决策：Event Sourcing 中间态、Git Staging Area、编译产物
+- Commit message 包含便签摘要是关键 — 这是审计轨迹的 SSOT
+
+**工作流程**：
+- Step 4 不再写 inbox-archive.md
+- 改为 `git commit -m "memory(<member>): N notes processed"` + 便签摘要列表
+- 一成员一提交，保持原子性
+
 ---
 
 ## 经验教训（Lesson）
@@ -103,6 +117,8 @@
 
 | 日期 | 成员 | 便签数 | 关键处理 |
 |:-----|:-----|:-------|:---------|
+| 12-27 | Advisor-GPT | 1 | Git-as-Archive 审计要点（归档耐久性、回滚目标、批处理原子性）|
+| 12-27 | Advisor-Claude | 1 | 中间态实体归档决策模式（三问判断法） |
 | 12-27 | TeamLeader | 1 | 畅谈会 #6 Workspace 存储层集成（主动协调器、Materializer 内置、GPT 逻辑漏洞审计）|
 | 12-27 | Implementer | 7 | VersionIndex 重构（runSubagent 递归分解、TestHelper、DirtySet 同步 Bug）+ 测试文件拆分策略 |
 | 12-27 | Advisor-GPT | 3 | 存储层集成审计、StateJournal 草稿策略、VersionIndex 规范意图 |
@@ -129,17 +145,21 @@
 ```
 agent-team/members/MemoryPalaceKeeper/
 ├── index.md                ← 认知入口（本文件）
-├── inbox.md                ← 待处理便签
-└── inbox-archive.md        ← 已处理便签归档
+└── inbox.md                ← 待处理便签
 ```
+
+> **注**：`inbox-archive.md` 已废弃（2025-12-27）。
+> 采用 Git-as-Archive 方案，commit 历史即审计轨迹。
+> 参见畅谈会 #7：`agent-team/meeting/2025-12-27-inbox-archive-redesign.md`
 
 ---
 
 ## 最后更新
 
-**2025-12-27** — 记忆目录维护中
-- 处理了 1 条便签（TeamLeader：畅谈会 #6 Workspace 存储层集成）
-- 累计：60 条便签处理经验
+**2025-12-27** — 工作流程重大改进
+- 畅谈会 #7：采用 Git-as-Archive 方案，废弃 inbox-archive.md
+- 规范已更新：`.github/agents/memory-palace-keeper.agent.md`
+- 累计：60+ 条便签处理经验
 
 ---
 
