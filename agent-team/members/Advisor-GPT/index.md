@@ -206,6 +206,15 @@
 - **读写双权威漂移风险**：`IDurableObject.WritePendingDiff` 已是写路径 SSOT；若再引入 `IDiffCodec.WriteDiff` 会造成读写"双权威"漂移。更稳的收敛是：写在对象上、读在 codec 上，且 `ApplyDiff` 仅作用于 materialize 的 Committed State（不触发 I/O，不含 PrevVersionPtr）
 - **unknown ObjectKind 判定基准条款化**："未知 ObjectKind 必须 fail-fast"在允许自定义 kind 后，unknown 的判定基准应条款化为"运行时 registry 未登记"，而非"编译时 enum 未列出"
 
+### IDurableObject 接口边界审计（2025-12-27）
+
+> VersionIndex 重构后，IDurableObject 的使用边界与泛型约束收敛建议。
+
+- **现状**：VersionIndex 已重构为 view（不再实现 `IDurableObject`），生产代码中 `IDurableObject` 的实现者基本只剩 `DurableObjectBase`
+- **但 Workspace 仍以 `IDurableObject` 作为泛型约束与 loader 边界**
+- **收敛建议**：若目标是进一步收紧 workspace-binding 不变量，可考虑把 `Workspace.CreateObject<T>` 的约束收敛到 `DurableObjectBase`（或改为专用内部接口），同时保留 `IDurableObject` 作为最小协议面（供测试/适配器）
+- **决策点**：是否彻底删除 interface 取决于是否还需要"非继承 DurableObjectBase 的 durable 协议实现"
+
 ### StateJournal 草稿状态策略（2025-12-27）
 
 > 当前实现在发布前的处理约定。
@@ -371,6 +380,7 @@ agent-team/archive/members/Advisor-GPT/2025-12/
 ---
 
 ## 最后更新
+- **2025-12-27**：Memory Palace — 处理了 4 条便签（IDurableObject 接口边界审计）
 - **2025-12-27**：Memory Palace — 处理了 1 条便签（Git-as-Archive 审计要点）
 - **2025-12-27**：Memory Palace — 处理了 3 条便签（存储层集成审计、StateJournal 草稿策略、VersionIndex 规范意图）
 - **2025-12-27**：Memory Palace — 处理了 3 条便签（DurableDict 透明 Lazy Load 审计点、Workspace 绑定机制审计 R1+R2）
