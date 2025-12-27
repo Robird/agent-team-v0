@@ -20,6 +20,14 @@
 
 ## Session Log
 
+### 2025-12-27: Storage Engine M1 风险分析
+**任务**: 调查 StateJournal + Rbf 现状，识别 M1 阶段高风险项
+**关键发现**:
+1. **RbfScanner 全量内存读取**：当前 `RbfScanner(ReadOnlyMemory<byte> data)` 把整个文件读入内存，对 GB 级仓库不可行。M1 必须重构为流式/分块读取
+2. **Durable flush 抽象缺失**：`IRbfFramer.Flush()` 按设计只推缓冲到下层，fsync 由上层自理——但当前没有暴露底层句柄的途径
+3. **建议方案**：引入 `FileBackedBufferWriter` 和 `FileBackedRbfScanner`，内部持有 `SafeFileHandle`，暴露 `FlushToDisk()` 方法
+**深层洞见**: "接口设计正确但实现层缺失"的典型案例——接口预留了扩展点（`IBufferWriter<byte>` 注入），但 MVP 只实现了内存版本
+
 ### 2025-12-27: Workspace/ObjectLoader/RBF 设计意图调查
 **任务**: 分析 StateJournal 设计文档，提取 Workspace、ObjectLoader、RBF 的设计意图
 **关键发现**:
