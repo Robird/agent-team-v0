@@ -100,7 +100,17 @@
 ### 记忆与写入机制
 - 把“记忆维护”视为可审计 Compaction：必须包含备份点、变更计数、QA（认知不变量/冷启动/链接）。
 - 写入机制应收敛为 **Memory Commit Protocol**：`Classify → Route → Apply`，并显式选择写入动作：`OVERWRITE | APPEND | MERGE | TOMBSTONE | EXTERNAL-REF`。
+### Git-as-Archive 审计要点（2025-12-27）
 
+> 以 Git commit 作为 inbox 归档的审计落点。
+
+| 审计维度 | 问题 | 建议 |
+|:---------|:-----|:-----|
+| **归档耐久性** | commit 必须 push/备份，否则只是本地暂存 | 明确 push 策略或备份机制 |
+| **回滚目标** | 仅 revert index.md 不足以恢复待处理原文 | 需有 pre-snapshot commit/stash，或把回滚粒度绑定到提交粒度 |
+| **批处理原子性** | 多便签处理需 all-or-nothing 观感 | 用临时分支/一次性 push 实现 |
+
+**多成员处理建议**：把提交粒度（per-member vs per-session）与回滚粒度绑定，避免"回滚了投影(index)但丢了源(inbox)"的不可恢复状态。
 ### 规范工程（审计/瘦身）
 - 冗余的根因往往是“同一事实多载体表达”（段落/表格/图/伪代码）；必须选定一个载体为 SSOT，其余降级为 Informative 并指回。
 - “行数瘦身”不是目标；目标是 **SSOT 唯一化 + 可测试闭环（条款 ID ↔ 测试向量/失败注入）**。
@@ -361,6 +371,7 @@ agent-team/archive/members/Advisor-GPT/2025-12/
 ---
 
 ## 最后更新
+- **2025-12-27**：Memory Palace — 处理了 1 条便签（Git-as-Archive 审计要点）
 - **2025-12-27**：Memory Palace — 处理了 3 条便签（存储层集成审计、StateJournal 草稿策略、VersionIndex 规范意图）
 - **2025-12-27**：Memory Palace — 处理了 3 条便签（DurableDict 透明 Lazy Load 审计点、Workspace 绑定机制审计 R1+R2）
 - **2025-12-26**：Memory Palace — 处理了 4 条便签（Detached 延拓值 D 判据、DiagnosticScope 可判定性、O6 工程成本）
