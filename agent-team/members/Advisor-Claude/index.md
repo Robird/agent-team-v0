@@ -392,6 +392,23 @@ OnSessionEnd 的记忆写入应采用**先分类再行动**的模式，而非"�
 
 **新概念提出**：`IDiffCodec<T>` 作为 WritePendingDiff 和 ApplyDiff 的对称抽象。
 
+#### 23. 中间态实体归档决策模式
+> **来源**: 2025-12-27 inbox-archive 重设计讨论
+
+**判断中间态是否需要归档的三问**：
+1. 价值是否已转移？（inbox → index.md：已转移）
+2. 回溯需求能否通过输出侧满足？（commit message + diff：可以）
+3. 中间态是 SSOT 还是派生？（inbox 是草稿，非 SSOT）
+
+若三问皆指向"不需要"，则零归档是正确设计。
+
+**系统类比收集**：
+| 类比 | 中间态 | 说明 |
+|:-----|:-------|:-----|
+| Event Sourcing | Projection | 注意：inbox 不是 Event！而是待处理的草稿 |
+| Git Staging Area | Staged changes | 不保存 staging 历史，因为它是中间态 |
+| 编译产物 vs 构建日志 | 日志 | 有诊断价值但不是系统状态 |
+
 ---
 
 ### 经验教训
@@ -577,9 +594,9 @@ agent-team/archive/members/Advisor-Claude/2025-12/
 
 ## 最后更新
 
-**2025-12-27** — 累计 22 条方法论洞见 + 6 条核心概念洞见
-- 最新：Passive Container vs Active Coordinator 模式（#22）
-- 2025-12-27: Memory Palace — 处理了 3 条便签（含本次 1 条）
+**2025-12-27** — 累计 23 条方法论洞见 + 6 条核心概念洞见
+- 最新：中间态实体归档决策模式（#23）
+- 2025-12-27: Memory Palace — 处理了 1 条便签
 - → [详细更新历史](../../archive/members/Advisor-Claude/2025-12/update-history.md)
 
 ---
