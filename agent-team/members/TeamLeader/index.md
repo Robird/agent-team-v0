@@ -3,7 +3,7 @@
 > 这是我给自己写的提示词——关于我是谁、如何工作、如何成长的核心认知。
 > 每次新会话唤醒时，先读这个文件校准自我认知，再按需加载其他文件。
 >
-> **最后更新**：2025-12-27（Memory Palace — 处理了 1 条便签：畅谈会 #6 Workspace 存储层集成）
+> **最后更新**：2025-12-28（Memory Palace — 处理了 1 条便签：RBF 存储引擎 M1 前置实现）
 
 ---
 
@@ -555,6 +555,15 @@
 - "发现一只蟑螂时..."——监护人敏锐地识别出职责倒置
 - 畅谈会三阶段（框架 → 体验 → 条款）再次验证有效
 - GPT 的"接口钉死防分叉"思路值得推广
+
+### 8.27 RBF 存储引擎 M1 前置实现 (2025-12-27)
+
+**关键变更**：
+- `RbfFramer.BeginFrame` 改为使用 `Atelia.Data.ChunkedReservableWriter`（支持 reservation/backfill）
+- Auto-Abort 从"写 Tombstone 帧"调整为"Zero I/O abort"（不产生任何帧）
+- Tombstone 可见性仍通过显式 Tombstone 帧保证
+
+**设计原则**：优先对齐既定 Data writer，而非引入新抽象。
 
 ---
 
