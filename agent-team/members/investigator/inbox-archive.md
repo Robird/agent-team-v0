@@ -4,6 +4,24 @@
 
 ---
 
+## 归档 2025-12-26 (处理于 2025-12-27)
+
+### 原便签: 2025-12-26 17:30 — `_removedFromCommitted` 调查洞见
+
+调查 `_removedFromCommitted` 时的发现：
+
+1. **设计权衡的洞见**：双字典策略（`_committed` + `_working`）的核心约束是"_committed 在 Commit 前只读"。这个约束带来了 Commit 失败时恢复简单的好处，但代价是需要额外的 `_removedFromCommitted` 集合来追踪删除意图。
+
+2. **规范与实现的契合点**：`[S-WORKING-STATE-TOMBSTONE-FREE]` 条款要求 Working State 不存储 tombstone。当前实现用 `_removedFromCommitted` 集合（而非 tombstone 值）满足了这个约束——这是一个巧妙但隐晦的设计。
+
+3. **监护人意见的精确定位**：监护人的意见针对的是 Load/Materialize 阶段，但实际问题在运行时状态管理。加载时 `_committed` 确实是最终状态，`_removedFromCommitted` 只在运行时填充。
+
+4. **替代设计的可行性**：如果改为单一 `_current` 字典（合并视图），可以消除 `_removedFromCommitted`，但需要重构读写路径和 Commit 失败恢复逻辑。
+
+**处理结果**: → MERGE 到 index.md Session Log 2025-12-26 条目（深层洞见补充）
+
+---
+
 ## 归档 2025-12-24 (处理于 2025-12-25)
 
 ### 原便签: 2025-12-24 15:30 — mvp-design-v2.md 历史决策引用分析

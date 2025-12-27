@@ -149,15 +149,39 @@
 - **§5.1 重写建议**：三分判定基准应为可机械判定维度（是否需要诊断 payload / 失败原因是否对调用方等价为单一语义 / 是否涉及基础设施故障）。
 - **`Try-` 前缀条款化**：必须约束签名，否则 `TryX(out)` 与 `TryX(): Result` 并存会导致审阅与调用方心智模型分叉。
 
-### DurableDict 议题核心审计风险（2025-12-26）
+### DurableDict 议题核心审计风险（2025-12-26，12-27 更新）
 
-> 三点高风险漂移/歧义来源。
+> 高风险漂移/歧义来源与透明 Lazy Load 审计要点。
 
 | 风险点 | 问题 | 建议 |
 |:-------|:-----|:-----|
 | **API 签名漂移** | 规范/审阅简报/实现之间存在签名不一致（Result+Enumerate vs bool+out+Entries vs 泛型/非泛型） | 钉死唯一 SSOT 签名 |
 | **ObjRef vs Ptr64 语义不可判定** | payload 层可区分，但若 CLR 层都落到 `ulong` 会导致语义不可判定（透明 lazy load 引入 silent corruption 风险） | 类型系统层面分离 |
 | **LazyRef 职责边界** | LazyRef 需要 Workspace，"透明加载"应条款化为 Accessor 层能力而非 DurableDict 本体职责 | 明确职责分层 |
+
+**透明 Lazy Load 落地的三个审计点**（2025-12-27）：
+
+1. **Workspace 注入**：必须有可注入的 Workspace（优先 internal 构造注入或 Attach-before-expose），避免全局/线程上下文。
+2. **Dirty 语义保持**：Lazy backfill 会写 `_current`，dirty 语义必须保持不变——需把 ObjRef 的等价关系钉死为 `ObjectId`（而非 `object.Equals`）。
+3. **ulong 类型约束**：代码层若用 `ulong` 表示 `ObjectId`，必须强制类型约束（MVP 明确不支持用户写入 `ulong` 业务值），否则普通 `ulong` 会被误判为 ObjRef，产生 silent corruption 风险。
+
+### Workspace 绑定机制审计（2025-12-27）
+
+> Workspace 绑定与 Ambient Context 的边界与可审计落点。
+
+**Round 1 结论**：AsyncLocal/Ambient Context 只能作为"调用点上下文隔离"（DX/并行测试），不能作为 DurableObject 的真绑定来源；否则同一对象实例会在不同 scope 下从不同 Workspace 执行 Lazy Load，导致语义不可判定与 silent corruption。
+
+**规范建议**（R1）：
+- 对象必须绑定且仅绑定一个 Owning Workspace
+- 绑定不可变
+- ambient 不匹配必须 fail-fast
+- 绑定不得引入新的可观察对象状态
+
+**Round 2 修订**（收敛后）：当对象在构造/加载时捕获并固化 Owning Workspace，且 Lazy Load 严格按 Owning Workspace 分派时，跨 scope 访问**不会**造成 silent corruption。因此：
+
+- 无需把"ambient != owning 必须 fail-fast"做成普遍硬条款
+- 更好的 SSOT 是 `[S-LAZYLOAD-DISPATCH-BY-OWNER]` + "ambient 不得影响已绑定对象语义"
+- 若仍需提示误用，可将 mismatch 检查降级为 Strict/Debug 选项（MAY），避免破坏跨 Workspace 复制/迁移的 DX
 
 ### Detached 延拓值与 DiagnosticScope 可判定性审计（2025-12-26）
 
@@ -317,6 +341,7 @@ agent-team/archive/members/Advisor-GPT/2025-12/
 ---
 
 ## 最后更新
+- **2025-12-27**：Memory Palace — 处理了 3 条便签（DurableDict 透明 Lazy Load 审计点、Workspace 绑定机制审计 R1+R2）
 - **2025-12-26**：Memory Palace — 处理了 4 条便签（Detached 延拓值 D 判据、DiagnosticScope 可判定性、O6 工程成本）
 - **2025-12-26**：Memory Palace — 处理了 2 条便签（AteliaResult 边界三分、DurableDict 审计风险）
 - **2025-12-26**：Memory Palace — 处理了 2 条便签（规范驱动代码审阅 Recipe 审计要点）

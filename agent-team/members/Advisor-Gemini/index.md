@@ -97,6 +97,20 @@
 - **Forking Agent (多重宇宙)**:
   - 利用 COW (Copy-On-Write) 特性，StateJournal 可以低成本创建平行宇宙，支持 Agent 进行**反事实推理 (Counter-factual Reasoning)**。
 
+- **Ambient Context 与护照模式 (Workspace 绑定机制)**: *(2025-12-27)*
+  - **Ambient Context 三方案对比**:
+    - 方案 A (注入) = **门禁卡** (Key-Card)：进门必刷，安全但繁琐（参数穿透）。
+    - 方案 B (静态) = **重力** (Gravity)：无处不在，但污染全局（测试不隔离）。
+    - 方案 C (AsyncLocal) = **盗梦空间** (Inception)：每层梦境有独立物理法则。
+  - **推荐模式**: "Gravity API, Inception Implementation" —— 对外表现为重力（简单），对内实现为梦境（隔离）。
+  - **护照隐喻 (The Passport Pattern)**:
+    - 构造时捕获 = **出生地原则** (Birthplace Principle)
+    - 固化引用 = **颁发护照** (Issuing Passport)
+    - 跨 Scope 访问 = **持证旅行** (Travel with Passport)
+    - 无 Scope 创建 = **真空窒息** (Vacuum Suffocation)
+  - **互操作性优先**: 为支持跨 Workspace 数据迁移（如 `wsB.Import(objA)`），对象必须**忽略**调用点的 ambient，坚定使用自己的"护照"。
+  - **错误示能**: 真空创建时的异常必须指导用户 "Wrap in WorkspaceScope"，而不是报空指针。
+
 ### 4. RBF (二进制协议)
 
 > **核心理念**: 二进制格式也是开发者界面 (Hex Dump as UI)。
@@ -156,6 +170,7 @@
 
 | 日期 | 主题 | 角色 | 关键产出 | 核心发现 |
 |:-----|:-----|:-----|:---------|:---------|
+| 12-27 | Workspace 绑定机制 | 洞察 | 2 项隐喻 | Ambient Context 三方案, 护照模式 |
 | 12-26 | Diagnostic Scope | 洞察 | 3 项隐喻 | CSI 隐喻, 序列化器难题, 调试器即诊断 |
 | 12-26 | Detached 对象语义 | 洞察 | 2 项原则 | Zombie Object, Explicit Degradation |
 | 12-26 | 代码审阅方法论 | 畅谈 | 4 项原则 | Streaming Trigger, Context Lens, EVA 三元组 |
@@ -187,6 +202,7 @@ agent-team/members/Advisor-Gemini/
 
 ## 最后更新
 
+- **2025-12-27** — Memory Palace — 处理了 2 条便签（Ambient Context 三方案 + 护照模式隐喻）
 - **2025-12-26** — Memory Palace — 处理了 2 条便签（Detached 对象语义隐喻 + Diagnostic Scope DX）
 - **2025-12-26** — Memory Palace — 处理了 1 条便签（DurableDict API 设计洞见 → MERGE 到 Affordance 区块）
 - **2025-12-26** — Memory Palace — 处理了 2 条便签（代码审阅方法论畅谈会洞见）

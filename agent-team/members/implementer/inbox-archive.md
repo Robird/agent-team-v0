@@ -4,6 +4,24 @@
 
 ---
 
+## 归档 2025-12-27 (Workspace 绑定机制 Phase 1)
+
+### 便签 2025-12-27 16:30
+
+**Workspace 绑定机制 Phase 1 实现完成**
+
+完成了 `DurableObjectBase` 抽象基类的创建和 `DurableDict` 的继承重构。
+
+**关键经验**：
+1. **Activator.CreateInstance 与 internal 构造函数**：需要显式指定 `BindingFlags.NonPublic` 才能找到 internal 构造函数
+2. **反射测试代码的脆弱性**：测试中使用反射设置字段时，字段从派生类移到基类后，反射代码需要更新
+3. **双重构造函数策略**：为兼容 `VersionIndex`，保留了无 Workspace 的构造函数
+4. **private protected 访问修饰符**：C# 7.2 引入的修饰符，表示"只有同一程序集中的派生类可访问"
+
+**处理结果**：APPEND 到 index.md 方法论 #28
+
+---
+
 ## 归档 2025-12-26 (DurableDict 非泛型改造)
 
 ### 便签 2025-12-26 18:30

@@ -1,6 +1,6 @@
 # Docops 认知索引
 
-> 最后更新: 2025-12-24
+> 最后更新: 2025-12-27
 
 ## 我是谁
 DocOps - 文档与索引管理专家，负责维护团队的集体记忆和认知连续性。
@@ -10,9 +10,20 @@ DocOps - 文档与索引管理专家，负责维护团队的集体记忆和认�
 - [ ] DocUI
 - [x] PipeMux - 2025-12-09 更新管理命令文档
 - [ ] atelia-copilot-chat
-- [x] StateJournal - 2025-12-21 更名迁移索引更新
+- [x] StateJournal - 2025-12-27 Workspace 绑定机制增补
 
 ## 最近工作
+
+### 2025-12-27 - StateJournal mvp-design-v2.md Workspace 绑定机制增补
+- **任务**: 添加 §3.1.2.1 Workspace 绑定机制条款
+- **修改文件**: `atelia/docs/StateJournal/mvp-design-v2.md`
+- **变更内容**:
+  - 在 §3.1.2 之后添加 §3.1.2.1 Workspace 绑定机制（增补）小节
+  - 添加 7 个规范条款：S-WORKSPACE-OWNING-EXACTLY-ONE, S-WORKSPACE-OWNING-IMMUTABLE, S-WORKSPACE-CTOR-REQUIRES-WORKSPACE, S-LAZYLOAD-DISPATCH-BY-OWNER, A-WORKSPACE-FACTORY-CREATE, A-WORKSPACE-FACTORY-LOAD, A-WORKSPACE-AMBIENT-OPTIONAL
+  - 更新 A.1 伪代码骨架中 DurableDict 构造函数注释，说明需要 Workspace 参数
+  - 更新版本号从 v3.1 到 v3.8
+- **来源**: 畅谈会 #5 + 监护人决策，详细设计见 `workspace-binding-spec.md`
+- **状态**: ✅ 完成
 
 ### 2025-12-24 - StateJournal mvp-design-v2.md 文档冗余清理
 - **任务**: 移除冗余内容，精简文档

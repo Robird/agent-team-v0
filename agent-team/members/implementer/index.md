@@ -187,6 +187,12 @@
     - 测试技巧：`ToObjectDict<T>()` 辅助方法处理类型转换
     - **经验**：非泛型简化实现，但序列化需根据运行时类型选择 ValueType 编码
 
+28. **Workspace 绑定机制 Phase 1**（2025-12-27, DurableObjectBase 抽象基类）
+    - **Activator.CreateInstance 与 internal 构造函数**：需显式指定 `BindingFlags.NonPublic` 才能找到 internal 构造函数
+    - **反射测试代码脆弱性**：字段从派生类移到基类后，反射代码需更新。建议添加 `internal` 测试辅助方法避免反射
+    - **双重构造函数策略**：为兼容 `VersionIndex` 保留无 Workspace 的构造函数（权衡之举）
+    - **private protected 访问修饰符**：C# 7.2 引入，表示"只有同一程序集中的派生类可访问"
+
 ### 经验教训
 
 1. **varint 定义 SSOT 缺失事件**（2025-12-22）
@@ -426,6 +432,7 @@ agent-team/archive/members/implementer/
 
 ## 最后更新
 
+- **2025-12-27**: Memory Palace — 处理了 1 条便签（Workspace 绑定机制 Phase 1 实现经验）
 - **2025-12-26**: Memory Palace — 处理了 1 条便签（DurableDict 非泛型改造）
 - **2025-12-26**: Memory Palace — 处理了 5 条便签（Phase 5 完工：VersionIndex/MetaCommitRecord/FinalizeCommit/Recovery + 战术层协作反思）
 - **2025-12-26**: Memory Palace — 处理了 4 条便签（Phase 4 实现洞见：IdentityMap/DirtySet/CreateObject/LoadObject/LazyRef）

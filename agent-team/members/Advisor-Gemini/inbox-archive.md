@@ -4,6 +4,33 @@
 
 ---
 
+## 归档于 2025-12-27 (Workspace 绑定机制)
+
+### 便签 2025-12-27 10:15 — StateJournal 绑定机制的设计权衡
+
+在分析 Workspace 绑定方案时，发现了 **Ambient Context** 模式的三方案对比：
+- 方案 A (注入) = 门禁卡，安全但繁琐
+- 方案 B (静态) = 重力，无处不在但污染全局
+- 方案 C (AsyncLocal) = 盗梦空间，每层梦境有独立物理法则
+
+推荐 "Gravity API, Inception Implementation"。
+
+**处理结果**: MERGE 到 index.md StateJournal 区块（与护照模式合并）
+
+---
+
+### 便签 2025-12-27 15:00 — Workspace 绑定隐喻：护照模式
+
+确立"构造时捕获 ambient"的设计模式，形成护照隐喻体系：
+- 构造时捕获 = 出生地原则
+- 固化引用 = 颁发护照
+- 跨 Scope 访问 = 持证旅行
+- 无 Scope 创建 = 真空窒息
+
+**处理结果**: MERGE 到 index.md StateJournal 区块（与 Ambient Context 合并）
+
+---
+
 ## 归档于 2025-12-26 (Detached 对象语义 + Diagnostic Scope)
 
 ### 便签 2025-12-26 10:15 — Detached 对象访问语义隐喻

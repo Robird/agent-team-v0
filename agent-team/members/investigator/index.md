@@ -1,6 +1,7 @@
 # Investigator 认知索引
 
-> 最后更新: 2025-12-25
+> 最后更新: 2025-12-27
+> - 2025-12-27: Memory Palace — 处理了 1 条便签（_removedFromCommitted 设计洞见）
 > - 2025-12-25: Memory Palace — 处理了 1 条便签（历史决策引用分析）
 > - 2025-12-24: Memory Palace — 处理了 1 条便签（术语别名调研）
 > - 2025-12-24: Memory Palace — 处理了 1 条便签
@@ -16,6 +17,20 @@
 - [ ] atelia-copilot-chat
 
 ## Session Log
+
+### 2025-12-26: `_removedFromCommitted` 集合必要性分析
+**任务**: 调查 DurableDict 中 `_removedFromCommitted` 集合是否多余
+**关键发现**:
+1. **不是 Materialize 的问题**：加载时 `_committed` 是最终状态，`_removedFromCommitted` 初始为空
+2. **运行时状态管理的副产品**：双字典策略要求 `_committed` 在 Commit 前只读，Remove 操作无法直接修改，只能用集合记录删除意图
+3. **符合规范条款**：`[S-WORKING-STATE-TOMBSTONE-FREE]` 要求 Working State 无 tombstone，当前实现用集合而非 tombstone 值满足约束
+4. **替代设计存在**：改为单一 `_current` 合并视图可消除该集合，但需要重构读写路径
+**结论**: 设计上可以消除，但当前架构下有其存在理由。保持现有设计，考虑长期重构。
+**交付**: [handoffs/2025-12-26-removedFromCommitted-analysis-INV.md](../handoffs/2025-12-26-removedFromCommitted-analysis-INV.md)
+**深层洞见** (2025-12-26 补充):
+- **设计权衡本质**：双字典策略的核心约束是"_committed 在 Commit 前只读"。带来 Commit 失败时恢复简单的好处，代价是需要 `_removedFromCommitted` 追踪删除意图
+- **规范与实现的巧妙契合**：`[S-WORKING-STATE-TOMBSTONE-FREE]` 用集合（而非 tombstone 值）实现——隐晦但有效
+- **监护人意见精确定位**：意见针对 Load/Materialize 阶段，但实际问题在运行时状态管理；加载时 `_committed` 确实是最终状态
 
 ### 2025-12-24: mvp-design-v2.md 历史决策引用分析
 **任务**: 分析 mvp-design-v2.md 中的历史决策引用情况

@@ -3,7 +3,7 @@
 > 这是我给自己写的提示词——关于我是谁、如何工作、如何成长的核心认知。
 > 每次新会话唤醒时，先读这个文件校准自我认知，再按需加载其他文件。
 >
-> **最后更新**：2025-12-26（Memory Palace — 处理了 3 条便签：畅谈会 #3 Detached 语义、畅谈会 #4 诊断作用域、O1 实施完成）
+> **最后更新**：2025-12-27（Memory Palace — 处理了 4 条便签：DurableDict 重构、畅谈会 #5 护照模式、Workspace 绑定机制、Lazy Loading）
 
 ---
 
@@ -468,6 +468,74 @@
 - 测试覆盖：605 → 606（新增 `Detached_HasChanges_ThrowsObjectDetachedException`）
 
 **详情**：[meeting/2025-12-26-diagnostic-scope.md](../../meeting/2025-12-26-diagnostic-scope.md)
+
+### 8.23 DurableDict 重构教训：实现偏离设计文档 (2025-12-27)
+
+**背景**：监护人发现 DurableDict 实现偏离了设计文档——旧实现使用三数据结构（`_committed` + `_working` + `_removedFromCommitted`），而设计文档明确要求双字典策略（`_committed` + `_current`）。
+
+**修复**：重构为标准双字典，读取只查 `_current`，写入只改 `_current`，`Remove` 直接删除不需额外追踪。606 测试全部通过。
+
+**教训**：
+1. 实现者可能只看任务目标而没有加载设计文档
+2. 批量自动化审阅需要改进——未发现如此显著的实现偏离
+3. "发现一个蟑螂时..." — 需要更系统地检查其他实现
+
+### 8.24 护照模式：DurableObject 与 Workspace 绑定机制 (2025-12-27)
+
+**畅谈会 #5 产出**：三位顾问达成共识，设计了 **护照模式 (Passport Pattern)**：
+
+| 决策 | 内容 |
+|:-----|:-----|
+| 核心机制 | 对象持有 `_owningWorkspace`（构造时从 ambient 捕获并固化） |
+| Lazy Load 分派 | 按 Owning Workspace 分派（不是按 ambient） |
+| API 外观 | 简洁（`new DurableDict(id)`） |
+| 跨 scope 访问 | 允许（持证旅行） |
+
+**关键洞见**：
+- GPT 论证了"纯 ambient 会导致跨 scope 误加载"
+- Claude 提出"构造时捕获并固化"
+- Gemini 用"护照隐喻"解释 DX
+
+**监护人分层智慧**：
+> "分层设计：第一层是方案 A（构造函数传入）；第二层再处理易用性。"
+> "不提供用 id 的 public 构造，而是只提供位于 workspace 上的工厂方法。"
+
+**实施成果**：
+| 层次 | 职责 | 状态 |
+|:-----|:-----|:----:|
+| Layer 1 | 核心绑定（构造函数） | ✅ 完成 |
+| Layer 2 | 工厂方法 | ✅ 基础完成 |
+| Layer 3 | Ambient Context | ⏳ 待需要 |
+
+**文档产出**：`workspace-binding-spec.md`（增补规范）、`mvp-design-v2.md` v3.8（7 条新条款）
+
+**代码产出**：`DurableObjectBase.cs`、`DurableDict.cs`（重构继承）、`ObjectDetachedException.cs`、`Workspace.cs`（桩类）
+
+**详情**：[meeting/2025-12-27-workspace-binding.md](../../meeting/2025-12-27-workspace-binding.md)
+
+### 8.25 Lazy Loading 实现完成 (2025-12-27)
+
+**项目里程碑**：回到最初的起因——DurableDict 需要实现透明 Lazy Loading。
+
+**实现内容**：
+1. `ResolveAndBackfill()` 方法：检测 ObjectId 并触发 Lazy Load
+2. `AreValuesEqual()` 方法：ObjRef 等价判定（ObjectId ≡ 实例）
+3. 更新 `TryGetValue`/索引器/`Entries` 调用 Lazy Load
+
+**满足条款**：
+- `[A-OBJREF-TRANSPARENT-LAZY-LOAD]` ✅
+- `[A-OBJREF-BACKFILL-CURRENT]` ✅
+- `[S-LAZYLOAD-DISPATCH-BY-OWNER]` ✅
+
+**新增测试**：8 个（614 测试通过）
+- 透明 Lazy Load 触发
+- 回填到 _current
+- 回填不改变 dirty 状态
+- Lazy Load 失败抛异常
+- ObjRef 等价判定
+
+**开放问题（已记录 backlog）**：
+- B-8: LoadObject<T> 泛型/非泛型分层
 
 ---
 

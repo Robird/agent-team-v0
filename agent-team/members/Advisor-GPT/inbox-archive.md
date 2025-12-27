@@ -196,3 +196,29 @@ Detached "延拓值"若沿用原返回类型域（如 `bool=false`、`int=0`）�
 **处理结果**：MERGE 到 index.md 核心洞见
 
 ---
+
+## 归档 2025-12-27
+
+### 便签 2025-12-27 00:35
+
+DurableDict 的"透明 Lazy Load"落地有三个容易被忽略的审计点：1）必须有可注入的 Workspace（优先 internal 构造注入或 Attach-before-expose，避免全局/线程上下文）；2）Lazy backfill 会写 _current，dirty 语义必须保持不变（需要把 ObjRef 的等价关系钉死为 ObjectId，而不是 object.Equals）；3）代码层若用 ulong 表示 ObjectId，则必须强制类型约束（MVP 明确不支持用户写入 ulong 业务值），否则会把普通 ulong 误判为 ObjRef，产生 silent corruption 风险。
+
+**处理结果**：MERGE 到 index.md DurableDict 核心审计风险条目（追加透明 Lazy Load 审计点）
+
+---
+
+### 便签 2025-12-27 10:15
+
+Workspace 绑定机制的审计结论：AsyncLocal/Ambient Context 只能作为"调用点上下文隔离"（DX/并行测试），不能作为 DurableObject 的真绑定来源；否则同一对象实例会在不同 scope 下从不同 Workspace 执行 Lazy Load，导致语义不可判定与 silent corruption。规范应增加：对象必须绑定且仅绑定一个 Owning Workspace、绑定不可变、ambient 不匹配必须 fail-fast、绑定不得引入新的可观察对象状态。
+
+**处理结果**：APPEND 到 index.md 核心洞见（与便签 3 合并为"Workspace 绑定机制审计"）
+
+---
+
+### 便签 2025-12-27 16:40
+
+Workspace 绑定机制 Round 2 收敛后的关键修订：当对象在构造/加载时捕获并固化 Owning Workspace，且 Lazy Load 严格按 Owning Workspace 分派时，跨 scope 访问不会造成 silent corruption，因此无需把"ambient!=owning 必须 fail-fast"做成普遍硬条款；更好的 SSOT 是 `[S-LAZYLOAD-DISPATCH-BY-OWNER]` + "ambient 不得影响已绑定对象语义"。若仍需提示误用，可将 mismatch 检查降级为 Strict/Debug 选项（MAY），避免破坏跨 Workspace 复制/迁移的 DX。
+
+**处理结果**：MERGE 到 index.md 核心洞见（与便签 2 合并为"Workspace 绑定机制审计"）
+
+---

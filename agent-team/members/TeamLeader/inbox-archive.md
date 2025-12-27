@@ -4,6 +4,48 @@
 
 ---
 
+## 归档 2025-12-27 下午（由 MemoryPalaceKeeper 处理）
+
+### 便签 1: DurableDict 重大重构完成 (2025-12-27 10:00)
+
+**内容摘要**：监护人发现实现偏离设计文档——旧实现用三数据结构，设计要求双字典。已重构修复，606 测试通过。教训：实现者可能只看任务目标未加载设计文档，批量审阅需改进。
+
+**处理结果**：
+- 分类：State-Update + Knowledge-Discovery
+- 操作：APPEND → index.md §8.23（DurableDict 重构教训）
+
+---
+
+### 便签 2: 畅谈会 #5 完成——护照模式 (2025-12-27 12:30)
+
+**内容摘要**：三位顾问达成共识，设计护照模式（Passport Pattern）：对象持有 `_owningWorkspace`，构造时从 ambient 捕获并固化，Lazy Load 按 Owning Workspace 分派。产出 7 条规范条款。
+
+**处理结果**：
+- 分类：Knowledge-Discovery
+- 操作：APPEND → index.md §8.24（护照模式）
+
+---
+
+### 便签 3: Workspace 绑定机制实施完成 (2025-12-27 14:00)
+
+**内容摘要**：监护人分层设计已全面实施。Layer 1 核心绑定完成，Layer 2 工厂方法完成，Layer 3 待需要。文档产出：workspace-binding-spec.md、mvp-design-v2.md v3.8。代码产出：DurableObjectBase.cs、DurableDict.cs 重构、ObjectDetachedException.cs、Workspace.cs 桩类。
+
+**处理结果**：
+- 分类：State-Update + Knowledge-Discovery
+- 操作：MERGE → index.md §8.24（实施成果部分）
+
+---
+
+### 便签 4: Lazy Loading 实现完成 (2025-12-27 15:00)
+
+**内容摘要**：回到最初起因——DurableDict Lazy Loading。实现 ResolveAndBackfill()、AreValuesEqual()，满足 3 条规范条款，新增 8 个测试（614 通过）。开放问题 B-8 已写入 backlog。
+
+**处理结果**：
+- 分类：State-Update + Knowledge-Discovery
+- 操作：APPEND → index.md §8.25（Lazy Loading 实现完成）
+
+---
+
 ## 归档 2025-12-26 下午晚间（由 MemoryPalaceKeeper 处理）
 
 ### 便签 1: L1 全量审阅完成 (2025-12-26 14:30)
