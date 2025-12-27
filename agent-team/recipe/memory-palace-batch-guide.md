@@ -46,16 +46,20 @@ prompt: |
   
   请处理该目录下的 `inbox.md` 文件中的所有便签。
   
-  按照你的工作流程：
-  1. 读取 inbox.md
-  2. 解析每条便签
-  3. 对每条执行 CLASSIFY → ROUTE → APPLY
-  4. 清空 inbox 并归档（可追加到 inbox-archive.md）
-  5. 更新 index.md 的"最后更新"区块
-  6. 输出处理报告
+  按照你的伪代码工作流程：
+  1. PHASE 1: 读取 inbox.md + index.md
+  2. PHASE 2: 逐条便签执行 CLASSIFY → ROUTE → APPLY
+  3. PHASE 3: 终端命令收尾（heredoc 重置 inbox + Git 提交）
+  4. 输出处理报告
 
   请开始处理。
 ```
+
+> **MemoryPalaceKeeper 工作流程已优化**（v2，2025-12-27）：
+> - 伪代码风格定义流程，执行更高效
+> - **Git-as-Archive**：Git 历史即归档，无需 inbox-archive.md
+> - 每条便签处理后输出 checkpoint，便于追踪进度
+> - 终端命令一次性完成 inbox 重置和 Git 提交
 
 ### Step 3: 汇总报告
 
@@ -97,4 +101,15 @@ prompt: |
 
 1. **按需处理**：只处理有待处理便签的成员，空 inbox 跳过
 2. **串行执行**：一次处理一个成员，避免并发冲突
-3. **Git 提交**：每批处理完成后，统一 git commit
+3. **Git 提交**：MemoryPalaceKeeper 会在处理完成后自动 Git 提交，调度者无需额外操作
+4. **元认知自我处理**：MemoryPalaceKeeper 自己也有 inbox，会在处理其他成员时顺带处理自己的便签
+
+---
+
+## 变更日志
+
+| 日期 | 变更 |
+|:-----|:-----|
+| 2025-12-27 | v2: 更新 prompt 适配伪代码工作流程；移除 inbox-archive.md 引用（Git-as-Archive）|
+| 2025-12-26 | v1.1: 添加 MemoryPalaceKeeper 到成员列表 |
+| 2025-12-26 | v1.0: 初版 |

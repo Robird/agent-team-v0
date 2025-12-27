@@ -2,23 +2,64 @@
 
 > **适用于**：Team Leader / StandardsChair 组织成员进行记忆维护
 > **前置技能**：[memory-maintenance-skill.md](memory-maintenance-skill.md)（成员自身的维护技能）
+> **相关指南**：[memory-palace-batch-guide.md](memory-palace-batch-guide.md)（便签批量处理）
 >
-> **状态**：v1.0（2025-12-22）
+> **状态**：v1.1（2025-12-27）
 > **SSOT**：本文件是组织记忆维护的权威指南
 
 ---
 
 ## 概述
 
-本文档定义 Team Leader 如何组织 AI Team 成员进行记忆维护。与 `memory-maintenance-skill.md`（成员自己执行维护）互补。
+本文档定义 Team Leader 如何组织 AI Team 成员进行记忆维护。
+
+**两类维护任务**：
+
+| 类型 | 频率 | 执行者 | 指南 |
+|:-----|:-----|:-------|:-----|
+| **便签处理**（inbox → index） | 每日 | MemoryPalaceKeeper | [memory-palace-batch-guide.md](memory-palace-batch-guide.md) |
+| **深度维护**（index 瘦身） | 按需（>800行） | 成员自己 | 本文档 + [memory-maintenance-skill.md](memory-maintenance-skill.md) |
 
 **角色分工**：
-- **成员**：执行自己记忆文件的维护（使用 memory-maintenance-skill.md）
-- **Leader**：组织、引导、质量把关（使用本文档）
+- **MemoryPalaceKeeper**：处理便签归档（高频、轻量）
+- **成员**：执行自己记忆文件的深度维护（低频、重量）
+- **Leader**：组织、引导、质量把关
 
 ---
 
-## 维护前：状态评估
+## 便签批量处理（日常）
+
+详见 [memory-palace-batch-guide.md](memory-palace-batch-guide.md)。
+
+**MemoryPalaceKeeper 工作流程特点**（v2，2025-12-27）：
+
+```python
+# 伪代码概览
+def processInbox(memberPath):
+    # PHASE 1: 读取
+    inbox, index = readFile(inbox.md), readFile(index.md)
+    
+    # PHASE 2: 逐条处理
+    for note in parseNotes(inbox):
+        noteType = classify(note)      # Discovery/State/Refinement/...
+        target = route(noteType)       # index.md 的哪个区块
+        editFile(index, target, note)  # APPEND/OVERWRITE/MERGE
+        print(f"✓ {noteType} → {target}")  # checkpoint
+    
+    # PHASE 3: 终端收尾
+    runTerminal("cat > inbox.md << 'EOF' ...")  # heredoc 重置
+    runTerminal("git commit ...")               # 自动提交
+```
+
+**关键改进**：
+- **Git-as-Archive**：Git 历史即归档，无需 inbox-archive.md
+- **元认知自我处理**：MemoryPalaceKeeper 可以处理自己的便签（使用本文档）
+
+---
+
+## 深度维护（按需）
+
+### 维护前：状态评估
 
 ### 行数统计命令
 
@@ -252,4 +293,5 @@ git add -A && git commit -m "feat: batch memory maintenance completed"
 
 | 日期 | 版本 | 变更 |
 |:-----|:-----|:-----|
+| 2025-12-27 | v1.1 | 添加便签批量处理章节；关联 memory-palace-batch-guide.md；说明 MemoryPalaceKeeper 伪代码工作流程 |
 | 2025-12-22 | v1.0 | 初版，基于 Advisor-Claude 试点维护经验 |

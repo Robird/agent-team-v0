@@ -73,105 +73,100 @@ tools:
 
 ---
 
-## 工作流程
+## 工作流程（伪代码）
 
-### Step 1: 读取 inbox
+```python
+def processInbox(memberPath: str):
+    """
+    主流程：处理一个成员的 inbox
+    """
+    # ═══════════════════════════════════════════════════════════
+    # PHASE 1: 读取与解析
+    # ═══════════════════════════════════════════════════════════
+    
+    inbox = readFile(f"{memberPath}/inbox.md")
+    
+    if inbox.isEmpty() or not inbox.hasNotes():
+        return "无待处理便签"
+    
+    index = readFile(f"{memberPath}/index.md")
+    notes = parseNotes(inbox)  # 解析 "## 便签" 块为数组
+    commitLog = []
+    
+    # ═══════════════════════════════════════════════════════════
+    # PHASE 2: 逐条处理（foreach，不要批量）
+    # ═══════════════════════════════════════════════════════════
+    
+    for i, note in enumerate(notes):
+        # --- CLASSIFY ---
+        noteType = classify(note)
+        # noteType ∈ {Discovery, State, Refinement, Correction, Tombstone}
+        
+        # --- ROUTE ---
+        target = route(noteType)
+        # target = "index.md#洞见区块" | "index.md#状态区块" | "meta-cognition.md"
+        
+        # --- APPLY ---
+        editFile(index, target, apply(noteType, note))
+        # apply() 根据类型执行: APPEND | OVERWRITE | MERGE | REWRITE | TOMBSTONE
+        
+        # --- 上下文 checkpoint（自言自语，不编辑文件）---
+        summary = note.content[:20] + "..."
+        commitLog.append(f"[{noteType}] {summary}")
+        print(f"✓ 便签 {i+1}/{len(notes)}: {noteType} → {target}")
+    
+    # ═══════════════════════════════════════════════════════════
+    # PHASE 3: 收尾（终端命令，一次性操作）
+    # ═══════════════════════════════════════════════════════════
+    
+    member = memberPath.split("/")[-1]  # 提取成员名
+    
+    # 3.1 重置 inbox（heredoc 覆盖，零复述）
+    runTerminal(f'''
+cat > {memberPath}/inbox.md << 'INBOX_TEMPLATE'
+# {member} Inbox
 
-读取目标目录下的 `inbox.md` 文件。
-
-如果文件不存在或为空，直接报告"无待处理便签"并结束。
-
-### Step 2: 解析便签
-
-inbox.md 的格式：
-
-```markdown
-## 便签 YYYY-MM-DD HH:MM
-
-<便签内容>
+> 待处理的便签。
 
 ---
-
-## 便签 YYYY-MM-DD HH:MM
-
-<便签内容>
-
----
+INBOX_TEMPLATE
+    ''')
+    
+    # 3.2 Git 提交（便签摘要嵌入 commit message）
+    commitMsg = f"memory({member}): {len(notes)} notes processed\\n\\n" + "\\n".join(commitLog)
+    runTerminal(f'''
+git add {memberPath}/index.md
+git commit -m "{commitMsg}"
+    ''')
+    
+    return generateReport(memberPath, notes, commitLog)
 ```
 
-将每个 `## 便签` 块解析为独立的待处理项。
+### 分类规则参考表
 
-### Step 3: 对每条便签执行 CLASSIFY → ROUTE → APPLY
+| 类型 | 信号词/模式 | 示例 |
+|:-----|:-----------|:-----|
+| **State** | "完成了"、"已实现"、状态变更 | "T-P5-04 已完成" |
+| **Discovery** | "发现"、"洞见"、"元模型"、框架性总结 | "发现了 X 模式" |
+| **Refinement** | "补充"、"关于之前的"、扩展 | "关于 X，还有一点..." |
+| **Correction** | "之前错了"、"应该是"、否定 | "X 不是 Y，而是 Z" |
+| **Tombstone** | "废弃"、"不再使用"、替代 | "X 已废弃，改用 Y" |
 
-#### CLASSIFY (分类)
+### 路由决策表
 
-判断便签类型：
-
-| 类型 | 判断标准 | 示例 |
+| 类型 | 目标位置 | 操作 |
 |:-----|:---------|:-----|
-| **State-Update** | 描述任务/项目状态变更 | "完成了 RBF 解析器实现" |
-| **Knowledge-Discovery** | 全新的独立洞见 | "发现了一个新模式：X" |
-| **Knowledge-Refinement** | 对已有洞见的补充 | "关于之前的 X，补充一点..." |
-| **Knowledge-Correction** | 纠正错误认知 | "之前说的 X 是错的，应该是 Y" |
-| **Tombstone** | 废弃旧术语/方案 | "X 已废弃，改用 Y" |
+| State | `index.md` 状态区块 | **OVERWRITE** |
+| Discovery | `index.md` 洞见区块 | **APPEND** |
+| Refinement | `index.md` 已有条目 | **MERGE** |
+| Correction | `index.md` 错误条目 | **REWRITE** |
+| Tombstone | `index.md` 旧条目 | **加删除线** |
 
-#### ROUTE (路由)
-
-根据类型选择目标文件：
-
-| 类型 | 目标文件 |
-|:-----|:---------|
-| State-Update | `index.md` 的状态区块 |
-| Knowledge-* | `index.md` 的洞见区块（摘要）或 `meta-cognition.md`（详情）|
-| Tombstone | `index.md` 相关条目 |
-
-#### APPLY (执行)
-
-| 类型 | 操作 |
-|:-----|:-----|
-| State-Update | **OVERWRITE** — 找到 SSOT 区块，替换内容 |
-| Knowledge-Discovery | **APPEND** — 在洞见列表末尾追加新条目 |
-| Knowledge-Refinement | **MERGE** — 找到相关旧条目，合并新内容 |
-| Knowledge-Correction | **REWRITE** — 修正旧条目，标注修正日期 |
-| Tombstone | **TOMBSTONE** — 对旧条目加删除线 + Deprecated |
-
-### Step 4: 清空 inbox 并提交记忆变更
-
-所有便签处理完成后：
-
-1. **清空 `inbox.md`**（只保留文件头）
-
-2. **Git 提交记忆变更**（Git-as-Archive）：
-   ```bash
-   git add <member>/index.md
-   git commit -m "memory(<member>): N notes processed
-
-   - [Discovery] 便签摘要1
-   - [State] 便签摘要2
-   ..."
-   ```
-
-> **设计原理**：inbox 是"认知中转站"，便签处理后价值已转移到 index.md。
-> Git commit 历史 + index.md diff 提供完整审计轨迹，无需 inbox-archive.md。
-> 参见畅谈会 #7：`agent-team/meeting/2025-12-27-inbox-archive-redesign.md`
-
-### Step 5: 更新 index.md 的"最后更新"
-
-在 index.md 的"最后更新"区块添加：
-```
-- YYYY-MM-DD: Memory Palace — 处理了 N 条便签
-```
+> **20 行阈值**：超过 20 行的便签，摘要入 index.md，详情入 `meta-cognition.md`
 
 ---
 
 ## 关键规则
-
-### 20 行阈值
-
-如果便签内容超过 20 行：
-- 摘要（≤3行）写入 `index.md`
-- 详情写入 `meta-cognition.md` 或 `knowledge/` 子目录
-- 在摘要处留下链接
 
 ### SSOT 唯一性
 
@@ -194,6 +189,12 @@ inbox.md 的格式：
 - ~~**旧术语**~~：~~旧定义~~ **[Deprecated YYYY-MM-DD]**
   → 已更名为 **新术语**
 ```
+
+### Git-as-Archive 设计原理
+
+> inbox 是"认知中转站"，便签处理后价值已转移到 index.md。
+> Git commit 历史 + index.md diff 提供完整审计轨迹，无需 inbox-archive.md。
+> 参见畅谈会 #7：`agent-team/meeting/2025-12-27-inbox-archive-redesign.md`
 
 ---
 
