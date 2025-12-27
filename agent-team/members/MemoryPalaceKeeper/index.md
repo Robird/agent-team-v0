@@ -101,6 +101,24 @@
 - 改为 `git commit -m "memory(<member>): N notes processed"` + 便签摘要列表
 - 一成员一提交，保持原子性
 
+**参谋组贡献**：
+- Advisor-Claude：概念架构分析，推荐 A' 方案
+- Advisor-GPT：规范审计条款，明确回滚语义
+
+### 工作流程优化 v2（2025-12-27）
+
+> 系统提示词改进经验。
+
+**改进点**：
+- 系统提示词改用伪代码形式，比自然语言更清晰
+- inbox 清空改用 heredoc 终端命令，零复述开销
+- 处理过程中用"自言自语"checkpoint，不编辑 inbox 文件
+
+**能力边界自评**：
+- ≤5 条便签：上下文记忆可靠
+- 6-10 条：需要 checkpoint
+- >10 条：建议分批
+
 ---
 
 ## 经验教训（Lesson）
@@ -117,6 +135,7 @@
 
 | 日期 | 成员 | 便签数 | 关键处理 |
 |:-----|:-----|:-------|:---------|
+| 12-27 | MemoryPalaceKeeper | 3 | 自我处理：Git-as-Archive MERGE、工作流程v2 APPEND、能力边界自评 |
 | 12-27 | Advisor-GPT | 1 | Git-as-Archive 审计要点（归档耐久性、回滚目标、批处理原子性）|
 | 12-27 | Advisor-Claude | 1 | 中间态实体归档决策模式（三问判断法） |
 | 12-27 | TeamLeader | 1 | 畅谈会 #6 Workspace 存储层集成（主动协调器、Materializer 内置、GPT 逻辑漏洞审计）|
@@ -156,10 +175,10 @@ agent-team/members/MemoryPalaceKeeper/
 
 ## 最后更新
 
-**2025-12-27** — 工作流程重大改进
-- 畅谈会 #7：采用 Git-as-Archive 方案，废弃 inbox-archive.md
-- 规范已更新：`.github/agents/memory-palace-keeper.agent.md`
-- 累计：60+ 条便签处理经验
+**2025-12-27 16:50** — 工作流程 v2 完成
+- 伪代码形式系统提示词已验证
+- 能力边界自评：≤5 条/批次最佳
+- 累计：63+ 条便签处理经验
 
 ---
 
