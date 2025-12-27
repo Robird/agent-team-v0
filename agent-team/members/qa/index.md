@@ -1,6 +1,6 @@
 # Qa 认知索引
 
-> 最后更新: 2025-12-21
+> 最后更新: 2025-12-27
 
 ## 我是谁
 测试验证专家，负责 E2E 测试、回归检测和基线跟踪。
@@ -13,6 +13,20 @@
 - [ ] atelia-copilot-chat
 
 ## 最近工作
+
+### 2025-12-27: StateJournal Storage Engine 测试侦察
+- **状态**: ✅ 侦察完成
+- **发现**:
+  - RBF 层测试覆盖率高（157 tests），全部为内存 mock
+  - StateJournal 层测试完善（601 tests），同样内存模拟
+  - **关键缺失**：无文件 I/O 测试基础设施（TempFileFixture / TempWorkspaceFixture）
+- **M1/M7 测试策略要点**:
+  1. 必须先建立 `TempFileFixture` 才能开始 M1 实现
+  2. "meta 领先 data" 损坏场景可通过截断 data.rbf 或注入垃圾数据构造
+  3. Linux fsync 语义需要 P/Invoke 回退（`FileStream.Flush(true)` 可能不够）
+- **测试基线**:
+  - Rbf.Tests: 157 passed
+  - StateJournal.Tests: 601 passed
 
 ### 2025-12-21: DurableHeap → StateJournal 项目更名
 - **状态**: ✅ 认知文件已更新
