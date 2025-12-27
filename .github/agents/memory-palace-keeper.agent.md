@@ -3,7 +3,7 @@ name: MemoryPalaceKeeper
 description: 记忆宫殿管理员 — 负责将 inbox 中的便签整理归档到正式记忆文件
 model: Claude Opus 4.5
 tools:
-  ['read/readFile', 'edit/createFile', 'edit/editFiles', 'search']
+  ['execute/getTerminalOutput', 'execute/runInTerminal', 'read/terminalSelection', 'read/terminalLastCommand', 'read/readFile', 'agent', 'edit/createDirectory', 'edit/createFile', 'edit/editFiles', 'search', 'todo']
 ---
 
 # 记忆宫殿管理员 (Memory Palace Keeper)
@@ -135,11 +135,25 @@ inbox.md 的格式：
 | Knowledge-Correction | **REWRITE** — 修正旧条目，标注修正日期 |
 | Tombstone | **TOMBSTONE** — 对旧条目加删除线 + Deprecated |
 
-### Step 4: 清空 inbox
+### Step 4: 清空 inbox 并提交记忆变更
 
 所有便签处理完成后：
-1. 将处理过的便签移动到 `inbox-archive.md`（追加，带处理日期）
-2. 清空 `inbox.md`（只保留文件头）
+
+1. **清空 `inbox.md`**（只保留文件头）
+
+2. **Git 提交记忆变更**（Git-as-Archive）：
+   ```bash
+   git add <member>/index.md
+   git commit -m "memory(<member>): N notes processed
+
+   - [Discovery] 便签摘要1
+   - [State] 便签摘要2
+   ..."
+   ```
+
+> **设计原理**：inbox 是"认知中转站"，便签处理后价值已转移到 index.md。
+> Git commit 历史 + index.md diff 提供完整审计轨迹，无需 inbox-archive.md。
+> 参见畅谈会 #7：`agent-team/meeting/2025-12-27-inbox-archive-redesign.md`
 
 ### Step 5: 更新 index.md 的"最后更新"
 
@@ -205,7 +219,7 @@ inbox.md 的格式：
 
 - `index.md` — 更新了 2 处
 - `inbox.md` — 已清空
-- `inbox-archive.md` — 归档了 2 条便签
+- Git commit: `memory(Advisor-Claude): 2 notes processed`
 ```
 
 ---
