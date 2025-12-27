@@ -208,6 +208,13 @@
     - **辅助方法随功能移动**：`CreateDetachedDict` → Detached 文件，`ToObjectDict` → Basic 文件
     - **runSubagent 串行拆分**：7 次调用，每次处理一个目标文件，明确任务边界
 
+31. **Workspace 核心 API 非泛型化**（2025-12-27, 100+ 处替换）
+    - **API 分层设计**：Core API（非泛型）返回 `DurableObjectBase`，Convenience API（类型化）提供 `LoadDict()`/`LoadAs<T>()`
+    - **类型收敛**：IdentityMap/DirtySet/ObjectLoaderDelegate/RegisterDirty 的核心路径从 `IDurableObject` 收敛为 `DurableObjectBase`
+    - **设计意图清晰化**："由数据决定类型" — 非泛型 Core API 让这一设计意图更显式
+    - **runSubagent 有效性验证**：100 处替换分解为 3 个 subagent 任务，继续验证分解大任务的模式
+    - 测试结果：601/601 通过 ✅
+
 ### 经验教训
 
 1. **varint 定义 SSOT 缺失事件**（2025-12-22）
@@ -447,6 +454,7 @@ agent-team/archive/members/implementer/
 
 ## 最后更新
 
+- **2025-12-27**: Memory Palace — 处理了 2 条便签（Workspace 核心 API 非泛型化 + VersionIndex 重构完工状态）
 - **2025-12-27**: Memory Palace — 处理了 7 条便签（VersionIndex 重构经验 + DirtySet 同步 Bug + 测试文件拆分策略）
 - **2025-12-27**: Memory Palace — 处理了 1 条便签（Workspace 绑定机制 Phase 1 实现经验）
 - **2025-12-26**: Memory Palace — 处理了 1 条便签（DurableDict 非泛型改造）
