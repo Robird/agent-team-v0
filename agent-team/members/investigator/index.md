@@ -1,6 +1,8 @@
 # Investigator 认知索引
 
 > 最后更新: 2025-12-27
+> - 2025-12-27: ObjectLoaderDelegate 重构影响分析
+> - 2025-12-27: Workspace/ObjectLoader/RBF 设计意图调查
 > - 2025-12-27: Memory Palace — 处理了 1 条便签（_removedFromCommitted 设计洞见）
 > - 2025-12-25: Memory Palace — 处理了 1 条便签（历史决策引用分析）
 > - 2025-12-24: Memory Palace — 处理了 1 条便签（术语别名调研）
@@ -17,6 +19,19 @@
 - [ ] atelia-copilot-chat
 
 ## Session Log
+
+### 2025-12-27: Workspace/ObjectLoader/RBF 设计意图调查
+**任务**: 分析 StateJournal 设计文档，提取 Workspace、ObjectLoader、RBF 的设计意图
+**关键发现**:
+1. **Workspace 定位**：类比 Git working tree，是核心协调器（Identity Map、Dirty Set、HEAD 追踪、Commit 协调）
+2. **ObjectLoader 是内部实现**：不是独立组件，LoadObject 流程定义在 Workspace 内部
+3. **四阶段读取模型**：Deserialize → Materialize（Shallow）→ LoadObject → ChangeSet
+4. **RBF 层级关系**：RBF 是 Layer 0，提供二进制帧封装；StateJournal 是 Layer 1，定义 Record 语义
+5. **护照模式**：每个对象 MUST 绑定一个 Owning Workspace，绑定不可变
+6. **分层 API 设计**：Layer 1（构造函数）→ Layer 2（工厂）→ Layer 3（可选 Ambient）
+**交付**: [handoffs/2025-12-27-workspace-objectloader-rbf-investigation-INV.md](../handoffs/2025-12-27-workspace-objectloader-rbf-investigation-INV.md)
+**待确认问题**:
+- B-8: LoadObject<T> 是否应拆分为非泛型底层 + 泛型包装？
 
 ### 2025-12-26: `_removedFromCommitted` 集合必要性分析
 **任务**: 调查 DurableDict 中 `_removedFromCommitted` 集合是否多余
@@ -139,6 +154,8 @@
 **更新**: [wiki/PipeMux/README.md](../../wiki/PipeMux/README.md) - 增加了核心组件详解、Calculator 命令表、已知问题代码现状列
 
 ## Key Deliverables
+- **handoffs/2025-12-27-objectloaderdelegate-refactoring-analysis-INV.md (2025-12-27)** - ObjectLoaderDelegate 重构影响分析，含使用点清单、测试 Mock 方式、IRbfScanner 状态评估
+- **handoffs/2025-12-27-workspace-objectloader-rbf-investigation-INV.md (2025-12-27)** - Workspace/ObjectLoader/RBF 设计意图调查，含关键条款引用和实现建议
 - **handoffs/2025-12-24-mvp-design-v2-decision-refs-INV.md (2025-12-24)** - mvp-design-v2.md 历史决策引用分析，15 处 Qxx 引用 + 8 处方案 C 引用
 - wiki/PieceTreeSharp/README.md (2025-12-09) - 源码核实全面重写，修正目录结构
 - wiki/atelia-prototypes/README.md (2025-12-09) - 源码核实全面重写

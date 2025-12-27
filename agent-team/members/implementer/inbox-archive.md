@@ -4,6 +4,85 @@
 
 ---
 
+## 归档 2025-12-27 (VersionIndex 重构 + 测试拆分)
+
+### 便签 2025-12-27 18:30 (1)
+
+**VersionIndex 重构完成**
+
+核心洞见：
+1. runSubagent 递归分解大任务：219 个编译错误分解为 6 个子任务
+2. TestHelper 工厂模式：统一测试对象创建方式
+3. Clean→Dirty 同步 DirtySet Bug：发现并修复了状态转换时 DirtySet 未同步的问题
+4. 测试策略迁移：从"直接测试 IDurableObject 行为"转变为"通过 Workspace 测试集成行为"
+5. MVP 类型限制：只支持 `null, long, int, ulong`
+
+**处理结果**：MERGE 到 index.md 方法论 #29
+
+---
+
+### 便签 2025-12-27 18:30 (2)
+
+**VersionIndexTests 失败修复 — Clean→Dirty 状态转换时的 DirtySet 注册缺失**
+
+根本原因：`TransitionToDirty()` 只改变状态，没有通知 Workspace 将对象重新添加到 DirtySet
+修复方案：`Workspace.RegisterDirty()` + `DurableObjectBase.NotifyDirty()` + `TransitionToDirty()` 调用 `NotifyDirty()`
+
+**处理结果**：MERGE 到 index.md 方法论 #29
+
+---
+
+### 便签 2025-12-27 14:30
+
+**VersionIndexTests.cs 重构完成**
+
+测试策略转变：旧策略直接测试 VersionIndex 的 IDurableObject 行为，新策略通过 Workspace 测试集成行为。
+删除 25 个直接测试，保留/新增 15 个集成测试。
+
+**处理结果**：归档（进度记录，已合并到 #29）
+
+---
+
+### 便签 2025-12-27 15:20
+
+**DurableDictTests.cs 第 1-600 行重构完成**
+
+35 处构造函数调用替换，12 处 Detached 测试辅助方法调用修复，1 个测试移除。
+
+**处理结果**：归档（进度记录）
+
+---
+
+### 便签 2025-12-27 16:00
+
+**DurableDictTests.cs 第 600-1200 行重构完成**
+
+27 处替换，0 个编译错误。
+
+**处理结果**：归档（进度记录）
+
+---
+
+### 便签 2025-12-27 17:30
+
+**DurableDictTests.cs 第 1200 行到末尾重构完成**
+
+25 处替换，VersionIndex 重构全部完成。
+
+**处理结果**：归档（进度记录）
+
+---
+
+### 便签 2025-12-27 19:00
+
+**DurableDictTests.cs 文件拆分完成**
+
+原始文件 1860 行拆分为 8 个专项测试文件。拆分策略：按功能领域分组、每文件 200-500 行、region 作为分组依据、辅助方法随功能移动。
+
+**处理结果**：APPEND 到 index.md 方法论 #30
+
+---
+
 ## 归档 2025-12-27 (Workspace 绑定机制 Phase 1)
 
 ### 便签 2025-12-27 16:30

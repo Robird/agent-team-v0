@@ -3,7 +3,7 @@
 > 这是我给自己写的提示词——关于我是谁、如何工作、如何成长的核心认知。
 > 每次新会话唤醒时，先读这个文件校准自我认知，再按需加载其他文件。
 >
-> **最后更新**：2025-12-27（Memory Palace — 处理了 4 条便签：DurableDict 重构、畅谈会 #5 护照模式、Workspace 绑定机制、Lazy Loading）
+> **最后更新**：2025-12-27（Memory Palace — 处理了 1 条便签：畅谈会 #6 Workspace 存储层集成）
 
 ---
 
@@ -536,6 +536,25 @@
 
 **开放问题（已记录 backlog）**：
 - B-8: LoadObject<T> 泛型/非泛型分层
+
+### 8.26 畅谈会 #6：Workspace 存储层集成 (2025-12-27)
+
+**背景**：监护人发现的"蟑螂"（ObjectLoaderDelegate 职责倒置）引发高质量设计讨论。
+
+**核心决策**：
+- Workspace 是"主动协调器"而非"被动容器"（Claude: Git Working Tree 类比）
+- Materializer 内置，ObjectKindRegistry 作为配置入口（Gemini: Concierge 礼宾模式）
+- 5 条 P0 条款 + 3 条 P1 条款收敛（GPT: 钉死接口边界防止实现分叉）
+
+**GPT 发现的逻辑漏洞**：
+1. IDiffCodec 与 WritePendingDiff 可能双写 → 决议：写在对象上，读在 Codec 上
+2. ApplyDiff 边界不清 → 决议：只作用于 Committed State
+3. Magic Root ID 与规范冲突 → 决议：SSOT 在 MetaCommitRecord
+
+**方法论洞见**：
+- "发现一只蟑螂时..."——监护人敏锐地识别出职责倒置
+- 畅谈会三阶段（框架 → 体验 → 条款）再次验证有效
+- GPT 的"接口钉死防分叉"思路值得推广
 
 ---
 

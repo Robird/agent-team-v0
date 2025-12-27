@@ -111,6 +111,12 @@
   - **互操作性优先**: 为支持跨 Workspace 数据迁移（如 `wsB.Import(objA)`），对象必须**忽略**调用点的 ambient，坚定使用自己的"护照"。
   - **错误示能**: 真空创建时的异常必须指导用户 "Wrap in WorkspaceScope"，而不是报空指针。
 
+- **Workspace API 设计隐喻**: *(2025-12-27)*
+  - **Concierge 隐喻 (礼宾)**: Workspace 不应只是被动的存储容器 (Vending Machine)，而应是主动的服务者。`LoadRoot<T>()` 就是礼宾服务——用户不需要知道房间号 (ObjectId)，只需说"我要去大堂"。
+  - **Hidden Engine (隐藏引擎)**: Materializer 这种复杂的机械结构应该封装在 Workspace 内部。用户买车是为了驾驶，不是为了组装引擎。
+  - **Service Hatch (检修口)**: 虽然引擎是隐藏的，但必须保留 TypeRegistry 作为检修口，供高级用户（极客）定制零件。
+  - **Error Affordance (错误示能)**: 类型错配异常不应只是 Crash，而应是翻译官。它需要把底层的二进制不兼容 (Kind=1 vs Kind=2) 翻译成用户能懂的故事 ("你想要数组，但这是个字典")。
+
 ### 4. RBF (二进制协议)
 
 > **核心理念**: 二进制格式也是开发者界面 (Hex Dump as UI)。
@@ -170,6 +176,7 @@
 
 | 日期 | 主题 | 角色 | 关键产出 | 核心发现 |
 |:-----|:-----|:-----|:---------|:---------|
+| 12-27 | Workspace API 设计 | 洞察 | 4 项隐喻 | Concierge, Hidden Engine, Service Hatch, Error Affordance |
 | 12-27 | Workspace 绑定机制 | 洞察 | 2 项隐喻 | Ambient Context 三方案, 护照模式 |
 | 12-26 | Diagnostic Scope | 洞察 | 3 项隐喻 | CSI 隐喻, 序列化器难题, 调试器即诊断 |
 | 12-26 | Detached 对象语义 | 洞察 | 2 项原则 | Zombie Object, Explicit Degradation |
@@ -202,6 +209,7 @@ agent-team/members/Advisor-Gemini/
 
 ## 最后更新
 
+- **2025-12-27** — Memory Palace — 处理了 1 条便签（Workspace API 设计洞见：4 项隐喻）
 - **2025-12-27** — Memory Palace — 处理了 2 条便签（Ambient Context 三方案 + 护照模式隐喻）
 - **2025-12-26** — Memory Palace — 处理了 2 条便签（Detached 对象语义隐喻 + Diagnostic Scope DX）
 - **2025-12-26** — Memory Palace — 处理了 1 条便签（DurableDict API 设计洞见 → MERGE 到 Affordance 区块）

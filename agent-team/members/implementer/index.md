@@ -193,6 +193,21 @@
     - **双重构造函数策略**：为兼容 `VersionIndex` 保留无 Workspace 的构造函数（权衡之举）
     - **private protected 访问修饰符**：C# 7.2 引入，表示"只有同一程序集中的派生类可访问"
 
+29. **VersionIndex 重构与 DirtySet 同步 Bug**（2025-12-27）
+    - **runSubagent 递归分解大任务**：219 个编译错误分解为 6 个子任务（按文件分组），大文件进一步分段处理
+    - **TestHelper 工厂模式**：`CreateDurableDict()` / `CreateCleanDurableDict()` 统一测试对象创建
+    - **Clean→Dirty DirtySet 同步 Bug**：对象从 Clean 修改为 Dirty 时，必须调用 `NotifyOwnerDirty()` 通知 Workspace 将其添加到 DirtySet，否则 Commit 会漏掉该对象
+    - **修复方案**：`Workspace.RegisterDirty()` + `DurableObjectBase.NotifyDirty()` + `DurableDict.TransitionToDirty()` 调用 `NotifyDirty()`
+    - **DirtySet.GetAll() 快照**：返回 `_set.Values.ToList()` 而非活动视图，避免遍历时修改导致异常
+    - **测试策略转变**：VersionIndex 从 IDurableObject 变成 View 后，状态管理测试移交 DurableDict，VersionIndex 测试聚焦视图 API 和集成行为
+
+30. **测试文件拆分策略**（2025-12-27, DurableDictTests 1860→8 文件）
+    - **按功能领域分组**：Basic/State/Detached/Serialization/Commit/DirtyTracking/LazyLoading/综合
+    - **每文件 200-500 行**：便于阅读和编辑
+    - **region 作为分组依据**：原始文件的 `#region` 标记是很好的功能边界
+    - **辅助方法随功能移动**：`CreateDetachedDict` → Detached 文件，`ToObjectDict` → Basic 文件
+    - **runSubagent 串行拆分**：7 次调用，每次处理一个目标文件，明确任务边界
+
 ### 经验教训
 
 1. **varint 定义 SSOT 缺失事件**（2025-12-22）
@@ -432,6 +447,7 @@ agent-team/archive/members/implementer/
 
 ## 最后更新
 
+- **2025-12-27**: Memory Palace — 处理了 7 条便签（VersionIndex 重构经验 + DirtySet 同步 Bug + 测试文件拆分策略）
 - **2025-12-27**: Memory Palace — 处理了 1 条便签（Workspace 绑定机制 Phase 1 实现经验）
 - **2025-12-26**: Memory Palace — 处理了 1 条便签（DurableDict 非泛型改造）
 - **2025-12-26**: Memory Palace — 处理了 5 条便签（Phase 5 完工：VersionIndex/MetaCommitRecord/FinalizeCommit/Recovery + 战术层协作反思）

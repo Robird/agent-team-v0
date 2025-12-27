@@ -183,6 +183,26 @@
 - 更好的 SSOT 是 `[S-LAZYLOAD-DISPATCH-BY-OWNER]` + "ambient 不得影响已绑定对象语义"
 - 若仍需提示误用，可将 mismatch 检查降级为 Strict/Debug 选项（MAY），避免破坏跨 Workspace 复制/迁移的 DX
 
+**VersionIndex 规范性意图**（2025-12-27）：
+
+- VersionIndex 应收敛为"ObjectId=0 的 Well-Known DurableDict（持久化形态）"，而非额外引入独立的 `VersionIndex : IDurableObject` 生命周期层
+- 更稳结构：Workspace 持有并提交 `_versionIndexDict : DurableDict`（绑定 workspace），`VersionIndex` 仅作类型化 view/facade 提供 `TryGet/SetObjectVersionPtr` 等 API，不参与两阶段提交
+- **建议**：移除/禁用 DurableDict 与 DurableObjectBase 的"无 workspace 绑定构造函数"，避免系统对象成为破坏不变量的后门
+
+### Workspace 存储层集成审计要点（2025-12-27）
+
+> 存储层整合时的读写路径与 unknown kind 判定基准审计。
+
+- **读写双权威漂移风险**：`IDurableObject.WritePendingDiff` 已是写路径 SSOT；若再引入 `IDiffCodec.WriteDiff` 会造成读写"双权威"漂移。更稳的收敛是：写在对象上、读在 codec 上，且 `ApplyDiff` 仅作用于 materialize 的 Committed State（不触发 I/O，不含 PrevVersionPtr）
+- **unknown ObjectKind 判定基准条款化**："未知 ObjectKind 必须 fail-fast"在允许自定义 kind 后，unknown 的判定基准应条款化为"运行时 registry 未登记"，而非"编译时 enum 未列出"
+
+### StateJournal 草稿状态策略（2025-12-27）
+
+> 当前实现在发布前的处理约定。
+
+- StateJournal 当前实现（atelia/src/StateJournal）在发布前视为草稿：已知存在与设计文档不一致的结构性问题，且无旧数据需要兼容
+- **默认策略**：在收到"此实现发布"通知之前，默认允许不做兼容性考虑、可进行破坏性重构（API/结构/格式均可调整），以规范一致性与可测试性为优先
+
 ### Detached 延拓值与 DiagnosticScope 可判定性审计（2025-12-26）
 
 > 评估 Detached 对象的"延拓值"方案与 DiagnosticScope 设计的可审计性。
@@ -341,6 +361,7 @@ agent-team/archive/members/Advisor-GPT/2025-12/
 ---
 
 ## 最后更新
+- **2025-12-27**：Memory Palace — 处理了 3 条便签（存储层集成审计、StateJournal 草稿策略、VersionIndex 规范意图）
 - **2025-12-27**：Memory Palace — 处理了 3 条便签（DurableDict 透明 Lazy Load 审计点、Workspace 绑定机制审计 R1+R2）
 - **2025-12-26**：Memory Palace — 处理了 4 条便签（Detached 延拓值 D 判据、DiagnosticScope 可判定性、O6 工程成本）
 - **2025-12-26**：Memory Palace — 处理了 2 条便签（AteliaResult 边界三分、DurableDict 审计风险）

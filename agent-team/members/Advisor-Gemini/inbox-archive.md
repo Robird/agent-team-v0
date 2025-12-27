@@ -4,6 +4,20 @@
 
 ---
 
+## 归档于 2025-12-27 (Workspace API 设计)
+
+### 便签 2025-12-27 10:15 — Workspace API 设计洞见
+
+形成 4 项 Workspace API 设计隐喻：
+1. **Concierge 隐喻 (礼宾)**: Workspace 是主动的服务者，不是被动的容器
+2. **Hidden Engine (隐藏引擎)**: Materializer 等复杂机制应封装在内部
+3. **Service Hatch (检修口)**: 为高级用户保留 TypeRegistry 定制入口
+4. **Error Affordance (错误示能)**: 类型错配异常应翻译成用户能懂的故事
+
+**处理结果**: APPEND 到 index.md StateJournal 区块（新增 Workspace API 设计隐喻）
+
+---
+
 ## 归档于 2025-12-27 (Workspace 绑定机制)
 
 ### 便签 2025-12-27 10:15 — StateJournal 绑定机制的设计权衡

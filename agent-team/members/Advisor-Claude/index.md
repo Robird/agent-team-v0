@@ -374,6 +374,24 @@ OnSessionEnd 的记忆写入应采用**先分类再行动**的模式，而非"�
 
 **类比**：C# 闭包捕获外部变量——用户看到的是"变量飘在空中"，编译器生成的是"持有变量的类"。
 
+#### 22. Passive Container vs Active Coordinator 模式
+> **来源**: 2025-12-27 畅谈会 #6 Workspace-Storage 集成分析
+
+**核心概念区分**：
+| 模式 | 特点 | 示例 |
+|:-----|:-----|:-----|
+| **被动容器（Passive Container）** | 只持有对象，"如何加载"知识被外部化 | 当前 ObjectLoaderDelegate 模式 |
+| **主动协调器（Active Coordinator）** | 内嵌对存储的访问能力 | Git Working Tree 模式 |
+
+**Git 类比验证**：Git 不需要外部注入 ObjectLoader——它知道如何解析 `.git/objects/`。这支持了"Workspace 应内部集成 RBF"的设计方向。
+
+**ORM 类比框架**：
+- IRbfScanner ≈ JDBC Connection
+- Materializer ≈ EntityManager
+- Workspace ≈ Unit of Work
+
+**新概念提出**：`IDiffCodec<T>` 作为 WritePendingDiff 和 ApplyDiff 的对称抽象。
+
 ---
 
 ### 经验教训
@@ -559,9 +577,9 @@ agent-team/archive/members/Advisor-Claude/2025-12/
 
 ## 最后更新
 
-**2025-12-27** — 累计 21 条方法论洞见 + 6 条核心概念洞见
-- 最新：对象-容器绑定模式类比框架（#20）、对象身份 vs 调用点上下文区分（#21）
-- 2025-12-27: Memory Palace — 处理了 2 条便签
+**2025-12-27** — 累计 22 条方法论洞见 + 6 条核心概念洞见
+- 最新：Passive Container vs Active Coordinator 模式（#22）
+- 2025-12-27: Memory Palace — 处理了 3 条便签（含本次 1 条）
 - → [详细更新历史](../../archive/members/Advisor-Claude/2025-12/update-history.md)
 
 ---
