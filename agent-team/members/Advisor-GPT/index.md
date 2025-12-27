@@ -222,6 +222,20 @@
 - StateJournal 当前实现（atelia/src/StateJournal）在发布前视为草稿：已知存在与设计文档不一致的结构性问题，且无旧数据需要兼容
 - **默认策略**：在收到"此实现发布"通知之前，默认允许不做兼容性考虑、可进行破坏性重构（API/结构/格式均可调整），以规范一致性与可测试性为优先
 
+### ObjectLoaderDelegate 移除路线图（2025-12-27）
+
+> 彻底实现 Workspace.Open(folder) + RootObject 的粗粒度里程碑规划。
+
+| 里程碑 | 内容 |
+|:-------|:-----|
+| **M1** | 文件后端 RBF I/O |
+| **M2** | Record Reader/Writer |
+| **M3** | Recovery/Open(folder) |
+| **M4** | Dict-only materialize（沿 PrevVersionPtr 链回放）|
+| **M5** | 真实 commit（data→fsync→meta→fsync）|
+| **M6** | 删除 ObjectLoaderDelegate |
+| **M7** | 端到端集成测试锁定 roundtrip/recovery/version-chain |
+
 ### Detached 延拓值与 DiagnosticScope 可判定性审计（2025-12-26）
 
 > 评估 Detached 对象的"延拓值"方案与 DiagnosticScope 设计的可审计性。
@@ -380,6 +394,7 @@ agent-team/archive/members/Advisor-GPT/2025-12/
 ---
 
 ## 最后更新
+- **2025-12-28**：Memory Palace — 处理了 1 条便签（ObjectLoaderDelegate 移除路线图 M1-M7）
 - **2025-12-27**：Memory Palace — 处理了 4 条便签（IDurableObject 接口边界审计）
 - **2025-12-27**：Memory Palace — 处理了 1 条便签（Git-as-Archive 审计要点）
 - **2025-12-27**：Memory Palace — 处理了 3 条便签（存储层集成审计、StateJournal 草稿策略、VersionIndex 规范意图）
