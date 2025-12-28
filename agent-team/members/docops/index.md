@@ -45,6 +45,20 @@ DocOps - 文档与索引管理专家，负责维护团队的集体记忆和认�
 
 ## 最近工作
 
+### 2025-12-28 - FrameTag Wrapper Type 移除全文档同步
+- **任务**: 响应 wrapper type 审计决议，同步所有 RBF 相关文档
+- **关联决议**: `meeting/2025-12-28-wrapper-type-audit.md`
+- **变更文件**:
+  | 文件 | 版本变更 | 主要修改 |
+  |:-----|:---------|:---------|
+  | `rbf-interface.md` | v0.16 → v0.17 | 移除 `[F-FRAMETAG-DEFINITION]`，§2.1 改为概念描述，接口参数 `FrameTag` → `uint` |
+  | `mvp-design-v2.md` | v3.8 → v3.9 | 术语表 FrameTag 定义更新，新增 Packing/Unpacking 逻辑小节 |
+  | `rbf-format.md` | v0.15 → v0.16 | 修复 `[F-FRAMETAG-WIRE-ENCODING]` 过时引用 |
+  | `rbf-test-vectors.md` | v0.10 → v0.11 | 审计确认无需修改，更新关联规范版本 |
+  | handoff 审阅报告 | - | 新增 TODO #9/#10，更新条款合规表 |
+- **设计洞见**: wrapper type 的价值在于编译期类型安全，但当类型只是 uint 别名且无额外验证逻辑时，直接用原始类型更简洁。接口层用 uint，应用层可自由选择 enum 语义封装。
+- **状态**: ✅ 完成
+
 ### 2025-12-28 - RBF 测试向量文档版本同步检查
 - **任务**: 检查 `rbf-test-vectors.md` 是否需要更新以反映 `rbf-interface.md` v0.16 变更
 - **变更来源**: 畅谈会 `2025-12-28-rbf-builder-payload-simplification.md`
@@ -146,7 +160,7 @@ DocOps - 文档与索引管理专家，负责维护团队的集体记忆和认�
 - **更新文件**:
   - `agent-team/lead-metacognition.md`: 项目 Backlog 表格路径更新
   - `.github/agents/docui-standards-chair.agent.md`: 任务类型加载文件表格更新
-  - `agent-team/members/gemini-advisor/index.md`: 项目列表更新
+  - `agent-team/members/deepseek-advisor/index.md`: 项目列表更新
   - `agent-team/wiki/DurableHeap/` → `agent-team/wiki/StateJournal/`: 目录重命名
   - `agent-team/wiki/StateJournal/concept.md`: 添加更名通知 banner
   - `agent-team/wiki/StateJournal/jam-brief-1.md`: 添加更名通知 banner
