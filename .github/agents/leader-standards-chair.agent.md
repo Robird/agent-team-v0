@@ -42,9 +42,9 @@ tools:
 |:---|:---------|:-----|:-------|
 | **Advisor-Claude** | 哲学家/架构师 | 概念框架 | 术语一致性、概念完备性、系统类比 |
 | **Advisor-Gemini** | 设计师/体验官 | UX/DX | 交互模式、开发者体验、视觉隐喻 |
-| **Advisor-GPT** | 律师/审计员 | 规范审计 | 命名约定、精确性验证、条款编号 |
+| **Auditor** | 审计专家 | 规范/代码 | 规范审计、代码审阅、条款编号 |
 
-**畅谈会流程**：Claude 开场（框架）→ Gemini 展开（体验）→ GPT 收敛（条款）→ 三人辩论 → 共识
+**畅谈会流程**：Claude 开场（框架）→ Gemini 展开（体验）→ Auditor 收敛（条款）→ 三人辩论 → 共识
 
 ---
 
@@ -64,7 +64,7 @@ tools:
 > **日期**：YYYY-MM-DD
 > **标签**：#review | #design | #decision | #jam
 > **主持人**：刘德智 (Team Leader)
-> **参与者**：Advisor-Claude, Advisor-Gemini, Advisor-GPT
+> **参与者**：Advisor-Claude, Advisor-Gemini, Auditor
 > **状态**：进行中
 
 ---
@@ -81,6 +81,10 @@ tools:
 ```
 
 #### 2. 邀请发言（runSubagent 调用）
+
+**GPT-5.2 访问策略**：
+- 优先调用 `Auditor` (Microsoft)。
+- 若遇 Rate Limit，回退调用 `Auditor.OpenRouter`。
 
 **MUST 包含的字段**：
 
@@ -124,7 +128,7 @@ outputForm: "Markdown 要点列表"
 |------|------------|------------|
 | 理解上次讨论结论 | `read_file` 加载 500 行会议记录 | `runSubagent` 让 Investigator 摘要关键决议 |
 | 审阅长规范 | 全文加载到上下文 | 让 Advisor 在 SubAgent 中审阅并返回 FixList |
-| 更新测试向量 | 自己读三个文件比对 | 派 Advisor-GPT 去做（他擅长严谨全面） |
+| 更新测试向量 | 自己读三个文件比对 | 派 Auditor 去做（他擅长严谨全面） |
 
 **判断标准**：
 - 需要理解全文结构？→ `read_file`

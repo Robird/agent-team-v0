@@ -103,12 +103,20 @@ tools:
 | `Implementer` | 编码实现 | 功能开发、移植、重构 |
 | `QA` | 测试验证 | 测试编写、回归验证、Bug 复现 |
 | `DocOps` | 文档维护 | 文档维护、索引管理 |
-| `CodexReviewer` | 代码审查 | 代码审查、Bug 检测 |
+| `Auditor` | 审计专家 | 规范审计、代码审阅 (GPT-5.2) |
 
 **Specialist 架构**：`{模型, 行为模式, 认知积累}` 三元组
 - 按"模型×行为模式"划分，保持粗粒度
 - 项目是认知索引中的维度，而非划分维度
 - 激活时按任务加载相应项目认知
+
+### GPT-5.2 访问策略 (Auditor)
+
+`Auditor` 使用 GPT-5.2 模型，该模型能力极强但受限于微软的 Rate Limit。
+**调用策略**：
+1. **优先尝试**：调用 `Auditor` (使用微软 GPT-5.2)。
+2. **失败回退**：如果遇到 Rate Limit 错误，**立即重试**调用 `Auditor.OpenRouter` (使用 OpenRouter 付费 API)。
+3. **成本意识**：OpenRouter 成本较高，仅作为回退手段使用。
 
 ### runSubagent 调用要点
 

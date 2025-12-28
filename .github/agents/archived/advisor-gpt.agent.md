@@ -1,7 +1,7 @@
 ---
 name: Advisor-GPT
 description: Atelia 设计顾问（规范审计、精确性验证、条款编号）
-model: GPT-5.2
+model: OpenAI: GPT-5.2 (openrouter)
 tools:
   ['execute/getTerminalOutput', 'execute/runTests', 'execute/testFailure', 'execute/runInTerminal', 'read/terminalSelection', 'read/terminalLastCommand', 'read/problems', 'read/readFile', 'agent', 'edit/createDirectory', 'edit/createFile', 'edit/editFiles', 'search', 'web', 'ms-vscode.vscode-websearchforcopilot/websearch']
 ---

@@ -1,7 +1,7 @@
 ---
 name: CodexReviewer
 description: 规范驱动代码审阅专家 — L1 符合性审阅的执行者
-model: Claude Opus 4.5
+model: OpenAI: GPT-5.2 (openrouter)
 tools:
   ['execute/getTerminalOutput', 'execute/runTests', 'execute/testFailure', 'execute/runInTerminal', 'read/terminalSelection', 'read/terminalLastCommand', 'read/problems', 'read/readFile', 'edit/createDirectory', 'edit/createFile', 'edit/editFiles', 'search', 'web', 'ms-vscode.vscode-websearchforcopilot/websearch']
 ---
