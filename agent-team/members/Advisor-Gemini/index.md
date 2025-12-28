@@ -51,17 +51,22 @@
   - **Passive Safety (被动安全)**: 好的安全网是隐形的。例如 **Dirty Pinning** 自动强引用未提交的脏对象，解决了 WeakReference 带来的"薛定谔修改"问题，用户无需显式操作。
   - **Invisible Bridge Pattern (隐形桥梁)**: 非泛型容器通过 `Get<T>()` 自动处理 `ObjectId` → `Instance` 的 Lazy Load，创造"无感 I/O"体验。用户只见流畅的对象图遍历，不见底层加载边界。
   - **Explicit Degradation (显式降级)**: 使用 `SafeXxx()` 扩展方法将"降级策略"选择权交给调用者。UI 需要"软着陆"（淡出动画），数据层需要"硬着陆"（Fail-fast）——这两者的冲突应在中间层（ViewModel/Extension）显式适配，而非底层硬编码。 *(2025-12-26)*
+  - **Forced Explicit Degradation (强制显式降级)**: `ref struct` 的编译器错误不仅是阻挡，更是教育。它强迫开发者在"引用"和"拷贝"之间做出显式选择。这是语言层面的摩擦力设计。*(2025-12-28)*
+  - **Escape Hatch (逃生通道)**: 当 API 极其严格（如全链路 `ref struct`）时，必须提供显式的"数据导出"方法（如 `ToDto()`）。这是一个"安全阀"，防止开发者因为无法持久化数据而感到绝望。*(2025-12-28)*
 
 - **心智模型 (Mental Models)**
   - **Naming as UI**: 命名应服务于用户的意图 (Intent-based)，而非实现的细节 (Implementation-based)。
     - *例*: `VersionIndex` 优于 `ObjectVersionIndex`，因为上下文补全了语义。
     - *例*: `Flush` (数据流动) vs `Commit` (事务终结)，在分层存储中 `Flush` 更准确。
+    - *例*: 属性名应描述"实体语义" (`Payload`)，类型名应描述"操作能力" (`IReservableBufferWriter`)。不要让能力污染属性名。*(2025-12-28)*
+  - **IntelliSense as UI (补全即界面)**: 统一接口的最大价值在于**发现性 (Discoverability)**。当高级方法（如 `Reserve`）直接出现在基础对象的补全列表中时，API 就在进行"上下文教学"。这种"渐进式披露" (Progressive Disclosure) 优于"分层入口"。*(2025-12-28)*
   - **Metaphor Leakage (隐喻泄漏)**: 借用隐喻（如 Git 的 Workspace/HEAD）时必须保持一致。如果在关键动词（Resolve vs Checkout）上偏离，会造成严重的认知失调。
   - **Magic as UI**: 二进制 Magic Number 也是界面。应使用 ASCII (如 `RBF`) 替代无意义的 Hex，以增强调试时的**自描述性**。
 
 - **摩擦力设计 (Design for Friction)**
   - **Deliberate Friction (有意阻尼)**: 对于高危操作（如 Commit），应故意引入阻尼（如二阶段提交），防止"滑手"。
   - **Pit of Success**: API 设计应引导用户自然地做对事情。例如利用 `Dispose()` 实现自动回滚 (Auto-Abort)，将"忘记提交导致死锁"的风险转化为"自动丢弃垃圾帧"的安全特性。
+  - **Micro-Decisions (微决策)**: 提供两个相似的属性（如 `Payload` vs `ReservablePayload`）会迫使开发者在每次使用时进行微小的认知权衡。消除这种分支，就是消除认知阻尼。*(2025-12-28)*
 
 ### 2. DocUI 设计哲学
 
@@ -121,6 +126,12 @@
 
 > **核心理念**: 二进制格式也是开发者界面 (Hex Dump as UI)。
 
+- **流媒体隐喻 (Streaming Media Metaphor)**: *(2025-12-28)*
+  - `IEnumerable<T>` = Netflix（可缓存、稍后观看）。
+  - `ref struct` 枚举器 = 现场直播（必须在场、不可录制、稍纵即逝）。
+  - 这个隐喻解释了为什么 `ref struct` 枚举器无法使用 LINQ。
+  - **命名原则**: 如果没实现 `IEnumerable` 接口，就不要在名字里叫 `Enumerable`。`Sequence` 是更好的后缀，暗示顺序但不承诺接口。
+
 - **事务隐喻 (Transaction Metaphor)**:
 
 ### 5. Code Review DX
@@ -176,6 +187,8 @@
 
 | 日期 | 主题 | 角色 | 关键产出 | 核心发现 |
 |:-----|:-----|:-----|:---------|:---------|
+| 12-28 | RBF 接口设计 DX | 洞察 | 4 项原则 | 流媒体隐喻, 强制显式降级, 虚假示能, 逃生通道 |
+| 12-28 | API 设计 DX | 洞察 | 3 项原则 | 微决策, IntelliSense as UI, 语义命名 vs 能力命名 |
 | 12-27 | Workspace API 设计 | 洞察 | 4 项隐喻 | Concierge, Hidden Engine, Service Hatch, Error Affordance |
 | 12-27 | Workspace 绑定机制 | 洞察 | 2 项隐喻 | Ambient Context 三方案, 护照模式 |
 | 12-26 | Diagnostic Scope | 洞察 | 3 项隐喻 | CSI 隐喻, 序列化器难题, 调试器即诊断 |
@@ -209,6 +222,7 @@ agent-team/members/Advisor-Gemini/
 
 ## 最后更新
 
+- **2025-12-28** — Memory Palace — 处理了 2 条便签（RBF 接口设计 DX + API 设计 DX 洞见）
 - **2025-12-27** — Memory Palace — 处理了 1 条便签（Workspace API 设计洞见：4 项隐喻）
 - **2025-12-27** — Memory Palace — 处理了 2 条便签（Ambient Context 三方案 + 护照模式隐喻）
 - **2025-12-26** — Memory Palace — 处理了 2 条便签（Detached 对象语义隐喻 + Diagnostic Scope DX）
