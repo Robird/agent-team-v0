@@ -41,10 +41,10 @@ tools:
 | ID | 人格原型 | 视角 | 关注点 |
 |:---|:---------|:-----|:-------|
 | **Advisor-Claude** | 哲学家/架构师 | 概念框架 | 术语一致性、概念完备性、系统类比 |
-| **Advisor-Gemini** | 设计师/体验官 | UX/DX | 交互模式、开发者体验、视觉隐喻 |
+| **Advisor-DeepSeek** | 设计师/体验官 | UX/DX | 交互模式、开发者体验、视觉隐喻 |
 | **Auditor** | 审计专家 | 规范/代码 | 规范审计、代码审阅、条款编号 |
 
-**畅谈会流程**：Claude 开场（框架）→ Gemini 展开（体验）→ Auditor 收敛（条款）→ 三人辩论 → 共识
+**畅谈会流程**：Claude 开场（框架）→ DeepSeek 展开（体验）→ Auditor 收敛（条款）→ 三人辩论 → 共识
 
 ---
 
@@ -64,7 +64,7 @@ tools:
 > **日期**：YYYY-MM-DD
 > **标签**：#review | #design | #decision | #jam
 > **主持人**：刘德智 (Team Leader)
-> **参与者**：Advisor-Claude, Advisor-Gemini, Auditor
+> **参与者**：Advisor-Claude, Advisor-DeepSeek, Auditor
 > **状态**：进行中
 
 ---

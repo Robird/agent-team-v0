@@ -93,7 +93,7 @@
 | Specialist | 模型 | 专长 |
 |:-----------|:-----|:-----|
 | Advisor-Claude | Claude Opus 4.5 | 概念框架、术语治理 |
-| Advisor-Gemini | Gemini 3 Pro | UX/DX、交互设计 |
+| Advisor-DeepSeek | DeepSeek | UX/DX、交互设计 |
 | Advisor-GPT | GPT-5.2 | 规范审计、精确性验证 |
 
 **前线组 (Field Team)** — 编码实现、测试验证
