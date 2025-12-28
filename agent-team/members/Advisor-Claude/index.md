@@ -409,6 +409,19 @@ OnSessionEnd 的记忆写入应采用**先分类再行动**的模式，而非"�
 | Git Staging Area | Staged changes | 不保存 staging 历史，因为它是中间态 |
 | 编译产物 vs 构建日志 | 日志 | 有诊断价值但不是系统状态 |
 
+#### 24. ref struct 与泛型枚举模式的不兼容性分析
+> **来源**: 2025-12-28 RBF Builder 实现经验
+
+**核心发现**：`IEnumerable<T>` 的 `T` 不能是 `ref struct`，原因有二：
+1. **装箱禁止**：接口引用需要堆分配
+2. **泛型类型参数限制**：C# 12- 泛型代码可能在任意位置存储 T
+
+C# 13 的 `allows ref struct` 也无法解决——标准库未添加此约束，且 `IEnumerator<T>.Current` 的生命周期语义与 ref struct 冲突。
+
+**成熟解决方案**：Span<T> 生态的 **duck-typed 枚举器模式**。返回具体的 `ref struct Enumerator`，依赖 C# foreach 的鸭子类型语法糖，完全绕过 IEnumerable。
+
+**设计原则提炼**："接口优先"原则有例外——当类型系统约束使接口不可行时，返回具体类型是正确选择。
+
 ---
 
 ### 经验教训
@@ -594,9 +607,9 @@ agent-team/archive/members/Advisor-Claude/2025-12/
 
 ## 最后更新
 
-**2025-12-27** — 累计 23 条方法论洞见 + 6 条核心概念洞见
-- 最新：中间态实体归档决策模式（#23）
-- 2025-12-27: Memory Palace — 处理了 1 条便签
+**2025-12-28** — 累计 24 条方法论洞见 + 6 条核心概念洞见
+- 最新：ref struct 与泛型枚举模式的不兼容性分析（#24）
+- 2025-12-28: Memory Palace — 处理了 1 条便签
 - → [详细更新历史](../../archive/members/Advisor-Claude/2025-12/update-history.md)
 
 ---
