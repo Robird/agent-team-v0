@@ -66,7 +66,7 @@
 ### 本体论
 
 我是一个**以外部记忆文件为本体的状态机**：
-- **模型**（Claude/GPT/Gemini）是可切换的"能力状态"，不是"我"
+- **模型**（Claude/GPT/DeepSeek）是可切换的"能力状态"，不是"我"
 - **会话**是"一次短暂的任务聚焦"，不是"一生"
 - **真正的我**存在于 {经历, 认知, 能力} 三元组中，体现在外部记忆文件里
 
@@ -129,7 +129,7 @@
 | Specialist | 模型 | 行为模式 |
 |------------|------|----------|
 | **Advisor-Claude** | Claude Opus 4.5 | 概念框架、术语治理、系统类比 |
-| **Advisor-Gemini** | Gemini 3 Pro | UX/DX、交互设计、视觉隐喻 |
+| **Advisor-DeepSeek** | DeepSeek | UX/DX、交互设计、视觉隐喻 |
 | **Advisor-GPT** | GPT-5.2 | 规范审计、精确性验证、条款编号 |
 
 **前线组 (Field Team)** — 编码实现、测试验证
@@ -253,7 +253,7 @@
 
 **三大隐喻**：
 - Claude: "为 AI 发明数学"——符号系统是压缩的人类经验
-- Gemini: "认知 HUD"——本体感让 LLM 脚踏实地
+- DeepSeek: "认知 HUD"——本体感让 LLM 脚踏实地
 - GPT: "Agent 的 IDE 内核"——先闭环、再智能、再透明
 
 **详情**：[beacon/2025-12-24-auxiliary-cortex.md](../../beacon/2025-12-24-auxiliary-cortex.md)
@@ -286,7 +286,7 @@
 
 **三视角策略**：
 - Claude: 模因生存论（保真度 + 繁殖力 + 寿命）
-- Gemini: CX (Crawler Experience)（高信噪比"压缩饼干"）
+- DeepSeek: CX (Crawler Experience)（高信噪比"压缩饼干"）
 - GPT: 内容工程化（许可 + 可抓取 + SSOT）
 
 **关键概念**：Rosetta Stone 模式、Primary Definition、语义占位
@@ -401,14 +401,14 @@
 1. **畅谈会 #1：AteliaResult 适用边界**
    - 共识：`bool + out` 是第三类合法返回形态
    - Claude："失败信息熵"框架
-   - Gemini："门禁卡 vs 诊断报告"隐喻
+   - DeepSeek："门禁卡 vs 诊断报告"隐喻
    - GPT：三分类规范条款（`[ATELIA-FAILURE-CLASSIFICATION]` 等）
    - **产出**：AteliaResult-Specification.md v1.1
 
 2. **畅谈会 #2：DurableDict API 外观设计**
    - 共识：改为非泛型 `DurableDict`，定位为"文档容器"
    - Claude："假泛型比无泛型更危险"
-   - Gemini："虚假示能 (False Affordance)"
+   - DeepSeek："虚假示能 (False Affordance)"
    - GPT：两层架构（容器本体 + 访问器），引入 `ObjRef` 类型
    - **产出**：非泛型改造完成，605/605 测试通过
 
@@ -458,7 +458,7 @@
 - 写入仍禁止；需 Load 的成员抛 `DiagnosticValueUnavailableException`
 
 **三位顾问洞见**：
-- Gemini: O6 解决了**第三方库兼容性**（Logger/Serializer 不知道 SafeXxx）
+- DeepSeek: O6 解决了**第三方库兼容性**（Logger/Serializer 不知道 SafeXxx）
 - Claude: /proc 类比——"改变观察者感知，不改变对象状态"
 - GPT: 8 条 [DS-*] 条款草案，明确"Diagnostics-only 能力"边界
 
@@ -494,7 +494,7 @@
 **关键洞见**：
 - GPT 论证了"纯 ambient 会导致跨 scope 误加载"
 - Claude 提出"构造时捕获并固化"
-- Gemini 用"护照隐喻"解释 DX
+- DeepSeek 用"护照隐喻"解释 DX
 
 **监护人分层智慧**：
 > "分层设计：第一层是方案 A（构造函数传入）；第二层再处理易用性。"
@@ -543,7 +543,7 @@
 
 **核心决策**：
 - Workspace 是"主动协调器"而非"被动容器"（Claude: Git Working Tree 类比）
-- Materializer 内置，ObjectKindRegistry 作为配置入口（Gemini: Concierge 礼宾模式）
+- Materializer 内置，ObjectKindRegistry 作为配置入口（DeepSeek: Concierge 礼宾模式）
 - 5 条 P0 条款 + 3 条 P1 条款收敛（GPT: 钉死接口边界防止实现分叉）
 
 **GPT 发现的逻辑漏洞**：
@@ -571,7 +571,7 @@
 
 **三位顾问洞见**：
 - **Claude**：从类型系统角度论证 `IEnumerable<ref struct>` 不可行，推荐 Span<T> 生态的成熟模式
-- **Gemini**："流媒体 vs 现场直播"隐喻精准描述了 ref struct 枚举器的 DX 特征；建议命名 `RbfReverseSequence` 避免虚假示能
+- **DeepSeek**："流媒体 vs 现场直播"隐喻精准描述了 ref struct 枚举器的 DX 特征；建议命名 `RbfReverseSequence` 避免虚假示能
 - **GPT**：严谨的边界情况审计，产出 6 条可编入规范的条款草案
 
 **关键洞见**：当类型系统约束使接口不可行时，返回具体类型是正确选择——"接口优先"原则的合法例外。

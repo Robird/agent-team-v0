@@ -87,7 +87,7 @@
 
 **三模型多样性价值**：
 - Claude 擅长结构化分析和概念图谱
-- Gemini 擅长 UX/HCI 创新洞察
+- DeepSeek 擅长 UX/HCI 创新洞察
 - GPT 擅长精确的术语和一致性检查
 
 ---

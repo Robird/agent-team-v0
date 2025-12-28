@@ -85,7 +85,7 @@ prompt: |
 | 成员 | 目录路径 |
 |:-----|:---------|
 | Advisor-Claude | `agent-team/members/Advisor-Claude/` |
-| Advisor-Gemini | `agent-team/members/Advisor-Gemini/` |
+| Advisor-DeepSeek | `agent-team/members/Advisor-DeepSeek/` |
 | Advisor-GPT | `agent-team/members/Advisor-GPT/` |
 | Implementer | `agent-team/members/implementer/` |
 | Investigator | `agent-team/members/investigator/` |

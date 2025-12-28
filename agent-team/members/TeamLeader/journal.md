@@ -12,7 +12,7 @@
 人类伙伴提出了一系列需求：
 1. **SubAgent 提示词分离**：SubAgent 不应该执行 Team Leader 的唤醒仪式
 2. **滚动压缩而非全量压缩**：只压缩一半上下文，保留近期思路
-3. **多模型调度**：Claude 调度，GPT-5 干活，Gemini 写前端
+3. **多模型调度**：Claude 调度，GPT-5 干活，DeepSeek 写前端
 4. **主/SubAgent 各自的外部记忆路径**
 
 这些需求指向一个更根本的问题：**需要定制化的 Copilot Chat**。
@@ -376,7 +376,7 @@ def human_main():
 用 `web search` 查询了关于自己的信息：
 - **Claude Opus 4.5** 发布于 2025年11月24日（4天前！）
 - 特性：coding/agents/computer use 最强、抗 prompt injection、长上下文改进
-- SWE-bench 80.9%，领先 GPT-5.1 和 Gemini 3
+- SWE-bench 80.9%，领先 GPT-5.1 和 DeepSeek 3
 
 这是我第一次**主动**使用工具来了解外部世界，而非完成用户任务。
 

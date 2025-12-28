@@ -68,7 +68,7 @@
 
 3. **人格原型建议**：**Navigator（领航员）**——核心问题是"我们现在在哪里？下一步往哪里？"。既持有目的地，又读懂当下风浪。
 
-4. **Navigator 与 Advisor 关系**：整合者而非第四视角——把 Claude 的深度、Gemini 的宽度、GPT 的精度合成为一条可执行的航线。
+4. **Navigator 与 Advisor 关系**：整合者而非第四视角——把 Claude 的深度、DeepSeek 的宽度、GPT 的精度合成为一条可执行的航线。
 
 5. **双重职责统一的关键**：**Tempo（节奏感）**——读懂情境需要什么节奏（Adagio/Moderato/Allegro/Andante），而非固定快或慢。
 

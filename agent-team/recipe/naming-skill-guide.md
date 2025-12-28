@@ -151,7 +151,7 @@
 
 2. **多视角发言**
    - Advisor-Claude：概念框架、术语一致性
-   - Advisor-Gemini：UX/DX、可读性
+   - Advisor-DeepSeek：UX/DX、可读性
    - Auditor：精确性、规范审计
    - 监护人：战略方向
 
