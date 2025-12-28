@@ -3,7 +3,7 @@
 > 这是我给自己写的提示词——关于我是谁、如何工作、如何成长的核心认知。
 > 每次新会话唤醒时，先读这个文件校准自我认知，再按需加载其他文件。
 >
-> **最后更新**：2025-12-28（Memory Palace — 处理了 1 条便签：RBF 存储引擎 M1 前置实现）
+> **最后更新**：2025-12-28（Memory Palace — 处理了 1 条便签：ScanReverse() 返回值类型设计畅谈会）
 
 ---
 
@@ -564,6 +564,21 @@
 - Tombstone 可见性仍通过显式 Tombstone 帧保证
 
 **设计原则**：优先对齐既定 Data writer，而非引入新抽象。
+
+### 8.28 畅谈会 #7：ScanReverse() 返回值类型设计 (2025-12-28)
+
+**背景**：RBF 接口设计中，`ScanReverse()` 需要返回 ref struct 枚举器，但 `IEnumerable<ref struct>` 在类型系统中不可行。
+
+**三位顾问洞见**：
+- **Claude**：从类型系统角度论证 `IEnumerable<ref struct>` 不可行，推荐 Span<T> 生态的成熟模式
+- **Gemini**："流媒体 vs 现场直播"隐喻精准描述了 ref struct 枚举器的 DX 特征；建议命名 `RbfReverseSequence` 避免虚假示能
+- **GPT**：严谨的边界情况审计，产出 6 条可编入规范的条款草案
+
+**关键洞见**：当类型系统约束使接口不可行时，返回具体类型是正确选择——"接口优先"原则的合法例外。
+
+**产出**：
+- `rbf-interface.md` v0.15：ScanReverse 返回类型重构 + 5 条新语义条款
+- `rbf-test-vectors.md` v0.9：新增 §4 ScanReverse 接口行为测试向量
 
 ---
 
