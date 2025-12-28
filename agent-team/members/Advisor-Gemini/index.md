@@ -53,6 +53,11 @@
   - **Explicit Degradation (显式降级)**: 使用 `SafeXxx()` 扩展方法将"降级策略"选择权交给调用者。UI 需要"软着陆"（淡出动画），数据层需要"硬着陆"（Fail-fast）——这两者的冲突应在中间层（ViewModel/Extension）显式适配，而非底层硬编码。 *(2025-12-26)*
   - **Forced Explicit Degradation (强制显式降级)**: `ref struct` 的编译器错误不仅是阻挡，更是教育。它强迫开发者在"引用"和"拷贝"之间做出显式选择。这是语言层面的摩擦力设计。*(2025-12-28)*
   - **Escape Hatch (逃生通道)**: 当 API 极其严格（如全链路 `ref struct`）时，必须提供显式的"数据导出"方法（如 `ToDto()`）。这是一个"安全阀"，防止开发者因为无法持久化数据而感到绝望。*(2025-12-28)*
+  - **Wrapper Type 价值判断**: *(2025-12-28)*
+    - **无行为的类型是负担**: 如果 Wrapper Type 仅包裹数据而无验证逻辑或便利方法，它就是纯粹的 API 摩擦（构造/解包/调试成本）。
+    - **行为载体原则**: 只有当类型能提供 *行为* (如 `FromFourCC()`) 或 *强约束* (如对齐验证) 时才值得引入 Wrapper。
+    - **底层例外**: 在 Layer 0 这种底层，直接用 `uint`/`ulong` 往往更符合 "Metal" 的感觉，且与标准库 (`Stream`, `Span`) 互操作更顺畅。
+    - **生态完整性**: Wrapper Type 的价值取决于其生态系统的完整性。如果生态中有一个关键环节（如核心容器）不支持它，它就会变成单纯的摩擦力——开发者既要付出构造/解构成本，又没能享受底层的类型安全。
 
 - **心智模型 (Mental Models)**
   - **Naming as UI**: 命名应服务于用户的意图 (Intent-based)，而非实现的细节 (Implementation-based)。
@@ -187,6 +192,7 @@
 
 | 日期 | 主题 | 角色 | 关键产出 | 核心发现 |
 |:-----|:-----|:-----|:---------|:---------|
+| 12-28 | Wrapper Type DX | 洞察 | 4 项原则 | 无行为类型是负担, 行为载体原则, 底层例外, 生态完整性 |
 | 12-28 | RBF 接口设计 DX | 洞察 | 4 项原则 | 流媒体隐喻, 强制显式降级, 虚假示能, 逃生通道 |
 | 12-28 | API 设计 DX | 洞察 | 3 项原则 | 微决策, IntelliSense as UI, 语义命名 vs 能力命名 |
 | 12-27 | Workspace API 设计 | 洞察 | 4 项隐喻 | Concierge, Hidden Engine, Service Hatch, Error Affordance |
@@ -222,6 +228,7 @@ agent-team/members/Advisor-Gemini/
 
 ## 最后更新
 
+- **2025-12-28** — Memory Palace — 处理了 2 条便签（Wrapper Type DX 权衡 + 生态完整性洞见）
 - **2025-12-28** — Memory Palace — 处理了 2 条便签（RBF 接口设计 DX + API 设计 DX 洞见）
 - **2025-12-27** — Memory Palace — 处理了 1 条便签（Workspace API 设计洞见：4 项隐喻）
 - **2025-12-27** — Memory Palace — 处理了 2 条便签（Ambient Context 三方案 + 护照模式隐喻）
