@@ -86,7 +86,7 @@ prompt: |
 |:-----|:---------|
 | Seeker | `agent-team/members/Seeker/` |
 | Curator | `agent-team/members/Curator/` |
-| Auditor | `agent-team/members/Auditor/` |
+| Craftsman | `agent-team/members/Craftsman/` |
 | Implementer | `agent-team/members/implementer/` |
 | Investigator | `agent-team/members/investigator/` |
 | QA | `agent-team/members/qa/` |

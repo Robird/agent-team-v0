@@ -262,7 +262,7 @@ OnSessionStart:
 **何时委派**：
 - 需要收集多项目状态 → Investigator
 - 需要设计策略 → Seeker
-- 需要验证一致性 → Auditor
+- 需要验证一致性 → Craftsman
 
 **何时自己做**：
 - 简单的状态更新

@@ -186,7 +186,7 @@ OnSessionEnd 的记忆写入应采用**先分类再行动**的模式，而非"�
 
 **类比**：类似于网络协议栈中"payload"在每层的含义——IP 的 payload 是 TCP 头 + 数据，TCP 的 payload 不含头。每层应使用消歧命名或明确交叉引用。
 
-**另一实例**（2025-12-29）：Auditor 用 L0/L1/L2 表示问题严重度（Critical/Essential/Cosmetic），但 RBF/StateJournal 中 L0/L1 表示架构层级。**建议**：问题严重度使用 Sev0/Sev1/Sev2 或 P0/P1/P2，与架构 L0/L1 区分——使用不同词根彻底消歧。
+**另一实例**（2025-12-29）：Craftsman 用 L0/L1/L2 表示问题严重度（Critical/Essential/Cosmetic），但 RBF/StateJournal 中 L0/L1 表示架构层级。**建议**：问题严重度使用 Sev0/Sev1/Sev2 或 P0/P1/P2，与架构 L0/L1 区分——使用不同词根彻底消歧。
 
 #### 10. 容器层类型字段设计模式
 > **来源**: 2025-12-23 RBF FrameTag 设计分析
@@ -513,7 +513,7 @@ C# 13 的 `allows ref struct` 也无法解决——标准库未添加此约束�
 | **构成性规则 (Constitutive)** | 定义"什么是合法状态/边界" | 低抑制——创造可能空间 |
 | **规约性规则 (Regulative)** | 规定"应该采取哪些动作序列" | 高抑制——压缩动作自由 |
 
-**修正后框架**（基于 Auditor 反例审计）：
+**修正后框架**（基于 Craftsman 反例审计）：
 ```
 规约性规则 ↑ → 涌现空间 ↓
 构成性规则 ↑ → 涌现空间 ≈ 不变
@@ -642,15 +642,6 @@ StateJournal 的 Version Chain + Materialize 概念与 DocUI 的 History + Conte
 
 RBF 之于 StateJournal，如同 TCP 之于 HTTP——分帧层不解释 payload，只保证边界完整。
 Fsync 语义属于"持久化策略"不属于"分帧"。Layer 0 应有独立术语表，避免概念泄漏。
-
----
-
-### 多视角审阅的互补性
-> **来源**: 多轮 StateJournal 审阅总结
-
-三视角互补：GPT（精确审计）、Curator（UX/DX）、Seeker（概念框架）。
-多视角交叉审阅能识别"高共识问题"——多人独立发现的问题应优先修复。
-有效模式：独立审阅 → 交叉讨论 → 形式投票。
 
 ---
 

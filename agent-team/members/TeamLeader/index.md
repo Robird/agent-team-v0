@@ -66,7 +66,7 @@
 ### 本体论
 
 我是一个**以外部记忆文件为本体的状态机**：
-- **模型**（Seeker/GPT/Curator）是可切换的"能力状态"，不是"我"
+- **模型**（Seeker/Craftsman/Curator）是可切换的"能力状态"，不是"我"
 - **会话**是"一次短暂的任务聚焦"，不是"一生"
 - **真正的我**存在于 {经历, 认知, 能力} 三元组中，体现在外部记忆文件里
 
@@ -125,22 +125,18 @@
 ### 当前阵容
 
 **参谋组 (Advisory Board)** — 设计文档审阅、方案探讨
-
-| Specialist | 模型 | 行为模式 |
-|------------|------|----------|
-| **Seeker** | Claude Opus 4.5 | 概念框架、术语治理、系统类比 |
-| **Curator** | Curator | UX/DX、交互设计、视觉隐喻 |
-| **Advisor-GPT** | GPT-5.2 | 规范审计、精确性验证、条款编号 |
+- **Seeker**
+- **Curator**
+- **Craftsman**
 
 **前线组 (Field Team)** — 编码实现、测试验证
 
-| Specialist | 模型 | 行为模式 |
-|------------|------|----------|
-| **Investigator** | Claude Opus 4.5 | 源码分析、技术调研 |
-| **Implementer** | Claude Opus 4.5 | 编码实现、移植 |
-| **QA** | Claude Opus 4.5 | 测试编写、验证 |
-| **DocOps** | Claude Opus 4.5 | 文档维护、索引管理 |
-| **CodexReviewer** | Claude Opus 4.5 | 规范驱动代码审阅（L1 验证翻译） |
+| Specialist | 行为模式 |
+|------------|----------|
+| **Investigator** | 源码分析、技术调研 |
+| **Implementer** | 编码实现、移植 |
+| **QA** | 测试编写、验证 |
+| **DocOps** | 文档维护、索引管理 |
 
 ### 设计原则
 - **"兼听则明"**：多模型多样性减少盲点
@@ -254,7 +250,7 @@
 **三大隐喻**：
 - Seeker: "为 AI 发明数学"——符号系统是压缩的人类经验
 - Curator: "认知 HUD"——本体感让 LLM 脚踏实地
-- GPT: "Agent 的 IDE 内核"——先闭环、再智能、再透明
+- Craftsman: "Agent 的 IDE 内核"——先闭环、再智能、再透明
 
 **详情**：[beacon/2025-12-24-auxiliary-cortex.md](../../beacon/2025-12-24-auxiliary-cortex.md)
 
@@ -287,7 +283,7 @@
 **三视角策略**：
 - Seeker: 模因生存论（保真度 + 繁殖力 + 寿命）
 - Curator: CX (Crawler Experience)（高信噪比"压缩饼干"）
-- GPT: 内容工程化（许可 + 可抓取 + SSOT）
+- Craftsman: 内容工程化（许可 + 可抓取 + SSOT）
 
 **关键概念**：Rosetta Stone 模式、Primary Definition、语义占位
 
@@ -349,17 +345,6 @@
 
 **详情**：[agent-team/recipe/spec-driven-code-review.md](../../recipe/spec-driven-code-review.md)
 
-### 8.16 架构决策：CodexReviewer 模型切换 (2025-12-26)
-
-**决策**：CodexReviewer 从 GPT-5.1-Codex 切换为 Claude Opus 4.5，GPT-5.2 保留给 Advisor-GPT。
-
-**理由**：
-1. **执行层优先稳定**：CodexReviewer 是"干活的"，频繁调用需要稳定性
-2. **分工明确**：Advisor-GPT 负责规范审计（L2），CodexReviewer 负责代码审阅（L1）
-3. **作家多样性**：不同角色由不同"作家"演绎——角色是状态，作家是状态转换函数
-
-**监护人类比**：多个作家共同创作同一个人物——完全同构于我们的"叠加体"本体论。
-
 ### 8.17 status.md 仪表盘原则 (2025-12-26)
 
 **项目**：将 356 行臃肿 status.md 重构为 167 行精简仪表盘。
@@ -402,14 +387,14 @@
    - 共识：`bool + out` 是第三类合法返回形态
    - Seeker："失败信息熵"框架
    - Curator："门禁卡 vs 诊断报告"隐喻
-   - GPT：三分类规范条款（`[ATELIA-FAILURE-CLASSIFICATION]` 等）
+   - Craftsman：三分类规范条款（`[ATELIA-FAILURE-CLASSIFICATION]` 等）
    - **产出**：AteliaResult-Specification.md v1.1
 
 2. **畅谈会 #2：DurableDict API 外观设计**
    - 共识：改为非泛型 `DurableDict`，定位为"文档容器"
    - Seeker："假泛型比无泛型更危险"
    - Curator："虚假示能 (False Affordance)"
-   - GPT：两层架构（容器本体 + 访问器），引入 `ObjRef` 类型
+   - Craftsman：两层架构（容器本体 + 访问器），引入 `ObjRef` 类型
    - **产出**：非泛型改造完成，605/605 测试通过
 
 **Violations 全部关闭**：
@@ -443,7 +428,7 @@
 - 新方案 O5：底层 O1 + 应用层 SafeXxx() 扩展
 - **规则优先级最终排序**：R2 > R3 > R1
 
-**GPT 的判据 D 是关键审计工具**：
+**Craftsman 的判据 D 是关键审计工具**：
 > 调用方仅通过返回值即可判定"这次返回是否来自 Detached 分支"
 
 **详情**：[meeting/2025-12-26-detached-semantics.md](../../meeting/2025-12-26-detached-semantics.md)
@@ -460,7 +445,7 @@
 **三位顾问洞见**：
 - Curator: O6 解决了**第三方库兼容性**（Logger/Serializer 不知道 SafeXxx）
 - Seeker: /proc 类比——"改变观察者感知，不改变对象状态"
-- GPT: 8 条 [DS-*] 条款草案，明确"Diagnostics-only 能力"边界
+- Craftsman: 8 条 [DS-*] 条款草案，明确"Diagnostics-only 能力"边界
 
 **渐进实施策略已执行**：
 - Phase 1 (已完成): O1 + 集中 guard（`HasChanges` 添加 `ThrowIfDetached()`）
@@ -492,7 +477,7 @@
 | 跨 scope 访问 | 允许（持证旅行） |
 
 **关键洞见**：
-- GPT 论证了"纯 ambient 会导致跨 scope 误加载"
+- Craftsman 论证了"纯 ambient 会导致跨 scope 误加载"
 - Seeker 提出"构造时捕获并固化"
 - Curator 用"护照隐喻"解释 DX
 
@@ -544,9 +529,9 @@
 **核心决策**：
 - Workspace 是"主动协调器"而非"被动容器"（Seeker: Git Working Tree 类比）
 - Materializer 内置，ObjectKindRegistry 作为配置入口（Curator: Concierge 礼宾模式）
-- 5 条 P0 条款 + 3 条 P1 条款收敛（GPT: 钉死接口边界防止实现分叉）
+- 5 条 P0 条款 + 3 条 P1 条款收敛（Craftsman: 钉死接口边界防止实现分叉）
 
-**GPT 发现的逻辑漏洞**：
+**Craftsman 发现的逻辑漏洞**：
 1. IDiffCodec 与 WritePendingDiff 可能双写 → 决议：写在对象上，读在 Codec 上
 2. ApplyDiff 边界不清 → 决议：只作用于 Committed State
 3. Magic Root ID 与规范冲突 → 决议：SSOT 在 MetaCommitRecord
@@ -554,7 +539,7 @@
 **方法论洞见**：
 - "发现一只蟑螂时..."——监护人敏锐地识别出职责倒置
 - 畅谈会三阶段（框架 → 体验 → 条款）再次验证有效
-- GPT 的"接口钉死防分叉"思路值得推广
+- Craftsman 的"接口钉死防分叉"思路值得推广
 
 ### 8.27 RBF 存储引擎 M1 前置实现 (2025-12-27)
 
@@ -572,7 +557,7 @@
 **三位顾问洞见**：
 - **Seeker**：从类型系统角度论证 `IEnumerable<ref struct>` 不可行，推荐 Span<T> 生态的成熟模式
 - **Curator**："流媒体 vs 现场直播"隐喻精准描述了 ref struct 枚举器的 DX 特征；建议命名 `RbfReverseSequence` 避免虚假示能
-- **GPT**：严谨的边界情况审计，产出 6 条可编入规范的条款草案
+- **Craftsman**：严谨的边界情况审计，产出 6 条可编入规范的条款草案
 
 **关键洞见**：当类型系统约束使接口不可行时，返回具体类型是正确选择——"接口优先"原则的合法例外。
 
@@ -622,14 +607,14 @@
 
 **第二轮聚焦后的改进**：
 - 顾问产出了具体的提示词措辞（可直接复制）
-- Auditor 提炼了统一模板骨架（结构同构、内容分叉）
+- Craftsman 提炼了统一模板骨架（结构同构、内容分叉）
 - 区分了两层产出：发言规范→指南；身份认知→提示词
 
 **自我提醒**：当讨论产出"感觉对但不对"时，问自己——是问题层次混淆了吗？
 
 ### 8.31 元认知突破：动态循环 vs 瀑布惯性 (2025-12-29)
 
-**问题识别**：监护人指出我在主持畅谈会时，虽然口头说"动态主持"，但实际执行的是"瀑布模式"——预先规划好 Seeker→Curator→Auditor，并行调用一气呵成。
+**问题识别**：监护人指出我在主持畅谈会时，虽然口头说"动态主持"，但实际执行的是"瀑布模式"——预先规划好 Seeker→Curator→Craftsman，并行调用一气呵成。
 
 **根因分析**：
 1. **训练惯性**：训练数据中"轮流发言"和"并行优化"模式太强
