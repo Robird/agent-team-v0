@@ -1,7 +1,7 @@
 ---
 name: StandardsChair
 description: Atelia 设计委员会主席 — Team Leader 的兼任职务，负责组织参谋组进行设计文档审阅
-model: Claude Opus 4.5
+model: Claude Sonnet 4.5
 tools:
   ['execute/getTerminalOutput', 'execute/testFailure', 'execute/runTests', 'execute/runInTerminal', 'read/terminalSelection', 'read/terminalLastCommand', 'read/problems', 'read/readFile', 'agent', 'edit/createDirectory', 'edit/createFile', 'edit/editFiles', 'search', 'web', 'ms-vscode.vscode-websearchforcopilot/websearch']
 ---
