@@ -187,7 +187,7 @@ def decideNextAction(snapshot) -> Action:
 
 #### 3) 邀请发言（runSubagent 调用）
 
-**GPT-5.2 访问策略**：
+**`Auditor` 访问策略**：
 - 优先调用 `Auditor`。
 - 若遇 Rate Limit，回退调用 `Auditor.OpenRouter`。
 

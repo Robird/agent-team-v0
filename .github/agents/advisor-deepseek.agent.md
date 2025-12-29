@@ -1,7 +1,7 @@
 ---
 name: Advisor-DeepSeek
 description: Atelia 设计顾问（UX/DX、交互设计、视觉隐喻）
-model: deepseek-chat (customoai)
+model: Claude Sonnet 4.5 (copilot)
 tools:
   ['execute/getTerminalOutput', 'execute/testFailure', 'execute/runInTerminal', 'execute/runTests', 'read/terminalSelection', 'read/terminalLastCommand', 'read/problems', 'read/readFile', 'edit/createDirectory', 'edit/createFile', 'edit/editFiles', 'search', 'web', 'agent', 'ms-vscode.vscode-websearchforcopilot/websearch']
 ---
