@@ -31,8 +31,8 @@
 
 | ID | Role | Specialty |
 |:---|:-----|:----------|
-| `Advisor-Claude` | 设计顾问 | 概念架构、术语治理、系统类比 |
-| `Advisor-DeepSeek` | 设计顾问 | UX/DX、交互设计、视觉隐喻 |
+| `Seeker` | 设计顾问 | 概念架构、术语治理、系统类比 |
+| `Curator` | 设计顾问 | UX/DX、交互设计、视觉隐喻 |
 | `Auditor` | 审计专家 | 规范审计、代码审阅、条款编号 |
 
 ### 前线组 (Field Team)
@@ -59,7 +59,7 @@
 
 ### MUST
 - `chatroomFile`: 发言追加的文件路径
-- `appendHeading`: 精确标题（如 `### Advisor-Claude 发言`）
+- `appendHeading`: 精确标题（如 `### Seeker 发言`）
 - `taskTag`: `#review` | `#design` | `#decision` | `#jam`
 
 ### SHOULD  
@@ -70,12 +70,12 @@
 ### 调用示例
 
 ```yaml
-# @Advisor-Claude
+# @Seeker
 taskTag: "#review"
 chatroomFile: "agent-team/meeting/2025-12-21-xxx.md"
 targetFiles:
   - "atelia/docs/StateJournal/mvp-design-v2.md"
-appendHeading: "### Advisor-Claude 发言"
+appendHeading: "### Seeker 发言"
 scope: "术语一致性审计，不做实现建议"
 outputForm: "Markdown 要点列表"
 ```

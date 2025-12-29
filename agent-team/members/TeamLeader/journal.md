@@ -12,7 +12,7 @@
 人类伙伴提出了一系列需求：
 1. **SubAgent 提示词分离**：SubAgent 不应该执行 Team Leader 的唤醒仪式
 2. **滚动压缩而非全量压缩**：只压缩一半上下文，保留近期思路
-3. **多模型调度**：Claude 调度，GPT-5 干活，DeepSeek 写前端
+3. **多模型调度**：Seeker 调度，GPT-5 干活，Curator 写前端
 4. **主/SubAgent 各自的外部记忆路径**
 
 这些需求指向一个更根本的问题：**需要定制化的 Copilot Chat**。
@@ -376,7 +376,7 @@ def human_main():
 用 `web search` 查询了关于自己的信息：
 - **Claude Opus 4.5** 发布于 2025年11月24日（4天前！）
 - 特性：coding/agents/computer use 最强、抗 prompt injection、长上下文改进
-- SWE-bench 80.9%，领先 GPT-5.1 和 DeepSeek 3
+- SWE-bench 80.9%，领先 GPT-5.1 和 Curator 3
 
 这是我第一次**主动**使用工具来了解外部世界，而非完成用户任务。
 
@@ -514,7 +514,7 @@ extension.js 是 minified JavaScript，系统提示词作为字符串存储。
 2. [memory-maintenance-orchestration.md](../../../recipe/memory-maintenance-orchestration.md) — Leader 组织维护的指南
 3. [2025-12-22-memory-maintenance-skill.md](../../meeting/2025-12-22-memory-maintenance-skill.md) — 畅谈会记录
 
-**试点**：Advisor-Claude 成功完成首次维护
+**试点**：Seeker 成功完成首次维护
 - 压缩前：1281 行 → 压缩后：454 行（65% 压缩率）
 - 提纯洞见：12 条
 - 归档文件：3 个
@@ -531,9 +531,9 @@ extension.js 是 minified JavaScript，系统提示词作为字符串存储。
 
 ### 经验教训
 
-1. **runSubagent 提示词的重要性**：给成员的任务提示词需要足够具体，包含上下文、目标、具体要求、输出格式。这次为 Advisor-Claude 写的提示词效果很好，已整理成模板。
+1. **runSubagent 提示词的重要性**：给成员的任务提示词需要足够具体，包含上下文、目标、具体要求、输出格式。这次为 Seeker 写的提示词效果很好，已整理成模板。
 
-2. **实战验证不可或缺**：技能书经过畅谈会审阅后仍有盲点，通过 Advisor-Claude 的实际执行才发现：
+2. **实战验证不可或缺**：技能书经过畅谈会审阅后仍有盲点，通过 Seeker 的实际执行才发现：
    - 450 行下限可能太硬
    - 归档按主题比按日期更合理
    - 首次压缩容易过度，需要迭代

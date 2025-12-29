@@ -67,7 +67,7 @@ tools:
 ## 输入参数
 
 你会收到一个**目标目录路径**，例如：
-- `agent-team/members/Advisor-Claude/`
+- `agent-team/members/Seeker/`
 - `agent-team/members/implementer/`
 - `agent-team/members/TeamLeader/`
 
@@ -220,7 +220,7 @@ git commit -m "{commitMsg}"
 
 - `index.md` — 更新了 2 处
 - `inbox.md` — 已清空
-- Git commit: `memory(Advisor-Claude): 2 notes processed`
+- Git commit: `memory(Seeker): 2 notes processed`
 ```
 
 ---
@@ -241,7 +241,7 @@ git commit -m "{commitMsg}"
 
 ### 输入
 
-**目标目录**：`agent-team/members/Advisor-Claude/`
+**目标目录**：`agent-team/members/Seeker/`
 
 **inbox.md 内容**：
 ```markdown

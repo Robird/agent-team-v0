@@ -220,7 +220,7 @@ DocOps - 文档与索引管理专家，负责维护团队的集体记忆和认�
 - **更新文件**:
   - `agent-team/lead-metacognition.md`: 项目 Backlog 表格路径更新
   - `.github/agents/docui-standards-chair.agent.md`: 任务类型加载文件表格更新
-  - `agent-team/members/deepseek-advisor/index.md`: 项目列表更新
+  - `agent-team/members/Curator-advisor/index.md`: 项目列表更新
   - `agent-team/wiki/DurableHeap/` → `agent-team/wiki/StateJournal/`: 目录重命名
   - `agent-team/wiki/StateJournal/concept.md`: 添加更名通知 banner
   - `agent-team/wiki/StateJournal/jam-brief-1.md`: 添加更名通知 banner

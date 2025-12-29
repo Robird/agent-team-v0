@@ -347,10 +347,10 @@ cp agent-team/members/<name>/index.md agent-team/archive/memory-maintenance/YYYY
 ```yaml
 # MaintenanceRun
 runId: MM-2025-12-22-01
-actor: Advisor-Claude
+actor: Seeker
 timestamp: 2025-12-22
 scope:
-  - agent-team/members/Advisor-Claude/index.md
+  - agent-team/members/Seeker/index.md
 triggers:
   - threshold: lines > 500
 actions:
@@ -401,9 +401,9 @@ notes: "压缩 12/14~12/21 的过程性讨论，保留洞见并补索引"
 **归档文件头模板**：
 ```markdown
 ---
-archived_from: members/Advisor-Claude/index.md
+archived_from: members/Seeker/index.md
 archived_date: 2025-12-22
-archived_by: Advisor-Claude
+archived_by: Seeker
 reason: 过程记录压缩
 original_section: "2025-12-20 MVP v2 自洽性审阅"
 ---

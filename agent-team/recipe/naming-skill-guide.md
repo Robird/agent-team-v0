@@ -150,8 +150,8 @@
    - 列出软性偏好（如 ASCII 可读）
 
 2. **多视角发言**
-   - Advisor-Claude：概念框架、术语一致性
-   - Advisor-DeepSeek：UX/DX、可读性
+   - Seeker：概念框架、术语一致性
+   - Curator：UX/DX、可读性
    - Auditor：精确性、规范审计
    - 监护人：战略方向
 

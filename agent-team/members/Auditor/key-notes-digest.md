@@ -173,7 +173,7 @@ graph TD
 - 区分“分块消息模型”与“传输层流式”；并讨论真正全双工流式 LLM 的含义
 
 **LLM 调用的三层模型（实现映射）**
-- **ICompletionClient**：厂商 API 适配层（OpenAI/Anthropic/DeepSeek 等）
+- **ICompletionClient**：厂商 API 适配层（OpenAI/Anthropic/Curator 等）
 - **IHistoryMessage**：跨厂商抽象调用消息（由渲染层生成，含 LOD 后的 ToolCallResult；并在最后 Observation 中包含 DocUI 渲染出的 App 信息）
 - **HistoryEntry**：更完整的交互记录结构（ToolCallResult 含 Basic+Detail）
 

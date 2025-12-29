@@ -261,7 +261,7 @@ OnSessionStart:
 
 **何时委派**：
 - 需要收集多项目状态 → Investigator
-- 需要设计策略 → Advisor-Claude
+- 需要设计策略 → Seeker
 - 需要验证一致性 → Auditor
 
 **何时自己做**：

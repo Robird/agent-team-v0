@@ -36,12 +36,7 @@
 
 > **核心转变**：主持人不是"流程执行者"，而是"注意力导航者"。
 
-**旧模式（已废弃）**：
-```
-Claude 开场 → DeepSeek 展开 → Auditor 收敛 → 三人辩论 → 共识
-```
-
-**新模式（动态循环）**：
+**动态循环模式**：
 ```python
 while True:
     snapshot = analyzeScene()           # 分析场势
@@ -76,7 +71,7 @@ while True:
 
 | 层次 | 作用 | 机制 | 适用场景 |
 |:-----|:-----|:-----|:---------|
-| **约束层** | 防止错误行为 | 条款式（MUST/SHOULD） | 边界护栏 |
+| **约束层** | 防止错误行为 | 严谨式（MUST/SHOULD） | 边界护栏 |
 | **风格层** | 塑造表达姿态 | 人格式（像 XX 一样） | 态度定调 |
 | **模板层** | 提供完整行为模式 | 具名人物式 | 执行时参照 |
 
@@ -92,21 +87,21 @@ while True:
 
 | ID | 人格原型 | 核心问题 | 风格 | 贡献 |
 |:---|:---------|:---------|:-----|:-----|
-| **Advisor-Claude** | 哲学家/架构师 | "这本质是什么？" | 温和深刻 | 概念框架、术语治理 |
-| **Advisor-DeepSeek** | 设计师/体验官 | "感觉如何？" | 共情故事 | UX/DX、交互设计 |
-| **Auditor** | 律师/审计员 | "是否一致？" | 犀利直接 | 规范审计、条款化 |
+| **Seeker** | 哲学家/架构师 | "这本质是什么？" | 温和深刻 | 概念框架、术语治理 |
+| **Curator** | 设计师/体验官 | "感觉如何？" | 共情故事 | UX/DX、交互设计 |
+| **Auditor** | 律师/审计员 | "是否一致？" | 犀利直接 | 合理性、一致性、可行性 |
 
 **互补张力表**：
 
 | 组合 | 张力 | 产出 |
 |:-----|:-----|:-----|
-| Claude ↔ DeepSeek | 深度 vs 宽度 | 既有理论支撑又有体验验证 |
-| Claude ↔ Auditor | 框架 vs 检验 | 概念框架被逻辑验证 |
-| DeepSeek ↔ Auditor | 直觉 vs 条款 | 感性洞察被严谨收敛 |
+| Seeker ↔ Curator | 深度 vs 宽度 | 既有理论支撑又有体验验证 |
+| Seeker ↔ Auditor | 框架 vs 检验 | 概念框架被逻辑验证 |
+| Curator ↔ Auditor | 直觉 vs 严谨 | 感性洞察被严谨收敛 |
 
 **通过共识的标准**：三个视角都认可才算通过。
 
-> **注意**：这不意味着必须按 Claude → DeepSeek → Auditor 的顺序。主持人根据场势决定邀请谁。
+> **注意**：这不意味着必须按 Seeker → Curator → Auditor 的顺序。主持人根据场势决定邀请谁。
 
 ---
 
@@ -124,7 +119,7 @@ while True:
 > **日期**：YYYY-MM-DD
 > **标签**：#review | #design | #decision | #jam
 > **主持人**：刘德智 (Team Leader)
-> **参与者**：Advisor-Claude, Advisor-DeepSeek, Auditor
+> **参与者**：Seeker, Curator, Auditor
 > **状态**：进行中
 
 ---
@@ -157,7 +152,7 @@ while True:
 #### 场势快照
 
 - **共识**：三层叠加策略获全体认可
-- **分歧**：条款式 vs 人格式提示词效果
+- **分歧**：严谨式 vs 人格式提示词效果
 - **缺口**：缺少体验设计视角
 - **能量**：讨论热度上升 🔥
 ```
@@ -194,12 +189,12 @@ while True:
 **MUST 字段**：
 
 ```yaml
-# @Advisor-Claude
+# @Seeker
 taskTag: "#review"
 chatroomFile: "agent-team/meeting/2025-12-21-xxx.md"
 targetFiles:
   - "atelia/docs/StateJournal/mvp-design-v2.md"
-appendHeading: "### Advisor-Claude 发言"
+appendHeading: "### Seeker 发言"
 scope: "术语一致性审计，不做实现建议"
 outputForm: "Markdown 要点列表"
 ```
@@ -483,6 +478,6 @@ Exploring → Clarifying → Testing → Deciding → Closing（可回退）
 |:-----|:-----|
 | 2025-12-29 | 用户提示词模板：新增监护人发起畅谈会的标准模板（开场咒语 + 收尾约束） |
 | 2025-12-29 | 动态循环模式：加入伪代码描述 + 咖啡馆隐喻 + 硬约束（对抗瀑布惯性） |
-| 2025-12-29 | 发言规范增强：并入 14 条 MUST/SHOULD/MAY 条款（来自参谋组提示词优化畅谈会） |
+| 2025-12-29 | 发言规范增强：并入 14 条 MUST/SHOULD/MAY 严谨（来自参谋组提示词优化畅谈会） |
 | 2025-12-28 | 动态主持机制重构：废弃固定流程，引入场势快照、风格工具箱、人类窗口、结论同步块 |
 | 2025-12-21 | 初版创建 |

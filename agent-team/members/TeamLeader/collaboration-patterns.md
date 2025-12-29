@@ -117,8 +117,8 @@
 
 | Specialist | 模型 | 视角 | 擅长领域 |
 |------------|------|------|----------|
-| **DocUIClaude** | Claude Opus 4.5 | 概念框架 | 系统类比、术语一致性、概念完备性 |
-| **DocUIDeepSeek** | DeepSeek | UX/DX | 交互模式、开发者体验、可发现性 |
+| **DocUISeeker** | Claude Opus 4.5 | 概念框架 | 系统类比、术语一致性、概念完备性 |
+| **DocUICurator** | Curator | UX/DX | 交互模式、开发者体验、可发现性 |
 | **DocUIGPT** | GPT-5.2 | 规范审计 | 命名约定、RFC 2119 合规、代码示例准确性 |
 
 **协作价值**: 三者结合能覆盖概念、体验、规范三个维度，形成互补。

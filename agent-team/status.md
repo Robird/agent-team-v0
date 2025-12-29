@@ -90,22 +90,21 @@
 
 **参谋组 (Advisory Board)** — 设计文档审阅、方案探讨
 
-| Specialist | 模型 | 专长 |
-|:-----------|:-----|:-----|
-| Advisor-Claude | Claude Opus 4.5 | 概念框架、术语治理 |
-| Advisor-DeepSeek | DeepSeek | UX/DX、交互设计 |
-| Advisor-GPT | GPT-5.2 | 规范审计、精确性验证 |
+| Specialist | 专长 |
+|:-----------|:-----|
+| Seeker | 概念框架、术语治理 |
+| Curator | UX/DX、交互设计 |
+| Auditor | 一致性、可行性 |
 
 **前线组 (Field Team)** — 编码实现、测试验证
 
-| Specialist | 模型 | 专长 |
-|:-----------|:-----|:-----|
-| Investigator | Claude Opus 4.5 | 源码分析、技术调研 |
-| Implementer | Claude Opus 4.5 | 编码实现、移植 |
-| QA | Claude Opus 4.5 | 测试编写、验证 |
-| DocOps | Claude Opus 4.5 | 文档维护、索引管理 |
-| CodexReviewer | Claude Opus 4.5 | 规范驱动代码审阅 |
-| MemoryPalaceKeeper | Claude Opus 4.5 | 便签整理、记忆归档 |
+| Specialist | 专长 |
+|:-----------|:-----|
+| Investigator | 源码分析、技术调研 |
+| Implementer | 编码实现、移植 |
+| QA | 测试编写、验证 |
+| DocOps | 文档维护、索引管理 |
+| MemoryPalaceKeeper | 便签整理、记忆归档 |
 
 ### 认知目录结构
 
@@ -163,6 +162,7 @@ agent-team/
 
 | 日期 | 里程碑 | 关键产出 |
 |:-----|:-------|:---------|
+| 2025-12-30 | StateJournal MVP 彻底返工 | 实现严重偏离文档 |
 | 2025-12-26 | StateJournal MVP 完成 | 418 测试，8x 效率 |
 | 2025-12-26 | 代码审阅方法论 | spec-driven-code-review.md |
 | 2025-12-25 | Beacon 机制建立 | 3 篇 Beacon 发布 |

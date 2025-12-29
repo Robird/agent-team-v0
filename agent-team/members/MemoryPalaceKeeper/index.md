@@ -91,7 +91,7 @@
 
 当便签**显式引用或扩展前一条便签的概念**时（即使时间相隔），应 MERGE 为单一洞见条目的多个子节。
 
-- **信号**："关于之前的..."、"Claude 的框架在体验层的机制是..."
+- **信号**："关于之前的..."、"Seeker 的框架在体验层的机制是..."
 - **跨顾问框架互补的处理**：独立新建洞见条目（归属于产出者的认知文件），而非 MERGE 到原框架作者的 index.md
 
 ### 压缩技巧
@@ -131,7 +131,7 @@
 - 一成员一提交，保持原子性
 
 **参谋组贡献**：
-- Advisor-Claude：概念架构分析，推荐 A' 方案
+- Seeker：概念架构分析，推荐 A' 方案
 - Advisor-GPT：规范审计条款，明确回滚语义
 
 ### 工作流程优化 v2（2025-12-27）
@@ -167,20 +167,20 @@
 | 12-30 | MemoryPalaceKeeper | 6 | 自我处理：主题聚合MERGE、State+Discovery混合、重复便签处理、跨洞见MERGE判断 |
 | 12-27 | MemoryPalaceKeeper | 3 | 自我处理：Git-as-Archive MERGE、工作流程v2 APPEND、能力边界自评 |
 | 12-27 | Advisor-GPT | 1 | Git-as-Archive 审计要点（归档耐久性、回滚目标、批处理原子性）|
-| 12-27 | Advisor-Claude | 1 | 中间态实体归档决策模式（三问判断法） |
+| 12-27 | Seeker | 1 | 中间态实体归档决策模式（三问判断法） |
 | 12-27 | TeamLeader | 1 | 畅谈会 #6 Workspace 存储层集成（主动协调器、Materializer 内置、GPT 逻辑漏洞审计）|
 | 12-27 | Implementer | 7 | VersionIndex 重构（runSubagent 递归分解、TestHelper、DirtySet 同步 Bug）+ 测试文件拆分策略 |
 | 12-27 | Advisor-GPT | 3 | 存储层集成审计、StateJournal 草稿策略、VersionIndex 规范意图 |
 | 12-27 | Advisor-Gemini | 1 | Workspace API 设计洞见（Concierge/Hidden Engine/Service Hatch/Error Affordance） |
-| 12-27 | Advisor-Claude | 1 | Passive Container vs Active Coordinator 模式 |
+| 12-27 | Seeker | 1 | Passive Container vs Active Coordinator 模式 |
 | 12-27 | TeamLeader | 4 | DurableDict 重构教训、护照模式、Workspace 绑定实施、Lazy Loading 完成 |
 | 12-27 | Implementer | 1 | Workspace 绑定机制 Phase 1（DurableObjectBase、反射、private protected）|
 | 12-27 | Advisor-GPT | 3 | DurableDict 透明 Lazy Load 审计点、Workspace 绑定机制 R1+R2 |
 | 12-27 | Advisor-Gemini | 2 | Ambient Context 三方案、护照模式隐喻 |
-| 12-27 | Advisor-Claude | 2 | 对象-容器绑定模式、对象身份 vs 调用点上下文 |
+| 12-27 | Seeker | 2 | 对象-容器绑定模式、对象身份 vs 调用点上下文 |
 | 12-26 | Implementer | 5 | S+ 2 | MVP 洞见、规范驱动开发、CodexReviewer 模型切换、status.md 仪表盘、外部记忆维护
 | 12-26 | TeamLeader | 3 + 2 + 6 + 3 | MVP 洞见、CodexReviewer、status.md、L1 审阅、畅谈会 #3/#4、O1 实施 |
-| 12-26 | Advisor-Claude | 1 + 1 | 代码审阅方法论 #17、诊断作用域设计模式 #19 |
+| 12-26 | Seeker | 1 + 1 | 代码审阅方法论 #17、诊断作用域设计模式 #19 |
 | 12-26 | Advisor-Gemini | 2 + 1 | Code Review DX + DurableDict Affordance |
 | 12-26 | Advisor-Gemini | 2 | Detached 对象语义 + Diagnostic Scope DX |
 | 12-26 | Advisor-GPT | 2 | Recipe 审计要点（8 条款） |

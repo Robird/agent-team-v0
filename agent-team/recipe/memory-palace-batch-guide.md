@@ -84,14 +84,13 @@ prompt: |
 
 | 成员 | 目录路径 |
 |:-----|:---------|
-| Advisor-Claude | `agent-team/members/Advisor-Claude/` |
-| Advisor-DeepSeek | `agent-team/members/Advisor-DeepSeek/` |
-| Advisor-GPT | `agent-team/members/Advisor-GPT/` |
+| Seeker | `agent-team/members/Seeker/` |
+| Curator | `agent-team/members/Curator/` |
+| Auditor | `agent-team/members/Auditor/` |
 | Implementer | `agent-team/members/implementer/` |
 | Investigator | `agent-team/members/investigator/` |
 | QA | `agent-team/members/qa/` |
 | DocOps | `agent-team/members/docops/` |
-| CodexReviewer | `agent-team/members/codex-reviewer/` |
 | TeamLeader | `agent-team/members/TeamLeader/` |
 | MemoryPalaceKeeper | `agent-team/members/MemoryPalaceKeeper/` |
 

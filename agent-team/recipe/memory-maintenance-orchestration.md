@@ -153,7 +153,7 @@ done | sort -rn
 
 | 变量 | 说明 | 示例 |
 |:-----|:-----|:-----|
-| `{MEMBER_NAME}` | 成员名称 | `Advisor-Claude` |
+| `{MEMBER_NAME}` | 成员名称 | `Seeker` |
 | `{LINE_COUNT}` | 当前行数 | `1281` |
 | `{BACKUP_COMMIT}` | 备份 commit hash | `f2c99c2` |
 | `{YYYY-MM}` | 归档月份 | `2025-12` |
@@ -273,7 +273,7 @@ git add -A && git commit -m "feat: batch memory maintenance completed"
 ## 维护反馈汇总（YYYY-MM-DD）
 
 ### 参与成员
-- [ ] Advisor-Claude
+- [ ] Seeker
 - [ ] Advisor-GPT
 - [ ] ...
 
@@ -294,4 +294,4 @@ git add -A && git commit -m "feat: batch memory maintenance completed"
 | 日期 | 版本 | 变更 |
 |:-----|:-----|:-----|
 | 2025-12-27 | v1.1 | 添加便签批量处理章节；关联 memory-palace-batch-guide.md；说明 MemoryPalaceKeeper 伪代码工作流程 |
-| 2025-12-22 | v1.0 | 初版，基于 Advisor-Claude 试点维护经验 |
+| 2025-12-22 | v1.0 | 初版，基于 Seeker 试点维护经验 |

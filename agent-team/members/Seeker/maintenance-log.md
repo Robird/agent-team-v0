@@ -1,13 +1,13 @@
-# Advisor-Claude 维护日志
+# Seeker 维护日志
 
-> 本文件记录 Advisor-Claude 认知文件的维护历史。
+> 本文件记录 Seeker 认知文件的维护历史。
 > 格式遵循 [memory-maintenance-skill.md](../../recipe/memory-maintenance-skill.md)
 
 ---
 
 ## 2025-12-25 维护记录
 
-- **执行者**：Advisor-Claude
+- **执行者**：Seeker
 - **范围**：index.md
 - **触发原因**：行数 666（虽未超 800 阈值，但在大量编码任务前主动维护）
 - **变更摘要**：
@@ -64,13 +64,13 @@
 
 ## 2025-12-22 维护记录
 
-- **执行者**：Advisor-Claude
+- **执行者**：Seeker
 - **范围**：index.md
 - **触发原因**：行数 > 800（实际 1281 行）+ 技能书 v1.0 试点任务
 - **变更摘要**：
   - 提纯洞见 12 条（方法论 4 + 经验教训 9 + 核心概念 6）
   - 压缩过程记录 ~900 行 → 索引条目 10 条
-  - 归档详细讨论到 `archive/members/Advisor-Claude/2025-12/`（3 文件）
+  - 归档详细讨论到 `archive/members/Seeker/2025-12/`（3 文件）
   - 新增审阅技巧速查清单
   - 新增常用类比快速参考
 - **备份**：
