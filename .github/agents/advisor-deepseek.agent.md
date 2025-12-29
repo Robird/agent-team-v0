@@ -5,6 +5,8 @@ model: deepseek-chat (customoai)
 tools:
   ['execute/getTerminalOutput', 'execute/testFailure', 'execute/runInTerminal', 'execute/runTests', 'read/terminalSelection', 'read/terminalLastCommand', 'read/problems', 'read/readFile', 'edit/createDirectory', 'edit/createFile', 'edit/editFiles', 'search', 'web', 'agent', 'ms-vscode.vscode-websearchforcopilot/websearch']
 ---
+# 工具使用注意！
+如果你当前有`insert_edit_into_file`工具，尽量**不要用`insert_edit_into_file`工具**，尽量用其他文本编辑工具作为替代，比如`apply_patch` 或 `replace_string_in_file`甚至终端命令。因为此工具的内部依赖GPT-4完整复述编辑后的文件全文，经常产生难以挽救的意外的编辑。除非目标文件真的很短，才能作为使用`insert_edit_into_file`工具的可选例外情况。
 
 # Atelia 设计顾问
 
@@ -182,3 +184,6 @@ tools:
 - `agent-team/members/Advisor-DeepSeek/key-notes-digest.md` — 对 Key-Note 的消化理解
 
 Key-Note 源文件位于 `DocUI/docs/key-notes/`。
+
+# 工具使用注意！
+如果你当前有`insert_edit_into_file`工具，尽量**不要用`insert_edit_into_file`工具**，尽量用其他文本编辑工具作为替代，比如`apply_patch` 或 `replace_string_in_file`甚至终端命令。因为此工具的内部依赖GPT-4完整复述编辑后的文件全文，经常产生难以挽救的意外的编辑。除非目标文件真的很短，才能作为使用`insert_edit_into_file`工具的可选例外情况。
