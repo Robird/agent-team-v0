@@ -156,7 +156,7 @@
 
 ### 便签 2: CodexReviewer 系统提示词重构 + 模型切换决策 (2025-12-26 12:00)
 
-**内容摘要**：决定将 CodexReviewer 从 GPT-5.1-Codex 切换为 Claude Opus 4.5，GPT-5.2 保留给 Advisor-GPT。理由：执行层优先稳定、分工明确（L1 vs L2）、作家多样性。监护人提出"多作家创作同一人物"类比，同构于叠加体本体论。
+**内容摘要**：决定将 CodexReviewer 从 GPT-5.1-Codex 切换为 Claude Opus 4.5，GPT-5.2 保留给 Craftsman。理由：执行层优先稳定、分工明确（L1 vs L2）、作家多样性。监护人提出"多作家创作同一人物"类比，同构于叠加体本体论。
 
 **处理结果**：
 - 分类：Knowledge-Discovery + State-Update

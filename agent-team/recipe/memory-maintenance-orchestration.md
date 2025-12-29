@@ -274,7 +274,7 @@ git add -A && git commit -m "feat: batch memory maintenance completed"
 
 ### 参与成员
 - [ ] Seeker
-- [ ] Advisor-GPT
+- [ ] Craftsman
 - [ ] ...
 
 ### 技能书有效部分

@@ -178,5 +178,5 @@ agent-team/members/Craftsman/
 ```
 
 ### 历史归档
-- 原 Advisor-GPT 归档: `agent-team/archive/members/Advisor-GPT/`
+- 原 Craftsman 归档: `agent-team/archive/members/Craftsman/`
 - 原 CodexReviewer 归档: `agent-team/archive/members/codex-reviewer/`

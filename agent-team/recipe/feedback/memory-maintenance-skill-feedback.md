@@ -2,7 +2,7 @@
 
 > **目标文档**：`agent-team/recipe/memory-maintenance-skill.md` (v1.0)  
 > **反馈来源**：Advisory Board 批量维护实战（2025-12-25）  
-> **参与成员**：Advisor-Claude, Advisor-GPT, Advisor-DeepSeek  
+> **参与成员**：Advisor-Claude, Craftsman, Advisor-DeepSeek  
 > **状态**：待畅谈与修订
 
 ---
@@ -14,12 +14,12 @@
 - **维护类型**：预防性维护（非触发阈值的紧急维护）
 - **成员状态**：
   - Advisor-Claude: 666 行（接近监控线）
-  - Advisor-GPT: 578 行（健康区）
+  - Craftsman: 578 行（健康区）
   - Advisor-DeepSeek: 552 行（健康区）
 
 **维护结果**：
 - Advisor-Claude: 666→495 行（26% 压缩）
-- Advisor-GPT: 578→332 行（43% 压缩）
+- Craftsman: 578→332 行（43% 压缩）
 - Advisor-DeepSeek: 552→144 行（74% 压缩）
 - **所有成员通过冷启动测试**
 
@@ -36,7 +36,7 @@
 **Advisor-Claude 评价**：
 > "指导性极强，每次维护都能快速定位'哪些内容属于哪层'"
 
-**Advisor-GPT 评价**：
+**Craftsman 评价**：
 > "四层结构提供了清晰的思维框架，帮助我重排了整个记忆文件"
 
 **关键价值**：
@@ -78,7 +78,7 @@
 **Advisor-Claude 评价**：
 > "比按日期更易检索（本次新增 update-history.md 验证了这点）"
 
-**Advisor-GPT 实践**：
+**Craftsman 实践**：
 - 创建了 3 个主题归档文件：
   - `statejournal-rbf-durability-audits.md`
   - `team-protocol-and-naming-audits.md`
@@ -332,9 +332,9 @@
 - 优点：结构清晰，检索高效
 - 缺点：需要在归档时决定分类
 
-**示例**（Advisor-GPT）：
+**示例**（Craftsman）：
 ```
-archive/members/Advisor-GPT/2025-12/
+archive/members/Craftsman/2025-12/
   ├── statejournal-rbf-durability-audits.md
   ├── team-protocol-and-naming-audits.md
   └── terminology-anchors-and-ssot-notes.md
@@ -483,7 +483,7 @@ archive/members/Advisor-DeepSeek/by-topic/
 ## 附录：完整维护日志链接
 
 - [Advisor-Claude 维护日志](../../members/Advisor-Claude/maintenance-log.md)
-- [Advisor-GPT 维护日志](../../members/Advisor-GPT/maintenance-log.md)
+- [Craftsman 维护日志](../../members/Craftsman/maintenance-log.md)
 - [Advisor-DeepSeek 维护日志](../../members/Advisor-DeepSeek/maintenance-log.md)
 
 ---
