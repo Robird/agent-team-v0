@@ -18,17 +18,26 @@
 - **Primary Definition + Index**：每术语唯一权威定义。
 - **Rename vs Re-home**：Rename 保留 alias，Re-home 保留 Redirect Stub。
 
-#### L1-L5 层级别名命名策略 (2025-12-30)
+#### L1-L5 层级别名命名策略 (2025-12-30, 更新 12-30)
 > 五层级方法论的层级标签与仓库既有术语冲突的处理方案。
 
 **冲突案例**：
 - `L4 = Route` 与 MemoryPalaceKeeper 流程术语 "ROUTE（CLASSIFY→ROUTE→APPLY）"强冲突
 - `L4 = Path` 虽避开 routing 联想，但在 DocGraph 域与 `Document.Path`/文件路径语义高频撞词
 
-**解决方案**：
+**原方案**（12-30）：
 - 保留 `L1-L5` 为 SSOT（无歧义的稳定锚点）
 - 引入**别名表**：`L4 canonical=Plan/Approach`，`Path/Route` 降级为 alias
 - 代码/测试/日志用**带层级前缀的短标签**：`[L4-PLAN]`、`[L3-SPEC]` 等
+
+**冲突升级观察**（12-30 16:10）：
+- 监护人提出"彻底移除 L1-L5 文本"与现行术语表直接冲突
+- 波及范围：Wish 系统规范/模板对 `L1-L5` 的硬编码
+
+**修订建议**：
+- 坐标型稳定锚点从 `L1-L5` 收敛为不含 L 的 `1..5`（或 `01..05`）
+- 语义型仍用 `Why/Shape/Rules/Plan/Craft`
+- 代码枚举/文档字段优先语义名，排序用 ordinal 字段或显式枚举值承载
 
 #### 简单套壳类型审阅 (2025-12-28)
 > Wrapper type 的审计判据与常见陷阱。
@@ -201,6 +210,11 @@
 
 **结论**："悬空引用聚合报告、默认失败"不仅是 L3 原则，也能立刻自举为端到端健康检查用例。
 
+**DocGraph ore.md 审计补充（2025-12-30）**：
+- `ore.md §3` 作为"L3 内核"仍缺：Requirement IDs、失败语义操作化、Wish 系统 MUST 覆盖边界声明
+- Wish 系统 MUST 包括：frontmatter 必填、status↔目录、文件名↔wishId、层级产物链接存在性（或 N/A）、ParentWish
+- 错误码/schema 在 ore 与 L2 双写且字段名不一致 → 应收敛为单一 SSOT
+
 #### 上位规范冲突审计模式 (2025-12-30)
 > 子规范与项目级约定冲突的常见类型及处理建议。
 
@@ -210,6 +224,41 @@
 | **ASCII 图示漂移** | 手工 ASCII 状态机/流程图与条文 SSOT 双写漂移 | 用 Mermaid 作为 SSOT；ASCII 若保留必须降级为 Illustration |
 
 **参考**：稳定语义锚点约定见 `atelia/docs/spec-conventions.md`
+
+#### 术语大小写治理与 Acronym Registry (2025-12-31)
+> 将缩写大小写规则工程化为可判定约束。
+
+**问题**：按长度（2字母）或语境（独立/复合）判断"缩写是否全大写"难以自动化且易产生分歧。
+
+**建议方案**：
+- 建立显式 **Acronym Registry**（机器可读 YAML/JSON）
+- 文档术语域按 Registry 判定大小写
+- lint 工具可直接消费 Registry，实现纯文本可判定检查
+
+#### SSOT 双层权威拆分 (2025-12-31)
+> 术语"概念语义"与"写法/命名规范"必须拆为两层权威，否则必然双写漂移。
+
+**架构建议**：
+| 层 | 文件 | 职责 |
+|:---|:-----|:-----|
+| **概念 SSOT** | `terminology.md` | 仅定义概念语义，不涉及写法 |
+| **写法条款** | `spec-conventions.md` | 承载写法规范，带 `[S-TERM-*]` 条款编号 |
+| **机器约束** | `terminology-registry.yaml` | 唯一机器可读约束输入，lint 消费 |
+
+**漂移信号实例**：
+- `Rules` vs `Rule` 同一文件中不一致
+- `L1-L5` 既被示例使用，又被 FAQ 宣告"不再使用"
+
+**关联风险 (2025-12-31 02:20)**：
+- `atelia/docs/spec-conventions.md` 当前存在两个同名"变更日志"区块（第 3 章后、文末各一份）
+- 建议收敛为单一变更日志，或明确标注"分章变更日志"的范围
+
+#### 工具绕过经验：`apply_patch` 长文本追加 (2025-12-30)
+> 在本仓库对会议文件追加长文本时的 workaround。
+
+**问题**：`apply_patch` 工具多次报错 `Cannot read properties of undefined (reading 'length')`
+
+**绕过方案**：改用 shell heredoc 追加
 
 ### 参与历史索引 (Advisor)
 - **StateJournal (RBF/Durability)**: 格式不变式、恢复/截断边界、两阶段提交。
