@@ -30,10 +30,12 @@ wishes/
 
 ## 核心概念
 
+> **术语参考**：五层级术语定义见 [Atelia 术语表](../agent-team/wiki/terminology.md)。
+
 | 概念 | 说明 |
 |:-----|:-----|
 | **Wish** | 监护人的意图，30 秒可读懂，链接到各层级产物 |
-| **层级产物** | L1(Why) → L2(What) → L3(Rules) → L4(How) → L5(Build) |
+| **层级产物** | L1(Why) → L2(Shape) → L3(Rules) → L4(Plan) → L5(Craft) |
 | **Issue** | 问题/阻塞记录，必须关联层级和 Wish |
 | **index.md** | 派生视图，可从各目录扫描重建 |
 

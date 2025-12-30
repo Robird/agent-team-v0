@@ -38,13 +38,15 @@ l2Document: "wishes/specs/doc-graph-api.md"
 
 ## 层级进度 (Layer Progress)
 
+> **术语参考**：五层级术语定义见 [Atelia 术语表](../../agent-team/wiki/terminology.md)。
+
 | 层级 | 状态 | 产物链接 | 备注 |
 |:-----|:-----|:---------|:-----|
 | L1 Why | 🟢 完成 | [畅谈会记录](../../agent-team/meeting/Meta/2025-12-30-layers-of-dev.md) | 监护人阐述动机 |
-| L2 What | 🟡 进行中 | [API 设计草案](../../atelia/docs/DocGraph/api.md) | 初版 API 外观已定义 |
+| L2 Shape | 🟡 进行中 | [API 设计草案](../../atelia/docs/DocGraph/api.md) | 初版 API 外观已定义 |
 | L3 Rules | ⚪ 未开始 | — | 待定义规范条款 |
-| L4 How | ⚪ 未开始 | — | 待选择技术方案（Markdig/YamlDotNet） |
-| L5 Build | ⚪ 未开始 | — | 待实现 |
+| L4 Plan | ⚪ 未开始 | — | 待选择技术方案（Markdig/YamlDotNet） |
+| L5 Craft | ⚪ 未开始 | — | 待实现 |
 
 > **状态符号**: ⚪ 未开始 | 🟡 进行中 | 🟢 完成 | 🔴 阻塞 | ➖ N/A
 
