@@ -159,6 +159,46 @@
 | **跨层升级标记** | 如 `[L1-BLOCK]` 标记表示"此项在 L1 阻塞，需升级到 L2 处理" |
 | **Clause Registry** | 任何 MUST/SHOULD/MAY 必须入库，其他位置只允许引用，禁止复述 |
 
+#### Wish 系统与 DocGraph 可执行性审计 (2025-12-30)
+> W-0002（DocGraph）审计过程中积累的规范可执行性判据。
+
+**Wish 系统"可执行"必须补齐的要素**：
+| 要素 | 说明 |
+|:-----|:-----|
+| **Wish 文档必填字段** | ID / 状态 / 验收 / 层级进度 |
+| **状态机触发条件** | Completed / Abandoned / Reopen 的可判定条件 |
+| **Issue 归属与维护责任** | 谁负责维护、何时更新 |
+| **链接健康可判定检查** | 能自动检测悬空引用 |
+| **`wishes/index.md` 定位** | 明确为派生视图以避免 SSOT 双写漂移 |
+
+**L3 拟定建议（MVP 聚焦）**：
+- Registry 文件作为遍历起点 → MUST
+- 悬空引用聚合报告、默认失败 → MUST/SHOULD
+- MVP 只做硬编码生成 `wishes/index.md`（解析 frontmatter + 解析 Wish 正文的层级进度表格）
+
+**Registry 隐式约定设计决策**：
+- 以 `wishes/active` / `wishes/completed` / `wishes/abandoned` 三目录枚举作为 roots（SSOT）
+- 不引入 `wishes/registry.*` 配置文件
+- 理由：减少配置漂移风险与 DX 负担，符合"最粗暴有效"
+- 代价：短期扩展性下降（未来多输出/多根集合再补回显式 Registry）
+
+**真实错误样例自举测试向量**：
+仓库现状已有可复用的"真实错误"，适合作为 MVP 首批测试向量：
+1. `wishes/index.md` → `active/wish-0002-temperature-sync-tool.md`（实际文件是 `wishes/active/wish-0002-doc-graph-tool.md`）
+2. `wishes/active/wish-0002-doc-graph-tool.md` 的 `l2Document` → `wishes/specs/doc-graph-api.md`（实际在 `atelia/docs/DocGraph/doc-graph-api.md`）
+
+**结论**："悬空引用聚合报告、默认失败"不仅是 L3 原则，也能立刻自举为端到端健康检查用例。
+
+#### 上位规范冲突审计模式 (2025-12-30)
+> 子规范与项目级约定冲突的常见类型及处理建议。
+
+| 冲突类型 | 信号 | 处理建议 |
+|:---------|:-----|:---------|
+| **条款编号体系漂移** | 子规范自创序号式 ID（如 `WS-*`），与项目"稳定语义锚点"约定（`[F-*]` / `[S-*]`）冲突 | 迁移到稳定锚点；保留"旧 ID → 新 ID"映射表作为兼容层 |
+| **ASCII 图示漂移** | 手工 ASCII 状态机/流程图与条文 SSOT 双写漂移 | 用 Mermaid 作为 SSOT；ASCII 若保留必须降级为 Illustration |
+
+**参考**：稳定语义锚点约定见 `atelia/docs/spec-conventions.md`
+
 ### 参与历史索引 (Advisor)
 - **StateJournal (RBF/Durability)**: 格式不变式、恢复/截断边界、两阶段提交。
 - **术语治理**: Primary Definition + Index。
