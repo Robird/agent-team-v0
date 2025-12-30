@@ -1,7 +1,7 @@
 # Wish 系统规范 (Rule-Layer 条款)
 
 > **文档性质**: 规范性 (Normative)
-> **版本**: 0.2.0
+> **版本**: 0.4.0
 > **创建日期**: 2025-12-30
 > **ParentWish**: [W-0001](../active/wish-0001-wish-system-bootstrap.md)
 
@@ -16,17 +16,20 @@
 
 ---
 
-## §1 术语定义
+## §1 Wish 系统术语
 
-> **术语参考**：五层级术语的权威定义见 [Atelia 术语表](../../agent-team/wiki/terminology.md)。
-> 本节仅列出 Wish 系统相关的核心术语。
+> **术语分层说明**：
+> - **本节**：仅定义 Wish 系统特有术语
+> - **全局概念**（如 SSOT、五层级方法论）：请查阅 [Atelia 术语表](../../agent-team/wiki/terminology.md)
+> - **写法规范**：请查阅 [规范约定](../../atelia/docs/spec-conventions.md) §4
 
-| 术语 | 定义 |
-|:-----|:-----|
-| **Wish** | 意图载体 + 产物索引的入口节点，承载动机并链接各层级产物 |
-| **层级产物** | 决策的物化形式，分为 Why-Layer → Shape-Layer → Rule-Layer → Plan-Layer → Craft-Layer 五个层级 |
-| **Issue** | 问题/阻塞的记录单元，必须关联到层级；通常关联某个 Wish，孤立 Issue 使用 `RelatedWishId: Orphan` 标记 |
-| **SSOT** | Single Source of Truth，唯一真相源 |
+| 术语 | 定义 | 备注 |
+|:-----|:-----|:-----|
+| **Wish** | 意图载体 + 产物索引的入口节点，承载动机并链接各层级产物 | 核心概念 |
+| **WishId** | Wish 的唯一标识符，格式 `W-XXXX` | 如 `W-0001` |
+| **Issue** | 问题/阻塞的记录单元，必须关联到层级；通常关联某个 Wish | 孤立 Issue 使用 `RelatedWishId: Orphan` |
+| **IssueId** | Issue 的唯一标识符，格式 `I-XXXX` | 如 `I-0001` |
+| **RelatedWishId** | Issue 元信息字段，标识关联的 Wish | `Orphan` 表示孤立 Issue |
 
 ---
 
@@ -230,6 +233,7 @@ stateDiagram-v2
 
 | 版本 | 日期 | 作者 | 变更说明 |
 |:-----|:-----|:-----|:---------|
+| 0.4.0 | 2025-12-31 | DocOps | §1 术语精简：只保留 Wish 特有术语，全局概念引用术语表 |
 | 0.3.0 | 2025-12-31 | Team Leader | 术语统一：移除L1-L5，采用Why-Layer等统一格式 |
 | 0.2.0 | 2025-12-30 | DocOps | 术语更新：What→Shape, How→Plan, Build→Craft；添加 §9 术语演变说明 |
 | 0.1.0 | 2025-12-30 | Implementer | 初始创建，基于畅谈会共识 |

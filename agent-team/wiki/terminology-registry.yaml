@@ -1,0 +1,111 @@
+# terminology-registry.yaml
+# 机器可读的术语规范 SSOT
+# 版本: 1.0.0
+# 创建日期: 2025-12-31
+# 最后更新: 2025-12-31
+# 参考: [2025-12-31 畅谈会记录](../meeting/2025-12-31-terminology-naming-convention.md)
+
+version: "1.0.0"
+last_updated: "2025-12-31"
+
+# 全大写缩写白名单
+# 这些缩写在文档术语域中使用全大写形式
+acronyms_uppercase:
+  # 2字母高频技术缩写
+  - ID    # Identifier
+  - UI    # User Interface
+  - UX    # User Experience
+  - DX    # Developer Experience
+  - AI    # Artificial Intelligence
+  - IO    # Input/Output
+  
+  # 3+字母高频技术缩写
+  - API   # Application Programming Interface
+  - LLM   # Large Language Model
+  - MVP   # Minimum Viable Product
+  - SSOT  # Single Source of Truth
+  - CRC   # Cyclic Redundancy Check
+  - RBF   # Reversible Binary Framing, `atelia/docs/Rbf/rbf-interface.md`
+  - COW   # Copy-On-Write
+  
+  # 其他常见缩写
+  - OK    # Okay (高频使用)
+
+# 层级术语闭集
+# 这些是固定的层级术语，不允许创建新的层级术语
+layer_terms:
+  - Why-Layer
+  - Shape-Layer
+  - Rule-Layer
+  - Plan-Layer
+  - Craft-Layer
+
+# 其他复合术语示例
+# 这些是项目中已建立的复合术语，作为参考
+compound_terms:
+  - App-For-LLM
+  - Context-Projection
+  - Capability-Provider
+  - Agent-OS
+  - Abstract-Token
+  - UI-Anchor
+  - Object-Anchor
+  - Action-Prototype
+
+# 术语变体映射
+# 记录每个术语的合法变体形式，用于搜索和规范化
+term_variants:
+  # 层级术语变体
+  Why-Layer:
+    - Why Layer
+    - WhyLayer
+    - why-layer
+  Shape-Layer:
+    - Shape Layer
+    - ShapeLayer
+    - shape-layer
+  Rule-Layer:
+    - Rule Layer
+    - RuleLayer
+    - rule-layer
+  Plan-Layer:
+    - Plan Layer
+    - PlanLayer
+    - plan-layer
+  Craft-Layer:
+    - Craft Layer
+    - CraftLayer
+    - craft-layer
+  
+  # 缩写变体
+  ID:
+    - Id
+    - id
+  UI:
+    - Ui
+    - ui
+  API:
+    - Api
+    - api
+  LLM:
+    - Llm
+    - llm
+
+# 管理元数据
+management:
+  # 增删流程
+  add_process: "PR 评审 + 记录变更理由"
+  remove_process: "PR 评审 + 记录废弃理由"
+  
+  # 使用指导
+  usage_guidance:
+    - "文档术语域：使用 Title-Kebab 格式（如 `Why-Layer`）"
+    - "文件名域：使用 lower-kebab-case 格式（如 `why-layer.md`）"
+    - "代码标识符域：遵循语言惯例（如 `WhyLayer`）"
+    - "缩写检查：不在本列表中的缩写使用首字母大写形式"
+  
+  # 工具集成
+  tool_integration:
+    - "DocGraph：作为术语规范化数据源"
+    - "CI lint：检查术语一致性"
+    - "IDE：提供自动补全建议"

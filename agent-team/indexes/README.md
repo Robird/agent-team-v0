@@ -94,3 +94,19 @@
 - 在撰写 AGENTS / Sprint / Task Board 更新前，先在本文件找到对应 anchor，再打开 `docs/reports/migration-log.md` 获取验证命令。
 - 若需要文件/测试列表，请使用 anchor → handoff 的映射（命名均在 `agent-team/handoffs/` 下），避免把长说明重新写回索引。
 - 任何新变更应遵循「Migration Log → Changefeed → AGENTS/Sprint」顺序，保持三个文档的一致性。
+
+### 2025-12-31 – Terminology Naming Convention
+- **#delta-2025-12-31-terminology-convention** – 术语命名规范制定：
+  - 多单词术语：`Title-Kebab` 格式（`Why-Layer`、`App-For-LLM`）
+  - 缩写规则：注册表白名单全大写，其他首字母大写
+  - Registry 位置：`agent-team/wiki/terminology-registry.yaml`
+  - 规范更新：`atelia/docs/spec-conventions.md` 新增第 4 章
+  - 畅谈会记录：`meeting/2025-12-31-terminology-naming-convention.md`
+
+### 2025-12-31 – Terminology SSOT Structure Decision
+- **#delta-2025-12-31-terminology-ssot-structure** – 术语 SSOT 三层结构决策：
+  - Layer 1（概念语义）：`agent-team/wiki/terminology.md`
+  - Layer 2（写法规范）：`atelia/docs/spec-conventions.md` §4
+  - Layer 3（机器可读）：`agent-team/wiki/terminology-registry.yaml`
+  - 决策：拒绝将术语表合并到 Wish 系统，保持团队知识库核心资产地位
+  - 畅谈会记录：`meeting/2025-12-31-ssot-terminology-structure.md`
