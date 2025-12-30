@@ -18,6 +18,18 @@
 - **Primary Definition + Index**：每术语唯一权威定义。
 - **Rename vs Re-home**：Rename 保留 alias，Re-home 保留 Redirect Stub。
 
+#### L1-L5 层级别名命名策略 (2025-12-30)
+> 五层级方法论的层级标签与仓库既有术语冲突的处理方案。
+
+**冲突案例**：
+- `L4 = Route` 与 MemoryPalaceKeeper 流程术语 "ROUTE（CLASSIFY→ROUTE→APPLY）"强冲突
+- `L4 = Path` 虽避开 routing 联想，但在 DocGraph 域与 `Document.Path`/文件路径语义高频撞词
+
+**解决方案**：
+- 保留 `L1-L5` 为 SSOT（无歧义的稳定锚点）
+- 引入**别名表**：`L4 canonical=Plan/Approach`，`Path/Route` 降级为 alias
+- 代码/测试/日志用**带层级前缀的短标签**：`[L4-PLAN]`、`[L3-SPEC]` 等
+
 #### 简单套壳类型审阅 (2025-12-28)
 > Wrapper type 的审计判据与常见陷阱。
 
