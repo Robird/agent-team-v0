@@ -1,11 +1,11 @@
-# Wish 系统规范 (L3 条款)
+# Wish 系统规范 (Rule-Layer 条款)
 
 > **文档性质**: 规范性 (Normative)
 > **版本**: 0.2.0
 > **创建日期**: 2025-12-30
 > **ParentWish**: [W-0001](../active/wish-0001-wish-system-bootstrap.md)
 
-本文档定义 Wish 系统的 MUST/SHOULD/MAY 条款，是 Wish 系统自身的 L3 层级产物。
+本文档定义 Wish 系统的 MUST/SHOULD/MAY 条款，是 Wish 系统自身的 Rule-Layer 产物。
 
 ## 上位约定
 
@@ -24,7 +24,7 @@
 | 术语 | 定义 |
 |:-----|:-----|
 | **Wish** | 意图载体 + 产物索引的入口节点，承载动机并链接各层级产物 |
-| **层级产物** | 决策的物化形式，分为 L1(Why) → L2(Shape) → L3(Rules) → L4(Plan) → L5(Craft) 五个层级 |
+| **层级产物** | 决策的物化形式，分为 Why-Layer → Shape-Layer → Rule-Layer → Plan-Layer → Craft-Layer 五个层级 |
 | **Issue** | 问题/阻塞的记录单元，必须关联到层级；通常关联某个 Wish，孤立 Issue 使用 `RelatedWishId: Orphan` 标记 |
 | **SSOT** | Single Source of Truth，唯一真相源 |
 
@@ -49,7 +49,7 @@
 - **[F-WISH-ONE-LINE-MOTIVATION]** MUST：Wish 文档必须包含"一句话动机"（≤ 50 字）。
 - **[F-WISH-GOALS-NONGOALS-SECTION]** MUST：Wish 文档必须包含"目标与边界"章节，明确 Goals 和 Non-Goals。
 - **[F-WISH-ACCEPTANCE-SECTION]** MUST：Wish 文档必须包含"验收标准"章节，至少 1 条可判定的验收条件。
-- **[F-WISH-LAYER-PROGRESS-TABLE]** MUST：Wish 文档必须包含"层级进度"表格，追踪 L1-L5 各层级状态。
+- **[F-WISH-LAYER-PROGRESS-TABLE]** MUST：Wish 文档必须包含"层级进度"表格，追踪 Why-Layer 到 Craft-Layer 各层级状态。
 - **[F-WISH-LAYER-PROGRESS-LINKS]** MUST：层级进度表格中的产物链接必须指向实际文件或明确标注 `N/A` 及原因。
 - **[F-WISH-CHANGELOG-SECTION]** MUST：Wish 文档必须包含"变更日志"章节，记录状态变更历史。
 
@@ -100,7 +100,7 @@
 - **[F-ISSUE-REQUIRED-FIELDS]** MUST：每个 Issue 必须包含以下字段：
   - `IssueId`: 唯一标识，格式 `I-XXXX`
   - `Status`: 状态枚举 — `Open` | `InProgress` | `Blocked` | `Done` | `Deferred`
-  - `Layer`: 所属层级 — `L1` | `L2` | `L3` | `L4` | `L5`
+  - `Layer`: 所属层级 — `Why-Layer` | `Shape-Layer` | `Rule-Layer` | `Plan-Layer` | `Craft-Layer`
   - `RelatedWishId`: 关联 Wish，孤立 Issue 标记为 `Orphan`
   - `Owner`: 负责人/角色
   - `LastUpdated`: 最后更新日期
@@ -212,17 +212,17 @@ stateDiagram-v2
 
 ## §9 术语演变说明
 
-本规范采用 v1.0 术语体系：
+本规范采用统一术语格式（2025-12-31更新）：
 
-| 层级 | 新术语 (v1.0) | 旧术语 (v0.1) | 说明 |
-|:-----|:---------------|:---------------|:-----|
-| L1 | Why | Why | 无变化 |
-| L2 | **Shape** | What | 强调"塑造边界"的动作性 |
-| L3 | Rules | Rules | 无变化 |
-| L4 | **Plan** | How | 避免冲突，强调"策略规划" |
-| L5 | **Craft** | Build | 强调实现过程中的技艺 |
+| 层级 | 统一格式 | 语义术语 | 说明 |
+|:-----|:---------|:---------|:-----|
+| L1 | **Why-Layer** | Why | 价值层 |
+| L2 | **Shape-Layer** | Shape | 契约层 |
+| L3 | **Rule-Layer** | Rule | 约束层（使用单数） |
+| L4 | **Plan-Layer** | Plan | 策略层 |
+| L5 | **Craft-Layer** | Craft | 物化层 |
 
-> **历史兼容性**：如遇旧文档使用 What/How/Build，请参照上表映射。详细术语演变历史见 [Atelia 术语表](../../agent-team/wiki/terminology.md)。
+> **历史兼容性**：如遇旧文档使用 L1-L5、What/How/Build 等，请参照上表映射。详细术语定义见 [Atelia 术语表](../../agent-team/wiki/terminology.md)。
 
 ---
 
@@ -230,5 +230,6 @@ stateDiagram-v2
 
 | 版本 | 日期 | 作者 | 变更说明 |
 |:-----|:-----|:-----|:---------|
+| 0.3.0 | 2025-12-31 | Team Leader | 术语统一：移除L1-L5，采用Why-Layer等统一格式 |
 | 0.2.0 | 2025-12-30 | DocOps | 术语更新：What→Shape, How→Plan, Build→Craft；添加 §9 术语演变说明 |
 | 0.1.0 | 2025-12-30 | Implementer | 初始创建，基于畅谈会共识 |

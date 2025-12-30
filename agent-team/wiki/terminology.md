@@ -140,6 +140,34 @@ public class BuildExecutor { }     // 使用 Craft
 - 上下文明确时可用简写
 - 新成员应优先阅读本术语表
 
+### 4. 统一术语格式（2025-12-31 更新）
+
+基于监护人决策，采用统一术语格式：
+
+#### 4.1 标准格式
+
+使用连字符连接语义术语与"Layer"：
+- `Why-Layer`（价值层）
+- `Shape-Layer`（契约层）  
+- `Rule-Layer`（约束层）
+- `Plan-Layer`（策略层）
+- `Craft-Layer`（物化层）
+
+> **注意**：`Rule`使用单数形式，避免与复数`Rules`混淆。
+
+#### 4.2 使用场景
+
+| 场景 | 应使用 | 示例 |
+|:-----|:-------|:-----|
+| **文档标题/引用** | 完整格式 | "Wish 系统规范 (Rule-Layer 条款)" |
+| **表格/索引** | 完整格式 | `Why-Layer`, `Shape-Layer`... |
+| **代码枚举** | 语义部分 | `Layer.Why`, `Layer.Shape`, `Layer.Rule`... |
+| **文件命名** | 语义部分 | `shape-api.md`, `rule-constraints.md` |
+
+#### 4.3 适用范围
+
+仅限 Wish 产物语境（Wish 系统、DocGraph 等新项目）。其他具体软件项目的分层（如互联网分层、记忆系统分层）不受影响。
+
 ---
 
 ## 冲突避免指南
@@ -219,10 +247,14 @@ namespace Atelia.DocGraph.Path { }       // ❌ 避免 Path
 
 ### Q2: 数字层级（L1-L5）还需要使用吗？
 
-**A**: 需要。数字层级是稳定标识符：
-- 始终可写 `L1/L2/L3/L4/L5`
-- 语义术语作为解释层和日常使用
-- 表格、索引等正式场合建议使用数字+语义形式
+**A**: 不再使用。基于2025-12-31监护人决策：
+
+**统一原则**：
+- 避免使用数字层级（L1-L5），避免中间插入层级的困扰
+- 统一使用语义术语格式：`Why-Layer`, `Shape-Layer`, `Rule-Layer`, `Plan-Layer`, `Craft-Layer`
+- 连字符连接便于搜索，避免意外前后粘连匹配
+
+**适用范围**：仅限 Wish 产物语境。其他具体软件项目的分层（如互联网分层）不受影响。
 
 ### Q3: 历史文档中的旧术语需要更新吗？
 
@@ -268,3 +300,75 @@ namespace Atelia.DocGraph.Path { }       // ❌ 避免 Path
 **维护者**：DocOps（术语表维护）
 **审计者**：Craftsman（规范一致性）
 **最后审核**：2025-12-30 畅谈会全体成员
+
+---
+
+## 附录：30秒速查卡片
+
+```
+┌─────────────────────────────────────────────────────┐
+│  📚 五层级术语快速指南（2025-12-31更新）               │
+├─────────────────────────────────────────────────────┤
+│                                                     │
+│  统一使用语义术语格式：                               │
+│                                                     │
+│  🗣️ 完整格式：Why-Layer → Shape-Layer → Rule-Layer →  │
+│              Plan-Layer → Craft-Layer                │
+│  📊 表格中：Why-Layer, Shape-Layer, Rule-Layer...    │
+│  💻 代码枚举：Layer.Why, Layer.Shape, Layer.Rule...   │
+│                                                     │
+│  📍 语义解释：                                        │
+│     Why-Layer = 价值层（为什么做）                    │
+│     Shape-Layer = 契约层（长什么样）                  │
+│     Rule-Layer = 约束层（什么约束）                   │
+│     Plan-Layer = 策略层（怎么做）                     │
+│     Craft-Layer = 物化层（代码实现）                  │
+│                                                     │
+│  💡 记忆口诀：Why-Shape-Rule-Plan-Craft               │
+│              （为什么-样子-规则-计划-手艺）            │
+│                                                     │
+│  ⚠️ 重要提醒：                                        │
+│     • 使用连字符格式，便于搜索                        │
+│     • Rule使用单数，避免混淆                          │
+│     • 仅限Wish产物语境                               │
+│                                                     │
+└─────────────────────────────────────────────────────┘
+```
+
+### 文件命名示例
+
+```
+推荐格式：语义名 + 主题
+────────────────────────────
+why-overview.md
+shape-api.md  
+rule-constraints.md
+plan-roadmap.md
+craft-implementation.md
+```
+
+### 代码枚举示例
+
+```csharp
+// 统一使用语义术语（Rule使用单数）
+public enum DocumentLayer
+{
+    Why,   // Why-Layer
+    Shape, // Shape-Layer
+    Rule,  // Rule-Layer（注意：单数）
+    Plan,  // Plan-Layer
+    Craft  // Craft-Layer
+}
+
+// 可添加Description属性显示完整格式
+[Description("Why-Layer")]
+Why,
+[Description("Shape-Layer")]
+Shape,
+[Description("Rule-Layer")]
+Rule,
+[Description("Plan-Layer")]
+Plan,
+[Description("Craft-Layer")]
+Craft
+```

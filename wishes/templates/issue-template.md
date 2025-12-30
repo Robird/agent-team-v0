@@ -8,7 +8,7 @@
 ```markdown
 | IssueId | 层级 | 状态 | RelatedWish | Owner | 描述 | 阻塞原因 | LastUpdated |
 |:--------|:-----|:-----|:------------|:------|:-----|:---------|:------------|
-| I-0001  | L3   | Open | W-0001      | @role | ... | —        | YYYY-MM-DD  |
+| I-0001  | Rule-Layer | Open | W-0001      | @role | ... | —        | YYYY-MM-DD  |
 ```
 
 ## 字段说明
@@ -16,7 +16,7 @@
 | 字段 | 必填 | 说明 |
 |:-----|:-----|:-----|
 | IssueId | ✅ | 唯一标识，格式 `I-XXXX` |
-| 层级 | ✅ | L1-L5，表示问题所属层级 |
+| 层级 | ✅ | Why-Layer / Shape-Layer / Rule-Layer / Plan-Layer / Craft-Layer，表示问题所属层级 |
 | 状态 | ✅ | Open / InProgress / Blocked / Done / Deferred |
 | RelatedWish | ✅ | 关联的 WishId，孤立 Issue 标记为 `Orphan` |
 | Owner | ✅ | 负责人/角色 |
