@@ -260,6 +260,35 @@
 
 **绕过方案**：改用 shell heredoc 追加
 
+#### DocGraph v0.1 审计要点 (2025-12-31)
+> DocGraph 规范与实现一致性审计过程中积累的判据。
+
+**scope.md 可判定性矛盾**：
+- 一方面要求对 `produce`/`produce_by` 做目标存在性验证与（可能）自动创建 frontmatter
+- 另一方面声明"不规范化 ../、不检查越界、不做路径处理"
+- 若不在 spec.md 固定"路径规范化 + workspace 边界检查 + 稳定排序/失败语义"，实现与测试将不可收敛
+
+**spec.md ↔ api.md 链接提取条款映射冲突**：
+| 审计点 | 问题 | 建议 |
+|:-------|:-----|:-----|
+| `Link.TargetPath` 语义 | 绝对/相对不一致 | 收敛为 workspace-relative normalized path |
+| 字段名 | `Type` vs `LinkType` | 对齐为 `Type: LinkType` |
+| `path.md#anchor` 的 Anchor 分类 | 语义不明确 | 保留 Anchor 类型；TargetPath 去 fragment；RawTarget 保留；纯锚点不输出记录 |
+
+**Requirement ID 前缀约束**：
+- spec.md 中 Requirement ID 前缀必须遵循 `spec-conventions` 的 `F/A/S/R` 闭集
+- Seeker 草案中 `R=Rules` 与 `[D-*]`（Deferred）会破坏全局一致性
+- 延期项应拆成"可测试的 MVP MUST NOT 条款 + Informative Roadmap item"
+
+**待闭合可判定点（2025-12-31）**：
+- External/Image 的 `Link.TargetPath` 语义（是否等于 RawTarget、是否为空、是否跳过 Normalize/Validate）
+- `[S-DOCGRAPH-LINK-BOUNDARY]` 越界时是否仍输出对应 `Link` 记录
+
+**实施记录 (2026-01-01 00:05)**：已完成三个 P0 映射一致性修复：
+- api.md：`Link.TargetPath` 语义收敛为 workspace-relative normalized path
+- spec.md：`[S-DOCGRAPH-LINK-OUTPUT]` 字段名对齐为 `Type: LinkType`
+- spec.md：`[S-DOCGRAPH-LINK-EXTRACT]` 明确 anchor 处理
+
 ### 参与历史索引 (Advisor)
 - **StateJournal (RBF/Durability)**: 格式不变式、恢复/截断边界、两阶段提交。
 - **术语治理**: Primary Definition + Index。
