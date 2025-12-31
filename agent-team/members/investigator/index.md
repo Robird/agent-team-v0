@@ -1,6 +1,7 @@
 # Investigator 认知索引
 
-> 最后更新: 2025-12-27
+> 最后更新: 2026-01-01
+> - 2026-01-01: workspace_info 机制调查（Copilot Chat Agent Prompt System）
 > - 2025-12-27: ObjectLoaderDelegate 重构影响分析
 > - 2025-12-27: Workspace/ObjectLoader/RBF 设计意图调查
 > - 2025-12-27: Memory Palace — 处理了 1 条便签（_removedFromCommitted 设计洞见）
@@ -19,6 +20,19 @@
 - [ ] atelia-copilot-chat
 
 ## Session Log
+
+### 2026-01-01: workspace_info 机制调查
+**任务**: 分析 VS Code Copilot Chat 中 workspace_info 的生成机制
+**关键发现**:
+1. **组成结构**：`workspace_info` 是 `GlobalAgentContext` 的子组件，包含 Tasks、FoldersHint、WorkspaceStructure 三部分
+2. **深度控制**：无显式深度限制，由 `maxSize=2000` 字符预算和 BFS 算法共同决定
+3. **生成算法**：`visualFileTree.ts` 实现广度优先展开，空间不足时添加 `...` 截断
+4. **排序规则**：文件在前目录在后，同类型按名称排序
+5. **过滤机制**：遵循 `.gitignore`、Copilot Ignore、排除点文件（默认）
+6. **缓存策略**：首轮渲染后缓存到 Turn Metadata，后续轮次复用
+7. **条件渲染**：仅在 `list_dir` 工具可用时渲染目录结构
+**实际意义**: 将 recipe 移到根目录可提高其在 workspace_info 中的可见性（更短路径 = 更高优先级）
+**交付**: [handoffs/2026-01-01-workspace-info-mechanism-INV.md](../handoffs/2026-01-01-workspace-info-mechanism-INV.md)
 
 ### 2025-12-27: Storage Engine M1 风险分析
 **任务**: 调查 StateJournal + Rbf 现状，识别 M1 阶段高风险项
@@ -162,6 +176,7 @@
 **更新**: [wiki/PipeMux/README.md](../../wiki/PipeMux/README.md) - 增加了核心组件详解、Calculator 命令表、已知问题代码现状列
 
 ## Key Deliverables
+- **handoffs/2026-01-01-workspace-info-mechanism-INV.md (2026-01-01)** - workspace_info 机制调查，含目录树生成算法、深度控制、缓存机制分析
 - **handoffs/2025-12-27-objectloaderdelegate-refactoring-analysis-INV.md (2025-12-27)** - ObjectLoaderDelegate 重构影响分析，含使用点清单、测试 Mock 方式、IRbfScanner 状态评估
 - **handoffs/2025-12-27-workspace-objectloader-rbf-investigation-INV.md (2025-12-27)** - Workspace/ObjectLoader/RBF 设计意图调查，含关键条款引用和实现建议
 - **handoffs/2025-12-24-mvp-design-v2-decision-refs-INV.md (2025-12-24)** - mvp-design-v2.md 历史决策引用分析，15 处 Qxx 引用 + 8 处方案 C 引用
