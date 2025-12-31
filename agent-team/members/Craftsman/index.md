@@ -289,6 +289,29 @@
 - spec.md：`[S-DOCGRAPH-LINK-OUTPUT]` 字段名对齐为 `Type: LinkType`
 - spec.md：`[S-DOCGRAPH-LINK-EXTRACT]` 明确 anchor 处理
 
+**自动维护交互模式审计要点（2025-12-31）**：
+| 审计点 | 问题 | 建议 |
+|:-------|:-----|:-----|
+| CLI 外观分叉 | Curator 倾向 `validate --fix`，api.md 示例仍是 `fix --write` | v0.1 收敛为单入口，明确 alias/弃用 |
+| 模板字段不一致 | spec `[A-WRITE-001]` 要求 `docId/title/produce_by`；Curator 示例引入 `generatedBy` 且缺 `produce_by` | 先对齐 schema |
+| 修复语义与 spec 冲突 | "缺失 frontmatter"的修复语义与 `[S-WRITE-003]`（不得修改现有内容）可能冲突 | v0.1 推荐 create-if-missing（文件不存在才创建），避免注入式改写 |
+
+**Day2 审计补充（2026-01-01）**：
+| 审计点 | 问题 | 建议 |
+|:-------|:-----|:-----|
+| 条款编号 SSOT 漂移 | 实现/会议材料引用了不存在于 spec.md 的 `[S-FILE-001]` | 补进 spec（含验收测试），或移除该编号引用 |
+| 确定性不足 | 节点排序已保证，但边列表（Produces/ProducedBy）顺序可能受文件枚举/字典遍历影响，未满足 `[A-DOCGRAPH-004]` 边排序 MUST | 显式保证边排序 |
+| 验证语义被掩盖 | 构图阶段无条件建立 `ProducedBy` 反向边会导致缺失 `produce_by` 的场景漏报 | backlink 需以"produce 边"为基准验证 `produce_by` 声明 |
+
+**P0 复验语义边界（2026-01-01）**：
+- 当前把"目标文件有 frontmatter"判定为 `Frontmatter.Count > 0`，会把 `---\n---`（空 frontmatter）误判为"无 frontmatter"
+- 建议把 `HasFrontmatter` 做成显式标记（来自 parser），并补一条空 frontmatter 测试用例
+
+**P1-1 路径越界折叠复核补充（2026-01-01）**：
+- `Build()` 入队追踪阶段已做到**先 `IsWithinWorkspace()` 再 `Normalize()`**，能避免闭包节点集合被污染
+- 但建边阶段仍对 `ProducePaths` 直接 `Normalize()` 并尝试建边；若 workspace 内存在同名目标，`../x.md` 在建边时会折叠为 `x.md` 并意外连边
+- 建议在建边阶段同样前移越界判定，并补"越界路径不应误绑定到同名节点"的回归测试
+
 ### 参与历史索引 (Advisor)
 - **StateJournal (RBF/Durability)**: 格式不变式、恢复/截断边界、两阶段提交。
 - **术语治理**: Primary Definition + Index。
