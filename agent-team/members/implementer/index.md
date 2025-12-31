@@ -29,6 +29,7 @@
 
 | 项目 | 状态 | 最后更新 | 备注 |
 |------|------|----------|------|
+| DocGraph | v0.1 MVP 完成 ✅ | 2026-01-01 | 93 测试通过，Day1-3 + P0/P1/P2 修复完成 |
 | StateJournal | M2 进行中 🔄 | 2025-12-28 | M1 完成（文件后端），M2 RecordReader 完成，659 测试通过 |
 | DocUI | MUD Demo 待实现 | 2025-12-15 | MVP-0 阶段规划完成 |
 | Atelia.Primitives | 基础类型库完成 ✅ | 2025-12-21 | AteliaResult/Error 体系 |
@@ -260,11 +261,27 @@
     - **动态化改造**：从 `terminology-registry.yaml` 动态读取缩写白名单；用 Python 解析 YAML（bash 原生不支持）；保留硬编码默认值作为降级方案
     - **经验教训**：检查脚本误报率过高导致 "alert fatigue"；代码标识符和文件路径中的缩写应保持语言/系统惯例，不受术语域规则约束
 
-38. **Wish 系统初始化实践**（2025-12-30）
-    - **自举验证通用性**：用系统定义系统本身是检验设计通用性的好方法
-    - **条款编号前缀设计**：`WS-F-*`（格式）、`WS-D-*`（目录）、`WS-I-*`（索引）、`WS-IS-*`（Issue）、`WS-ST-*`（状态转换）、`WS-LK-*`（链接）、`WS-MN-*`（维护）——按功能领域分类便于查找
-    - **派生视图标注**：index.md 头部明确标注"派生视图/可重建"可防止 SSOT 混淆
-    - **交付物**：`/repos/focus/wishes/` 完整结构（2 Wish 文档 + 37 条 L3 条款 + 2 模板）
+38. **DocGraph v0.1 MVP 实现经验**（2026-01-01, Day1~3 + P0/P1/P2 修复）
+    - **Day 1 核心洞见**：
+      - YamlDotNet `UnderscoredNamingConvention` 将 camelCase 转为 snake_case（如 `docId` → `doc_id`）
+      - C# 模式匹配限制：`obj is TypeA x and not TypeB` 非法，需改为 `obj is TypeA x && obj is not TypeB`
+      - 测试先行：35 个测试用例帮助快速发现问题
+    - **Day 2 核心洞见**：
+      - 路径越界检测时机：**先 `IsWithinWorkspace()` 检查原始路径，再 `Normalize()`**——否则越界信息丢失
+      - title 必填检测：检查 `frontmatter.ContainsKey("title")` 而非 `node.Title`（后者有 docId 后备值）
+      - 文件过滤优先级：隐藏文件 → 临时文件 → 非 .md 文件
+    - **P0 修复核心洞见**：
+      - frontmatter 判断：`Frontmatter.Count > 0 && !Title.StartsWith("[缺失]")`
+      - produce_by backlink 验证方向：源 → 检查目标的 produce_by（非反向）
+      - 循环检测：`visited` + `inStack` 双集合（前者避免重复访问，后者检测当前路径循环）
+    - **P1/P2 修复核心洞见**：
+      - 越界检查必须在路径规范化之前执行
+      - 构造函数可选参数顺序：使用命名参数 `targetFilePath:` 避免修改大量调用点
+      - 占位节点边界情况：文件不存在时不应验证核心字段
+    - **Day 3 CLI 核心洞见**：
+      - System.CommandLine 版本冲突：内置 `--version` 选项与自定义选项冲突需避免
+      - 修复预览格式：ASCII 框线包裹 + 超长内容截断
+    - **测试覆盖**：Day 1: 35 → Day 2: 57 → P0: 63 → P1/P2: 74 → Day 3: 93
 
 ### 经验教训
 
@@ -505,9 +522,9 @@ agent-team/archive/members/implementer/
 
 ## 最后更新
 
+- **2026-01-01**: Memory Palace — 处理了 5 条便签（DocGraph v0.1 MVP 完成：Day1~3 + P0/P1/P2 修复，聚合为洞见 #38）
 - **2025-12-31**: Memory Palace — 处理了 3 条便签（术语一致性检查脚本实践：分域命名体系四域、误报修复、动态化改造）
 - **2025-12-30**: Memory Palace — 处理了 2 条便签（DocGraph 术语代码友好性分析洞见 + P2 术语更新任务完成）
-- **2025-12-30**: Memory Palace — 处理了 1 条便签（Wish 系统初始化完成 + 实践洞见：自举验证、条款编号前缀、派生视图标注）
 - **2025-12-30**: Memory Palace — 处理了 1 条便签（构成性 vs 规约性规则——系统提示词重写实践，Curator/Craftsman 提示词压缩完成）
 - **2025-12-28**: Memory Palace — 处理了 9 条便签（M1 RBF 文件后端里程碑完成 + M2 Record Writer/Reader 里程碑）
 - **2025-12-27**: Memory Palace — 处理了 2 条便签（Workspace 核心 API 非泛型化 + VersionIndex 重构完工状态）
