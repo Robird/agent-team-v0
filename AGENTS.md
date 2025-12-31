@@ -110,5 +110,5 @@ outputForm: "Markdown 要点列表"
 编写操作指南？ → `agent-team/how-to/write-recipe.md`
 生成Beacon文件？ → `agent-team/how-to/generate-beacon.md`
 维护外部记忆？ → `agent-team/how-to/maintain-external-memory.md`
-编排记忆维护？ → `agent-team/how-to/orchestrate-memory-maintenance.md`
-批量维护记忆？ → `agent-team/how-to/batch-maintain-memory.md`
+批量处理inbox便签？ → `agent-team/how-to/batch-process-inbox.md`
+组织深度记忆维护？ → `agent-team/how-to/organize-deep-maintenance.md`

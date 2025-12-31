@@ -12,8 +12,8 @@
 | `agent-team/recipe/naming-skill-guide.md` | `agent-team/how-to/name-things-well.md` |
 | `agent-team/recipe/memory-accumulation-spec.md` | `agent-team/how-to/accumulate-memory.md` |
 | `agent-team/recipe/memory-maintenance-skill.md` | `agent-team/how-to/maintain-memory.md` |
-| `agent-team/recipe/memory-maintenance-orchestration.md` | `agent-team/how-to/orchestrate-memory-maintenance.md` |
-| `agent-team/recipe/memory-palace-batch-guide.md` | `agent-team/how-to/batch-maintain-memory.md` |
+| `agent-team/recipe/memory-maintenance-orchestration.md` | `agent-team/how-to/organize-deep-maintenance.md` |
+| `agent-team/recipe/memory-palace-batch-guide.md` | `agent-team/how-to/batch-process-inbox.md` |
 | `agent-team/recipe/real-time-collaboration-pattern.md` | `agent-team/how-to/collaborate-realtime.md` |
 | `agent-team/recipe/strategic-tactical-dual-session.md` | `agent-team/how-to/dual-session-pattern.md` |
 | `agent-team/recipe/spec-driven-code-review.md` | `agent-team/how-to/review-code-with-spec.md` |
