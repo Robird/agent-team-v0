@@ -8,7 +8,7 @@
 >
 > **依赖关系**：
 > - DependsOn: 无（这是元Recipe）
-> - SeeAlso: [所有现有Recipe](../recipe/)
+> - SeeAlso: [所有现有Recipe](../how-to/)
 
 ---
 
@@ -242,7 +242,7 @@ Craftsman执行L1审查（人工）
         │                    │                    │
         ▼                    ▼                    ▼
 ┌───────────────┐   ┌───────────────┐   ┌───────────────┐
-│   wiki/       │   │   recipe/     │   │   meeting/    │
+│   wiki/       │   │   how-to/     │   │   meeting/    │
 │  (知识库)     │   │  (操作手册)   │   │  (过程记录)   │
 │ "是什么"      │   │ "怎么做"      │   │ "发生了什么"  │
 └───────┬───────┘   └───────┬───────┘   └───────┬───────┘
@@ -256,7 +256,7 @@ Craftsman执行L1审查（人工）
 
 ### 5.2 Recipe索引要求
 
-所有Recipe必须在`recipe/index.md`中注册：
+所有Recipe必须在`AGENTS.md中的操作指南速查章节`中注册：
 
 ```markdown
 # Recipe索引
@@ -281,7 +281,7 @@ Craftsman执行L1审查（人工）
 ### Phase 0：基础设施（8小时）
 1. 创建`check-recipe-quality.sh`脚本（Implementer）
 2. 创建`templates/recipe-template.md`（DocOps）
-3. 创建`recipe/index.md`索引（DocOps）
+3. 创建`AGENTS.md中的操作指南速查章节`索引（DocOps）
 
 ### Phase 1：结构对齐（16小时）
 1. 为12个现有Recipe添加缺失章节（DocOps为主）
@@ -304,8 +304,8 @@ Craftsman执行L1审查（人工）
 
 | 原计划行动 | 变更原因 | 新方案 |
 |:-----------|:---------|:-------|
-| 目录上移到根目录（`agent-team/recipe/` → `/how-to/`） | 避免workspace_info和AGENTS.md重复注入相同信息 | 仅改名不上移（`agent-team/recipe/` → `agent-team/how-to/`） |
-| 创建独立的`recipe/index.md`索引文件 | AGENTS.md已提供完整索引，避免重复维护 | 在AGENTS.md中嵌入极简Prompt化索引 |
+| 目录上移到根目录（`agent-te../how-to/` → `/how-to/`） | 避免workspace_info和AGENTS.md重复注入相同信息 | 仅改名不上移（`agent-te../how-to/` → `agent-team/how-to/`） |
+| 创建独立的`AGENTS.md中的操作指南速查章节`索引文件 | AGENTS.md已提供完整索引，避免重复维护 | 在AGENTS.md中嵌入极简Prompt化索引 |
 | 复杂的Prompt化索引格式（含emoji、markdown链接、星号） | 优化Token使用效率 | 极简格式：`情境问句？ → \`文件路径\`` |
 
 ### 新的索引方案

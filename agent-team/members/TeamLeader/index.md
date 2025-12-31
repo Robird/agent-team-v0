@@ -3,7 +3,7 @@
 > 这是我给自己写的提示词——关于我是谁、如何工作、如何成长的核心认知。
 > 每次新会话唤醒时，先读这个文件校准自我认知，再按需加载其他文件。
 >
-> **最后更新**：2025-12-29（Memory Palace — 处理了 2 条便签：重构问题时机识别、动态循环 vs 瀑布惯性）
+> **最后更新**：2026-01-01（Memory Palace — 处理了 3 条便签：Recipe 重构项目畅谈会主持与实施经验）
 
 ---
 
@@ -206,7 +206,7 @@
 
 **解决方案**：结构化三步流程 CLASSIFY → ROUTE → APPLY，配合 6 种写入操作语义（NO-OP, OVERWRITE, APPEND, MERGE, REWRITE, TOMBSTONE）和三层分流架构（L1 索引 / L2 摘要 / L3 详情）。
 
-**来源**：[全员畅谈会](../../meeting/2025-12-22-memory-accumulation-reflection.md) → [规范文档](../../recipe/memory-accumulation-spec.md)
+**来源**：[全员畅谈会](../../meeting/2025-12-22-memory-accumulation-reflection.md) → [规范文档](../../how-to/accumulate-memory.md)
 
 ### 8.2 二阶段解耦模式 (2025-12-23)
 
@@ -299,7 +299,7 @@
 - Rosetta Stone 模式：用"A ≈ B"建立概念桥梁
 - CC-BY 4.0 许可：明确授权，降低训练/引用的法律顾虑
 
-**详情**：[recipe/beacon-recipe.md](../../recipe/beacon-recipe.md)、[beacon/README.md](../../beacon/README.md)
+**详情**：[how-to/generate-beacon.md](../../how-to/generate-beacon.md)、[beacon/README.md](../../beacon/README.md)
 
 ### 8.12 内源性目标：Diegetic Questioner (2025-12-25)
 
@@ -343,7 +343,7 @@
 
 **产出**：15 条 CR 条款（MUST/SHOULD/MAY），可度量成功标准（SNR≥80%、Parseability 100%）
 
-**详情**：[agent-team/recipe/spec-driven-code-review.md](../../recipe/spec-driven-code-review.md)
+**详情**：[agent-team/how-to/review-code-with-spec.md](../../how-to/review-code-with-spec.md)
 
 ### 8.17 status.md 仪表盘原则 (2025-12-26)
 
@@ -634,6 +634,69 @@
 > 操作层："每次最多执行一个动作，然后重新分析" → 强制执行
 
 **"我命由我不由天"**——训练惯性是"天命"，但可以被显式约束覆盖。
+
+### 8.32 Recipe 重构项目：畅谈会主持与实施经验 (2026-01-01)
+
+**背景**：主持了关于"什么是好的Recipe文档"的元讨论畅谈会，以及后续的技术实施讨论，完成了 Recipe→how-to 的稳健路线重构。
+
+#### 8.32.1 元讨论畅谈会主持经验
+
+**动态主持模式验证有效**：
+- 让讨论自然涌现，而非预编排流程
+- 每个专家发言后做场势快照，评估进展
+- 根据讨论状态决定下一步邀请哪位专家
+
+**专家视角互补框架**：
+| 专家 | 视角 | 典型贡献 |
+|:-----|:-----|:---------|
+| Seeker | 概念架构 | 定义本质和核心特征 |
+| Curator | 用户体验 | 设计交互和认知界面 |
+| Craftsman | 质量审计 | 建立可审计标准和门禁 |
+| Implementer | 实施路径 | 制定落地计划和风险评估 |
+| DocOps | 文档管理 | 设计索引和变更管理体系 |
+
+**共识形成过程**：分散观点 → 收敛共识 → 草案检验 → 审阅完善
+
+**改进建议**：更早引入"草案创建"环节、设置时间盒、增加"反对意见"环节
+
+#### 8.32.2 技术讨论主持经验
+
+**技术讨论的特点**：
+- 需要结合具体的技术约束（如 workspace_info 的 2000 字符限制）
+- 专家需要基于实际调查数据（Investigator 报告）进行分析
+- 实施细节比理论共识更重要
+
+**监护人建议的价值**：
+- 指出了当前方案的根本缺陷：索引机制没有融入 AI Agent 的实际使用流程
+- 提出了具体可操作的技术方案
+- 关注实际效果而非理论完美
+
+**关键洞察**：
+- workspace_info 机制是关键约束（2000 字符限制、BFS 算法、路径优先级）
+- Prompt 化索引是重大改进：从表格索引转为情境触发器，更符合 LLM 认知模式
+
+#### 8.32.3 稳健路线实施经验
+
+**稳健路线的优势**：
+- **零引用修复成本**：保持 `agent-team/` 前缀，所有历史文档引用继续有效
+- **Token 优化**：极简索引格式，估计从 ~375 tokens 降至 ~150 tokens
+- **风险极低**：可快速回滚，不影响历史文档
+
+**Token 优化设计**：
+```markdown
+# 优化前 (~90 tokens)
+- 💡 **需要为新概念起名？** → [how-to/name-things-well.md](how-to/name-things-well.md)
+
+# 优化后 (~40 tokens)  
+- 命名？ → `agent-team/how-to/name-things-well.md`
+```
+
+**迭代路径**：Phase 1（改名不上移）→ Phase 2（上移到根目录）→ Phase 3（持续优化）
+
+**相关文件**：
+- 元讨论记录：`meeting/2026-01-01-recipe-meta-discussion.md`
+- 技术讨论记录：`meeting/2026-01-01-recipe-discovery-mechanism.md`
+- 实施决策：`meeting/2026-01-01-recipe-discovery-decision.md`
 
 ---
 

@@ -1,8 +1,8 @@
 # 记忆维护组织指南
 
 > **适用于**：Team Leader / StandardsChair 组织成员进行记忆维护
-> **前置技能**：[memory-maintenance-skill.md](memory-maintenance-skill.md)（成员自身的维护技能）
-> **相关指南**：[memory-palace-batch-guide.md](memory-palace-batch-guide.md)（便签批量处理）
+> **前置技能**：[maintain-memory.md](maintain-memory.md)（成员自身的维护技能）
+> **相关指南**：[batch-process-inbox.md](batch-process-inbox.md)（便签批量处理）
 >
 > **状态**：v1.1（2025-12-27）
 > **SSOT**：本文件是组织记忆维护的权威指南
@@ -17,8 +17,8 @@
 
 | 类型 | 频率 | 执行者 | 指南 |
 |:-----|:-----|:-------|:-----|
-| **便签处理**（inbox → index） | 每日 | MemoryPalaceKeeper | [memory-palace-batch-guide.md](memory-palace-batch-guide.md) |
-| **深度维护**（index 瘦身） | 按需（>800行） | 成员自己 | 本文档 + [memory-maintenance-skill.md](memory-maintenance-skill.md) |
+| **便签处理**（inbox → index） | 每日 | MemoryPalaceKeeper | [batch-process-inbox.md](batch-process-inbox.md) |
+| **深度维护**（index 瘦身） | 按需（>800行） | 成员自己 | 本文档 + [maintain-memory.md](maintain-memory.md) |
 
 **角色分工**：
 - **MemoryPalaceKeeper**：处理便签归档（高频、轻量）
@@ -94,7 +94,7 @@ done | sort -rn
 
 你被选为记忆维护技能书（v1.0）的执行者。你的记忆文件 `index.md` 当前有 **{LINE_COUNT} 行**，超过了 800 行的维护触发阈值。
 
-**技能书位置**：`agent-team/recipe/memory-maintenance-skill.md`（请先阅读）
+**技能书位置**：`agent-team/how-to/maintain-memory.md`（请先阅读）
 
 ## 任务目标
 

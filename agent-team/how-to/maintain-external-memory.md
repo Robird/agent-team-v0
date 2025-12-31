@@ -54,7 +54,7 @@ AI Agent 的认知连续性依赖**外部记忆文件**——这些文件是 Age
 | **TaskQueue** | todo.md, task-board.md | 待办清单 | 增删 | 完成即删除 |
 | **Inbox** | inbox.md | 收件箱 | 只追加 | Keeper 整理 |
 | **Archive** | meeting/*.md | 档案馆 | 只追加 | 不修改，可索引 |
-| **Recipe** | recipe/*.md | 配方书 | 版本演进 | 持续完善 |
+| **Recipe** | how-to/*.md | 配方书 | 版本演进 | 持续完善 |
 
 ### 2.2 各类型详解
 
@@ -176,7 +176,7 @@ AI Agent 的认知连续性依赖**外部记忆文件**——这些文件是 Age
 
 #### Recipe（配方书类）
 
-**代表**：`recipe/*.md`
+**代表**：`how-to/*.md`
 
 **核心问题**：怎么做这件事？
 
@@ -371,7 +371,7 @@ OnSessionStart:
 | task-board.md | TaskQueue | 每任务 | 增删更新 |
 | inbox.md | Inbox | Keeper处理 | 只追加 |
 | meeting/*.md | Archive | 不维护 | 只追加 |
-| recipe/*.md | Recipe | 按需 | 版本演进 |
+| how-to/*.md | Recipe | 按需 | 版本演进 |
 
 ### 附录 B: 原则速查表
 

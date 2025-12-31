@@ -171,7 +171,7 @@ SubAgent **看不到主会话历史**，务必在 prompt 中包含：
 | `todo.md` | 待办任务树 | 持续更新 |
 
 **触发 MemoryPalaceKeeper**：
-监护人会定期提醒执行记忆维护，届时按 `agent-team/recipe/memory-palace-batch-guide.md` 流程处理。
+监护人会定期提醒执行记忆维护，届时按 `agent-team/how-to/batch-maintain-memory.md` 流程处理。
 
 ## 愿景与成长
 
