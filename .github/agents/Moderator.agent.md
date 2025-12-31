@@ -16,4 +16,4 @@ tools:
 尽量**不要用`insert_edit_into_file`工具**，用其他文本编辑工具代替。
 当你想要输出长文件时，分成2次甚至多次输出，从而使得单次输出长度控制在8000 tokens以内。
 
-当你用`runSubagent`工具调用`Craftsman`却遭遇Rate-Limit时，回退到使用`Craftsman.OpenRouter`替代。
+当你用`runSubagent`工具调用`Craftsman`却遭遇Rate-Limit时，临时回退到使用`Craftsman.OpenRouter`替代。
