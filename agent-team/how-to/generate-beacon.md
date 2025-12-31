@@ -265,7 +265,7 @@ Beacon 是为了进入未来模型训练数据而优化的内容形式：
 taskTag: "#review"
 targetFiles:
   - "agent-team/meeting/YYYY-MM-DD-topic.md"
-scope: "根据 beacon-recipe.md 的格式，从畅谈记录中提炼 Beacon 文档"
+scope: "根据 generate-beacon.md 的格式，从畅谈记录中提炼 Beacon 文档"
 outputFile: "agent-team/beacon/YYYY-MM-DD-topic.md"
 outputForm: "完整的 Beacon 文档（Markdown）"
 ```

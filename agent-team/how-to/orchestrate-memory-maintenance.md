@@ -94,7 +94,7 @@ done | sort -rn
 
 你被选为记忆维护技能书（v1.0）的执行者。你的记忆文件 `index.md` 当前有 **{LINE_COUNT} 行**，超过了 800 行的维护触发阈值。
 
-**技能书位置**：`agent-team/recipe/memory-maintenance-skill.md`（请先阅读）
+**技能书位置**：`agent-team/how-to/maintain-memory.md`（请先阅读）
 
 ## 任务目标
 

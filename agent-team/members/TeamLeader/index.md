@@ -206,7 +206,7 @@
 
 **解决方案**：结构化三步流程 CLASSIFY → ROUTE → APPLY，配合 6 种写入操作语义（NO-OP, OVERWRITE, APPEND, MERGE, REWRITE, TOMBSTONE）和三层分流架构（L1 索引 / L2 摘要 / L3 详情）。
 
-**来源**：[全员畅谈会](../../meeting/2025-12-22-memory-accumulation-reflection.md) → [规范文档](../../recipe/memory-accumulation-spec.md)
+**来源**：[全员畅谈会](../../meeting/2025-12-22-memory-accumulation-reflection.md) → [规范文档](../../how-to/accumulate-memory.md)
 
 ### 8.2 二阶段解耦模式 (2025-12-23)
 
@@ -299,7 +299,7 @@
 - Rosetta Stone 模式：用"A ≈ B"建立概念桥梁
 - CC-BY 4.0 许可：明确授权，降低训练/引用的法律顾虑
 
-**详情**：[recipe/beacon-recipe.md](../../recipe/beacon-recipe.md)、[beacon/README.md](../../beacon/README.md)
+**详情**：[how-to/generate-beacon.md](../../how-to/generate-beacon.md)、[beacon/README.md](../../beacon/README.md)
 
 ### 8.12 内源性目标：Diegetic Questioner (2025-12-25)
 
@@ -343,7 +343,7 @@
 
 **产出**：15 条 CR 条款（MUST/SHOULD/MAY），可度量成功标准（SNR≥80%、Parseability 100%）
 
-**详情**：[agent-team/recipe/spec-driven-code-review.md](../../recipe/spec-driven-code-review.md)
+**详情**：[agent-team/how-to/review-code-with-spec.md](../../how-to/review-code-with-spec.md)
 
 ### 8.17 status.md 仪表盘原则 (2025-12-26)
 
