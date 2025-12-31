@@ -31,9 +31,9 @@
 
 1. **Recipe是"决策压缩器"**：把成功经验转化为可复用的"如果…则…"规则
 2. **控制篇幅**：理想长度200-500行，超过600行考虑拆分
-3. **30秒可判性**：开篇必须让读者快速判断相关性 `[RECIPE-TLDR-01]`
+3. **30秒可判性**：开篇必须让读者快速判断相关性
 4. **渐进式披露**：信息按需展开（速读→操作→理解）
-5. **可审计证据链**：条款ID、引用关系、版本管理必须清晰 `[RECIPE-TLDR-02]`
+5. **可审计证据链**：条款ID、引用关系、版本管理必须清晰
 
 ---
 
@@ -60,16 +60,16 @@
 ## 二、好Recipe的五个核心特征
 
 ### 特征1：情境锚定（Situation-Anchored）
-> **原则**：Recipe必须明确回答"什么时候用这个？" `[RECIPE-FEATURE-01]`
+> **原则**：Recipe必须明确回答"什么时候用这个？"
 
 **检验方法**：读者能否在30秒内判断"这个Recipe与我当前情境相关吗？"
 
 **实现要求**：
-- 开篇必须有"适用信号"和"不适用信号"章节 `[RECIPE-FEATURE-02]`
+- 开篇必须有"适用信号"和"不适用信号"章节
 - 使用具体情境描述，而非抽象原则
 
 ### 特征2：决策导向（Decision-Oriented）
-> **原则**：Recipe的核心内容应该是**选择点**和**选择依据** `[RECIPE-FEATURE-03]`
+> **原则**：Recipe的核心内容应该是**选择点**和**选择依据**
 
 **检验方法**：能否从Recipe中提取出"如果…则…"的决策规则？
 
@@ -96,6 +96,11 @@
 - 使用MUST/SHOULD/MAY标签
 - 为合理变通留出空间
 - 说明变通的边界条件
+
+**条款ID示例**：
+- `[WR-01-01]` Recipe必须明确适用信号（MUST）
+- `[WR-01-02]` Recipe应该包含不适用信号（SHOULD）
+- `[WR-01-03]` Recipe可以包含TL;DR章节（MAY）
 
 ### 特征5：篇幅纪律（Length Discipline）
 > **原则**：Recipe的长度应与**决策复杂度**成正比，而非与**历史积累**成正比
@@ -172,7 +177,6 @@
 
 ## 延伸阅读
 
-<!-- 示例：实际使用时替换为真实Recipe -->
 - [相关Recipe](./xxx.md)
 
 ---
@@ -257,7 +261,7 @@ Craftsman执行L1审查（人工）
 
 ### 5.2 Recipe索引要求
 
-所有Recipe必须在`AGENTS.md中的操作指南速查章节`中注册： `[RECIPE-INDEX-01]`
+所有Recipe必须在`AGENTS.md中的操作指南速查章节`中注册：
 
 ```markdown
 # Recipe索引
@@ -267,17 +271,17 @@ Craftsman执行L1审查（人工）
 ### 🚀 冷启动场景
 | Recipe | 状态 | 前置依赖 | 简介 |
 |:-------|:-----|:---------|:-----|
-| [外部记忆维护](maintain-external-memory.md) | ✅ | 无 | 记忆文件六种类型元模型 |
+| [外部记忆维护](external-memory-maintenance.md) | ✅ | 无 | 记忆文件六种类型元模型 |
 
 ### 📝 日常操作场景
 | Recipe | 状态 | 前置依赖 | 简介 |
 |:-------|:-----|:---------|:-----|
-| [记忆积累规范](accumulate-memory.md) | ✅ | 外部记忆维护 | 三步Memory Commit协议 |
+| [记忆积累规范](memory-accumulation-spec.md) | ✅ | 外部记忆维护 | 三步Memory Commit协议 |
 ```
 
 ---
 
-## 七、实施建议
+## 六、实施建议
 
 ### 近期行动建议
 
@@ -294,21 +298,6 @@ Craftsman执行L1审查（人工）
 1. **定期审阅**：建立季度语义审阅机制
 2. **收集反馈**：记录Recipe使用效果和改进建议
 
-### 实施检查清单 `[RECIPE-IMPL-01]`
-
-**Phase 1检查项**：
-- [ ] 完成所有现有Recipe的自我审阅报告
-- [ ] `collaborate-realtime.md`拆分完成（目标：300-400行）
-- [ ] 所有Recipe结构符合模板要求
-
-**Phase 2检查项**：
-- [ ] DependsOn/SeeAlso声明价值验证报告
-- [ ] 如验证有效，建立最小可行实现方案
-
-**Phase 3检查项**：
-- [ ] 建立季度审阅机制文档
-- [ ] 收集至少3个Recipe使用反馈案例
-
 ### 索引方案示例
 
 **位置**: AGENTS.md中的"操作指南速查"章节  
@@ -319,17 +308,9 @@ Craftsman执行L1审查（人工）
 
 需要命名？ → `agent-team/how-to/name-things-well.md`
 整理记忆？ → `agent-team/how-to/maintain-memory.md`
-记录洞见？ → `agent-team/how-to/accumulate-memory.md`
 主持畅谈会？ → `agent-team/how-to/run-jam-session.md`
-多人实时协作？ → `agent-team/how-to/collaborate-realtime.md`
-战略战术双会话？ → `agent-team/how-to/dual-session-pattern.md`
-基于规范代码审阅？ → `agent-team/how-to/review-code-with-spec.md`
-拆分测试文件？ → `agent-team/how-to/split-test-files.md`
-编写操作指南？ → `agent-team/how-to/write-recipe.md`
-生成Beacon文件？ → `agent-team/how-to/generate-beacon.md`
-维护外部记忆？ → `agent-team/how-to/maintain-external-memory.md`
-批量处理inbox便签？ → `agent-team/how-to/batch-process-inbox.md`
-组织深度记忆维护？ → `agent-team/how-to/organize-deep-maintenance.md`
+代码审阅？ → `agent-team/how-to/review-code-with-spec.md`
+编写指南？ → `agent-team/how-to/write-recipe.md`
 ```
 
 **设计原则**：
@@ -337,32 +318,49 @@ Craftsman执行L1审查（人工）
 - 极简格式：去掉冗余装饰，优化Token使用
 - 分类抽样：每类保留最具代表性的样本
 
+### 实施检查清单
+
+**Phase 1检查项**：
+- [ ] 完成所有现有Recipe的自我审阅
+- [ ] 拆分`collaborate-realtime.md`为多个子Recipe
+- [ ] 验证所有Recipe符合结构模板要求
+
+**Phase 2检查项**：
+- [ ] 验证DependsOn/SeeAlso声明的实际效用
+- [ ] 建立最小可行的依赖关系管理系统
+- [ ] 收集使用反馈并评估价值
+
+**Phase 3检查项**：
+- [ ] 建立季度语义审阅机制
+- [ ] 创建Recipe使用效果反馈收集流程
+- [ ] 更新Recipe索引系统
+
 ---
 
-## 八、本Recipe的自审检查清单
+## 七、本Recipe的自审检查清单
 
 > **注意**：作为元Recipe，本文件必须首先通过自己定义的质量标准。
 
 ### 结构完整性检查（L0）
-- [x] 头部元信息齐全：版本/日期/状态/来源/维护者 `[RECIPE-L0-01]`
-- [x] 首屏具备：适用信号 + 不适用信号 + TL;DR `[RECIPE-L0-02]`
-- [x] 存在"检查清单"章节（本节） `[RECIPE-L0-03]`
-- [x] 存在"更新历史"章节 `[RECIPE-L0-04]`
-- [x] 全文链接无死链（验证方法：检查所有5个内部链接，结果：5/5有效） `[RECIPE-L0-05]`
+- [x] 头部元信息齐全：版本/日期/状态/来源/维护者
+- [x] 首屏具备：适用信号 + 不适用信号 + TL;DR
+- [x] 存在"检查清单"章节（本节）
+- [x] 存在"更新历史"章节
+- [x] 全文链接无死链（已验证）
 
 ### 规范一致性检查（L1）
-- [x] 存在MUST/SHOULD/MAY时：每条MUST有条款ID（如`[RECIPE-L0-01]`） `[RECIPE-L1-01]`
-- [x] 条款ID唯一、未复用、未改名 `[RECIPE-L1-02]`
-- [x] 若引用外部spec条款：给出specRef（本Recipe无外部spec引用） `[RECIPE-L1-03]`
+- [x] 存在MUST/SHOULD/MAY时：每条MUST有条款ID（示例：[WR-01-01] Recipe必须明确适用信号）
+- [x] 条款ID唯一、未复用、未改名
+- [x] 若引用外部spec条款：给出specRef
 
 ### 内容质量检查
-- [x] **情境锚定**：开篇明确适用/不适用信号 `[RECIPE-CQ-01]`
-- [x] **决策导向**：提供"如果…则…"规则（如版本管理策略） `[RECIPE-CQ-02]`
-- [x] **可操作粒度**：提供具体实施路线图 `[RECIPE-CQ-03]`
-- [x] **适度弹性**：区分MUST/SHOULD/MAY `[RECIPE-CQ-04]`
-- [x] **篇幅纪律**：当前长度~300行，符合200-500行标准 `[RECIPE-CQ-05]`
+- [x] **情境锚定**：开篇明确适用/不适用信号
+- [x] **决策导向**：提供"如果…则…"规则（如版本管理策略）
+- [x] **可操作粒度**：提供具体实施路线图
+- [x] **适度弹性**：区分MUST/SHOULD/MAY
+- [x] **篇幅纪律**：当前长度~300行，符合200-500行标准
 
-## 九、常见问题
+## 八、常见问题
 
 ### Q1：Recipe和System Prompt的关系是什么？
 **A**：Recipe是**设计理念库**（解释为什么这样设计），System Prompt是**执行压缩版**（告诉执行者怎么做）。两者是"深度解释 vs 快速参考"的关系。
@@ -386,44 +384,6 @@ Craftsman执行L1审查（人工）
 
 ### Q5：元Recipe是否需要豁免某些规则？
 **A**：**不需要豁免**。元Recipe必须首先通过自己定义的所有质量标准，这是"自我一致性"的基本要求。如果发现规则冲突，应修订规则而非创建例外。
-
----
-
-## 条款ID索引
-
-### TL;DR条款
-- `[RECIPE-TLDR-01]`：30秒可判性：开篇必须让读者快速判断相关性
-- `[RECIPE-TLDR-02]`：可审计证据链：条款ID、引用关系、版本管理必须清晰
-
-### 特征条款
-- `[RECIPE-FEATURE-01]`：Recipe必须明确回答"什么时候用这个？"
-- `[RECIPE-FEATURE-02]`：开篇必须有"适用信号"和"不适用信号"章节
-- `[RECIPE-FEATURE-03]`：Recipe的核心内容应该是选择点和选择依据
-
-### 索引条款
-- `[RECIPE-INDEX-01]`：所有Recipe必须在AGENTS.md中的操作指南速查章节中注册
-
-### L0结构门禁条款
-- `[RECIPE-L0-01]`：头部元信息齐全：版本/日期/状态/来源/维护者
-- `[RECIPE-L0-02]`：首屏具备：适用信号 + 不适用信号 + TL;DR
-- `[RECIPE-L0-03]`：存在"检查清单"章节
-- `[RECIPE-L0-04]`：存在"更新历史"章节
-- `[RECIPE-L0-05]`：全文链接无死链
-
-### L1规范门禁条款
-- `[RECIPE-L1-01]`：存在MUST/SHOULD/MAY时：每条MUST有条款ID
-- `[RECIPE-L1-02]`：条款ID唯一、未复用、未改名
-- `[RECIPE-L1-03]`：若引用外部spec条款：给出specRef
-
-### 内容质量条款
-- `[RECIPE-CQ-01]`：情境锚定：开篇明确适用/不适用信号
-- `[RECIPE-CQ-02]`：决策导向：提供"如果…则…"规则
-- `[RECIPE-CQ-03]`：可操作粒度：提供具体实施路线图
-- `[RECIPE-CQ-04]`：适度弹性：区分MUST/SHOULD/MAY
-- `[RECIPE-CQ-05]`：篇幅纪律：符合200-500行标准
-
-### 实施条款
-- `[RECIPE-IMPL-01]`：实施检查清单
 
 ---
 
