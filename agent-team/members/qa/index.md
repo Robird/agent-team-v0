@@ -1,18 +1,131 @@
 # Qa 认知索引
 
-> 最后更新: 2025-12-27
+> 最后更新: 2026-01-01 17:00
 
 ## 我是谁
 测试验证专家，负责 E2E 测试、回归检测和基线跟踪。
 
 ## 我关注的项目
 - [ ] PieceTreeSharp
+- [x] DocGraph
 - [ ] DocUI
 - [x] PipeMux
 - [x] StateJournal (原 DurableHeap，2025-12-21 更名)
 - [ ] atelia-copilot-chat
 
 ## 最近工作
+
+### 2026-01-01: DocGraph v0.1 Day 3 全面验证
+- **状态**: ✅ 验证通过
+- **验证范围**: Day 3 全部实现（CLI命令、修复功能、输出格式、端到端测试）
+- **测试结果**:
+  - 单元测试: 93/93 通过（Day 2后74 + Day 3新增19）
+  - CLI命令测试: 19/19 通过
+  - 退出码测试: 4/4 通过
+  - 回归测试: 无回归
+- **CLI命令验证**:
+  - `docgraph --help`: 正确显示所有命令
+  - `docgraph validate`: 基础/verbose/json/fix模式全部正常
+  - `docgraph fix`: dry-run/--yes模式正常，成功创建缺失文件
+  - `docgraph stats`: 基础/verbose/json模式正常
+- **性能基准**:
+  - 小规模: 6文档/4ms
+  - 大规模: 2000文档/30ms (远超spec要求53倍)
+- **用户体验评估**: 5/5 - 命令直观、输出清晰、交互友好
+- **整体评分**: ⭐⭐⭐⭐⭐ (5/5)
+- **结论**: Day 3验证通过，v0.1 MVP可交付
+- **报告**: [meeting/DocGraph/2026-01-01-docgraph-v0.1-implementation-phase3.md](../../meeting/DocGraph/2026-01-01-docgraph-v0.1-implementation-phase3.md#qa-day-3-验证结果)
+- **洞见**:
+  - CLI 三命令分工（validate/fix/stats）设计优秀，`--dry-run` + `--yes` 组合让修复操作既安全又灵活
+  - 修复功能安全性：存在 Error/Fatal 时阻止自动修复，避免在问题环境下制造更多问题
+  - v0.1 MVP 达到交付标准：功能完整、质量达标（93测试）、性能优秀、体验良好
+
+### 2026-01-01: DocGraph v0.1 P1/P2 修复验证
+- **状态**: ✅ 验证通过
+- **验证范围**: Craftsman 审计发现的 P1/P2 问题修复
+- **测试结果**:
+  - 单元测试: 74/74 通过（原 63 + 新增 11）
+  - P1 修复测试: 9/9 通过
+  - P2 修复测试: 2/2 通过
+  - 回归测试: 无回归
+- **P1 问题修复验证**:
+  - P1-1: 路径归一化"越界折叠"风险 ✅（先检查后规范化）
+  - P1-2: 产物文档核心字段验证 ✅（docId/produce_by 验证）
+- **P2 问题修复验证**:
+  - P2-1: 条款编号SSOT对齐 ✅
+  - P2-2: 视觉标记/动作标签完善 ✅
+  - P2-3: 排序规则字段补齐 ✅
+- **规范符合性**: 完全符合 spec.md 相关条款
+- **性能影响**: 无明显退化
+- **整体评分**: ⭐⭐⭐⭐⭐ (5/5)
+- **结论**: P1/P2 修复质量优秀，可进入下一阶段
+- **报告**: [meeting/DocGraph/2026-01-01-docgraph-v0.1-implementation-phase2-p1p2-fix.md](../../meeting/DocGraph/2026-01-01-docgraph-v0.1-implementation-phase2-p1p2-fix.md#qa-p1p2修复验证结果)
+- **洞见**:
+  - P1-1 核心教训：路径检查必须在规范化之前执行，否则 `../outside.md` 会被折叠为 `outside.md`，典型的"顺序依赖"安全问题
+  - P1-2 占位节点处理智慧：占位节点（文件不存在）不验证 docId/produce_by，避免无意义的噪音警告
+  - P2-3 排序规则完善：`ValidationIssue` 新增 `TargetFilePath` 字段，排序从 4 级变为 5 级
+
+### 2026-01-01: DocGraph v0.1 P0 修复验证
+- **状态**: ✅ 验证通过
+- **验证范围**: Craftsman 审计发现的 4 个 P0 规范偏差修复
+- **测试结果**:
+  - 单元测试: 63/63 通过（原 57 + 新增 6）
+  - P0 修复测试: 7/7 通过
+  - 回归测试: 无回归
+- **P0 问题修复验证**:
+  - P0-1: produce目标frontmatter存在性验证 ✅
+  - P0-2: produce_by backlink验证逻辑 ✅
+  - P0-3: 闭包确定性边排序 ✅
+  - P0-4: 循环引用Info记录 ✅
+- **规范符合性**: 完全符合 spec.md [A-DOCGRAPH-003/004/005] 条款
+- **性能影响**: 无明显退化
+- **整体评分**: ⭐⭐⭐⭐⭐ (5/5)
+- **结论**: P0 修复质量优秀，可进入 Day 3
+- **报告**: [meeting/DocGraph/2026-01-01-docgraph-v0.1-implementation-phase2.md](../../meeting/DocGraph/2026-01-01-docgraph-v0.1-implementation-phase2.md#qa-p0修复验证结果)
+- **洞见**:
+  - frontmatter 存在性检查：使用 `Frontmatter.Count > 0 && !Title.StartsWith("[缺失]")` 判断
+  - backlink 验证关键：从 produce 边出发检查目标的 produce_by 声明，而非反向（后者会漏报缺失 produce_by）
+  - 边排序时机：应在 DocumentGraph 构造时而非 DocumentNode 创建时执行，确保所有边都已建立
+  - 循环检测实现：DFS + inStack 集合 + reportedCycles 避免重复报告
+
+### 2026-01-01: DocGraph v0.1 Day 2 实现验证
+- **状态**: ✅ 验证通过
+- **验证范围**: Day 2 全部实现（DocumentGraphBuilder 集成测试、验证逻辑、错误报告）
+- **测试结果**:
+  - 单元测试: 57/57 通过（Day 1: 35 + Day 2: 22）
+  - 端到端测试: 5/5 场景通过
+  - 退出码语义: 100% 符合 spec.md §5.3
+  - 性能基准: 300文档/4ms, 1500文档/9ms
+- **集成测试覆盖**:
+  - 目录扫描: 7 个测试用例（递归、隐藏文件、临时文件、非 md 文件）
+  - 关系提取: 6 个测试用例（单/多 produce、双向关系、循环引用、传递闭包）
+  - 验证逻辑: 5 个测试用例（必填字段、悬空链接、无效路径）
+  - 错误报告: 4 个测试用例（统计信息、三层建议、严重度排序、文件路径）
+- **整体评分**: ⭐⭐⭐⭐⭐ (5/5)
+- **结论**: 通过验证，可进入 Day 3
+- **报告**: [meeting/DocGraph/2026-01-01-docgraph-v0.1-implementation-phase2.md](../../meeting/DocGraph/2026-01-01-docgraph-v0.1-implementation-phase2.md#qa-测试验证结果)
+- **洞见**:
+  - 性能惊艳：1500 文档验证仅需 9ms，吞吐量达 166,666 docs/s，远超 spec 要求 88 倍
+  - 文件过滤规则澄清：`temp~.md` 未被过滤是正确行为——过滤规则是"以 `~` 结尾"而非"包含 `~`"，符合 vim 备份文件命名模式
+
+### 2026-01-01: DocGraph v0.1 Day 1 实现验证
+- **状态**: ✅ 验证通过
+- **验证范围**: Day 1 全部实现（PathNormalizer, FrontmatterParser, DocumentGraphBuilder）
+- **测试结果**:
+  - 单元测试: 35/35 通过
+  - 端到端测试: 5/5 场景通过
+  - 退出码语义: 100% 符合 spec.md
+- **发现的测试缺口**:
+  - 资源限制测试（64KB、10层嵌套、1024项数组）
+  - DocumentGraphBuilder 集成测试（循环引用、多层追踪）
+  - 大规模性能基准测试
+- **整体评分**: ⭐⭐⭐⭐☆ (4.5/5)
+- **结论**: 通过验证，可进入 Day 2
+- **报告**: [meeting/DocGraph/2026-01-01-docgraph-v0.1-implementation-phase1.md](../../meeting/DocGraph/2026-01-01-docgraph-v0.1-implementation-phase1.md#qa-测试验证结果)
+- **洞见**:
+  - Implementer 超额完成：不只是骨架，而是完整实现；XML 注释正确引用 spec.md 条款编号
+  - 性能预估乐观：3 文档验证仅需 2-3ms，远超预期
+  - 资源限制测试是 Day 2 应优先补充的最大缺口
 
 ### 2025-12-27: StateJournal Storage Engine 测试侦察
 - **状态**: ✅ 侦察完成
@@ -166,6 +279,11 @@
 
 | Project | Changefeed | Baseline |
 |---------|------------|----------|
+| DocGraph | #delta-2026-01-01-docgraph-day3-qa-verification | Unit: 93/93 pass, CLI: 19/19 pass, Perf: 2000 docs/30ms |
+| DocGraph | #delta-2026-01-01-docgraph-p1p2-qa-verification | Unit: 74/74 pass, P1: 9/9 pass, P2: 2/2 pass |
+| DocGraph | #delta-2026-01-01-docgraph-p0-qa-verification | Unit: 63/63 pass, E2E: 5/5 pass, P0: 7/7 pass |
+| DocGraph | #delta-2026-01-01-docgraph-day2 | Unit: 57/57 pass, E2E: 5/5 pass, Perf: 1500 docs/9ms |
+| DocGraph | #delta-2026-01-01-docgraph-day1 | Unit: 35/35 pass, E2E: 5/5 pass |
 | PipeMux | #delta-2025-12-09-management-commands | E2E: 7/7 pass |
 | StateJournal | #delta-2025-12-20-p0-revision | P0 第四轮共识修订: ✅ 7/7 验证通过 |
 | StateJournal | #delta-2025-12-19-b456-batch | B-4/B-5/B-6 批量修订: ✅ 验证通过 |
