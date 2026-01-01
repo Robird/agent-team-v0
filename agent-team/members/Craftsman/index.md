@@ -358,6 +358,22 @@
 - Beacon 只引用或作为临时定义并声明迁移计划
 - 避免格式漂移导致 grep/lint 失效
 
+#### Artifact-Tiers 框架骨架完善建议 (2026-01-02)
+> Artifact-Tiers 定义边界与缺失结构的审计洞见。
+
+**核心定义边界**：
+- **Tier 定义**：决策/证据模式的切片
+- **管理对象排除**：Wish/Issue/Task 属于管理对象，不应混入 Tier 层级
+- **Wish 纳入方式**：作为"生命周期轴/容器"，由 Resolve 负责裁决（承诺/延后/放弃）
+- **循环定义风险**：避免"Wish 包含 Resolve"与"Resolve 创建 Wish"的循环
+
+**建议补齐的框架骨架**：
+| 结构 | 内容 |
+|:-----|:-----|
+| **Definitions** | Artifact / Tier / Gate / Re-entry / Lens |
+| **跨层不变量** | 自由度收敛 / 可判定性增强 / 显式回溯 / I-O 闭包 |
+| **关系图** | Wish ↔ Artifacts ↔ Issue ↔ Task |
+
 #### Artifact-Tiers 层级重命名审计 (2026-01-02)
 > Resolve-Tier 重命名相关审计要点汇总。
 
