@@ -30,7 +30,7 @@ wishes/
 
 ## 核心概念
 
-> **术语参考**：五层级术语定义见 [Atelia 术语表](../agent-team/wiki/terminology.md)。
+> **术语参考**：五层级术语定义见 [Artifact-Tiers](../agent-team/wiki/artifact-tiers.md)。
 
 | 概念 | 说明 |
 |:-----|:-----|

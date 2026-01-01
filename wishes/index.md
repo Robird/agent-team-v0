@@ -98,4 +98,4 @@
 ## 变更历史
 
 ### 2025-12-30 – Terminology Update
-- **#delta-2025-12-30-terminology-v1** – 五层级术语从 v0.1 (Why/What/Rules/How/Build) 升级到 v1.0 (Why/Shape/Rules/Plan/Craft)。权威定义见 `agent-team/wiki/terminology.md`。
+- **#delta-2025-12-30-terminology-v1** – 五层级术语从 v0.1 (Why/What/Rules/How/Build) 升级到 v1.0 (Why/Shape/Rules/Plan/Craft)。权威定义见 `agent-team/wiki/artifact-tiers.md`。

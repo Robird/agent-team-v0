@@ -13,7 +13,7 @@
 
 | 你想... | 查阅... | 文件位置 |
 |:--------|:--------|:---------|
-| **理解术语含义**（是什么） | Layer 1：概念语义 SSOT | `terminology.md` |
+| **理解术语含义**（是什么） | Layer 1：概念语义 SSOT | `artifact-tiers.md` |
 | **确认术语写法**（怎么写） | Layer 2：写法规范 SSOT | `spec-conventions.md` §4 |
 | **配置工具规则**（lint/IDE） | Layer 3：机器可读 SSOT | `terminology-registry.yaml` |
 | **查看完整指南** | 本文件 | `terminology-guide.md` |
@@ -23,7 +23,7 @@
 ## 📚 三层 SSOT 结构详解
 
 ### Layer 1：概念语义 SSOT
-**文件**: `terminology.md`
+**文件**: `artifact-tiers.md`
 **职责**: 定义术语的**含义**（"是什么"）
 **包含**:
 - 五层级方法论（Why/Shape/Rule/Plan/Craft）
@@ -78,7 +78,7 @@
 │               术语指南 (本文件)                      │
 │                   ↙       ↘                         │
 │     概念语义 SSOT          写法规范 SSOT             │
-│     (terminology.md)      (spec-conventions.md)     │
+│     (artifact-tiers.md)      (spec-conventions.md)     │
 │           ↓                     ↓                    │
 │     机器可读 SSOT ←─────────────┘                    │
 │   (terminology-registry.yaml)                       │
@@ -118,10 +118,10 @@ yq '.layer_terms[]' terminology-registry.yaml
 ./agent-team/scripts/check-terminology-consistency.sh
 
 # 搜索特定术语的使用
-grep -r "Why-Layer" --include="*.md" agent-team/wiki atelia/docs
+grep -r "Why-Tier" --include="*.md" agent-team/wiki atelia/docs
 
 # 查看术语表版本
-head -10 terminology.md | grep "版本"
+head -10 artifact-tiers.md | grep "版本"
 ```
 
 ---
@@ -129,7 +129,7 @@ head -10 terminology.md | grep "版本"
 ## 📋 团队协作流程
 
 ### 新术语提案流程
-1. **概念定义** → 更新 `terminology.md`（Layer 1）
+1. **概念定义** → 更新 `artifact-tiers.md`（Layer 1）
 2. **写法规范** → 更新 `spec-conventions.md`（Layer 2）
 3. **工具规则** → 更新 `terminology-registry.yaml`（Layer 3）
 4. **验证检查** → 运行一致性检查脚本
@@ -151,7 +151,7 @@ head -10 terminology.md | grep "版本"
 ## 🎯 验收标准
 
 ### 三层结构验收
-- [ ] `terminology.md` 只包含概念语义，无写法规范
+- [ ] `artifact-tiers.md` 只包含概念语义，无写法规范
 - [ ] `spec-conventions.md` §4 明确引用 registry
 - [ ] `terminology-registry.yaml` 可被工具正确读取
 - [ ] 检查脚本从 registry 动态加载规则
@@ -174,12 +174,12 @@ head -10 terminology.md | grep "版本"
 
 ### 新成员入门
 1. 阅读本指南了解三层结构
-2. 查阅 `terminology.md` 理解核心概念
+2. 查阅 `artifact-tiers.md` 理解核心概念
 3. 查看 `spec-conventions.md` §4 学习写法规范
 4. 运行检查脚本验证理解
 
 ### 文档作者指南
-1. 写作前确认术语在 `terminology.md` 中有定义
+1. 写作前确认术语在 `artifact-tiers.md` 中有定义
 2. 遵循 `spec-conventions.md` 的格式规范
 3. 使用 registry 中的缩写白名单
 4. 完成后运行一致性检查

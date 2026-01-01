@@ -33,20 +33,20 @@ produce:
 - [x] `wishes/` 目录已创建，结构符合设计
 [x] 至少 2 个 Wish 文档已创建（本 Wish + DocGraph）
 - [x] index.md 可用于导航
-- [x] L3 条款文件已定义核心 MUST 条款
+- [x] Rule-Tier 条款文件已定义核心 MUST 条款
 - [ ] 用 Wish 系统成功追踪一个完整 Wish 生命周期
 
 ## 层级进度 (Layer Progress)
 
-> **术语参考**：五层级术语定义见 [Atelia 术语表](../../agent-team/wiki/terminology.md)。
+> **术语参考**：本文档使用 [Artifact-Tiers](../../agent-team/wiki/artifact-tiers.md#artifact-tiers产物层级)（产物层级）框架组织产物层级。具体层级定义见 [Artifact-Tiers](../../agent-team/wiki/artifact-tiers.md)。
 
-| 层级 | 状态 | 产物链接 | 备注 |
-|:-----|:-----|:---------|:-----|
-| L1 Why | 🟢 完成 | [畅谈会记录](../../agent-team/meeting/Meta/2025-12-30-layers-of-dev.md) | 动机已充分表达 |
-| L2 Shape | 🟢 完成 | [模板文件](../templates/wish-template.md) | 文档结构设计 |
-| L3 Rules | 🟢 完成 | [wish-system-rules.md](../specs/wish-system-rules.md) | MUST/SHOULD/MAY 条款 |
-| L4 Plan | 🟡 进行中 | — | 手工维护方案，暂无需文档 |
-| L5 Craft | ➖ N/A | — | MVP 无自动化代码 |
+| Artifact Tier | 状态 | 产物链接 | 备注 |
+|:--------------|:-----|:---------|:-----|
+| Why-Tier | 🟢 完成 | [畅谈会记录](../../agent-team/meeting/Meta/2025-12-30-layers-of-dev.md) | 动机已充分表达 |
+| Shape-Tier | 🟢 完成 | [模板文件](../templates/wish-template.md) | 文档结构设计 |
+| Rule-Tier | 🟢 完成 | [wish-system-rules.md](../specs/wish-system-rules.md) | MUST/SHOULD/MAY 条款 |
+| Plan-Tier | 🟡 进行中 | — | 手工维护方案，暂无需文档 |
+| Craft-Tier | ➖ N/A | — | MVP 无自动化代码 |
 
 > **状态符号**: ⚪ 未开始 | 🟡 进行中 | 🟢 完成 | 🔴 阻塞 | ➖ N/A
 

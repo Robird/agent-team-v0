@@ -31,15 +31,15 @@ tags: []
 
 ## 层级进度 (Layer Progress)
 
-> **术语参考**：五层级术语定义见 [Atelia 术语表](../../agent-team/wiki/terminology.md)。
+> **术语参考**：本文档使用 [Artifact-Tiers](../../agent-team/wiki/artifact-tiers.md#artifact-tiers产物层级)（产物层级）框架组织产物层级。具体层级定义见 [Artifact-Tiers](../../agent-team/wiki/artifact-tiers.md)。
 
-| 层级 | 状态 | 产物链接 | 备注 |
-|:-----|:-----|:---------|:-----|
-| Why-Layer | ⚪ 未开始 | — | |
-| Shape-Layer | ⚪ 未开始 | — | |
-| Rule-Layer | ⚪ 未开始 | — | |
-| Plan-Layer | ⚪ 未开始 | — | |
-| Craft-Layer | ⚪ 未开始 | — | |
+| Artifact Tier | 状态 | 产物链接 | 备注 |
+|:--------------|:-----|:---------|:-----|
+| Why-Tier | ⚪ 未开始 | — | |
+| Shape-Tier | ⚪ 未开始 | — | |
+| Rule-Tier | ⚪ 未开始 | — | |
+| Plan-Tier | ⚪ 未开始 | — | |
+| Craft-Tier | ⚪ 未开始 | — | |
 
 > **状态符号**: ⚪ 未开始 | 🟡 进行中 | 🟢 完成 | 🔴 阻塞 | ➖ N/A
 

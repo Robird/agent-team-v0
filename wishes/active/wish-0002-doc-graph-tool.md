@@ -43,15 +43,15 @@ produce:
 
 ## 层级进度 (Layer Progress)
 
-> **术语参考**：五层级术语定义见 [Atelia 术语表](../../agent-team/wiki/terminology.md)。
+> **术语参考**：本文档使用 [Artifact-Tiers](../../agent-team/wiki/artifact-tiers.md#artifact-tiers产物层级)（产物层级）框架组织产物层级。具体层级定义见 [Artifact-Tiers](../../agent-team/wiki/artifact-tiers.md)。
 
-| 层级 | 状态 | 产物链接 | 备注 |
-|:-----|:-----|:---------|:-----|
-| Why-Layer | 🟢 完成 | [畅谈会记录](../../agent-team/meeting/Meta/2025-12-30-layers-of-dev.md) | 监护人阐述动机 |
-| Shape-Layer | 🟡 进行中 | [API 设计草案](../../atelia/docs/DocGraph/api.md) | 初版 API 外观已定义 |
-| Rule-Layer | ⚪ 未开始 | — | 待定义规范条款 |
-| Plan-Layer | ⚪ 未开始 | — | 待选择技术方案（Markdig/YamlDotNet） |
-| Craft-Layer | ⚪ 未开始 | — | 待实现 |
+| Artifact Tier | 状态 | 产物链接 | 备注 |
+|:--------------|:-----|:---------|:-----|
+| Why-Tier | 🟢 完成 | [畅谈会记录](../../agent-team/meeting/Meta/2025-12-30-layers-of-dev.md) | 监护人阐述动机 |
+| Shape-Tier | 🟡 进行中 | [API 设计草案](../../atelia/docs/DocGraph/api.md) | 初版 API 外观已定义 |
+| Rule-Tier | ⚪ 未开始 | — | 待定义规范条款 |
+| Plan-Tier | ⚪ 未开始 | — | 待选择技术方案（Markdig/YamlDotNet） |
+| Craft-Tier | ⚪ 未开始 | — | 待实现 |
 
 > **状态符号**: ⚪ 未开始 | 🟡 进行中 | 🟢 完成 | 🔴 阻塞 | ➖ N/A
 
