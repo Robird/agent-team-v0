@@ -14,7 +14,7 @@
 |:-----|:-----|
 | "我正在创建新的 Wish 文档" | → [§1 Wish 文档模板](#1-wish-文档模板) |
 | "我正在创建 Wish 的产物文档" | → [§2 产物文档模板](#2-产物文档模板) |
-| "我想添加术语定义（defines）" | → [§3 扩展字段](#3-扩展字段可选) |
+| "我想添加术语定义（glossary）" | → [§3 扩展字段](#3-扩展字段可选) |
 | "我想添加问题跟踪（issues）" | → [§3 扩展字段](#3-扩展字段可选) |
 | "DocGraph 验证报错了" | → [§4 常见错误与修复](#4-常见错误与修复) |
 | "我想验证我写的是否正确" | → [§5 验证命令](#5-验证命令) |
@@ -92,19 +92,25 @@ produce_by:
 
 ## 3. 扩展字段（可选）
 
-### 3.1 `defines` — 术语定义
+### 3.1 `glossary` — 术语表
 
-用于声明本文档定义的术语，供 `GlossaryVisitor` 汇总。
+用于声明本文档定义的术语，供 `GlossaryVisitor` 汇总到 `docs/glossary.gen.md`。
+
+**格式约定**：使用单键映射序列，术语使用 kebab-case 命名。
 
 ```yaml
 ---
-defines:
-  - term: "文档图"
-    definition: "frontmatter 关系构成的有向图，不是文件系统树"
-  - term: "Root Nodes"
-    definition: "Wish 文档，是文档图的入口点"
+glossary:
+  - Document-Graph: "文档关系图"
+  - Root-Nodes: "Wish 文档，是文档图的入口点"
+  - produce-关系: "Wish 文档到产物文档的单向链接"
 ---
 ```
+
+**设计目标**：
+- 字段名＝输出名（`glossary` ↔ `glossary.gen.md`）
+- 语法简洁，减少视觉噪声
+- 保持顺序语义（YAML 序列）
 
 ### 3.2 `issues` — 问题跟踪
 
