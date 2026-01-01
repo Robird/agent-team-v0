@@ -1,6 +1,6 @@
 # Docops 认知索引
 
-> 最后更新: 2026-01-02 16:00
+> 最后更新: 2026-01-02 18:00
 
 ## 我是谁
 DocOps - 文档与索引管理专家，负责维护团队的集体记忆和认知连续性。
@@ -121,6 +121,29 @@ DocOps - 文档与索引管理专家，负责维护团队的集体记忆和认�
 - 重定向 Stub 设计
 
 **关联文件**：`meeting/2026-01-01-recipe-discovery-mechanism.md`
+
+### 单体文档拆分架构模式（2026-01-02）
+
+参与 Artifact-Tiers 理论框架升级畅谈会，从文档管理角度提出架构性洞见。
+
+**核心洞见**：当文档从"术语表"演变为"理论框架手册"时，需要拆分为"核心 + 卫星"模式。
+
+**分层入口架构**：
+| 层级 | 用途 | Token 预算 |
+|:-----|:-----|:-----------|
+| 30 秒版 | index.md 头部 | ~100 tokens |
+| 5 分钟版 | index.md 完整 + 角色着陆页 | ~300 tokens |
+| 深度版 | core-definitions.md + cognitive-chain.md | ~800 tokens |
+
+**多维模型文档化策略**：
+- Tier 是决策维度（横轴）
+- Lifecycle 是演化维度（纵轴）
+- Lens 是关注点维度（正交轴）
+- 在 core-definitions.md 中用关系图统一定义
+
+**迁移策略**: 先创建新结构，旧文件改为 Redirect Stub，更新引用后移除
+
+**关联文件**: `meeting/2026-01-02-artifact-tiers-wish-integration-jam.md`
 
 ### 术语迁移成本评估模型（2025-12-31）
 
@@ -322,6 +345,20 @@ DocOps - 文档与索引管理专家，负责维护团队的集体记忆和认�
 - [x] StateJournal - 2025-12-29 文档原子化重构 Phase 1 完成
 
 ## 最近工作
+
+### 2026-01-02 - Resolve-Tier 术语迁移 Phase 1 完成
+
+**任务**: 执行 SSOT 原子更新的最后两个文件
+
+**更新文件**:
+| 文件 | 主要修改 |
+|:-----|:---------|
+| `atelia/docs/spec-conventions.md` | 更新 `[S-TERM-TIER-CLOSED-SET]` 条款，添加变更日志 v0.7 |
+| `agent-team/wiki/terminology-registry.yaml` | 版本 1.0.0 → 1.1.0，`layer_terms` → `tier_terms`，Why-Tier → Resolve-Tier |
+
+**关键决策**: 统一使用 Tier（不是 Layer），与 AGENTS.md 中的 Artifact-Tiers 框架保持一致。
+
+**状态**: ✅ 完成
 
 ### 2026-01-01 - Artifact-Adventures Beacon 大纲创建
 
