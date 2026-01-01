@@ -18,7 +18,7 @@
 - **Primary Definition + Index**：每术语唯一权威定义。
 - **Rename vs Re-home**：Rename 保留 alias，Re-home 保留 Redirect Stub。
 
-#### L1-L5 层级别名命名策略 (2025-12-30, 更新 12-30)
+#### L1-L5 层级别名命名策略 (2025-12-30, 更新 2026-01-01)
 > 五层级方法论的层级标签与仓库既有术语冲突的处理方案。
 
 **冲突案例**：
@@ -38,6 +38,13 @@
 - 坐标型稳定锚点从 `L1-L5` 收敛为不含 L 的 `1..5`（或 `01..05`）
 - 语义型仍用 `Why/Shape/Rules/Plan/Craft`
 - 代码枚举/文档字段优先语义名，排序用 ordinal 字段或显式枚举值承载
+
+**框架名 vs 层级名分离审计（2026-01-01）**：
+- 建议把"框架名（Framework）"与"层级名（Level）"分离
+- **canonical 术语优先选 `Artifact-Tiers`**（代码/规范最省心）
+- 若选 `Artifact Strata`，必须带限定词并冻结词形：
+  - 框架只叫 `Artifact Strata`
+  - 单层永远叫 `ArtifactLevel`（不要引入 `Stratum` 以避免单复数与 lint/命名漂移）
 
 #### 简单套壳类型审阅 (2025-12-28)
 > Wrapper type 的审计判据与常见陷阱。
@@ -241,7 +248,7 @@
 **架构建议**：
 | 层 | 文件 | 职责 |
 |:---|:-----|:-----|
-| **概念 SSOT** | `terminology.md` | 仅定义概念语义，不涉及写法 |
+| **概念 SSOT** | `artifact-tiers.md` | 仅定义概念语义，不涉及写法 |
 | **写法条款** | `spec-conventions.md` | 承载写法规范，带 `[S-TERM-*]` 条款编号 |
 | **机器约束** | `terminology-registry.yaml` | 唯一机器可读约束输入，lint 消费 |
 
@@ -337,6 +344,19 @@
 2. 补自审检查清单
 3. 最小化统一条款 ID 格式与唯一性边界
 4. 定义 specRef 最小格式（含 fallback）
+
+#### Beacon 叙事型文档审计要点 (2026-01-01)
+> Artifact-Adventures 等叙事型 Beacon 的规范语气与 SSOT 归属审计。
+
+**叙事型 Beacon 规范语气冲突**：
+- 叙事型 Beacon 若包含"必须/禁止/约束"等规范语气，容易与 SSOT 原则冲突
+- 建议引入 `Normative Scope` 小节并把所有规范语句收束到文末 `Normative Annex`（单一入口）
+- 正文全部降级为 informative
+
+**Stage Token SSOT 归属**：
+- Stage Token 这种机器可读标记要明确 SSOT 归属（优先 `spec-conventions.md`/机器注册表）
+- Beacon 只引用或作为临时定义并声明迁移计划
+- 避免格式漂移导致 grep/lint 失效
 
 ### 参与历史索引 (Advisor)
 - **StateJournal (RBF/Durability)**: 格式不变式、恢复/截断边界、两阶段提交。
