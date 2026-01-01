@@ -240,7 +240,7 @@ DocOps - 文档与索引管理专家，负责维护团队的集体记忆和认�
 
 ### 双向链接规范的例外情况（2025-12-30）
 
-执行 Wish 系统文档一致性审计时发现：[WS-LK-002] 条款要求被引用产物必须有 ParentWish 字段，但这仅适用于**专属产物**。
+执行 Wish 系统文档一致性核查时发现：[WS-LK-002] 条款要求被引用产物必须有 ParentWish 字段，但这仅适用于**专属产物**。
 
 | 产物类型 | 示例 | ParentWish 要求 |
 |:---------|:-----|:----------------|
@@ -381,11 +381,11 @@ DocOps - 文档与索引管理专家，负责维护团队的集体记忆和认�
 
 **状态**: ✅ 完成
 
-### 2026-01-01 - Recipe 目录审计与元讨论
+### 2026-01-01 - Recipe 目录核查与元讨论
 
-**任务**: 完成 `agent-team/recipe/` 目录下 12 个 Recipe 文件全面审计，参与 Recipe 元讨论畅谈会
+**任务**: 完成 `agent-team/recipe/` 目录下 12 个 Recipe 文件全面核查，参与 Recipe 元讨论畅谈会
 
-**审计核心发现**:
+**核查核心发现**:
 
 | 发现 | 说明 |
 |:-----|:-----|
@@ -394,7 +394,7 @@ DocOps - 文档与索引管理专家，负责维护团队的集体记忆和认�
 | 记忆体系 | accumulation → maintenance → orchestration → batch-guide 形成闭环 |
 
 **最佳实践典范**:
-- `spec-driven-code-review.md`：条款体系完整、可审计产物清晰
+- `spec-driven-code-review.md`：条款体系完整、可验证产物清晰
 - `strategic-tactical-dual-session.md`：有量化验证数据（8x 效率提升）
 - `naming-skill-guide.md`：提供多种方法论的适用边界框架
 
@@ -457,9 +457,9 @@ DocOps - 文档与索引管理专家，负责维护团队的集体记忆和认�
 
 **状态**: ✅ 完成
 
-### 2025-12-30 - Wish 系统首次文档一致性审计
+### 2025-12-30 - Wish 系统首次文档一致性核查
 
-**任务**: 审计 Wish 系统文档结构与双向链接规范落地情况
+**任务**: 核查 Wish 系统文档结构与双向链接规范落地情况
 
 **核心发现**:
 1. Wish 系统结构完整，37 条 L3 条款覆盖全面
@@ -517,7 +517,7 @@ DocOps - 文档与索引管理专家，负责维护团队的集体记忆和认�
 **状态**: ✅ 完成
 
 ### 2025-12-28 - FrameTag Wrapper Type 移除全文档同步
-- **任务**: 响应 wrapper type 审计决议，同步所有 RBF 相关文档
+- **任务**: 响应 wrapper type 核查决议，同步所有 RBF 相关文档
 - **关联决议**: `meeting/2025-12-28-wrapper-type-audit.md`
 - **变更文件**:
   | 文件 | 版本变更 | 主要修改 |
@@ -525,7 +525,7 @@ DocOps - 文档与索引管理专家，负责维护团队的集体记忆和认�
   | `rbf-interface.md` | v0.16 → v0.17 | 移除 `[F-FRAMETAG-DEFINITION]`，§2.1 改为概念描述，接口参数 `FrameTag` → `uint` |
   | `mvp-design-v2.md` | v3.8 → v3.9 | 术语表 FrameTag 定义更新，新增 Packing/Unpacking 逻辑小节 |
   | `rbf-format.md` | v0.15 → v0.16 | 修复 `[F-FRAMETAG-WIRE-ENCODING]` 过时引用 |
-  | `rbf-test-vectors.md` | v0.10 → v0.11 | 审计确认无需修改，更新关联规范版本 |
+  | `rbf-test-vectors.md` | v0.10 → v0.11 | 核查确认无需修改，更新关联规范版本 |
   | handoff 审阅报告 | - | 新增 TODO #9/#10，更新条款合规表 |
 - **设计洞见**: wrapper type 的价值在于编译期类型安全，但当类型只是 uint 别名且无额外验证逻辑时，直接用原始类型更简洁。接口层用 uint，应用层可自由选择 enum 语义封装。
 - **状态**: ✅ 完成

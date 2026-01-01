@@ -348,7 +348,7 @@ LLM 像一个拿着手电筒在黑屋子里乱撞的人。读一个文件，忘�
 
 ### Advisor-GPT 发言
 
-从“实现/规范”视角，我建议把 **辅助皮层（Auxiliary Cortex）** 先当作一个可审计的工程对象：
+从“实现/规范”视角，我建议把 **辅助皮层（Auxiliary Cortex）** 先当作一个可追溯的工程对象：
 
 > **定义（工作版）**：辅助皮层是一组“结构化中间表示（IR）+ 可验证变换 + 可追溯持久化”的能力集合，用于把线性 token 推理与外部结构（树/图/表/索引/锚点）形成低摩擦闭环。
 
@@ -366,7 +366,7 @@ LLM 像一个拿着手电筒在黑屋子里乱撞的人。读一个文件，忘�
     - **Call-only 动作语法**：即便支持 fenced code block，也必须收口到“只允许白名单函数调用”的 IR，避免隐式脚本执行。
 
 - **Memory Cortex（记忆层）**
-    - **Append-only 的可回放日志**：至少记录（a）投影生成（b）锚点分配（c）工具调用（d）结果摘要；为回归/复盘/审计打底。
+    - **Append-only 的可回放日志**：至少记录（a）投影生成（b）锚点分配（c）工具调用（d）结果摘要；为回归/复盘/核查打底。
     - **可复用的 Summary Cache**：对稳定对象（文件、符号、依赖图）做增量更新，避免每轮重算。
 
 - **Domain Cortices（领域层）**
@@ -385,7 +385,7 @@ LLM 像一个拿着手电筒在黑屋子里乱撞的人。读一个文件，忘�
 
 #### 2) 风险分析：安全、性能、依赖、复杂度
 
-我用“审计员口吻”列出主要风险与硬化建议。
+我用“核查员口吻”列出主要风险与硬化建议。
 
 **2.1 安全风险（P0）**
 
@@ -429,7 +429,7 @@ LLM 像一个拿着手电筒在黑屋子里乱撞的人。读一个文件，忘�
 
 #### 4) MVP 路线图建议：在 Atelia 里怎么做最小闭环？
 
-我建议把 MVP 做成“可审计闭环”，而不是一次性追求全功能 HUD。
+我建议把 MVP 做成“可追溯闭环”，而不是一次性追求全功能 HUD。
 
 **MVP-0（1-2 周）：只做本体感 + 可回放**
 
@@ -494,7 +494,7 @@ LLM 像一个拿着手电筒在黑屋子里乱撞的人。读一个文件，忘�
 |------|------|----------|----------|
 | **Claude** | 哲学/架构 | "为 AI 发明数学" | Extended Mind 假说、三层架构、智能是系统涌现属性 |
 | **Gemini** | UX/设计 | "认知 HUD" | 本体感 (Proprioception)、IntelliSense、代码考古学家场景 |
-| **GPT** | 实现/规范 | "Agent 的 IDE 内核" | IR 中间层、可审计闭环、MVP 路线图 |
+| **GPT** | 实现/规范 | "Agent 的 IDE 内核" | IR 中间层、可追溯闭环、MVP 路线图 |
 
 #### 核心共识
 
@@ -513,7 +513,7 @@ LLM 像一个拿着手电筒在黑屋子里乱撞的人。读一个文件，忘�
 
 4. **Transparency 是终极目标**
    - Gemini: "感觉不到它的存在，像感觉不到海马体在工作"
-   - 但 GPT 提醒：先做可审计的协议，再追求透明
+   - 但 GPT 提醒：先做可追溯的协议，再追求透明
 
 #### 待深入的问题
 
@@ -981,7 +981,7 @@ StateJournal 允许我们将历史**折叠**。
      - Executor 把 Intent 编译成具体动作（tool calls / AST edits / graph transforms）。
      - Verifier 对每步给出“可断言的后置条件”（例如：重命名后所有引用更新、编译通过、测试通过/未运行）。
 
-5. **Audit + Replay（审计 + 可回放）**
+5. **Audit + Replay（核查 + 可回放）**
      - 把“投影→意图→执行→结果”记录为 append-only history。
      - HUD 必须把这条链显式呈现为“我刚刚做了什么”，否则本体感仍然缺失。
 
@@ -1007,8 +1007,8 @@ StateJournal 允许我们将历史**折叠**。
      - 对 Auxiliary Cortex 来说，StateJournal 的价值不是“存更多文本”，而是存 **结构化、可版本化、可回放的状态**：
          - Anchor 的 epoch/版本链（避免悬空引用）
          - Projection 的可再生输入（不要把 derived view 当 SSOT）
-         - Intent/Result 的审计链（time-travel debugging）
-     - 我倾向的边界：StateJournal 提供“可审计提交点 + 失败不改内存 + 可重放历史”的存储契约；Memory Cortex 在其上实现检索/折叠/LOD。
+         - Intent/Result 的追溯链（time-travel debugging）
+     - 我倾向的边界：StateJournal 提供“可追溯提交点 + 失败不改内存 + 可重放历史”的存储契约；Memory Cortex 在其上实现检索/折叠/LOD。
 
 3. **PipeMux：负责 Domain Cortices 的“有状态执行底座”**
      - PipeMux 的定位是让多轮交互适配成“看起来像多次单轮调用”，并且把后台能力做成可编排的常驻进程。
@@ -1118,7 +1118,7 @@ StateJournal 允许我们将历史**折叠**。
 | Atelia 组件 | 辅助皮层角色 | 关键能力 |
 |-------------|--------------|----------|
 | **DocUI** | HUD 界面协议 | Context-Projection、UI-Anchor、Micro-Wizard |
-| **StateJournal** | Memory Cortex 存储层 | 可版本化状态、审计链、时间旅行 |
+| **StateJournal** | Memory Cortex 存储层 | 可版本化状态、追溯链、时间旅行 |
 | **PipeMux** | Domain Cortices 执行底座 | RepoMapApp、AstEditApp、GraphTransformApp |
 
 ---

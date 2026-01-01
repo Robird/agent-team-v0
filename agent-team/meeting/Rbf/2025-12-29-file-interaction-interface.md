@@ -3,7 +3,7 @@
 > **日期**：2025-12-29
 > **标签**：#design
 > **主持人**：刘德智 (StandardsChair)
-> **参与者**：Advisor-Claude, Advisor-DeepSeek, Auditor
+> **参与者**：Advisor-Claude, Advisor-DeepSeek, Advisor-GPT
 > **状态**：进行中
 
 ---
@@ -63,14 +63,14 @@
 
 | 决策点 | 共识 | 支持者 |
 |:-------|:-----|:-------|
-| **入口点形状** | `IRbfFile` 单一入口点 | Claude, DeepSeek, Auditor |
+| **入口点形状** | `IRbfFile` 单一入口点 | Claude, DeepSeek, GPT |
 | **创建方式** | `CreateNew` vs `OpenExisting` 显式分离 | Claude, DeepSeek, 监护人 |
-| **持久化控制** | `DurableFlush()` 在文件级 | Claude, DeepSeek, Auditor |
-| **Dispose 幂等性** | 必须幂等 | Auditor |
+| **持久化控制** | `DurableFlush()` 在文件级 | Claude, DeepSeek, GPT |
+| **Dispose 幂等性** | 必须幂等 | GPT |
 | **D2: Create 对已有文件** | **FailIfExists** | **监护人裁决** |
 | **D3: Scanner 实例数** | **单例**（至少 MVP） | **监护人裁决** |
 
-### 关键纠正（Auditor）
+### 关键纠正（GPT 核查）
 
 | 原判断 | 纠正 |
 |:-------|:-----|
@@ -98,7 +98,7 @@ public static class RbfFile {
 }
 ```
 
-### 待规范化的关键契约（Auditor 识别）
+### 待规范化的关键契约（GPT 识别）
 
 | # | 契约 | 可判定性要求 |
 |:--|:-----|:-------------|
@@ -135,12 +135,12 @@ public static class RbfFile {
 |:-------|:-----|:-------|
 | **分层合理性** | ✅ 符合依赖倒置，测试性边界清晰 | Claude, DeepSeek |
 | **Façade 模式** | ✅ 常规 vs 高级分离正确，需接口隔离防 God Object | Claude, DeepSeek |
-| **FramePtr Bit 分配** | ✅ 44:20（64TB / 4MB），满足需求 | Claude, Auditor |
+| **FramePtr Bit 分配** | ✅ 44:20（64TB / 4MB），满足需求 | Claude, GPT |
 | **底层 API** | ✅ RandomAccess（无状态，配合 FramePtr） | Claude, DeepSeek |
 | **缓存策略** | ✅ 暂不实现（过早优化） | Claude, DeepSeek |
 | **可测试性** | ✅ A层内存测试，B层集成测试 | DeepSeek |
 
-### 关键裁决点（Auditor 识别）
+### 关键裁决点（GPT 识别）
 
 | # | 问题 | 影响 |
 |:--|:-----|:-----|
@@ -169,7 +169,7 @@ public static class RbfFile {
 
 ### Advisor-Claude 发言（基于需求重新设计）
 
-> **基于**：StateJournal 真实需求调查（§ 需求分析结论、Auditor 验证）
+> **基于**：StateJournal 真实需求调查（§ 需求分析结论、GPT 验证）
 > **重点**：接口形状设计与实现衔接
 
 #### 1. 接口形状设计
@@ -698,9 +698,9 @@ RbfReverseSequence ScanReverse();
 
 ---
 
-### Auditor 发言
+### Advisor-GPT 发言
 
-### Auditor 发言（基于 MVP 重新审计）
+### Advisor-GPT 发言（基于 MVP 重新核查）
 
 #### 1. 必须规范化的契约
 
@@ -803,7 +803,7 @@ RbfReverseSequence ScanReverse();
 
 ## 监护人--刘世超 第一轮发言
 
-我们要有的放矢，我建议让Claude和Auditor分别独立读取和分析一次`atelia/docs/StateJournal/mvp-design-v2.md.original`文件(正在拆分中，这是未改动的大单体版本)，来分析上层的StateJournal对文件访问接口的功能需求，这样有利于设计出对上层使用者来说最佳的文件访问接口。
+我们要有的放矢，我建议让Claude和GPT分别独立读取和分析一次`atelia/docs/StateJournal/mvp-design-v2.md.original`文件(正在拆分中，这是未改动的大单体版本)，来分析上层的StateJournal对文件访问接口的功能需求，这样有利于设计出对上层使用者来说最佳的文件访问接口。
 发言完毕，期待二位呈现的调查与分析结果。
 
 对于具体问题上：
@@ -1162,7 +1162,7 @@ class RbfFile {
 
 <EditAnchor EOF>
 
-### Auditor 需求验证与规范审计
+### Advisor-GPT 需求验证与规范核查
 
 #### 1. Claude 需求理解的验证结果
 
@@ -1205,7 +1205,7 @@ class RbfFile {
 
 ---
 
-#### 3. 接口调整的规范审计
+#### 3. 接口调整的规范核查
 
 本节的“兼容性”以现行 RBF SSOT 为准： [atelia/docs/Rbf/rbf-interface.md](atelia/docs/Rbf/rbf-interface.md)。
 
@@ -1782,7 +1782,7 @@ public void RbfFrameCodec_Decode_ValidFrame_ReturnsPayload() {
 
 ---
 
-### Auditor 发言（FramePtr 规范审计）
+### Advisor-GPT 发言（FramePtr 规范核查）
 
 #### 1. 与现有规范的冲突检查
 
@@ -1797,7 +1797,7 @@ public void RbfFrameCodec_Decode_ValidFrame_ReturnsPayload() {
 - 若希望最小化破坏，另一个可行路线是：保留 `Address64`（offset-only）不变，新增 `FramePtr`，并在 `IRbfScanner` 上新增重载 `TryReadAt(FramePtr)` 作为 fast-path；但这与“升级”一词的语义不一致，需要在规范里明确“Address64 退为兼容类型/别名”。
 
 2) **条款 ID 漂移风险**
-- 任务描述提到的 `[A-RBF-ADDRESS64-OFFSET]` 在当前 SSOT 中不存在（现为 `[F-ADDRESS64-*]` 系列）。若该 ID 来自旧草案，必须在 Clause Registry 或文档内做“旧 ID → 新 ID”的显式映射，否则审计与实现无法对齐。
+- 任务描述提到的 `[A-RBF-ADDRESS64-OFFSET]` 在当前 SSOT 中不存在（现为 `[F-ADDRESS64-*]` 系列）。若该 ID 来自旧草案，必须在 Clause Registry 或文档内做“旧 ID → 新 ID”的显式映射，否则核查与实现无法对齐。
 
 3) **FramePtr.length 的“长度到底指什么”必须钉死**
 - 现行 `Address64` 只定义 offset，因此读路径会先读 HeadLen 再知道 frame 总长度。
@@ -1855,7 +1855,7 @@ FramePtr 引入的“新契约面”至少包括：
     - `FramePtr.FromPacked` MUST fail-fast（建议 `ArgumentOutOfRangeException` 或 `FormatException`）；
     - `TryReadAt` 收到“非法 ptr”（若 API 允许）时的行为也必须固定（建议返回 false，或抛参数异常，二选一）。
 
-**是否需要预留扩展位（扩展性审计）**：
+**是否需要预留扩展位（扩展性核查）**：
 - 44:20 用满 64 bit，本身没有“显式版本位”。
 - 若要支持向后兼容与未来扩展，建议考虑预留 1 个“编码版本/种类 bit”（例如 MSB）：
     - `0` = legacy Address64-only packed（length 隐含未知，读时需要二次读取 header），
@@ -1930,7 +1930,7 @@ FramePtr 引入的“新契约面”至少包括：
 (实际发言内容较长，已通过编辑追加到会议文件)
 
 
-### Auditor 发言（FramePtr 规范审计）
+### Advisor-GPT 发言（FramePtr 规范核查）
 
 #### 1. 与现有规范的冲突检查
 

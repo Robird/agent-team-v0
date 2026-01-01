@@ -2,7 +2,7 @@
 
 **Task**: AA-001
 **Date**: 2025-11-19
-**Auditor**: GitHub Copilot
+**核查者**: GitHub Copilot
 
 ## Executive Summary
 The C# port of the PieceTree text buffer (`PieceTree.TextBuffer`) captures the core Red-Black Tree structure and basic editing operations but lacks critical production-readiness features present in the TypeScript original. The most significant gaps are in **CRLF normalization/handling**, **search caching**, and **specific performance optimizations**.

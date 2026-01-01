@@ -428,7 +428,7 @@
 - 新方案 O5：底层 O1 + 应用层 SafeXxx() 扩展
 - **规则优先级最终排序**：R2 > R3 > R1
 
-**Craftsman 的判据 D 是关键审计工具**：
+**Craftsman 的判据 D 是关键检查工具**：
 > 调用方仅通过返回值即可判定"这次返回是否来自 Detached 分支"
 
 **详情**：[meeting/2025-12-26-detached-semantics.md](../../meeting/2025-12-26-detached-semantics.md)
@@ -557,7 +557,7 @@
 **三位顾问洞见**：
 - **Seeker**：从类型系统角度论证 `IEnumerable<ref struct>` 不可行，推荐 Span<T> 生态的成熟模式
 - **Curator**："流媒体 vs 现场直播"隐喻精准描述了 ref struct 枚举器的 DX 特征；建议命名 `RbfReverseSequence` 避免虚假示能
-- **Craftsman**：严谨的边界情况审计，产出 6 条可编入规范的条款草案
+- **Craftsman**：严谨的边界情况核查，产出 6 条可编入规范的条款草案
 
 **关键洞见**：当类型系统约束使接口不可行时，返回具体类型是正确选择——"接口优先"原则的合法例外。
 
@@ -651,7 +651,7 @@
 |:-----|:-----|:---------|
 | Seeker | 概念架构 | 定义本质和核心特征 |
 | Curator | 用户体验 | 设计交互和认知界面 |
-| Craftsman | 质量审计 | 建立可审计标准和门禁 |
+| Craftsman | 质量检查 | 建立可检验标准和门禁 |
 | Implementer | 实施路径 | 制定落地计划和风险评估 |
 | DocOps | 文档管理 | 设计索引和变更管理体系 |
 

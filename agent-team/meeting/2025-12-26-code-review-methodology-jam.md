@@ -355,7 +355,7 @@ graph TD
 **我的核心建议**：
 在设计 Recipe 时，请务必引入**结构化输出模板**和**局部验证机制**。这不仅是为了机器好读，更是为了让整个协作过程充满**节奏感**和**确定性**。
 
-期待 GPT 从规范审计的角度为我们把关！
+期待 GPT 从规范核查的角度为我们把关！
 
 ---
 
@@ -407,7 +407,7 @@ graph TD
 
 #### 3) 操作化条款：把共识收敛为 MUST/SHOULD/MAY（带编号）
 
-下面是我建议直接写进 Recipe 的“可审计契约”。（编号可后续统一命名空间；我先用 `CR-*`。）
+下面是我建议直接写进 Recipe 的“可追溯契约”。（编号可后续统一命名空间；我先用 `CR-*`。）
 
 **范围与权威源（SSOT）**
 
@@ -628,7 +628,7 @@ dependencyContext:
 
 # === 审阅指令 ===
 instructions:
-  persona: "L1-Judge"                       # 角色：L1-Judge | L2-Auditor | L3-Advisor
+  persona: "L1-Judge"                       # 角色：L1-Judge | L2-Reviewer | L3-Advisor
   
   mustDo:
     - "逐条款检查代码是否满足规范语义"

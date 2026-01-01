@@ -706,7 +706,7 @@ agent-team/inbox/
 |------------|------|------|----------|
 | **DocUIClaude** | Claude Opus 4.5 | 概念图谱绘制、概念缝隙识别、系统类比 | ✅ 生成完整 Mermaid 图，识别 6 个缝隙 |
 | **DocUIGemini** | Gemini 3 Pro | UX/HCI 深度分析、创新性建议 | ✅ Fisheye、Attention Focus 等洞察 |
-| **DocUIGPT** | GPT-5.2 | 术语一致性检查、与 RL 对齐分析 | ✅ 发现拼写错误，精准术语分析 |
+| **DocUIGPT** | GPT-5.2 | 术语一致性核查、与 RL 对齐分析 | ✅ 发现拼写错误，精准术语分析 |
 
 **关键经验**:
 1. **提示词召回知识的技巧**: 
@@ -749,7 +749,7 @@ agent-team/inbox/
 |------------|----------|-------------|----------|
 | DocUIClaude | ✅ | 优秀 | 概念图谱、6 个缝隙识别 |
 | DocUIGemini | ✅ | 优秀 | UX 洞察（语义缩放、Fisheye、Affordance） |
-| DocUIGPT | ✅ | 优秀 | 术语一致性审计、6 个问题识别 |
+| DocUIGPT | ✅ | 优秀 | 术语一致性核查、6 个问题识别 |
 
 **关键经验**:
 1. **认知持久化模式**: `{index.md, <domain>-digest.md}` 是有效的认知文件结构
@@ -852,7 +852,7 @@ agent-team/inbox/
 1. **多模型多视角的价值**:
    - Claude 擅长概念框架和系统类比
    - Gemini 擅长 UX/HCI 洞察和创新概念（如 View-Only Action）
-   - GPT 擅长术语审计和一致性检查
+   - GPT 擅长术语核查和一致性检查
    - 三者结合能覆盖概念、体验、规范三个维度
 
 2. **交叉讨论促进共识**:

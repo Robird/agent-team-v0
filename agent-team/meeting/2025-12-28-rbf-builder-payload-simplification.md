@@ -261,7 +261,7 @@ Claude 提到了"心智模型"，我想从**开发者体验 (DX)** 的微观交�
 
 ### Advisor-GPT 发言
 
-我从“规范可审计性 / 条款自洽性”角度看，这个简化本质上是一次**契约收紧**（strengthening）：把“可预留写入器”从可选能力提升为 `RbfFrameBuilder` 的**必备能力**。这在“自用、无兼容包袱”的前提下是合理的，但需要把规范与实现里当前对 `ReservablePayload != null` 的含义，干净地迁移为“实现内部能力”而不是“公开属性分支”。
+我从“规范可检验性 / 条款自洽性”角度看，这个简化本质上是一次**契约收紧**（strengthening）：把“可预留写入器”从可选能力提升为 `RbfFrameBuilder` 的**必备能力**。这在“自用、无兼容包袱”的前提下是合理的，但需要把规范与实现里当前对 `ReservablePayload != null` 的含义，干净地迁移为“实现内部能力”而不是“公开属性分支”。
 
 #### 1) 现有条款影响分析（需要如何修订）
 
@@ -282,7 +282,7 @@ Claude 提到了"心智模型"，我想从**开发者体验 (DX)** 的微观交�
 
 1. **能力误推断漏洞（类型≠回滚能力）**
    - 关键点：`IReservableBufferWriter` 的契约描述的是“预留 + 提交”，并未规范化“未提交数据可回滚/可丢弃”的对外能力。
-   - 简化后若规范仍用“Reservation 回滚”措辞但没有定义“如何判定/如何实现/失败如何处置”，会出现可审计性缺口：实现者可能提供能 Reserve 但不能 clean abort 的 writer，从而只能走 Tombstone；但调用方读到 `IReservableBufferWriter Payload` 可能以为“Zero I/O 总是成立”。
+   - 简化后若规范仍用“Reservation 回滚”措辞但没有定义“如何判定/如何实现/失败如何处置”，会出现可检验性缺口：实现者可能提供能 Reserve 但不能 clean abort 的 writer，从而只能走 Tombstone；但调用方读到 `IReservableBufferWriter Payload` 可能以为“Zero I/O 总是成立”。
    - 建议：在 `[S-RBF-BUILDER-AUTO-ABORT]` 明确写成“Zero I/O 是实现优化，不是由 `Payload` 类型本身承诺”。
 
 2. **未提交 reservation 的处置（Dispose 是否允许抛异常）**
@@ -366,7 +366,7 @@ public ref struct RbfFrameBuilder {
 |:-----|:-----|:---------|
 | **Advisor-Claude** | 概念框架 | `IReservableBufferWriter : IBufferWriter<byte>` 是严格超集，类型系统层面**完全兼容**；自用项目应采用"最大能力"而非"最小接口"原则 |
 | **Advisor-Gemini** | 开发者体验 | 消除"微决策"认知负担；IntelliSense 即 UI；**渐进式披露**优于**模式切换** |
-| **Advisor-GPT** | 规范审计 | 简化是"契约收紧"，需修订 `[A-RBF-FRAME-BUILDER]` 和 `[S-RBF-BUILDER-AUTO-ABORT]`；识别 3 个边界漏洞需补丁 |
+| **Advisor-GPT** | 规范核查 | 简化是"契约收紧"，需修订 `[A-RBF-FRAME-BUILDER]` 和 `[S-RBF-BUILDER-AUTO-ABORT]`；识别 3 个边界漏洞需补丁 |
 
 ### 简化的收益（确认）
 

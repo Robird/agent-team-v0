@@ -11,7 +11,7 @@
 
 ## 背景（2-3句）
 
-DurableHeap MVP v2 设计文档 (`DurableHeap/docs/mvp-design-v2.md`) 是一份约 1000 行的技术规范，尚无实现和数据。三位 Specialist 从概念框架、UX/DX、规范审计三个视角进行了三轮畅谈式审阅，目标是确保文档自洽、术语一致、低冗余。
+DurableHeap MVP v2 设计文档 (`DurableHeap/docs/mvp-design-v2.md`) 是一份约 1000 行的技术规范，尚无实现和数据。三位 Specialist 从概念框架、UX/DX、规范核查三个视角进行了三轮畅谈式审阅，目标是确保文档自洽、术语一致、低冗余。
 
 ---
 

@@ -1,14 +1,14 @@
 # DocMaintainer 流程改进建议 (2025-12-05)
 
 **目标读者:** Team Leader, Planner  
-**背景:** 2025-12-05 文档一致性审计发现的流程缺口  
+**背景:** 2025-12-05 文档一致性核查发现的流程缺口  
 **更新:** 已收到 Info-Indexer 回信，包含方案推荐
 
 ---
 
 ## 🎯 执行摘要
 
-本次审计暴露了 3 个流程问题：
+本次核查暴露了 3 个流程问题：
 1. **Sprint Log 创建滞后** - Sprint 05 启动 3 天后才创建文档
 2. **Changefeed 创建缺失** - 依赖手动操作，容易遗漏
 3. **文档同步延迟** - Migration Log 与实际工作有 3 天时间差
@@ -248,7 +248,7 @@ Porter    Info-Indexer  DocMaintainer
 
 ### 当前问题
 - DocMaintainer 的 `Current Focus` 停留在 2025-12-02
-- 本次审计后才更新到 2025-12-05
+- 本次核查后才更新到 2025-12-05
 
 ### 建议方案
 **每次 Sprint Batch 完成后，所有相关 Team Members 同步认知文件**

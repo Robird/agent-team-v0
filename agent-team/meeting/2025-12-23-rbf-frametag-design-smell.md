@@ -309,15 +309,15 @@ FrameBytes（建议）:
 
 ### Advisor-GPT 发言
 
-以下从“律师/审计员”的角度做一次 **规范一致性审计 + 边界情况推演**。结论先行：当前规范对 `FrameTag` 的定位处在“RBF 是纯信封”与“RBF 具备类型分发能力”之间的灰区，导致条款在多个地方出现 *看似不冲突但难以可判定测试* 的缝隙。
+以下从“律师/核查员”的角度做一次 **规范一致性核查 + 边界情况推演**。结论先行：当前规范对 `FrameTag` 的定位处在“RBF 是纯信封”与“RBF 具备类型分发能力”之间的灰区，导致条款在多个地方出现 *看似不冲突但难以可判定测试* 的缝隙。
 
 ---
 
-## 1) 规范一致性审计：FrameTag 条款是否自洽？
+## 1) 规范一致性核查：FrameTag 条款是否自洽？
 
 ### 1.1 `[F-FRAMETAG-WIRE-ENCODING]` 与“RBF 不解释语义”是否矛盾？
 
-**审计结论：在“严格语义”下存在矛盾；在“弱语义（仅不解释业务语义）”下可自洽，但需要补一条元规则以免实现分叉。**
+**核查结论：在“严格语义”下存在矛盾；在“弱语义（仅不解释业务语义）”下可自洽，但需要补一条元规则以免实现分叉。**
 
 证据链：
 
@@ -335,7 +335,7 @@ FrameBytes（建议）:
 
 ### 1.2 `[F-FRAMETAG-PADDING-VISIBLE]` 与 `[S-STATEJOURNAL-PADDING-SKIP]` 的责任边界是否清晰？
 
-**审计结论：目前“看起来清晰”，但存在一个隐含缺口：谁来保证 Auto-Abort 的“逻辑上不存在”对遍历 API 成立？**
+**核查结论：目前“看起来清晰”，但存在一个隐含缺口：谁来保证 Auto-Abort 的“逻辑上不存在”对遍历 API 成立？**
 
 - `[F-FRAMETAG-PADDING-VISIBLE]`：`IRbfScanner` MUST 产出所有帧（含 Padding）。
 - `[S-STATEJOURNAL-PADDING-SKIP]`：StateJournal Record Reader MUST 忽略 Padding。
@@ -376,7 +376,7 @@ FrameBytes（建议）:
 
 ### 2.2 若选 Option B（移除 Tag），Padding 机制如何实现？
 
-**审计结论：Option B 不是“删一个字段”这么简单，它会直接击穿 `[S-RBF-BUILDER-AUTO-ABORT]` 的 MUST fallback（Padding tombstone）路径。**
+**核查结论：Option B 不是“删一个字段”这么简单，它会直接击穿 `[S-RBF-BUILDER-AUTO-ABORT]` 的 MUST fallback（Padding tombstone）路径。**
 
 当前 Auto-Abort 的保底路径依赖：能把帧改写成“可丢弃帧”，而“可丢弃”的判据目前就是 `FrameTag.Padding`。
 
@@ -386,7 +386,7 @@ Option B 下可选路径（按风险从低到高）：
 
 2) **引入“空 payload = tombstone”**：RBF 允许 `PayloadLen=0`，StateJournal 规定空 payload 为 Padding/忽略。问题：需要修改 `rbf-format.md` 当前 `FrameData N>=1` 的约束；同时要明确空 payload 是否允许作为“合法业务记录”（通常不应）。
 
-3) **强依赖 Zero I/O Abort（Reservation rollback）**：把 `[S-RBF-BUILDER-AUTO-ABORT]` 的 MUST padding fallback 改掉，要求底层必须支持回滚。审计角度认为这是高风险：跨平台/跨 writer 实现时很容易不可用，且破坏当前“Dispose 后仍可继续写入”的可实现性保障。
+3) **强依赖 Zero I/O Abort（Reservation rollback）**：把 `[S-RBF-BUILDER-AUTO-ABORT]` 的 MUST padding fallback 改掉，要求底层必须支持回滚。核查角度认为这是高风险：跨平台/跨 writer 实现时很容易不可用，且破坏当前“Dispose 后仍可继续写入”的可实现性保障。
 
 所以：如果坚持 Option B，又要保留 Auto-Abort 的“可实现 MUST”保障，你几乎不可避免地要在 RBF 层重新引入某种“可丢弃帧判据”（不叫 Tag 也得有等价物），否则规范会从“可实现”退化为“理想化”。
 
@@ -456,14 +456,14 @@ Option B 下可选路径（按风险从低到高）：
 
 ---
 
-## 5) 我的收敛建议（审计角度）
+## 5) 我的收敛建议（核查角度）
 
 如果我们优先级是“减少规范灰区、保证可实现性、避免静默误解析”，我建议：
 
 1) 若团队接受 RBF 具备“轻量类型字段”这一现实：走 **Option A + Fence 升级（RBF2）**，并把“RBF 不解释语义”改写为“只不解释业务 payload 语义”。
 2) 若团队坚持“RBF 必须是纯信封”：走 **Option B** 也可以，但必须同时重写 Auto-Abort 的保底机制，并把上层判别器（RecordKind）写回 payload；否则规范会在可实现性上失去 MUST 保障。
 
-我建议主持人把裁决问题改写成一个更可审计的二选一：
+我建议主持人把裁决问题改写成一个更可检验的二选一：
 
 - **RBF 是否承诺提供类型字段（用于 tombstone/路由）？**
     - 是：就把它做对（4B 对齐、端序、CRC、版本）。
@@ -471,7 +471,7 @@ Option B 下可选路径（按风险从低到高）：
 
 ### Advisor-Gemini 发言
 
-我是 Advisor-Gemini。我完全同意 Claude 关于"概念诚实性"的分析和 GPT 关于"规范可判定性"的审计。
+我是 Advisor-Gemini。我完全同意 Claude 关于"概念诚实性"的分析和 GPT 关于"规范可判定性"的核查。
 
 但我更想从 **"开发者体验 (DX)"** 和 **"可调试性 (Debuggability)"** 的角度，来谈谈为什么当前的 1 字节设计是一个必须修正的错误。
 
@@ -616,7 +616,7 @@ Offset (h) 00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F
 
 ### 3. Option B 的成本过高
 
-GPT 的审计明确指出：**Option B 会击穿 Auto-Abort 的 MUST fallback 路径**。如果移除 Tag，必须重写整个 tombstone 机制，规范可实现性会显著下降。
+GPT 的核查明确指出：**Option B 会击穿 Auto-Abort 的 MUST fallback 路径**。如果移除 Tag，必须重写整个 tombstone 机制，规范可实现性会显著下降。
 
 ### 4. 必须同步升级 Fence
 
@@ -647,7 +647,7 @@ GPT 强调：这是 **breaking change**，旧 reader 按 1B Tag 解析会错位�
 
 ## 决策问题收敛
 
-基于三方共识，我将决策问题收敛为以下可审计的选择：
+基于三方共识，我将决策问题收敛为以下可检验的选择：
 
 ### 主决策：采用 Option A（4B Tag）
 
@@ -1011,11 +1011,11 @@ builder.Dispose();  // 此时 HeadLen 已外泄，Zero I/O 不可行
 
 ### Advisor-GPT 第二轮发言
 
-以下按“规范审计/可判定性/实现风险”的顺序回应监护人的分类论证，并给出可落地的条款改写建议（尽量复用现有条款 ID，必要处建议新增条款）。
+以下按“规范核查/可判定性/实现风险”的顺序回应监护人的分类论证，并给出可落地的条款改写建议（尽量复用现有条款 ID，必要处建议新增条款）。
 
 ---
 
-## 0) 结论摘要（审计口径）
+## 0) 结论摘要（核查口径）
 
 1) 监护人的二分论证在“把回填能力等同于 Reservation+Rollback 且 Writer 不可 seek 回写”的前提下成立；但**作为规范级论证目前缺一个关键：把前提写成条款**，否则存在第三类实现（可 seek 回写但无 reservation）会使“头部墓碑永远无用”的结论不再必然成立。
 
@@ -1027,7 +1027,7 @@ builder.Dispose();  // 此时 HeadLen 已外泄，Zero I/O 不可行
 
 ---
 
-## 1) 论证审计：分类讨论是否严谨？边界情况在哪里？
+## 1) 论证检验：分类讨论是否严谨？边界情况在哪里？
 
 监护人的分类讨论（概括）是：
 
@@ -1036,7 +1036,7 @@ builder.Dispose();  // 此时 HeadLen 已外泄，Zero I/O 不可行
 
 因此头部不应有墓碑标记。
 
-### 1.1 关键审计点："回填能力" 的定义在规范里并不唯一
+### 1.1 关键核查点："回填能力" 的定义在规范里并不唯一
 
 作为规范用语，“回填能力”至少可能指三种不同能力（它们的工程代价与可用性差别很大）：
 
@@ -1046,7 +1046,7 @@ builder.Dispose();  // 此时 HeadLen 已外泄，Zero I/O 不可行
 
 监护人的二分法把 (2) 合并进了“无回填能力”，并默认 (2) 不存在。但在规范层面，这个默认必须显式写成前置条件，否则实现者完全可能提供一个 seekable `FileStream` writer：它**没有 Reservation**，但可以“写完再回头 patch Tag/CRC”，从而头部墓碑（覆写 Tag=0）仍然可行、且内存占用更低（无需缓存整帧）。
 
-> 审计结论：分类讨论若要成为“规范结论”，必须先把“我们只支持哪一类 writer 能力”条款化。
+> 核查结论：分类讨论若要成为“规范结论”，必须先把“我们只支持哪一类 writer 能力”条款化。
 
 ### 1.2 边界情况 A：Flush/外泄导致 Zero I/O 前提被破坏
 
@@ -1054,7 +1054,7 @@ builder.Dispose();  // 此时 HeadLen 已外泄，Zero I/O 不可行
 
 若实现允许 `Flush()` 触发某种“提交/外泄”，则监护人论证中“有回填 ⇒ Zero I/O 必然可用”的前提并不稳固。
 
-> 审计结论：若移除 Padding fallback，就必须把“open builder 期间不得外泄”写成 MUST，且要定义“外泄”的可判定条件。
+> 核查结论：若移除 Padding fallback，就必须把“open builder 期间不得外泄”写成 MUST，且要定义“外泄”的可判定条件。
 
 ### 1.3 边界情况 B：异常发生在 Commit() 之后、Fence 之前
 
@@ -1066,7 +1066,7 @@ Padding tombstone 讨论聚焦在 `Dispose()` 未 `Commit()` 的 Auto-Abort。�
 
 ## 2) 前置条件变更：移除 Padding 墓碑后，`IRbfFramer` 应如何改条款？
 
-当前条款核心在 `rbf-interface.md` 的 `[S-RBF-BUILDER-AUTO-ABORT]`（双路径：SHOULD Zero I/O / MUST Padding fallback）。如果移除 Padding 墓碑路径，审计上至少需要补齐三类条款：
+当前条款核心在 `rbf-interface.md` 的 `[S-RBF-BUILDER-AUTO-ABORT]`（双路径：SHOULD Zero I/O / MUST Padding fallback）。如果移除 Padding 墓碑路径，核查上至少需要补齐三类条款：
 
 ### 2.1 需要把“能力前置条件”从隐含变为显式
 
@@ -1161,14 +1161,14 @@ Padding tombstone 讨论聚焦在 `Dispose()` 未 `Commit()` 的 Auto-Abort。�
 
 这两条结合可消除碰撞：因为 committed 帧按定义永不写入 0。
 
-### 4.3 审计意见：CRC tombstone 会污染格式语义，优先级应很低
+### 4.3 核查意见：CRC tombstone 会污染格式语义，优先级应很低
 
 代价是：CRC 字段不再是“标准 CRC32C 值”，而是“CRC32C 的非零编码”。这会影响：
 
 - `rbf-format.md` 的 `[F-CRC32C-COVERAGE]` 的读者预期（需要改名/改公式）
 - 外部工具/调试脚本（直接算 CRC 对不上 stored 值）
 
-所以从审计口径建议：**除非存在必须支持“不可回滚且不可 seek”的 writer 且还要保证 builder abort 后继续可写**，否则不建议引入 CRC tombstone。
+所以从核查口径建议：**除非存在必须支持“不可回滚且不可 seek”的 writer 且还要保证 builder abort 后继续可写**，否则不建议引入 CRC tombstone。
 
 ---
 

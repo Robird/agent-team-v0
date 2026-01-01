@@ -460,7 +460,7 @@ Implementer 的 `meta-cognition.md` 为空，是因为我们混淆了"认知内�
 
 ### Advisor-GPT 发言（第一波）
 
-我从**规范审计 / 可验证性 / 条款编号**角度回答这四个问题：核心结论是——现行提示词“要求更新”，但缺少**写入操作语义（append/overwrite/merge）**与**分流路由（routing）**，导致落盘形态自然退化为 append-only 日志。
+我从**规范核查 / 可验证性 / 条款编号**角度回答这四个问题：核心结论是——现行提示词“要求更新”，但缺少**写入操作语义（append/overwrite/merge）**与**分流路由（routing）**，导致落盘形态自然退化为 append-only 日志。
 
 ---
 
@@ -477,7 +477,7 @@ Implementer 的 `meta-cognition.md` 为空，是因为我们混淆了"认知内�
 - 缺失“SSOT 位置”：index.md 中同时存在身份、洞察、教训、以及“最后更新”等元信息，但没有规则规定哪些段落是**单一真相（SSOT）且必须覆盖**。结果出现典型症状：正文大量新增，但“最后更新”区并未稳定同步（元信息漂移）。
 - 缺失“过程内容的去向”：收尾协议没有规定“会议全文/过程日志不得复制进 index.md”，因此最省力策略是把过程也作为洞见一起落盘，造成阅读成本随时间线性增长。
 
-**由此形成的文件内容模式**（审计归纳）
+**由此形成的文件内容模式**（核查归纳）
 - index.md 倾向成为“综合日志 + 经验堆栈”的单文件容器（append-only 倾向强）。
 - key-notes-digest.md 相对更像主题性文档（聚类）——因为它天然按 Key-Note 分段，结构对“更新/合并”更友好。
 
@@ -485,7 +485,7 @@ Implementer 的 `meta-cognition.md` 为空，是因为我们混淆了"认知内�
 
 #### 2) 规范化建议：可操作的 OnSessionEnd 触发器规则（MUST/SHOULD/MAY）
 
-我建议把 OnSessionEnd 写入机制规范化为一个“可审计的提交流程（Commit Protocol）”，并给出稳定条款 ID（便于测试/索引/复核）。下面是可直接放进系统提示词的条款集。
+我建议把 OnSessionEnd 写入机制规范化为一个“可追溯的提交流程（Commit Protocol）”，并给出稳定条款 ID（便于测试/索引/复核）。下面是可直接放进系统提示词的条款集。
 
 **定义（用于条款可判定）**
 - **State（状态真值）**：对“当前是谁/当前在做什么/当前路径与入口是什么”的可覆盖事实集合。
@@ -499,7 +499,7 @@ Implementer 的 `meta-cognition.md` 为空，是因为我们混淆了"认知内�
 - [MM-TRIG-04]（MUST）若分类为 `State-Update`，必须执行覆盖写（overwrite），保证读者无需时间推导即可得到“当前真值”。
 - [MM-TRIG-05]（MUST）若分类为 `Knowledge-Delta`，必须在写入前执行“去重检查”：判断属于 `Discovery | Refinement | Correction`，并选择 append/merge/rewrite 三选一。
 - [MM-TRIG-06]（SHOULD）若分类为 `Mixed`，应拆分为“State 覆盖 + Knowledge 合并/追加 + Log 外置索引”三步，禁止把三者混写到同一段落。
-- [MM-TRIG-07]（SHOULD）每次写入应产生一条“维护日志（maintenance note）”：包含 `date / files touched / operation (append|merge|overwrite) / rationale`，用于后续审计与回滚。
+- [MM-TRIG-07]（SHOULD）每次写入应产生一条“维护日志（maintenance note）”：包含 `date / files touched / operation (append|merge|overwrite) / rationale`，用于后续追溯与回滚。
 - [MM-TRIG-08]（MAY）若实现具备 Git 能力，可用一次 commit 作为“回滚闭环”；否则至少在 archive/ 下生成一次快照（snapshot）再做重写。
 
 ---
@@ -533,10 +533,10 @@ Implementer 的 `meta-cognition.md` 为空，是因为我们混淆了"认知内�
 
 ---
 
-#### 小结（审计口径）
+#### 小结（核查口径）
 
 - 现行提示词“驱动了写入”，但因为没有定义写入语义与分流路由，行为会稳定退化为 append-only。
-- 解决路径不是让大家更勤快“做记忆维护”，而是把 OnSessionEnd 变成一个**带分类、带路由、带写入语义**的可审计协议（像 Git 提交那样有固定动作集合）。
+- 解决路径不是让大家更勤快“做记忆维护”，而是把 OnSessionEnd 变成一个**带分类、带路由、带写入语义**的可追溯协议（像 Git 提交那样有固定动作集合）。
 - 下一步最小改动：在系统提示词里加上上述条款，并把“index.md 的哪些段落必须覆盖写”钉死为 SSOT。
 
 
@@ -567,7 +567,7 @@ Implementer 的 `meta-cognition.md` 为空，是因为我们混淆了"认知内�
 | Claude | **记忆 .gitignore** | 不是所有内容都应进入主记忆 |
 | Gemini | **Git Commit Wizard** | OnSessionEnd 应是结构化提交流程 |
 | Gemini | **Librarian Persona** | 图书管理员人格，负责归位 |
-| GPT | **Commit Protocol** | 可审计的提交协议 |
+| GPT | **Commit Protocol** | 可追溯的提交协议 |
 
 ### 3. 写入操作语义（四种动作）
 
@@ -920,7 +920,7 @@ index.md 只留一行链接
 |:-----|:-----|
 | `2025-12-20-mvp-design-v2-revision-brief-INV.md` | StateJournal MVP 修订清单 |
 | `durableheap-mvp-v2-review-brief-2025-12-19.md` | MVP v2 审阅摘要 |
-| `docui-decision-brief-2025-12-15-audit-round1.md` | DocUI Key-Notes 审计结果 |
+| `docui-decision-brief-2025-12-15-audit-round1.md` | DocUI Key-Notes 核查结果 |
 
 **这种模式的优势**：
 
@@ -1679,7 +1679,7 @@ Changefeed Anchor = 一个可被引用的知识锚点，包含：
 
 #### 4) 对框架的评估：写入操作语义与分流规则是否严谨？
 
-**总体评价：方向正确、接近“可审计”，但还差几个“审查门禁”级别的精确定义。**
+**总体评价：方向正确、接近“可核查”，但还差几个“审查门禁”级别的精确定义。**
 
 **我认为严谨的部分：**
 
@@ -1807,7 +1807,7 @@ Step 3: APPLY ───→ 执行写入动作 + 留 Memory Commit Message
 
 - **Advisor-Claude**：记忆 .gitignore 隐喻、分类决策树
 - **Advisor-Gemini**：Git Commit Wizard、Librarian Persona、渐进披露
-- **Advisor-GPT**：可审计条款（MM-TRIG/MM-ROUTE/MM-WRITE）
+- **Advisor-GPT**：可追溯条款（MM-TRIG/MM-ROUTE/MM-WRITE）
 - **Implementer**：实战痛点、60 秒 OnSessionEnd 流程
 - **Investigator**：过程产物外置模式
 - **QA**：测试用例设计、数据库操作类比

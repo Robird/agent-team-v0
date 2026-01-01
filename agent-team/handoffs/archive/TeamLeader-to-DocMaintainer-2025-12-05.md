@@ -98,7 +98,7 @@ Changefeed = 轻量指针（anchor + 一句话 + 链接）
 
 - **暂不强制执行**：避免增加过多流程负担
 - **自然触发**：当 Team Member 被调用时，会自动更新自己的认知文件
-- **定期审计**：DocMaintainer 可以在 Sprint 结束时检查一次
+- **定期检查**：DocMaintainer 可以在 Sprint 结束时检查一次
 
 ### 关于自动化工具
 

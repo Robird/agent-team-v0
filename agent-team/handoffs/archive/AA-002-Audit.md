@@ -1,7 +1,7 @@
 # Audit Report: TextModel & PieceTreeBuffer (AA-002)
 
 **Date**: 2025-11-19
-**Auditor**: GitHub Copilot
+**核查者**: GitHub Copilot
 **Scope**: Comparison of TypeScript `TextModel`/`PieceTreeTextBuffer` vs C# `TextModel`/`PieceTreeBuffer`.
 
 ## Executive Summary

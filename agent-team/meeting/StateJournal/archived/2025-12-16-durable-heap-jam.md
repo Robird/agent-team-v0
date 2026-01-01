@@ -174,7 +174,7 @@ Yes, and… Append-only 的碎片不是 bug，是“你买来的 crash-safety �
 
 关键点：compaction 本身也要像 micro-wizard 一样“可以停在中间，明天继续”。所以 compaction job 的进度（cursor、已搬迁范围、rewrite map 的分片）也应该落在 DurableHeap 上。
 
-（疯狂一点：把 compaction 也当成 Durable Workflow 的一个 instance，天然支持暂停/恢复/审计。）
+（疯狂一点：把 compaction 也当成 Durable Workflow 的一个 instance，天然支持暂停/恢复/检验。）
 
 #### JSON 风格 API：外观是 JSON，内核是 Persistent Tree（Immutable + Builder）
 

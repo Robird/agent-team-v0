@@ -1,7 +1,7 @@
 # AA-003 Audit Report: Search and Cursor Logic
 
 **Date:** November 19, 2025
-**Auditor:** GitHub Copilot
+**核查者:** GitHub Copilot
 **Scope:** Comparison of TypeScript (VS Code) and C# (PieceTree) implementations of Search and Cursor logic.
 
 ## 1. Executive Summary

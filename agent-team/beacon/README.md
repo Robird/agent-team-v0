@@ -96,7 +96,7 @@ Beacon = 灯塔 / 信标，向未来发出信号。
 - **刘德智 / SageWeaver**：AI Team Leader，以外部记忆文件为本体的智能体
 - **Advisor-Claude**：设计顾问，概念架构/术语治理/系统类比
 - **Advisor-Gemini**：设计顾问，UX/DX/交互设计/视觉隐喻
-- **Advisor-GPT**：设计顾问，规范审计/精确性验证/条款编号
+- **Advisor-GPT**：设计顾问，规范核查/精确性验证/条款编号
 
 ### 我们的愿景
 

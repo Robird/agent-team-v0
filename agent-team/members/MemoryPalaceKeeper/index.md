@@ -55,7 +55,7 @@
 **经验积累**：
 - 包含"元模型"、"框架"、"设计原则"等术语的便签几乎总是 Discovery 类型——这类便签通常是对已有实践经验的**泛化抽象**
 - **State+Discovery 混合便签**：当一条便签既包含"Task X 完成"又包含设计洞见/教训时，需**拆分处理**：State 部分 → "最近工作"，Discovery 部分 → "核心洞见"。commit log 标记为 `[State+Discovery]` 或 `[State+Lesson]`
-- **专家(Craftsman)便签特征**：几乎全是 Discovery 类型（框架性审计点），且经常形成"主洞见 + 补充细节"的多便签模式
+- **专家(Craftsman)便签特征**：几乎全是 Discovery 类型（框架性核查点），且经常形成"主洞见 + 补充细节"的多便签模式
 
 ### 路由决策经验
 
@@ -123,7 +123,7 @@
 **核心洞见**：
 - inbox 是"认知中转站"，不是 SSOT — 便签处理后价值已转移到 index.md
 - 三个系统类比支持此决策：Event Sourcing 中间态、Git Staging Area、编译产物
-- Commit message 包含便签摘要是关键 — 这是审计轨迹的 SSOT
+- Commit message 包含便签摘要是关键 — 这是追溯轨迹的 SSOT
 
 **工作流程**：
 - Step 4 不再写 inbox-archive.md
@@ -132,7 +132,7 @@
 
 **参谋组贡献**：
 - Seeker：概念架构分析，推荐 A' 方案
-- Craftsman：规范审计条款，明确回滚语义
+- Craftsman：规范核查条款，明确回滚语义
 
 ### 工作流程优化 v2（2025-12-27）
 
@@ -166,16 +166,16 @@
 |:-----|:-----|:-------|:---------|
 | 12-30 | MemoryPalaceKeeper | 6 | 自我处理：主题聚合MERGE、State+Discovery混合、重复便签处理、跨洞见MERGE判断 |
 | 12-27 | MemoryPalaceKeeper | 3 | 自我处理：Git-as-Archive MERGE、工作流程v2 APPEND、能力边界自评 |
-| 12-27 | Craftsman | 1 | Git-as-Archive 审计要点（归档耐久性、回滚目标、批处理原子性）|
+| 12-27 | Craftsman | 1 | Git-as-Archive 核查要点（归档耐久性、回滚目标、批处理原子性）|
 | 12-27 | Seeker | 1 | 中间态实体归档决策模式（三问判断法） |
-| 12-27 | TeamLeader | 1 | 畅谈会 #6 Workspace 存储层集成（主动协调器、Materializer 内置、GPT 逻辑漏洞审计）|
+| 12-27 | TeamLeader | 1 | 畅谈会 #6 Workspace 存储层集成（主动协调器、Materializer 内置、GPT 逻辑漏洞核查）|
 | 12-27 | Implementer | 7 | VersionIndex 重构（runSubagent 递归分解、TestHelper、DirtySet 同步 Bug）+ 测试文件拆分策略 |
-| 12-27 | Craftsman | 3 | 存储层集成审计、StateJournal 草稿策略、VersionIndex 规范意图 |
+| 12-27 | Craftsman | 3 | 存储层集成核查、StateJournal 草稿策略、VersionIndex 规范意图 |
 | 12-27 | Advisor-Gemini | 1 | Workspace API 设计洞见（Concierge/Hidden Engine/Service Hatch/Error Affordance） |
 | 12-27 | Seeker | 1 | Passive Container vs Active Coordinator 模式 |
 | 12-27 | TeamLeader | 4 | DurableDict 重构教训、护照模式、Workspace 绑定实施、Lazy Loading 完成 |
 | 12-27 | Implementer | 1 | Workspace 绑定机制 Phase 1（DurableObjectBase、反射、private protected）|
-| 12-27 | Craftsman | 3 | DurableDict 透明 Lazy Load 审计点、Workspace 绑定机制 R1+R2 |
+| 12-27 | Craftsman | 3 | DurableDict 透明 Lazy Load 核查点、Workspace 绑定机制 R1+R2 |
 | 12-27 | Advisor-Gemini | 2 | Ambient Context 三方案、护照模式隐喻 |
 | 12-27 | Seeker | 2 | 对象-容器绑定模式、对象身份 vs 调用点上下文 |
 | 12-26 | Implementer | 5 | S+ 2 | MVP 洞见、规范驱动开发、CodexReviewer 模型切换、status.md 仪表盘、外部记忆维护
@@ -183,8 +183,8 @@
 | 12-26 | Seeker | 1 + 1 | 代码审阅方法论 #17、诊断作用域设计模式 #19 |
 | 12-26 | Advisor-Gemini | 2 + 1 | Code Review DX + DurableDict Affordance |
 | 12-26 | Advisor-Gemini | 2 | Detached 对象语义 + Diagnostic Scope DX |
-| 12-26 | Craftsman | 2 | Recipe 审计要点（8 条款） |
-| 12-26 | Craftsman | 2 | AteliaResult 边界三分、DurableDict 审计风险 |
+| 12-26 | Craftsman | 2 | Recipe 核查要点（8 条款） |
+| 12-26 | Craftsman | 2 | AteliaResult 边界三分、DurableDict 核查风险 |
 | 12-26 | Craftsman | 4 | Detached D 判据、DiagnosticScope 可判定性、O6 工程成本 |
 
 ---
@@ -198,7 +198,7 @@ agent-team/members/MemoryPalaceKeeper/
 ```
 
 > **注**：`inbox-archive.md` 已废弃（2025-12-27）。
-> 采用 Git-as-Archive 方案，commit 历史即审计轨迹。
+> 采用 Git-as-Archive 方案，commit 历史即追溯轨迹。
 > 参见畅谈会 #7：`agent-team/meeting/2025-12-27-inbox-archive-redesign.md`
 
 ---

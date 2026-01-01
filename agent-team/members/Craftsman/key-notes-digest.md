@@ -261,7 +261,7 @@ graph TD
 
 ---
 
-## 术语一致性分析（跨文档审计）
+## 术语一致性分析（跨文档核查）
 
 ### 术语源头与引用规则
 
@@ -327,7 +327,7 @@ graph TD
 
 | 日期 | 动作 |
 |------|------|
-| 2025-12-13 | 首次完整同步：读取 5 篇 Key-Note，补全逐篇摘要与术语一致性审计 |
+| 2025-12-13 | 首次完整同步：读取 5 篇 Key-Note，补全逐篇摘要与术语一致性核查 |
 | 2025-12-14 | 重新同步：新增 UI-Anchor；micro-wizard 已补齐定义；action-anchor 不再存在于 key-notes 目录，已从摘要移除 |
 | 2025-12-15 | 新增 Error-Feedback 与 Cursor-And-Selection；同步 Key-Note 数量与总览关系图 |
 | 2025-12-19 | 例行复核：逐篇读取 10 篇 Key-Note，未发现新增文件或结构性变更 |
@@ -371,10 +371,10 @@ graph TD
 - **条款分类建议**：以 `[F/A/S/R]` 作为规范条款 ID 的前缀更通用：`[F-xx]` Format/Framing、`[A-xx]` API、`[S-xx]` Semantics（含 commit 语义不变式）、`[R-xx]` Recovery。并建议“编号不复用、每条可映射到至少一个测试向量/失败注入测试”。
 - **Test Vectors 的骨架策略**：可以先建立 Appendix 骨架（按类目列场景 + 关联条款 ID），但每类至少放 1 个 seed vector 用于钉死歧义，其余优先从 reference impl 自动生成。
 
-### 2025-12-20 补充：条款 ID 的“语法纪律”与可审计性
+### 2025-12-20 补充：条款 ID 的“语法纪律”与可检验性
 
 - 一旦选择 `[F/A/S/R-xx]` 作为条款 ID SSOT，正文应避免临时子前缀（如 `F-VER-01`、`S-CB-01`）混入；要么扁平化编号，要么把 ID 的 grammar（Topic 集合、递增/弃用规则、测试映射规则）写成规范。
-- 条款前缀的“分类正确性”与测试向量组织强耦合：Format/Framing 条款误标为 Semantics 会导致测试与审计索引错位。
+- 条款前缀的"分类正确性"与测试向量组织强耦合：Format/Framing 条款误标为 Semantics 会导致测试与核查索引错位。
 
 ### 2025-12-21 补充：SSOT + 内联摘要（Inline Summary）作为 DocUI LOD 的写作落点
 
@@ -387,7 +387,7 @@ graph TD
 ## 2025-12-21 补充：AI Team 元认知（命名/协议/示例一致性）
 
 - **命名治理**：优先“可解析 grammar”而非隐喻；推荐 `Role-Model`（Role 受控词表、Model 标准化），把项目归属/作用域放到调用参数与目标文件路径里，而不是塞进名字。
-- **形式合并**：统一“畅谈会”载体可行，但要把 `#review/#design/#decision` 与最低产物绑定，否则会丢失可操作性与可审计性。
+- **形式合并**：统一"畅谈会"载体可行，但要把 `#review/#design/#decision` 与最低产物绑定，否则会丢失可操作性与可追溯性。
 - **协议化邀请**：`runSubagent` 建议显式字段化（聊天室路径、目标文件、追加标题、范围与输出形态），并把“追加到末尾”的验证步骤作为 SHOULD，降低协作摩擦。
 - **示例一致性**：规范/模板/伪代码比条款更易漂移；一旦约定标题/路径/函数名，模板必须完全一致，否则复制粘贴会制造系统性错误。
 
@@ -431,7 +431,7 @@ graph TD
 - `Details` 优先收敛为 `IReadOnlyDictionary<string, string>`：跨进程/跨语言序列化稳定、避免 `object` 语义炸裂；复杂结构采用 JSON-in-string。
 - `ErrorCode` 除机器分派键外应被视为“静态文档索引”（Runtime → SOP/Registry）：推荐配套 ErrorCode Registry + `help(errorCode)`/导航入口以实现自助恢复闭环。
 
-### 2025-12-20 补充：API 回滚语义的“baseline 缺失”规则（可审计写法）
+### 2025-12-20 补充：API 回滚语义的"baseline 缺失"规则（可检验写法）
 
 - 当一个 API 同名覆盖多对象生命周期（Persistent/Transient）时，规范必须先钉死“回滚目标 baseline 是否存在”。
 - 若 baseline 不存在，必须在规范层做二选一：`MUST detach (fail-fast)` 或 `MUST reset-to-Genesis (continue usable)`，并连带钉死 `LoadObject/NotFound/IdentityMap` 的可观察行为。

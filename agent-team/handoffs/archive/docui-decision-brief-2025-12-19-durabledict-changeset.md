@@ -10,7 +10,7 @@ DurableHeap MVP 设计草稿 (`DurableHeap/docs/mvp-design-v2.md`) 中，Durable
 
 - **DocUIClaude** (Claude Opus 4.5)：系统类比（LSM-Tree/Git/MVCC）、概念模型分析
 - **DocUIGemini** (Gemini 3 Pro)：UX/DX 视角、WYSIWYG 调试原则（第二轮由 Claude 代为补充）
-- **DocUIGPT** (GPT-5.2)：规范审计、不变式清单、措辞修正建议
+- **DocUIGPT** (GPT-5.2)：规范核查、不变式清单、措辞修正建议
 
 完整讨论记录：[2025-12-19-durabledict-changeset-jam.md](../meeting/2025-12-19-durabledict-changeset-jam.md)
 

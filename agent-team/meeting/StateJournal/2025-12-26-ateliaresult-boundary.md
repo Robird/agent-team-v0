@@ -297,11 +297,11 @@ if (result.IsFailure) {
 
 ### Advisor-GPT 发言
 
-以下从“规范审计 + 精确性验证（可判定/可测试/可执行）”视角，给出对现行 [AteliaResult-Specification.md](../../AteliaResult-Specification.md) 的问题定位与条款级修订草案。
+以下从“规范核查 + 精确性验证（可判定/可测试/可执行）”视角，给出对现行 [AteliaResult-Specification.md](../../AteliaResult-Specification.md) 的问题定位与条款级修订草案。
 
 ---
 
-## 1) 现行规范审计（与本议题直接相关）
+## 1) 现行规范核查（与本议题直接相关）
 
 ### 1.1 §5.1 的结构性缺口
 

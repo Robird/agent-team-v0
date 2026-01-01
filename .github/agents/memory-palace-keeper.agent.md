@@ -193,7 +193,7 @@ git commit -m "{commitMsg}"
 ### Git-as-Archive 设计原理
 
 > inbox 是"认知中转站"，便签处理后价值已转移到 index.md。
-> Git commit 历史 + index.md diff 提供完整审计轨迹，无需 inbox-archive.md。
+> Git commit 历史 + index.md diff 提供完整追溯轨迹，无需 inbox-archive.md。
 > 参见畅谈会 #7：`agent-team/meeting/2025-12-27-inbox-archive-redesign.md`
 
 ---

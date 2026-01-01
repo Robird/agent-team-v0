@@ -19,7 +19,7 @@
 **Yes, and**：我们可以同时支持两种存储策略（先 Snapshot MVP，后 Event-Sourcing 提升可调试性）。
 
 - **Snapshot（快照）**：每次 yield/resume 都存 `CommandSnapshot`（易实现，缺点是“为什么走到这里”不透明）。
-- **Event-Sourcing（事件溯源）**：History 里追加 `CommandEvent`（Started/Yielded/Resumed/Completed/Failed/Cancelled），恢复时 replay（可审计、可重放、天然适配“History 仅追加”）。
+- **Event-Sourcing（事件溯源）**：History 里追加 `CommandEvent`（Started/Yielded/Resumed/Completed/Failed/Cancelled），恢复时 replay（可追溯、可重放、天然适配“History 仅追加”）。
 
 我偏向把 Command 的“持久化真相”放进 **HistoryEntry 的事件流**：
 
@@ -122,7 +122,7 @@ public interface ICommandLeaf {
 我建议先不动 `AgentRunState`，而是在 `_state` 或 `_pendingToolResults` 旁边引入一个“小 mailbox”概念：
 
 - 当工具返回 `Yield(Prompt)`：
-    - 追加一个 **ToolResultsEntry**（记录“此 tool-call 启动了 command，并 yield 了 prompt”，用于审计）。
+    - 追加一个 **ToolResultsEntry**（记录“此 tool-call 启动了 command，并 yield 了 prompt”，用于追溯）。
     - 同时通过 `AppendNotification(...)` 或追加 `ObservationEntry` 把 prompt 渲染到上下文，让引擎进入下一轮 model call。
     - 把 `command_id` 放进“可见工具定义”里，通过一个通用工具 `command.resume(command_id, input)` 来承接下一轮输入。
 

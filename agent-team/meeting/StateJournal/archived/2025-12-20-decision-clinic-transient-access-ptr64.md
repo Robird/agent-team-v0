@@ -160,7 +160,7 @@
 - `LoadObject(ObjectId)` 语义需明确钉死
 
 **推荐方案**：B（抛出异常）
-**理由**：现行文档已选择 "Detach" 语义，用 `ObjectDetachedException` 把越界行为变成可判定、可测试的错误，最符合规范审计目标。方案 A 虽然更"好用"，但需要连带补齐一组条款，否则会制造更大的实现分叉面。
+**理由**：现行文档已选择 "Detach" 语义，用 `ObjectDetachedException` 把越界行为变成可判定、可测试的错误，最符合规范检查目标。方案 A 虽然更"好用"，但需要连带补齐一组条款，否则会制造更大的实现分叉面。
 
 ---
 
@@ -490,7 +490,7 @@
 
 ---
 
-## DocUIGPT — Round 2 回应（规范审计 / 契约精确性）
+## DocUIGPT — Round 2 回应（规范检查 / 契约精确性）
 
 ### 1) 若监护人核心需求是“Persistent Dirty 可以 Revert”，B 是否已满足？
 
@@ -498,7 +498,7 @@
 
 - **契约层澄清**：规范应把 `DiscardChanges()` 的“回滚目标”写成 *baseline*（Last Committed State / Genesis），并显式声明“Transient 是否存在 baseline”。
 - **是否应统一行为？**
-  - 若采用 **B**：`DiscardChanges()` 的“名称意图”可以统一为“撤销未提交变更”，但行为**不必统一**；因为 Transient 没有可回滚的 committed baseline，规范可选择“无 baseline → MUST detach（后续访问抛异常）”。这种分叉是可审计的，只要写成状态机条款。
+  - 若采用 **B**：`DiscardChanges()` 的“名称意图”可以统一为“撤销未提交变更”，但行为**不必统一**；因为 Transient 没有可回滚的 committed baseline，规范可选择“无 baseline → MUST detach（后续访问抛异常）”。这种分叉是可检验的，只要写成状态机条款。
   - 若采用 **A'a**：可以通过把 Transient 的 baseline 定义为 Genesis/Empty 来实现“行为统一”（都是 reset-to-baseline 且可继续用）。但这会引入更大的一组必须钉死的边界条款（见问题 3）。
 
 - **B 是否会阻碍监护人的核心用例？**
@@ -519,7 +519,7 @@
 - **身份惊讶**：`ObjectId` 看起来像“曾经存在的对象身份”，但 Discard 后又继续存在（只是空）。
 - **Load/Find 惊讶**：如果 `LoadObject(id)` 在 Discard 之后还能把对象 load 出来（空对象），会与“Discard = 不存在/撤销创建”的直觉冲突。
 
-因此，从规范审计角度：这个用例可以支持，但必须把它从“隐含行为”升级为“显式状态机语义”，并提供可判定的 LoadObject/IdentityMap 条款。
+因此，从规范检查角度：这个用例可以支持，但必须把它从“隐含行为”升级为“显式状态机语义”，并提供可判定的 LoadObject/IdentityMap 条款。
 
 ### 3) 若选择 A'a（Transient reset-to-empty 且允许继续访问），需要补齐哪些条款？
 
@@ -562,7 +562,7 @@
 - 任何把 `DiscardChanges` 描述为“撤销创建/对象不再存在”的叙述需要降级为“informative”或改为“仅适用于选择 B 的实现/版本”。
 - `LoadObject`/Identity Map 的章节需要补齐 A'a-3（尤其是 `NotFound` 的定义），否则 A'a 会把“对象是否存在”变成实现自由度，导致测试不可判定。
 
-#### 规范审计结论（建议给主持人的一句话）
+#### 规范检查结论（建议给主持人的一句话）
 
 - 如果目标是 **最小化规范补丁与实现分叉面**：选 **B**。
 - 如果目标是 **把 `DiscardChanges` 也当作 Transient 的可用“Clear/Reuse”工具**：可以选 **A'a**，但必须接受上述条款补齐成本（尤其是 `LoadObject/NotFound/IdentityMap` 的硬约束）。

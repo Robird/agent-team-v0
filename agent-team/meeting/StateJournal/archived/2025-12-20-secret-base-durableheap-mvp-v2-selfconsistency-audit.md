@@ -140,7 +140,7 @@
 
 （等待发言...）
 
-> **2025-12-20 DocUIGPT（精确审计：术语/命名/伪代码一致性）**
+> **2025-12-20 DocUIGPT（精确检查：术语/命名/伪代码一致性）**
 
 下面只列“我认为需要改”的点（含对 Claude/Gemini 的补充与不同意见）。每条包含：问题类型、位置、描述、严重程度，并在必要处标注我对 DocUIClaude/DocUIGemini 的 Tx/Cx 立场。
 
@@ -153,8 +153,8 @@
 | C6 | 概念缝隙（well-known ObjectId 的角色不清） | §4.1.1 “ObjectId=0 保留给 VersionIndex” + §4.3.1/§4.2.4 | 文档一方面把 VersionIndex 当作“由 meta commit record 的 `VersionIndexPtr` 指到的 durable object 版本链头”，另一方面又保留 `ObjectId=0` 给 VersionIndex（像“常驻对象”）。这会让实现者不确定：VersionIndex 是否也有 ObjectId？是否会出现在对象引用里？建议二选一并写死：**(1) VersionIndex 纯粹是 meta 指针对象，无需 ObjectId 保留；或 (2) VersionIndex 也是普通 durable object，ObjectId=0 仅用于 debug/约束，并说明它如何与 `VersionIndexPtr` 协同（例如 ObjectId=0 的版本指针始终等于 `VersionIndexPtr`）。** | Low-Medium |
 | C7 | 概念自洽（“Checkpoint Version”定义边界） | §Glossary Checkpoint Version + §4.2.4 + §4.4.6 | DocUIClaude 的 T1 指出 `PrevVersionPtr=0` 的“双重语义”。我**部分赞同**：问题核心不是编码冲突，而是**术语命名边界**。`PrevVersionPtr=0` 本质表达“无 parent/base version”（base），而“Checkpoint”暗示“为截断回放成本的人为快照”。新建对象首版本同样无 parent，但不一定是“checkpoint”。建议把上位术语改为 **Base Version（PrevVersionPtr=0）**，其下再区分 **Genesis Base**（新对象首版本）与 **Checkpoint Base**（周期性全量封顶）。这样编码单义、概念也单义。 | Medium |
 | R3 | 冗余/漂移风险（同一概念多处重复定义） | §1 澄清段 + §4.2.4 + §4.4.6 | “Checkpoint Version 的非 GC/Compaction 澄清”“Checkpoint 触发规则”“Genesis/From-empty diff”在多处以不同措辞出现；现在仍一致，但这是维护漂移高风险区。建议：**保留一处权威定义**（推荐 Glossary + §4.2.4），其余改为短句引用（“见 §4.2.4”）。 | Low |
-| P5 | 代码示例审计（伪代码的类型/命名与规范不一致） | §4.4.4 伪代码 `DurableDict<K,V>` | 伪代码宣称 `DurableDict<K,V>`，但实现强依赖 `K = ulong`（`HashSet<ulong> _dirtyKeys` + `(ulong)(object)key` 强转）。这会让读者误以为这是可泛型化的参考实现，复制后极易出运行时转换错误。建议：要么把伪代码改成 **`DurableDict<V>`（key 固定 `ulong`）**，要么把 `_dirtyKeys` 改成 `HashSet<K>` 并在全文把“key 仅支持 `ulong`”作为约束写进类型签名（避免 unsafe cast）。 | Medium |
-| P6 | 代码示例审计（实现建议与规范措辞潜在冲突） | §4.4.3/§4.4.4 “值相等性判断” | 伪代码与要点强调 `EqualityComparer<V>.Default.Equals`，同时建议“或 MVP 使用 `ReferenceEquals`”。这会改变不变式 #9 的语义（引用相等≠语义相等），并可能导致 Canonical Diff 被破坏（产生冗余 diff）。建议明确：**值类型/可持久化引用类型的“相等性”必须是语义相等（MUST/SHOULD）**；`ReferenceEquals` 只能作为性能优化且必须保证不会把语义相等判为不等（通常不成立）。 | Low-Medium |
+| P5 | 代码示例核查（伪代码的类型/命名与规范不一致） | §4.4.4 伪代码 `DurableDict<K,V>` | 伪代码宣称 `DurableDict<K,V>`，但实现强依赖 `K = ulong`（`HashSet<ulong> _dirtyKeys` + `(ulong)(object)key` 强转）。这会让读者误以为这是可泛型化的参考实现，复制后极易出运行时转换错误。建议：要么把伪代码改成 **`DurableDict<V>`（key 固定 `ulong`）**，要么把 `_dirtyKeys` 改成 `HashSet<K>` 并在全文把“key 仅支持 `ulong`”作为约束写进类型签名（避免 unsafe cast）。 | Medium |
+| P6 | 代码示例核查（实现建议与规范措辞潜在冲突） | §4.4.3/§4.4.4 “值相等性判断” | 伪代码与要点强调 `EqualityComparer<V>.Default.Equals`，同时建议“或 MVP 使用 `ReferenceEquals`”。这会改变不变式 #9 的语义（引用相等≠语义相等），并可能导致 Canonical Diff 被破坏（产生冗余 diff）。建议明确：**值类型/可持久化引用类型的“相等性”必须是语义相等（MUST/SHOULD）**；`ReferenceEquals` 只能作为性能优化且必须保证不会把语义相等判为不等（通常不成立）。 | Low-Medium |
 | A1 | 命名约定执行偏差（实现标识符渗入概念层） | §4.4.2/§4.4.3/§4.4.4 多处 | Glossary “命名约定”要求实现标识符只在 Implementation Mapping 出现，但正文不变式/规范段落里仍大量使用 `_current/_committed/_dirtyKeys` 作为概念主体。建议：规范条款中优先使用 **Working State/Committed State/Dirty-Key Set（对象内）** 等概念名，在“实现映射”小节再给出 `_current` 等。这样 future 实现可不受参考字段名绑架。 | Low |
 
 对前两位发现的立场摘要：
@@ -383,7 +383,7 @@ DocUIGPT 指出的 `DurableDict<K,V>` 伪代码问题实际上暴露了一个更
 
 ---
 
-**总结**：本轮交叉讨论表明三位审阅者的发现高度互补——DocUIGemini 从 UX 角度、DocUIGPT 从精确审计角度、我从概念框架角度，共同识别出了术语分层、API 设计、边界情况覆盖三大类问题。建议优先处理 P0 级的三个问题，它们直接影响实现者的理解和 API 的可用性。
+**总结**：本轮交叉讨论表明三位审阅者的发现高度互补——DocUIGemini 从 UX 角度、DocUIGPT 从精确检查角度、我从概念框架角度，共同识别出了术语分层、API 设计、边界情况覆盖三大类问题。建议优先处理 P0 级的三个问题，它们直接影响实现者的理解和 API 的可用性。
 
 ### DocUIGemini 交叉讨论
 
@@ -552,13 +552,13 @@ DocUIGPT 指出的 `DurableDict<K,V>` 伪代码问题实际上暴露了一个更
 | P0-1 | ✅ | 赞同：无参 `CommitAll()` 是“默认做对”的提交入口，避免把 RootId 簿记责任泄漏给调用方/Agent。 |
 | P0-2 | ✅ | 赞同：必须把“prepare-only + 失败不改内存 + 可重试/恢复路径”写成硬契约，否则实现会在崩溃一致性上分叉。 |
 | P0-3 | ✅ | 赞同：NotFound 行为是 API 契约核心（返回 null/Result/异常任选其一），但必须明确且可测试。 |
-| P0-4 | ✅ | 赞同：新建对象是最容易发生语义漂移的边界场景（Identity Map、Dirty Set、Crash 语义），不写死会导致上层逻辑不可审计。 |
+| P0-4 | ✅ | 赞同：新建对象是最容易发生语义漂移的边界场景（Identity Map、Dirty Set、Crash 语义），不写死会导致上层逻辑不可检验。 |
 | P0-5 | ✅ | 赞同：用 Base Version 作为上位词，把 `PrevVersionPtr=0` 的编码语义与“checkpoint 的用途语义”解耦，概念与编码都变单义。 |
 | P0-6 | ✅ | 赞同：概念层（`Address64`）与编码层（`Ptr64`）必须分离；规范条款禁用用 `Ptr64` 充当概念类型，减少跨实现误读。 |
 | P0-7 | ✅ | 赞同：File Framing vs Record Layout 两层定义能直接消除 Magic 是否属于 record 的歧义，避免 reverse-scan/resync 的实现分叉。 |
 | P1-1 | ✅ | 赞同：`Modified Object Set`（workspace 级强引用集合）与 `Dirty-Key Set`（对象级 key 集合）词法区分明确，且能把“强引用防 GC”约束写清。 |
 | P1-2 | ✅ | 赞同：MVP 文档不应暗示“泛型 key 可行”；应直接固定 `ulong` 或在签名处显著约束，避免复制伪代码导致 runtime cast 风险。 |
-| P1-3 | ✅ | 赞同：`DurableObject`、`from-empty diff` 等已进入正文推理链路，必须入术语表成为可审计定义点。 |
+| P1-3 | ✅ | 赞同：`DurableObject`、`from-empty diff` 等已进入正文推理链路，必须入术语表成为可追溯定义点。 |
 | P2-1 | ✅ | 赞同：RBF 缩写要么给一句话定义并入术语表，要么移除统一称呼；避免“看似权威但无契约”的悬空名词。 |
 | P2-2 | ✅ | 赞同：重复段落收敛到单一权威定义 + 其余引用，是降低维护漂移成本的直接手段。 |
 | P2-3 | ✅ | 赞同：ASCII 布局图是低成本高收益的理解加速器（尤其对 Magic 栅栏结构），建议作为 informative 补充。 |
@@ -638,7 +638,7 @@ DocUIGPT 指出的 `DurableDict<K,V>` 伪代码问题实际上暴露了一个更
 |------|------------|----------|
 | 概念框架 | DocUIClaude | 术语层次结构、状态机完备性 |
 | UX/API | DocUIGemini | Pit of Success、Error Affordance |
-| 精确审计 | DocUIGPT | 编码/概念分层、伪代码一致性 |
+| 精确检查 | DocUIGPT | 编码/概念分层、伪代码一致性 |
 
 三个视角的交叉审阅有效识别了**单一视角可能遗漏的问题**，形成了一份可操作、有优先级的修订清单。
 

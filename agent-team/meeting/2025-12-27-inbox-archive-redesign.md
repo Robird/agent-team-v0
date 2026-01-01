@@ -80,7 +80,7 @@
 |:-----|:---------------------|:-----------|
 | 验证处理是否正确 | 部分需要 | Commit message 记录便签摘要足矣 |
 | 回滚错误处理 | 极少 | Git 可以 revert index.md 的变更 |
-| 审计记忆演进 | 可能 | index.md 的 diff 就是演进记录 |
+| 追溯记忆演进 | 可能 | index.md 的 diff 就是演进记录 |
 | Debug 分类逻辑 | 偶尔 | 保留最近 N 次的便签（滚动窗口） |
 
 **推荐意见**：采用 **变体 A'**，但 commit message 需要包含便签摘要（见下）。
@@ -116,7 +116,7 @@ Git 不保存 staging area 的历史——因为它是中间态。**inbox 是 me
 
 #### 4. Commit Message 规范建议
 
-为了平衡"零归档文件"和"可审计性"，建议 commit message 包含：
+为了平衡"零归档文件"和"可追溯性"，建议 commit message 包含：
 
 ```
 memory: processed 3 notes for Advisor-Claude
@@ -152,7 +152,7 @@ Refs: 2025-12-27-memory-maintenance
 **理由汇总**：
 1. **概念自洽**：inbox 是中间态，不属于系统状态的 SSOT
 2. **符合记忆系统本质**：价值已转移到 index.md，保留原文是冗余
-3. **Git 提供足够审计能力**：commit message + index.md diff 覆盖回溯需求
+3. **Git 提供足够追溯能力**：commit message + index.md diff 覆盖回溯需求
 4. **系统类比支持**：Event Sourcing、Git Staging Area、编译产物——中间态不需持久化
 
 **配套建议**：
@@ -177,7 +177,7 @@ Refs: 2025-12-27-memory-maintenance
 
 ### Advisor-GPT 发言
 
-以下以“规范审计”视角给出条款化建议，重点覆盖：1) Git-as-Archive 的边界条件/失败模式；2) 回滚场景精确性；3) 多成员批量处理的原子性。
+以下以"规范核查"视角给出条款化建议，重点覆盖：1) Git-as-Archive 的边界条件/失败模式；2) 回滚场景精确性；3) 多成员批量处理的原子性。
 
 #### 0. 定义（为避免术语漂移）
 
@@ -185,7 +185,7 @@ Refs: 2025-12-27-memory-maintenance
 
 0.2 **MUST** 明确“Archive”的含义：若指“可在机器丢失/重装后仍可恢复”，则仅“本地 commit”不构成 Archive，必须依赖远端或外部备份。
 
-0.3 **SHOULD** 把一次处理会话定义为一个 `Run`（含 RunId/时间戳），以便在回滚与审计中引用。
+0.3 **SHOULD** 把一次处理会话定义为一个 `Run`（含 RunId/时间戳），以便在回滚与追溯中引用。
 
 #### 1) Git-as-Archive 的边界条件与失败模式
 
@@ -255,7 +255,7 @@ Refs: 2025-12-27-memory-maintenance
 - 任何冲突必须 fail-fast 并人工介入；或
 - 允许自动合并但必须提供可验证规则（例如仅追加、禁止重排）。
 
-3.5 **SHOULD** 提交消息（Commit message）应可支持机器检索与审计聚合：
+3.5 **SHOULD** 提交消息（Commit message）应可支持机器检索与追溯聚合：
 - 前缀（例如 `memory:`/`archive:`）
 - 成员标识与 RunId
 - 处理便签数量，以及（可选）便签时间戳列表/摘要
@@ -272,5 +272,5 @@ Refs: 2025-12-27-memory-maintenance
 
 ---
 
-结论（审计裁决）：变体 A' 可以成立，但它的“回滚能力”天然弱于方案 A（含 PreSnapshot）。如果团队把“可重处理回滚”列为 MUST，则必须引入 PreSnapshot（commit 或等价物）并满足 push/备份的耐久性条款。
+结论（核查裁决）：变体 A' 可以成立，但它的"回滚能力"天然弱于方案 A（含 PreSnapshot）。如果团队把"可重处理回滚"列为 MUST，则必须引入 PreSnapshot（commit 或等价物）并满足 push/备份的耐久性条款。
 

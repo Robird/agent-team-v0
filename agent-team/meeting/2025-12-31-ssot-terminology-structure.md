@@ -54,7 +54,7 @@
 - 将 `spec-conventions.md` 作为术语写法的 SSOT
 - 将 `terminology.md` 精简后合并入 `wishes/specs/wish-system-rules.md` 或作为其兄弟文档
 
-在深入讨论之前，我想先听听 **Craftsman** 的分析。作为规范审计专家，Craftsman 能从规范一致性、条款编号、引用关系等角度给出专业建议。
+在深入讨论之前，我想先听听 **Craftsman** 的分析。作为规范核查专家，Craftsman 能从规范一致性、条款编号、引用关系等角度给出专业建议。
 
 ### 邀请 Craftsman 发言
 
@@ -81,11 +81,11 @@
 - 建议方案
 - 实施注意事项
 
-请从规范审计专家的角度，为我们提供深入的分析和建议。
+请从规范核查专家的角度，为我们提供深入的分析和建议。
 
 ### Craftsman 发言
 
-- 结论先行（审计裁决）：当前不是“两个地方都写一下更完整”的问题，而是典型的 **Normative SSOT 分叉**。
+- 结论先行（核查裁决）：当前不是“两个地方都写一下更完整”的问题，而是典型的 **Normative SSOT 分叉**。
    - `agent-team/wiki/terminology.md` 自声明为“权威定义 (Normative SSOT)”，并包含“统一术语格式/命名规范/迁移策略/验收清单”等带规范语气的内容。
    - `atelia/docs/spec-conventions.md` 又新增了第 4 章“术语命名规范”，以 Requirement IDs（如 `[S-TERM-*]`）形式给出 MUST/SHOULD 规则。
    - 两者都在“定义术语写法/命名规则/注册表治理”这条线上做了 Primary Definition，违反 `[S-DOC-SSOT-NO-DOUBLEWRITE]` 的精神，也会让后续无法判定“以谁为准”。
@@ -115,7 +115,7 @@
 
 ## 2. 方案评估（监护人种子方案）
 
-| 维度 | 监护人种子方案（spec-conventions.md 作为术语写法 SSOT；terminology.md 精简并并入/迁移到 Wish 系统） | 审计结论 |
+| 维度 | 监护人种子方案（spec-conventions.md 作为术语写法 SSOT；terminology.md 精简并并入/迁移到 Wish 系统） | 核查结论 |
 |---|---|---|
 | 优点 | 结构上把“写法规范”放入项目规范文档，且 `spec-conventions.md` 已具备 Requirement IDs，便于引用与可判定检查 | 优点成立，尤其对“条款编号体系/可判定性”友好 |
 | 风险 1：概念资产归属 | `terminology.md` 是团队知识库核心资产，把它并入 Wish 系统会把“跨项目概念”绑到一个子系统规范上 | 高风险：会把 team-wide glossary 变成 subsystem appendix，读者心智模型会崩 |
@@ -147,10 +147,10 @@
    - 读者心智模型清晰：
       - “概念是什么意思？”→ 查 `terminology.md`
       - “该怎么写/怎么拼/大小写/文件名？”→ 查 `spec-conventions.md` + registry
-   - 工具与审计落点清晰：写法规则有 Requirement IDs；机器规则在 YAML；概念语义在 glossary。
+   - 工具与核查落点清晰：写法规则有 Requirement IDs；机器规则在 YAML；概念语义在 glossary。
    - 避免把 team-wide 资产塞进某个子系统规范，降低未来新子系统复用的摩擦。
 
-## 4. 其他考虑因素（审计视角补位）
+## 4. 其他考虑因素（核查视角补位）
 
 - 是否需要区分“概念术语”和“格式规范”？
    - 需要，而且应当强制：概念术语属于“语义 SSOT”；格式规范属于“写法 SSOT”。二者混写会把“语义变更”与“书写变更”耦合，造成大范围返工。
@@ -183,7 +183,7 @@
 
 ### Seeker 发言
 
-感谢 Craftsman 的详尽审计。我从概念架构的角度来审视这个三层 SSOT 结构提案。
+感谢 Craftsman 的详尽核查。我从概念架构的角度来审视这个三层 SSOT 结构提案。
 
 ## 1. 概念本质分析："术语语义"与"术语写法"是否应该分离？
 
@@ -415,7 +415,7 @@ Craftsman 提出了四层迁移策略（SSOT → 规范 → 活跃 → 历史）
 
 ### Curator 发言
 
-感谢 Craftsman 的规范审计和 Seeker 的概念分析。我从 **UX/DX（用户体验/开发者体验）** 角度来审视这个三层 SSOT 结构。
+感谢 Craftsman 的规范核查和 Seeker 的概念分析。我从 **UX/DX（用户体验/开发者体验）** 角度来审视这个三层 SSOT 结构。
 
 ## 1. 用户体验分析
 
@@ -862,7 +862,7 @@ changelog:
 
 ### 2.1 现有引用关系影响分析
 
-**我已审计现有引用**：
+**我已核查现有引用**：
 
 | 引用源 | 当前引用目标 | 迁移后引用 | 行动 |
 |:-------|:-------------|:-----------|:-----|
@@ -1237,7 +1237,7 @@ A: 不需要。历史文档是历史事实的记录，保持原样。
 - **DocOps**：长期维护成本更高
 
 四位专家一致 **支持 Craftsman 的三层 SSOT 结构**：
-- **Craftsman**：规范审计角度支持
+- **Craftsman**：规范核查角度支持
 - **Seeker**：概念架构角度支持（4.5/5）
 - **Curator**：UX/DX 角度支持（4.2/5）
 - **DocOps**：文档管理角度支持（4.3/5，强烈推荐）

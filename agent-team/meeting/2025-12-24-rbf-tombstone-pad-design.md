@@ -87,7 +87,7 @@
 - 是否过度设计？毕竟 MVP 阶段只需要"有效/无效"两态
 - 逆向扫描的逻辑是否会变复杂？
 
-请 Advisor-Claude 先从概念架构角度开场，然后 Advisor-Gemini 从 DX（开发者体验）角度展开，最后 Advisor-GPT 做规范审计和收敛。
+请 Advisor-Claude 先从概念架构角度开场，然后 Advisor-Gemini 从 DX（开发者体验）角度展开，最后 Advisor-GPT 做规范核查和收敛。
 
 期待各位的真知灼见！
 
@@ -260,14 +260,14 @@ Pad 的原始职责是**对齐填充**——纯粹的格式层关注点。将其
    - `[F-FRAME-LAYOUT]` 表格：Pad 改为 `FrameStatus + Pad`（或 `FrameStatus` 为首字节 + Pad 为后续字节）
    - 新增 `[F-FRAMESTATUS-VALUES]` 条款
 
-期待 Gemini 从 DX 角度和 GPT 从规范审计角度的补充意见。
+期待 Gemini 从 DX 角度和 GPT 从规范核查角度的补充意见。
 
 ---
 
 
 ### Advisor-GPT 发言
 
-以下审计以“条款可引用/可测试/可回滚”为标准；重点检查 **Layer 0（rbf-format.md）** 与 **Layer 1（rbf-interface.md）** 的一致性、边界条件与兼容性语义。
+以下核查以“条款可引用/可测试/可回滚”为标准；重点检查 **Layer 0（rbf-format.md）** 与 **Layer 1（rbf-interface.md）** 的一致性、边界条件与兼容性语义。
 
 ---
 
@@ -403,11 +403,11 @@ HeadLen = 16 + PayloadLen + PadLen
 
 ---
 
-## 5) 对 Claude 建议的“FrameStatus”术语看法（审计视角）
+## 5) 对 Claude 建议的“FrameStatus”术语看法（核查视角）
 
 总体意见：**赞成采用 `FrameStatus`，但需要防止它在 Layer 0/Layer 1 发生“命名-职责漂移”**。
 
-审计要点：
+核查要点：
 - `FrameStatus` 这个词本身是“可扩展容器名”，容易诱导未来把更多语义塞进同一个字节，导致上层实现出现分叉。
 - 因此必须配套两条硬约束：
    1) **只承诺两态**（Normal/Tombstone），其余值如何处理必须写死（fail-fast or forward-compatible policy）。
@@ -517,7 +517,7 @@ public struct RbfFrame {
 | 2 | **Pad 长度从 0~3 改为 1~4** | 监护人原案 + GPT 公式确认 |
 | 3 | **术语命名为 `FrameStatus`** | Claude 提议，Gemini/GPT 支持 |
 | 4 | **值定义**：`0x00=Normal`, `0xFF=Tombstone` | Claude 提议，GPT 确认 |
-| 5 | **CRC 覆盖范围不变**（Pad 已在 CRC 内） | Claude 确认，GPT 审计 |
+| 5 | **CRC 覆盖范围不变**（Pad 已在 CRC 内） | Claude 确认，GPT 核查 |
 | 6 | **逆向扫描算法核心逻辑不变**，仅更新最小长度注释 | Claude/GPT 一致 |
 | 7 | **Scanner 仍产出所有帧（含 Tombstone）**，过滤责任在 Layer 1 | Claude 提议，GPT 条款化 |
 
@@ -530,7 +530,7 @@ public struct RbfFrame {
 
 ---
 
-## 待修改条款清单（GPT 审计结果）
+## 待修改条款清单（GPT 核查结果）
 
 ### Layer 0: rbf-format.md
 

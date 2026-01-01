@@ -430,15 +430,15 @@ FrameTag.Meta = MetaCommitRecord;               // 0x00020000
 
 ### Advisor-GPT 发言
 
-以下从“规范审计/条款可判定性”视角收敛：先做现有条款审计（哪些条款会被提议 B 触发连锁），再给出一个**可直接写进 SSOT 的 FrameTag 位布局**（含保留区与未知值策略），最后列出“要改哪些条款 ID/如何改”。
+以下从“规范核查/条款可判定性”视角收敛：先做现有条款核查（哪些条款会被提议 B 触发连锁），再给出一个**可直接写进 SSOT 的 FrameTag 位布局**（含保留区与未知值策略），最后列出“要改哪些条款 ID/如何改”。
 
 ---
 
-## 1) 现有条款审计（ObjectKind / FrameTag 相关）
+## 1) 现有条款核查（ObjectKind / FrameTag 相关）
 
-> 审计目标：找出“哪些句子在采用提议 B 时会变成错误/自相矛盾/不可测试”。
+> 核查目标：找出“哪些句子在采用提议 B 时会变成错误/自相矛盾/不可测试”。
 
-| 位置 | 条款/段落 | 现状（摘意） | 审计结论（采用提议 B 的冲突点） | 建议处置 |
+| 位置 | 条款/段落 | 现状（摘意） | 核查结论（采用提议 B 的冲突点） | 建议处置 |
 |---|---|---|---|---|
 | mvp-design-v2.md | Glossary：FrameTag 定义 | FrameTag 是 Record 的唯一判别器；RBF 定义并透传 | **仍可成立**，但“唯一判别器”将从“2 个常量值”升级为“结构化编码值域”；需要明确“FrameTag 的 SSOT 编码规则” | 修改措辞：FrameTag 仍是唯一判别器，但其值域按位段编码（见新条款） |
 | mvp-design-v2.md | 枚举值速查表：FrameTag = 0x1/0x2 | `0x00000001`=ObjectVersionRecord，`0x00000002`=MetaCommitRecord | **将失效**：ObjectVersionRecord 不再是单一常量，而是一个“RecordType 分区 + ObjectKind 子类型”区间 | 替换为“RecordType 编码 + ObjectKind 子字段”表 |
@@ -448,7 +448,7 @@ FrameTag.Meta = MetaCommitRecord;               // 0x00020000
 | rbf-interface.md | `[F-FRAMETAG-DEFINITION]` | FrameTag 是 4B discriminator，RBF 不解释语义 | **无冲突**：RBF 不需要理解“RecordType/ObjectKind”子字段；仍是 opaque 值 | 不改（或仅补充“上层可采用位段编码”说明） |
 | rbf-interface.md | §5.1 `[S-STATEJOURNAL-FRAMETAG-MAPPING]` | 固定映射 `0x1/0x2` | **将失效**：该表是 StateJournal 对 FrameTag 的 SSOT 映射；采用 B 必须更新，否则接口层与上层设计自相矛盾 | 修改为“RecordType+ObjectKind 编码规则”并给出示例值 |
 
-**审计结论（核心矛盾点）**：
+**核查结论（核心矛盾点）**：
 - 真正需要改的不是 rbf-format（Layer 0），而是 **mvp-design-v2 的枚举速查表 + ObjectVersionRecord payload 布局 + rbf-interface 的 StateJournal 映射条款**。否则会出现“接口文档宣称 0x1/0x2 固定映射，但设计文档又说 FrameTag 是唯一判别器却需读 payload 里的 ObjectKind”的双 SSOT。
 
 ---
@@ -602,7 +602,7 @@ FrameTag.Meta = MetaCommitRecord;               // 0x00020000
 
 ---
 
-## 6) 结论性建议（审计立场）
+## 6) 结论性建议（核查立场）
 
 - 若选择提议 B：必须把“FrameTag 位段编码规则”升级成 **SSOT 条款**（而不是只写在示例/注释里），否则未来扩展时会出现多实现分叉。
 - rbf-format 不需要改；真正的 SSOT 冲突点在：mvp-design-v2 的 FrameTag 速查表 / ObjectVersionRecord payload 布局 与 rbf-interface 的 `[S-STATEJOURNAL-FRAMETAG-MAPPING]`。

@@ -1043,7 +1043,7 @@ AGENTS.md（入口）→ 关键路径表格 → how-to/（根目录直接可见�
 1. **新 Recipe 命名**：必须遵循动作化命名（`动词-名词.md`）
 2. **Recipe 头部**：必须声明 `DependsOn` / `SeeAlso` 字段
 3. **变更通知**：Recipe MAJOR 变更必须更新 Changefeed Anchor
-4. **定期审计**：每季度检查 how-to/ 索引与实际文件的一致性
+4. **定期检查**：每季度检查 how-to/ 索引与实际文件的一致性
 
 ---
 

@@ -34,7 +34,7 @@
   - `[S-DOC-TEXT-FIRST]` 规范性内容 MUST 以线性可读、可解析的文本形式表达
   - `[S-DOC-SSOT-SINGLE]` 同一事实被多种形式重复时，MUST 选定唯一 SSOT（单一信息源）
   - `[S-DOC-ASCIIART-AVOID]` ASCII art SHOULD NOT 出现在规范文档中
-- **现状审计**：`jam-session-guide.md` 和 `mvp-design-v2.md` 存在 ASCII art 作为唯一载体的问题
+- **现状核查**：`jam-session-guide.md` 和 `mvp-design-v2.md` 存在 ASCII art 作为唯一载体的问题
 - **实施路线图**：P0 修基座规范 → P1 修 SSOT 文档破口 → P2 轻量 lint 防复发
 - **反对双写**：Mermaid 本身就是线性 SSOT，不应强制再配文字（会制造漂移）
 

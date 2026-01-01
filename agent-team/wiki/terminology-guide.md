@@ -199,7 +199,7 @@ head -10 artifact-tiers.md | grep "版本"
 | 1.0.0 | 2025-12-31 | 初始版本，基于三层 SSOT 结构决策 |
 
 **维护者**: DocOps
-**审计者**: Craftsman
+**核查者**: Craftsman
 **UX 设计**: Curator
 **概念设计**: Seeker
 

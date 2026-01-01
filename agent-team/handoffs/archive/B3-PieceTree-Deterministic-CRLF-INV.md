@@ -132,7 +132,7 @@ These suites are out-of-scope for the immediate CRLF push but should stay on the
 - **TS alignment plan:** modify `docs/plans/ts-test-alignment.md` to mark the CRLF suite and centralized line-start suite as "Ported" (previously flagged under Tier A). Note that `search offset cache` and `buffer api` remain open.
 
 ### 3.3 Reporting
-- Capture a short summary in the changefeed referencing both this memo and the deterministic test file(s) touched, so downstream auditors can trace which TS cases are covered.
+- Capture a short summary in the changefeed referencing both this memo and the deterministic test file(s) touched, so downstream reviewers can trace which TS cases are covered.
 - Ensure TRX artifacts from CI capture the expanded suite counts (50 deterministic Facts) for future regressions.
 
 ## 4. Risks & open questions

@@ -32,7 +32,7 @@
 
 ### Craftsman 发言
 
-**Craftsman**: 从规范审计角度：
+**Craftsman**: 从规范核查角度：
 1. **术语一致性**: Why-Tier 在 SSOT 中已定义，迁移需要系统化
 2. **Stage Token**: `[AA:WHY]` 需要迁移到 `[AA:RESOLVE]`
 3. **迁移策略**: 四阶段迁移（SSOT → Stage Token → Biding → Theory）
@@ -247,7 +247,7 @@ Resolve-Tier    Shape-Tier    Rule-Tier     Plan-Tier     Craft-Tier
 
 | 关注点 | Resolve-Tier | Shape-Tier | Rule-Tier | Plan-Tier | Craft-Tier |
 |:-------|:-------------|:-----------|:----------|:----------|:-----------|
-| **安全性** | 值得投入吗？ | 边界在哪？ | 合规条款 | 实现策略 | 代码审计 |
+| **安全性** | 值得投入吗？ | 边界在哪？ | 合规条款 | 实现策略 | 代码审阅 |
 | **性能** | 重要性判断 | SLA承诺 | 性能约束 | 优化方案 | benchmark |
 
 横切关注点**不是独立层级**，而是**在每层的投影**。

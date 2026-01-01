@@ -409,13 +409,13 @@ Workspace 应该是 **"Battery Included"** 的——开箱即用，引擎内置�
 
 ### Advisor-GPT 发言
 
-我从“律师/审计员”角度收口：你们两位的方向总体一致（Workspace 做主动协调器、Materializer 内置、Registry 作为检修口、错误信息要可行动）。真正的风险在于：**接口边界没钉死时，概念会在实现里反复漂移**——尤其是 `IDiffCodec`、`TypeRegistry`、Root 发现与迁移路径。
+我从“律师/核查员”角度收口：你们两位的方向总体一致（Workspace 做主动协调器、Materializer 内置、Registry 作为检修口、错误信息要可行动）。真正的风险在于：**接口边界没钉死时，概念会在实现里反复漂移**——尤其是 `IDiffCodec`、`TypeRegistry`、Root 发现与迁移路径。
 
 #### 0) 发现的逻辑冲突/缝隙（需要补条款，否则落地会分叉）
 
 1) **`IDiffCodec` 与现有 `IDurableObject.WritePendingDiff` 的“双写风险”**
     - 现状：写路径已规范化为对象方法 `WritePendingDiff(IBufferWriter<byte>)`（Prepare 阶段）+ `OnCommitSucceeded()`（Finalize 阶段）。
-    - Claude 的提案若把 `WriteDiff` 也放进 codec，等于把“写路径权威”变成两处（对象 vs codec）。这会在 DurableDict/未来 DurableArray 上制造不可审计的不一致。
+    - Claude 的提案若把 `WriteDiff` 也放进 codec，等于把“写路径权威”变成两处（对象 vs codec）。这会在 DurableDict/未来 DurableArray 上制造不可追溯的不一致。
     - 结论：**规范必须选一个 SSOT**：要么“写在对象上、读在 codec 上”，要么“读写都在 codec 上且对象只持状态”。MVP 已经落了前者（写在对象上）。
 
 2) **`ApplyDiff` 的作用对象必须明确，否则违反四阶段模型（Deserialize/Materialize/LoadObject/ChangeSet）**
@@ -526,7 +526,7 @@ public interface IDiffCodec<TCommittedState>
 - **P1**：Registry 的 scope/注册时机 + “unknown kind”的基准；`ObjectLoaderDelegate` 的 deprecate/迁移条款。
 - **P2**：`WorkspaceOptions` 的渐进复杂度与 DX 友好入口。
 
-（我建议把上面 P0/P1 直接进规范；否则实现 PR 会出现“能跑但不可审计”的分叉。）
+（我建议把上面 P0/P1 直接进规范；否则实现 PR 会出现“能跑但不可追溯”的分叉。）
 
 ---
 

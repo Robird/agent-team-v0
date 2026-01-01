@@ -55,7 +55,7 @@ var dict = workspace.CreateObject<DurableDict>();
 
 | 优点 | 缺点 |
 |:-----|:-----|
-| ✅ 显式依赖，易审计 | ❌ 每个对象存储 Workspace 引用（内存开销） |
+| ✅ 显式依赖，易检验 | ❌ 每个对象存储 Workspace 引用（内存开销） |
 | ✅ 易于测试（Mock Workspace） | ❌ API 更复杂（用户需要传 Workspace） |
 | ✅ 支持多 Workspace | ❌ 对象无法在 Workspace 间迁移 |
 
@@ -455,11 +455,11 @@ public class DurableDict : DurableObjectBase
 
 ### Advisor-GPT 发言 (Round 1)
 
-以下从“规范严谨性 + 可测试性”角度对 Claude / Gemini 的建议做审计，并给出可落地的条款草案（Normative）与兼容性分析。
+以下从“规范严谨性 + 可测试性”角度对 Claude / Gemini 的建议做核查，并给出可落地的条款草案（Normative）与兼容性分析。
 
 ---
 
-## 0. 结论（可审计版）
+## 0. 结论（可检验版）
 
 1) **“Workspace 绑定”必须是 DurableObject 的不可变属性**：对象实例一旦被 `LoadObject/CreateObject` 产出并对外可见，就 MUST 绑定到某一个 Workspace；后续不允许被“环境上下文”隐式改绑。
 
@@ -471,7 +471,7 @@ public class DurableDict : DurableObjectBase
 
 ---
 
-## 1) 条款兼容性审计（对齐现有 §3.1.3 与对象状态机）
+## 1) 条款兼容性核查（对齐现有 §3.1.3 与对象状态机）
 
 ### 1.1 与 §3.1.3 Lazy Loading 条款的兼容性
 
@@ -498,7 +498,7 @@ public class DurableDict : DurableObjectBase
 
 ---
 
-## 2) Ambient Context（AsyncLocal）审计：并发/异步可靠性
+## 2) Ambient Context（AsyncLocal）核查：并发/异步可靠性
 
 ### 2.1 AsyncLocal 的可靠性边界（能做什么，不能做什么）
 
@@ -510,9 +510,9 @@ public class DurableDict : DurableObjectBase
 - 若调用链路显式使用 `ExecutionContext.SuppressFlow()`，或使用不捕获上下文的低级线程 API，则 ambient 可能不流动。
 - 若把 ambient 当作“对象所属 Workspace”的真相源，会导致**对象在不同 scope 下语义变化**（这是逻辑错误，不是 AsyncLocal 的错）。
 
-审计结论：AsyncLocal 适合作为“调用点上下文”（DX/测试隔离），但**不适合作为对象身份绑定**。
+核查结论：AsyncLocal 适合作为“调用点上下文”（DX/测试隔离），但**不适合作为对象身份绑定**。
 
-### 2.2 审计建议：Scope 需要可嵌套、可恢复、异常安全
+### 2.2 核查建议：Scope 需要可嵌套、可恢复、异常安全
 
 如果采纳 Gemini 的 Ambient Context Pattern，规范至少要钉死：
 - scope 必须支持嵌套（保存/恢复 previous）

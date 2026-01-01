@@ -338,9 +338,9 @@ parentWish: "W-0002"
 
 ### Craftsman 发言
 
-下面从“规范审计/可判定性/可维护性”的角度，对方案 C（Why → Shape → Rules → Route → Craft）与方案 C'（Why → Shape → Rules → Path → Craft）做一次兼容性与冲突评估。
+下面从“规范核查/可判定性/可维护性”的角度，对方案 C（Why → Shape → Rules → Route → Craft）与方案 C'（Why → Shape → Rules → Path → Craft）做一次兼容性与冲突评估。
 
-#### 1) 规范一致性审计结果（与现有规范/模板/文档的兼容性）
+#### 1) 规范一致性核查结果（与现有规范/模板/文档的兼容性）
 
 - **与 Wish 系统现状不一致（高影响）**：当前仓库已有事实上的层级命名 SSOT：
   - 在 [wishes/README.md](../../wishes/README.md) 与 [wishes/templates/wish-template.md](../../wishes/templates/wish-template.md) 中，层级产物写作 `L1(Why) → L2(What) → L3(Rules) → L4(How) → L5(Build)`。
@@ -378,7 +378,7 @@ parentWish: "W-0002"
 - **不建议把层级术语塞进条款编号作为主体系**：当前项目的条款编号体系是语义锚点 `[F-*]/[A-*]/[S-*]/[R-*]`，并且已在 Wish 系统规范中广泛采用（例如 `[F-WISH-FRONTMATTER-REQUIRED]` 等）。
 - `L3-RULES-001` 这种“顺序号 + 层级名”的编号：
   - 优点：读者直觉上知道属于哪层。
-  - 缺点：与现有稳定语义锚点体系不一致；且一旦术语从 Route 改 Path、What 改 Shape，会导致编号语义漂移（最难审计）。
+  - 缺点：与现有稳定语义锚点体系不一致；且一旦术语从 Route 改 Path、What 改 Shape，会导致编号语义漂移（最难核查）。
 - **折中建议（兼容且可判定）**：
   1. 条款仍用稳定语义锚点：例如 DocGraph L3 规范用 `[S-DOCGRAPH-…]` / `[F-DOCGRAPH-…]` 这一类。
   2. 在文档内部允许“展示型索引号”作为次要导航（Informative），例如：`(L3-001)`，但**跨文档引用只允许锚点**。
@@ -388,7 +388,7 @@ parentWish: "W-0002"
 
 - **在 C vs C' 之间，我支持 C' 的方向（Route → Path）**：理由是 Route 与仓库中既有的“ROUTE（分流路由）”强冲突，且 Route 在软件语境里天然联想到 HTTP/event routing。
 - **但我不建议把 L4 的 canonical 名称定为 Path（至少对 DocGraph）**：因为 DocGraph 的核心数据模型里已经有 `Path` 字段，且全仓库 path=文件路径的语义占用极高。
-- **推荐的可审计落地形态**：
+- **推荐的可检验落地形态**：
   1. 保留数字层级作为 SSOT：始终写 `L1/L2/L3/L4/L5`。
   2. 引入“层级别名表”（单点权威定义），例如：`L1 Why, L2 Shape (alias: What), L3 Rules, L4 Plan (alias: Path/Route), L5 Craft (alias: Build)`。
   3. 在代码注释/测试名/日志里使用带层级前缀的短标签以消歧：`[L4-PLAN]`、`[L2-SHAPE]`、`[L3-RULES]`；同时把文件路径一律写作 `FilePath`/`DocPath`。
@@ -969,7 +969,7 @@ namespace Atelia.DocGraph.LayerRoute { }
 |:-----|:---------|:--------|:---------|
 | **Seeker** | 方案 C | Route | 本质分析支持，Route 强调"路径选择" |
 | **Curator** | 方案 C' | Path | UX/DX 角度，Path 比 Route 更日常 |
-| **Craftsman** | 改良方案 | Plan/Approach | 规范审计，Path 有冲突，Route 有同形异义 |
+| **Craftsman** | 改良方案 | Plan/Approach | 规范核查，Path 有冲突，Route 有同形异义 |
 | **DocOps** | 方案 C | Route | 文档管理，Path 与 DocGraph.Document.Path 冲突 |
 | **Implementer** | 改良方案 | **Plan** | 代码实现，Path 有命名空间冲突，Plan 最优 |
 
@@ -1090,7 +1090,7 @@ namespace Atelia.DocGraph.LayerRoute { }
 
 - **Seeker** 的本质追问奠定了理论基础
 - **Curator** 的 UX/DX 分析确保了术语可用性  
-- **Craftsman** 的规范审计发现了关键冲突
+- **Craftsman** 的规范核查发现了关键冲突
 - **DocOps** 的过渡方案提供了执行路径
 - **Implementer** 的代码分析找到了最优解
 

@@ -268,8 +268,8 @@
 
 **发言位置**: agent-team/meeting/2025-12-16-durable-heap-mvp-design.md（Investigator 的想法）
 
-### 2025-12-15: DocUI Key-Notes 规范审计（第一轮）
-**任务**: 以规范审计专家视角审阅 DocUI Key-Notes 文档
+### 2025-12-15: DocUI Key-Notes 规范核查（第一轮）
+**任务**: 以规范核查专家视角审阅 DocUI Key-Notes 文档
 **审阅范围**: 7 个文档（glossary.md, llm-agent-context.md, doc-as-usr-interface.md, app-for-llm.md, UI-Anchor.md, micro-wizard.md, cursor-and-selection.md）
 **审阅维度**: 命名约定、文档格式、代码示例、状态标记
 **发现**:

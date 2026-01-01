@@ -68,7 +68,7 @@ StateJournal MVP v2 设计文档 (`atelia/docs/StateJournal/mvp-design-v2.md`) �
 
 理由：MVP v2 设计文档的概念框架已经完备——核心概念定义清晰、API 签名覆盖读/写/恢复三条路径、伪代码足够指导实现。但存在若干概念衔接缝隙和伪代码边界情况未覆盖的问题，需要在开工前补齐。
 
-#### 概念完备性审计
+#### 概念完备性核查
 
 ##### ✅ 已完备的核心概念链
 
@@ -248,7 +248,7 @@ Week 7
 
 #### 方法论收获
 
-本次审阅验证了"概念完备性审计"的检查模式：
+本次审阅验证了"概念完备性核查"的检查模式：
 
 1. **概念链闭合检查**：画出核心概念图，验证每个概念的定义、使用、销毁是否都有覆盖
 2. **API 路径覆盖检查**：枚举读/写/提交/恢复/撤销五条路径，确认每条都有 API 定义
@@ -274,7 +274,7 @@ Week 7
 | 3 | atelia/docs/StateJournal/mvp-test-vectors.md：DIRTY-001/002/003 用例文字与代码片段 | 测试用例混用 `Delete`/`Remove`（而规范正文强调 .NET 命名 `Remove`）。这会诱导实现者做两套 API 或在测试里引入别名，从而增加分叉面。 | P1（重要） | 统一测试用例文本与示例代码为 `Remove`（或统一使用规范对外 API 名）；如确需保留 `Delete` 作为别名，必须在 API 条款区显式写 `Delete` 的地位（alias/obsolete）并给出兼容策略。 |
 | 4 | atelia/docs/StateJournal/mvp-test-vectors.md：章节结构 | 文件中存在重复/并列的 “RBF framing” 章节块（同一主题多处叙述），且编号结构不稳定，容易造成 drift（测试向量与条款映射表互相脱节）。 | P2（中等） | 将测试向量按“主题 → 向量列表 → 断言（含条款锚点）”重排为单一目录树；每个向量只出现一次；允许在末尾附“黄金文件目录建议”作为附录。 |
 | 5 | atelia/docs/StateJournal/mvp-test-vectors.md：`PTR-OK-001` 的前置条件描述 | 用例描述写成“ptr 指向处 Magic 匹配”，但规范中 Magic 是 record 分隔符且不属于 record；Ptr64 指向 `HeadLen` 起点（其前 4B 才是 Magic）。描述易让实现者把校验点放错位置。 | P2（中等） | 将向量断言改为“`ptr-4..ptr-1` 为 Magic（域匹配），且 `ptr` 处 `HeadLen` 可读并满足对齐/长度/CRC 条款”。 |
-| 6 | atelia/docs/StateJournal/mvp-design-v2.md：全篇（元规则） | 元规则声明“（MVP 固定）规范性约束应有条款编号”，但仍建议做一次机械审计：是否存在用“（MVP 固定）/必须/不得”等措辞表达硬约束却未绑定语义锚点的句子（会形成不可测试的暗契约）。 | P2（中等） | 运行一次“关键字扫描”（MUST/MUST NOT/（MVP 固定））并补齐缺失锚点；或明确把该句元规则改成 SHOULD 并解释例外。 |
+| 6 | atelia/docs/StateJournal/mvp-design-v2.md：全篇（元规则） | 元规则声明“（MVP 固定）规范性约束应有条款编号”，但仍建议做一次机械核查：是否存在用“（MVP 固定）/必须/不得”等措辞表达硬约束却未绑定语义锚点的句子（会形成不可测试的暗契约）。 | P2（中等） | 运行一次“关键字扫描”（MUST/MUST NOT/（MVP 固定））并补齐缺失锚点；或明确把该句元规则改成 SHOULD 并解释例外。 |
 
 #### 实施优先级建议
 
@@ -310,7 +310,7 @@ Week 7
 
 理由：从 DX 视角看，核心 API 结构清晰，但存在一个致命的**读写类型不对称（Read/Write Asymmetry）**陷阱，如果不解决，开发者在使用 `DurableDict` 时会遭遇严重的运行时类型错误或认知失调。
 
-#### 开发者体验审计 (DX Audit)
+#### 开发者体验评估 (DX Audit)
 
 ##### 1. ⚠️ 读写不对称陷阱 (The Read/Write Asymmetry Trap) [P0]
 

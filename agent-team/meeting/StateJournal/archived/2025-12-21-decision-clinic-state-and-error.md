@@ -519,11 +519,11 @@ public enum DurableObjectState
 
 ---
 
-#### P0-3 把“必须写死”升级为条款：审计 §3.2.1/§3.2.2 的 MUST + RFC2119 措辞 + 锚点规范
+#### P0-3 把“必须写死”升级为条款：核查 §3.2.1/§3.2.2 的 MUST + RFC2119 措辞 + 锚点规范
 
-这里我不复述已有条款，而是给出**缺口审计**：哪些“规范性句子”尚未被条款化（无法被测试向量引用），以及建议的锚点名/措辞。
+这里我不复述已有条款，而是给出**缺口核查**：哪些“规范性句子”尚未被条款化（无法被测试向量引用），以及建议的锚点名/措辞。
 
-##### 1) §3.2.1（Data 文件）MUST 审计缺口
+##### 1) §3.2.1（Data 文件）MUST 核查缺口
 
 已存在的条款（示例）：`[F-MAGIC-RECORD-SEPARATOR]`、`[F-HEADLEN-TAILLEN-SYMMETRY]`、`[F-CRC32C-PAYLOAD-COVERAGE]`、`[R-RESYNC-DISTRUST-TAILLEN]`、`[F-PTR64-NULL-AND-ALIGNMENT]`。
 
@@ -543,7 +543,7 @@ public enum DurableObjectState
 3) **Magic 常量值本身应条款化（否则跨实现可能拼写/版本漂移）**
 - 建议新增：`[F-MAGIC-VALUE-DATA]` / `[F-MAGIC-VALUE-META]`（或合并为 `[F-MAGIC-VALUE-BY-DOMAIN]`）
 
-##### 2) §3.2.2（Meta 文件）MUST 审计缺口
+##### 2) §3.2.2（Meta 文件）MUST 核查缺口
 
 1) **刷盘顺序“必须写死”必须升级为 Recovery 条款（P0）**
 - 建议新增：`[R-COMMIT-FSYNC-ORDER]`
@@ -564,7 +564,7 @@ public enum DurableObjectState
 
 ##### 3) 锚点命名规范（补强元规则，减少歧义）
 
-现有命名规则已给出，我建议再加 3 条“审计友好”的硬规则（写进规范语言小节即可）：
+现有命名规则已给出，我建议再加 3 条"核查友好"的硬规则（写进规范语言小节即可）：
 - 锚点名 **禁止**包含 MUST/SHOULD/MAY（规范级别可能演进，但锚点应稳定）。
 - 对“过程类/顺序类”条款统一用后缀：`-SEQUENCE` / `-ORDER`（例如 `RECORD-WRITE-SEQUENCE`, `COMMIT-FSYNC-ORDER`），便于 grep 与测试命名。
 - 同一语义不得出现两个近义锚点（例如 `WRITE-STEP-ORDER` 与 `WRITE-SEQUENCE` 只能留一个），否则测试映射会分叉。

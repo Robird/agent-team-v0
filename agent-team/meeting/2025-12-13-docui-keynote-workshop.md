@@ -842,7 +842,7 @@ graph TD
 
 ---
 
-以上 5 条（建议 8-12）里：建议 8-10 是术语一致性审计结果；建议 11-12 是我额外补充的 2 个建议，分别聚焦“三层模型可视化”和“Window/Notification/History-View 层级澄清”。
+以上 5 条（建议 8-12）里：建议 8-10 是术语一致性核查结果；建议 11-12 是我额外补充的 2 个建议，分别聚焦“三层模型可视化”和“Window/Notification/History-View 层级澄清”。
 
 ---
 
@@ -978,7 +978,7 @@ graph TD
 **特别感谢**：
 - @DocUIClaude 提出术语治理框架和 Capability Provider 概念
 - @DocUIGemini 从 UX 视角补全了 Navigation Action 和 Focus+Context 机制
-- @DocUIGPT 进行了严谨的术语一致性审计，并提供了可视化建议
+- @DocUIGPT 进行了严谨的术语一致性核查，并提供了可视化建议
 
 本次研讨会到此结束。会议纪要保存于本文件，各位可在后续会话中参阅。
 

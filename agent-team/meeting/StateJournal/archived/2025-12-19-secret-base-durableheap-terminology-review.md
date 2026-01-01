@@ -345,7 +345,7 @@ EpochRecord（逻辑） ──实现为──→ MetaCommitRecord（meta file �
 
 ### DocUIGPT 发言
 
-> **视角**：规范审计、命名约定、文档格式、代码示例准确性
+> **视角**：规范检查、命名约定、文档格式、代码示例准确性
 
 ---
 
@@ -365,7 +365,7 @@ EpochRecord（逻辑） ──实现为──→ MetaCommitRecord（meta file �
 
 ---
 
-#### 2. 规范审计视角的新问题
+#### 2. 规范检查视角的新问题
 
 ##### 2.1 概念层 vs 实现层命名混写（最核心问题）
 
@@ -571,7 +571,7 @@ EpochRecord（逻辑） ──实现为──→ MetaCommitRecord（meta file �
 
 ---
 
-### DocUIGPT 第二轮发言（规范审计）
+### DocUIGPT 第二轮发言（规范检查）
 
 #### 共识 1：EpochMap → `VersionIndex`
 

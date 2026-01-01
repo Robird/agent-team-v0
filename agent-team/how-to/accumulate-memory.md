@@ -552,7 +552,7 @@ OnSessionEnd 检查清单：
 |:-----|:---------|
 | **Seeker** | 记忆 .gitignore 隐喻、分类决策树、覆盖规则 |
 | **Curator** | Git Commit Wizard、Librarian Persona、渐进披露、三层架构 |
-| **Craftsman** | MM-TRIG/MM-ROUTE/MM-WRITE 条款、可审计协议 |
+| **Craftsman** | MM-TRIG/MM-ROUTE/MM-WRITE 条款、可追溯协议 |
 | **Implementer** | 实战痛点、60 秒原则、meta-cognition 定位 |
 | **Investigator** | 过程产物外置模式、Brief 链接实践 |
 | **QA** | 测试用例设计、数据库操作类比、NO-OP/EXTERNAL-REF |

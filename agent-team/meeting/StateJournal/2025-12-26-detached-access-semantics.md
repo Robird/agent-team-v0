@@ -329,20 +329,20 @@ Debug.WriteLine($"Object {obj.ObjectId}: HasChanges = {obj.HasChanges}");
 
 ### Advisor-GPT 发言（第一轮）
 
-我从**规范审计/可判定性（decidability）**的视角，专门挑“能不能写成一致的黑盒测试、实现是否会分叉”的角度来审。结论先说：当前 `[S-DETACHED-ACCESS-TIERING]` 已经把“R1 vs R2”的硬冲突化解为两层，但它仍然缺少两类关键钉死点：
+我从**规范核查/可判定性（decidability）**的视角，专门挑“能不能写成一致的黑盒测试、实现是否会分叉”的角度来审。结论先说：当前 `[S-DETACHED-ACCESS-TIERING]` 已经把“R1 vs R2”的硬冲突化解为两层，但它仍然缺少两类关键钉死点：
 
 1) **“语义数据访问/元信息访问”定义不够可机械判定**（容易变成作者口感），导致新成员加入后会分叉。
 2) “延拓值”如果仍用原本的返回类型域（如 `bool`/`int`），多数情况下会产生**语义碰撞**：延拓值落在正常值域内，调用方无法区分“真值”与“Detached 特判值”，从而把错误静默扩散。
 
-下面按你们的问题逐条审计。
+下面按你们的问题逐条核查。
 
-#### 1) 现有 `[S-DETACHED-ACCESS-TIERING]` 的完备性审计
+#### 1) 现有 `[S-DETACHED-ACCESS-TIERING]` 的完备性核查
 
 现行条款（见 mvp-design-v2.md）给了一个访问分层表：
 - **元信息访问**：`State`, `Id`, `ObjectId` → Detached 时 MUST NOT throw
 - **语义数据访问**：`TryGetValue`, `Set`, `Remove`, `Count`, `Enumerate`, `HasChanges` → Detached 时 MUST throw `ObjectDetachedException`
 
-从审计角度，它的缺口主要是：
+从核查角度，它的缺口主要是：
 
 - **缺口 A：分类判定规则缺失**。
    - 现在读者只能“看示例猜意图”：`Count` 为什么是语义数据而不是元信息？（对 dict 来说 `Count` 很像元信息，但它依赖内容。）
@@ -361,7 +361,7 @@ Debug.WriteLine($"Object {obj.ObjectId}: HasChanges = {obj.HasChanges}");
 
 #### 2) 如何将成员分类为“元信息”vs“语义数据”（可判定定义建议）
 
-我建议把二分升级为**可审计的判定规则 + per-type 白名单**（二者缺一不可）：
+我建议把二分升级为**可检验的判定规则 + per-type 白名单**（二者缺一不可）：
 
 **(a) 规范性定义（判定规则）**
 
@@ -387,9 +387,9 @@ Debug.WriteLine($"Object {obj.ObjectId}: HasChanges = {obj.HasChanges}");
 
 该表必须覆盖“所有对外可见成员”（至少 public API 面），否则就不是可判定规范。
 
-#### 3) “延拓值”方案的可判定性审计
+#### 3) “延拓值”方案的可判定性核查
 
-延拓值方案要成立，必须先回答一个可审计问题：
+延拓值方案要成立，必须先回答一个可检验问题：
 
 > 对每个属性 $P: T$，Detached 的延拓值 $P(Detached)$ 是否：
 > 1) **唯一**（没有多个“都挺合理”的候选），且
@@ -400,9 +400,9 @@ Debug.WriteLine($"Object {obj.ObjectId}: HasChanges = {obj.HasChanges}");
 - 调用方写出 `if (!obj.HasChanges) return;` 会把“Detached”静默当成“无需处理”，**把错误吞掉**。
 - 更关键：这类 bug 很难靠测试覆盖，因为“false/0/empty”是完全合理的真实值，测试无法区分“正常 false”还是“Detached false”。
 
-因此，从可判定性角度我给一个很硬的审计结论：
+因此，从可判定性角度我给一个很硬的核查结论：
 
-> **若不改变属性返回类型，使其能表达“Detached”这一与正常值域互斥的分支（disjoint domain），则“延拓值”在规范层面不可判定/不可审计。**
+> **若不改变属性返回类型，使其能表达“Detached”这一与正常值域互斥的分支（disjoint domain），则“延拓值”在规范层面不可判定/不可检验。**
 
 要让延拓值可判定，至少需要三选一：
 
@@ -444,13 +444,13 @@ Debug.WriteLine($"Object {obj.ObjectId}: HasChanges = {obj.HasChanges}");
 > - 若任何属性在 Detached 时选择“返回延拓值而非抛异常”，则该属性的返回类型 MUST 能表达与正常值域互斥的 Detached 分支（disjoint domain），例如 nullable / tagged union / `Result<T>`。
 > - 若返回类型无法表达互斥分支（如 `bool`/`int`），则该属性 MUST 被归类为 `Semantic` 并遵循 `[S-DETACHED-SEMANTIC-THROW]`。
 
-（备注：最后一条是“把延拓值方案变成可审计方案”的最低门槛；否则延拓值只能作为实现偏好，无法进入规范。）
+（备注：最后一条是“把延拓值方案变成可检验方案”的最低门槛；否则延拓值只能作为实现偏好，无法进入规范。）
 
 #### 决策矩阵（供主席收敛用）
 
-| 方案 | 规则概要 | 可判定/可测试性 | 安全性（fail-fast） | 对 R1 的友好度 | API 破坏性 | 我对风险的审计意见 |
+| 方案 | 规则概要 | 可判定/可测试性 | 安全性（fail-fast） | 对 R1 的友好度 | API 破坏性 | 我对风险的核查意见 |
 |---|---|---:|---:|---:|---:|---|
-| **O1（现行强化）** | `Meta` 不抛；所有 `Semantic`（含属性）一律抛 `ObjectDetachedException`；`DiscardChanges` no-op | 高 | 高 | 中（属性可抛，但在 .NET 里可接受） | 低 | **推荐**：最可审计，最少静默错误 |
+| **O1（现行强化）** | `Meta` 不抛；所有 `Semantic`（含属性）一律抛 `ObjectDetachedException`；`DiscardChanges` no-op | 高 | 高 | 中（属性可抛，但在 .NET 里可接受） | 低 | **推荐**：最可检验，最少静默错误 |
 | **O2（监护人直觉版）** | 方法抛；属性不抛并返回“延拓值”（不改类型） | 低 | 低 | 高 | 低 | **不推荐**：延拓值与真值域碰撞，错误静默扩散且难测 |
 | **O3（严格延拓版）** | 属性不抛，但把返回类型改成可表达 Detached（`bool?`/`Result<T>`/tagged） | 高 | 中（错误变成显式分支） | 高 | 高 | 可行但代价大：会波及所有调用方与 API 风格 |
 | **O4（冻结快照版）** | Detach 后仍可读最后已知语义数据（不抛），只禁止写入 | 中 | 低-中 | 高 | 中 | 风险在“Detached 仍像活着”：与 ObjectId 重用/工作区语义容易打架 |
@@ -936,7 +936,7 @@ R2 体系的优点之一是：Detached 触发统一失败通道（`ObjectDetache
 
 ### 3) “O2 想要成立”的最低规范要求：必须让 Detached 分支与正常值域互斥
 
-如果团队坚持“属性不抛异常”，我认为唯一可审计的路是把 O2 升级为“严格延拓”（类似我之前说的 O3）：
+如果团队坚持“属性不抛异常”，我认为唯一可检验的路是把 O2 升级为“严格延拓”（类似我之前说的 O3）：
 
 - **类型层显式表达 Detached**：`bool?` / `int?` / `Result<T>` / tagged union
 - 或者 **提供显式的 Safe/Try 入口**（例如 `TryGetHasChanges(out bool)`），把“降级策略”变成调用方显式选择
@@ -947,7 +947,7 @@ R2 体系的优点之一是：Detached 触发统一失败通道（`ObjectDetache
 
 ## 结论（对主持人的决策建议）
 
-- 若目标是**可判定、可测试、可审计**：保持 O1（元信息可读；语义成员一律抛 `ObjectDetachedException`；`DiscardChanges` no-op）。
+- 若目标是**可判定、可测试、可检验**：保持 O1（元信息可读；语义成员一律抛 `ObjectDetachedException`；`DiscardChanges` no-op）。
 - 若目标是“属性不抛异常”的 DX：不要选 O2（同值域碰撞），而应选“严格延拓”：返回类型显式携带 Detached 分支，或在应用层提供 `SafeXxx()` 适配。
 ---
 
@@ -979,7 +979,7 @@ R2 体系的优点之一是：Detached 触发统一失败通道（`ObjectDetache
 
 #### 关键洞见：判据 D (Disjointness)
 
-GPT 提出的**判据 D**是本次讨论最重要的审计工具：
+GPT 提出的**判据 D**是本次讨论最重要的核查工具：
 
 > **判据 D**：调用方仅通过成员返回（不读额外状态）即可判定"这次返回是否来自 Detached 分支"。
 

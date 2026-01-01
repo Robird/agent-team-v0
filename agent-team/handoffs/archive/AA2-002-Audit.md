@@ -2,7 +2,7 @@
 
 **Task**: AA2-002  
 **Date**: 2025-11-20  
-**Auditor**: GitHub Copilot
+**核查者**: GitHub Copilot
 
 ## Scope & Inputs
 - **TS references**: `ts/src/vs/editor/common/model/textModel.ts`, `ts/src/vs/editor/common/model/pieceTreeTextBuffer/pieceTreeTextBuffer.ts`, supporting types under `ts/src/vs/editor/common/model.ts` and `ts/src/vs/editor/common/model/editStack.ts`.

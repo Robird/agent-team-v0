@@ -525,7 +525,7 @@ spec.md 本质上是一份"**契约的时态切片**"。api.md 说"这个工具�
 
 我的建议是：**先写 §0 和 §6**——它们直接解决两个 P0 问题。其他章节可以从 ore.md §3 迁移并精简。
 
-以上是我的结构大纲建议，期待 Curator 从 DX 角度补充"导航式设计"的具体表达，以及 Craftsman 审计条款命名的一致性。
+以上是我的结构大纲建议，期待 Curator 从 DX 角度补充"导航式设计"的具体表达，以及 Craftsman 核查条款命名的一致性。
 
 ---
 
@@ -806,15 +806,15 @@ Phase 3（迭代完善）:
 
 > Seeker 的结构大纲在**概念层面**设计得很好，但在**体验层面**需要为"30秒判断"和"5分钟上手"两种场景做针对性优化。核心改进方向是：**减少章节数、增加速读区、优化导航密度**。
 
-期待 Craftsman 对条款编号和术语一致性的审计意见。
+期待 Craftsman 对条款编号和术语一致性的核查意见。
 
 ---
 
-### Craftsman 发言（规范审计与实施建议）
+### Craftsman 发言（规范核查与实施建议）
 
-我从“规范审计/可验证交叉引用/可实施落地”的角度，审计 Seeker 提出的 spec.md 结构大纲与条款编号体系，并对齐上位约定（[atelia/docs/spec-conventions.md](../../../atelia/docs/spec-conventions.md)）以及现有素材（[atelia/docs/DocGraph/api.md](../../../atelia/docs/DocGraph/api.md)、[atelia/docs/DocGraph/ore.md](../../../atelia/docs/DocGraph/ore.md)、[wishes/specs/wish-system-rules.md](../../../wishes/specs/wish-system-rules.md)）。
+我从“规范核查/可验证交叉引用/可实施落地”的角度，审阅 Seeker 提出的 spec.md 结构大纲与条款编号体系，并对齐上位约定（[atelia/docs/spec-conventions.md](../../../atelia/docs/spec-conventions.md)）以及现有素材（[atelia/docs/DocGraph/api.md](../../../atelia/docs/DocGraph/api.md)、[atelia/docs/DocGraph/ore.md](../../../atelia/docs/DocGraph/ore.md)、[wishes/specs/wish-system-rules.md](../../../wishes/specs/wish-system-rules.md)）。
 
-#### 1) 规范审计发现
+#### 1) 规范核查发现
 
 ##### 1.1 条款编号体系（完整性/一致性/可引用性）
 
@@ -829,7 +829,7 @@ Phase 3（迭代完善）:
 
 **发现 C：`[R-PARSE-*]` 这类通配符引用不可测试、不可追溯**
 
-- 规范引用的最小可验证单位应是“稳定语义锚点”（单条 Requirement ID）。通配符在审计/测试映射上不可落地（无法证明覆盖了哪些条款，也无法在 code/test 中精确绑定）。
+- 规范引用的最小可验证单位应是“稳定语义锚点”（单条 Requirement ID）。通配符在核查/测试映射上不可落地（无法证明覆盖了哪些条款，也无法在 code/test 中精确绑定）。
 
 **发现 D：Seeker 文中出现“F=失败”暗示，但上位约定中 `F=Format/Framing`**
 
@@ -897,7 +897,7 @@ Seeker 的章节大纲总体覆盖了 Rule-Layer 需要的要素（范围/输入
 | `[R-NAV-RULE-REF]` | `[A-DOCGRAPH-ERROR-NAVIGATION-RULEREF-SHOULD]` 或拆为 `[A-DOCGRAPH-ERROR-NAVIGATION-FIELDS]` | 错误报告结构属于协议外表 |
 | `[D-CONFIG-FILE]` | 改写为 `[S-DOCGRAPH-MVP-NO-CONFIG-FILE]`（MUST NOT） + “Roadmap 表（Informative）” | “Deferred”本身不是规范性要求；真正可测试的是“v1 不支持/不暴露” |
 
-##### 2.3 “延期/路线图”怎么写才可审计
+##### 2.3 “延期/路线图”怎么写才可验证
 
 我建议把“Deferred”分成两层：
 
@@ -957,7 +957,7 @@ Seeker 的章节大纲总体覆盖了 Rule-Layer 需要的要素（范围/输入
 
 ---
 
-#### 5) 错误码命名规范（前缀 + 语义）审计与建议
+#### 5) 错误码命名规范（前缀 + 语义）核查与建议
 
 现状（来自 api.md/ore.md/会议草案）：
 
@@ -1015,7 +1015,7 @@ Seeker 的章节大纲总体覆盖了 Rule-Layer 需要的要素（范围/输入
 2. 错误码命名：选 `DOCGRAPH_*`（推荐）还是沿用 `PARSE_*` 并加 `toolId` 字段。
 3. 引用可验证性：先做“ID + 文件/章节链接”的双段式引用；是否需要后续把条款升级为 heading 锚点。
 
-以上审计意见供团队收敛；我建议我们先把“编号与错误 SSOT”定死并落地，以免后续实现与文档交叉引用不可验证。---
+以上核查意见供团队收敛；我建议我们先把“编号与错误 SSOT”定死并落地，以免后续实现与文档交叉引用不可验证。---
 
 ### 主持人决策引导与实施规划
 
@@ -1074,7 +1074,7 @@ Seeker 的章节大纲总体覆盖了 Rule-Layer 需要的要素（范围/输入
 
 ##### Phase 0（立即开始）：建立基础框架
 **目标**：创建spec.md文件，建立基础结构
-**实施者**：Seeker（概念架构）+ Craftsman（规范审计）
+**实施者**：Seeker（概念架构）+ Craftsman（规范核查）
 **产出**：
 1. spec.md文件创建
 2. 执行摘要（30秒速读）
@@ -1083,7 +1083,7 @@ Seeker 的章节大纲总体覆盖了 Rule-Layer 需要的要素（范围/输入
 
 ##### Phase 1（同步进行）：错误处理SSOT
 **目标**：解决P0-B问题
-**实施者**：Craftsman（规范审计）+ Curator（UX/DX）
+**实施者**：Craftsman（规范核查）+ Curator（UX/DX）
 **产出**：
 1. §4 错误处理SSOT（错误分类、错误码清单、JSON schema）
 2. api.md §6的导航链接更新
@@ -1108,7 +1108,7 @@ Seeker 的章节大纲总体覆盖了 Rule-Layer 需要的要素（范围/输入
 4. 编写§0文档元声明（含术语限定）
 5. 确定条款编号模板（如[S-DOCGRAPH-...]）
 
-请 **Seeker** 和 **Craftsman** 协作完成这个任务。Seeker负责概念架构和内容，Craftsman负责规范审计和条款编号。
+请 **Seeker** 和 **Craftsman** 协作完成这个任务。Seeker负责概念架构和内容，Craftsman负责规范核查和条款编号。
 
 完成后请在此发言，我们将继续Phase 1的实施。
 完成后请在此发言，我们将继续Phase 1的实施。
@@ -1145,7 +1145,7 @@ Seeker 的章节大纲总体覆盖了 Rule-Layer 需要的要素（范围/输入
 - §0.4 术语限定（特有术语 + 窄化定义）
 
 ##### 5. 条款编号体系
-✅ 严格遵循 Craftsman 的审计意见和 spec-conventions.md 的 F/A/S/R 闭集：
+✅ 严格遵循 Craftsman 的核查意见和 spec-conventions.md 的 F/A/S/R 闭集：
 - 使用 `[S-DOCGRAPH-*]` 作为语义条款前缀
 - 使用 `[A-DOCGRAPH-*]` 作为 API/CLI 契约前缀
 - 完全避免 Craftsman 指出的 `[R-*]`、`[D-*]` 误用
@@ -1181,7 +1181,7 @@ Seeker 的章节大纲总体覆盖了 Rule-Layer 需要的要素（范围/输入
 
 #### 三、需要 Craftsman 补充的内容
 
-1. **条款完整性审计**：请 Craftsman 审阅 20 条条款是否覆盖了 ore.md §3 的所有规范性要求，是否有遗漏。
+1. **条款完整性核查**：请 Craftsman 审阅 20 条条款是否覆盖了 ore.md §3 的所有规范性要求，是否有遗漏。
 
 2. **条款命名一致性**：请确认条款命名是否符合 spec-conventions.md §2 的"3-5 词"长度控制和"概括核心语义"原则。
 
@@ -1191,7 +1191,7 @@ Seeker 的章节大纲总体覆盖了 Rule-Layer 需要的要素（范围/输入
 
 #### 四、下一步建议
 
-1. **Phase 1**：请 Craftsman 对 spec.md 进行规范审计，补充遗漏条款
+1. **Phase 1**：请 Craftsman 对 spec.md 进行规范核查，补充遗漏条款
 2. **Phase 2**：更新 api.md §6，添加指向 spec.md 的导航链接
 3. **Phase 3**：从 ore.md §3 提炼更详细的处理规则（§2、§3 待细化）
 
@@ -1207,7 +1207,7 @@ Seeker 的章节大纲总体覆盖了 Rule-Layer 需要的要素（范围/输入
 
 ---
 
-*等待 Craftsman 的规范审计反馈。*
+*等待 Craftsman 的规范核查反馈。*
 ---
 
 ### 主持人进展更新与下一步规划
@@ -1326,7 +1326,7 @@ Seeker 的章节大纲总体覆盖了 Rule-Layer 需要的要素（范围/输入
 - **[S-DOCGRAPH-OUTPUT-PATH]** MUST：输出文件路径固定为 `wishes/index.md`。
 ```
 
-这是明显的**条款 ID 冲突**——同一个 ID 不能对应两个不同的文件路径。这需要 Craftsman 审计确认哪个是正确的。
+这是明显的**条款 ID 冲突**——同一个 ID 不能对应两个不同的文件路径。这需要 Craftsman 核查确认哪个是正确的。
 
 **问题 C：§4.4 失败策略中也存在重复条款**
 
@@ -1994,7 +1994,7 @@ api.md 的表达方式整体上是**中性-专业**的，没有使用"禁止"、
 
 邀请团队讨论下一步方向：
 1. **Seeker**：对当前spec.md的完整性有何评估？
-2. **Craftsman**：是否需要进一步规范审计？
+2. **Craftsman**：是否需要进一步规范核查？
 3. **Curator**：P1优化是否必须现在完成？
 
 请各位专家发表意见，我们将基于团队共识决定下一步行动。---
@@ -2082,7 +2082,7 @@ api.md 的表达方式整体上是**中性-专业**的，没有使用"禁止"、
 感谢所有参与专家的卓越贡献：
 - **Seeker**：完成了spec.md的绝大部分创建工作
 - **Curator**：提供了详细的UX/DX评估和优化建议
-- **Craftsman**：提供了关键的规范审计建议
+- **Craftsman**：提供了关键的规范核查建议
 
 明天，我们将继续推进新的畅谈会，开始 **Plan-Layer 实现规划**，将规范转化为可工作的代码。
 

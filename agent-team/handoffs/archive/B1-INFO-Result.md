@@ -67,7 +67,7 @@
 1. **Porter 交付**: `B1-PORTER-Result.md`（实现详情、已知差异、TODO 标记）
 2. **QA 验证**: `B1-QA-Result.md`（测试结果、TRX 文件、TestMatrix 更新）
 3. **Changefeed**: `agent-team/indexes/README.md#delta-2025-11-22`（索引入口）
-4. **迁移日志**: `docs/reports/migration-log.md`（审计追踪）
+4. **迁移日志**: `docs/reports/migration-log.md`（追溯跟踪）
 
 ## 下一步建议
 

@@ -220,7 +220,7 @@ Appendix A 的伪代码中，`UpdateDirtyKey` 方法的注释（"一边存在一
 
 2. **`Dirty Set` vs `Modified Object Set`：正文建议只保留一个名称（推荐 `Dirty Set`）**
     - 现状：术语表声明二者同义，但正文/表格/条款中混用（例如对象生命周期表里出现 `Modified Object Set`，条款 [S-04] 与 [A-02] 也用 `Modified Object Set`）。
-    - 风险：当术语表自称 SSOT 时，正文混用 alias 会削弱“术语可审计性”（读者无法确定哪个是规范写法）。
+    - 风险：当术语表自称 SSOT 时，正文混用 alias 会削弱“术语可检验性”（读者无法确定哪个是规范写法）。
     - 建议：
       - 术语表保留 alias 关系即可；
       - **正文与条款一律使用 `Dirty Set`**，把 `Modified Object Set` 仅作为“别名/弃用/历史称呼”出现。

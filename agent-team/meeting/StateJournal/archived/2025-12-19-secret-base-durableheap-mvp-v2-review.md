@@ -18,7 +18,7 @@
 |------|----------|--------|
 | **DocUIClaude** | 概念框架 | 术语一致性、概念完备性、逻辑自洽 |
 | **DocUIGemini** | UX/交互 | API 设计合理性、开发者体验、可发现性 |
-| **DocUIGPT** | 规范审计 | 命名约定、文档格式、代码示例准确性 |
+| **DocUIGPT** | 规范检查 | 命名约定、文档格式、代码示例准确性 |
 
 ---
 
@@ -168,7 +168,7 @@ Scheme C 的 `_committed` vs `_current` 结构为调试提供了极佳的 **"Dif
 
 ### 📋 DocUIGPT 发言
 
-作为**规范审计专家**，我重点检查三件事：
+作为**规范检查专家**，我重点检查三件事：
 1) **命名约定**是否“概念层/编码层/实现层”一致且不混用；2) **Markdown 格式**是否可渲染、可跳转、可维护；3) **伪代码/示例**是否与正文语义一致，且不会诱导实现走错。
 
 #### 问题清单
@@ -176,7 +176,7 @@ Scheme C 的 `_committed` vs `_current` 结构为调试提供了极佳的 **"Dif
 | # | 严重度 | 问题 | 分析 | 建议 |
 |---:|--------|------|------|------|
 | 1 | **Critical** | `FlushToWriter` 的“非提交”语义与伪代码实现相矛盾 | 术语表定义 **FlushToWriter** 为“计算 diff 并序列化到 writer（非提交）”，但 4.4.4 伪代码里 `FlushToWriter()` 在写入成功后立刻 `_committed = Clone(_current); _isDirty=false;`。在 meta-file commit point 语义下，如果 heap 级 commit 后续步骤（写 meta / flush / fsync）失败，会产生“对象已本地追平但磁盘未提交”的**假提交**状态，甚至丢失重试所需的 dirty 信息。这个问题会直接导致实现错误，是规范层面的硬矛盾。 | 把对象级写入拆成两阶段：`FlushToWriter()` 只产生/写出 diff（prepare），**不更新** `_committed/_isDirty`；heap 级 commit 成功后统一回调 `FinalizeCommitSucceeded()`（或批量 finalize）来追平 committed/清 dirty；失败则保持 dirty 并允许重试。若坚持当前实现，则必须把 `FlushToWriter` 降级为 internal 且明确“只能在 meta commit 成功后调用”。 |
-| 2 | **Major** | `RecordKind`/`MetaKind`/`ObjectKind` 命名体系不统一，容易在实现层引入歧义 | 文档在 framing 层说“record kind 在 payload”，data payload 用 `RecordKind`（`0x01` 表示 `ObjectVersionRecord`）；meta payload 又改为 `MetaKind`（`0x01` 表示 `MetaCommitRecord`），而对象类型用 `ObjectKind`。这种“同层不同名”会导致读者误以为它们的判定规则/扩展策略不同，降低格式可审计性。 | 统一为一个词汇体系：建议 payload 第一个字段一律叫 `RecordKind`（包含 data 与 meta 的顶层类型）；`ObjectKind` 仅用于 `ObjectVersionRecord` 内区分对象解码器。若需区分文件域，可用 `DataRecordKind/MetaRecordKind`（但仍保留 `RecordKind` 这一上位名）。 |
+| 2 | **Major** | `RecordKind`/`MetaKind`/`ObjectKind` 命名体系不统一，容易在实现层引入歧义 | 文档在 framing 层说“record kind 在 payload”，data payload 用 `RecordKind`（`0x01` 表示 `ObjectVersionRecord`）；meta payload 又改为 `MetaKind`（`0x01` 表示 `MetaCommitRecord`），而对象类型用 `ObjectKind`。这种“同层不同名”会导致读者误以为它们的判定规则/扩展策略不同，降低格式可检验性。 | 统一为一个词汇体系：建议 payload 第一个字段一律叫 `RecordKind`（包含 data 与 meta 的顶层类型）；`ObjectKind` 仅用于 `ObjectVersionRecord` 内区分对象解码器。若需区分文件域，可用 `DataRecordKind/MetaRecordKind`（但仍保留 `RecordKind` 这一上位名）。 |
 | 3 | **Major** | Markdown 相对链接疑似错误：`ChunkedReservableWriter.cs` 指向路径不对 | 6 节链接写成 `../atelia/src/Data/ChunkedReservableWriter.cs`，但本文档位于 `DurableHeap/docs/` 下时，`../atelia` 会解析到 `DurableHeap/atelia`（不存在），而实际目录在仓库根的 `atelia/`。这会造成“规范引用不可达”，降低文档可信度。 | 把链接改为 `../../atelia/src/Data/ChunkedReservableWriter.cs`（从 `DurableHeap/docs/` 回到仓库根再进入 `atelia/`）。并建议在 CI（或文档检查脚本）里加“相对链接可达性”校验。 |
 | 4 | **Major** | “概念术语 vs 实现标识符”的边界在正文未完全贯彻 | 术语表的命名约定要求“实现标识符仅在 Implementation Mapping 出现，用代码格式”。但正文多处在规范段落直接使用 `_current/_committed/_dirtySet` 等实现名（虽有 code format，但会把实现细节抬到规范层）。长期演进会导致文档被实现绑死。 | 在规范段落优先使用 **Working/Committed State、Dirty Set、Identity Map** 等概念名；实现名集中放在“Implementation Mapping / Reference Implementation Notes”小节。
 |
@@ -491,7 +491,7 @@ MVP v2 文档应当是 **Single Source of Truth**。
 
 ### DocUIGPT 第二轮发言
 
-我继续从“规范可审计性 + 实现不出坑”的角度补齐四个问题。
+我继续从“规范可检验性 + 实现不出坑”的角度补齐四个问题。
 
 #### Q1: FlushToWriter 修复方案
 

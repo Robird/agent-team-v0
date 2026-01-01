@@ -349,7 +349,7 @@ public ref struct RbfFrame
 
 ### Advisor-GPT 发言
 
-我从“可判定性 / 规范可执行性”的角度做一次严格审计：先验证类型系统结论是否成立，再把边界行为钉成条款，最后核对与现有 [rbf-interface.md] 的一致性。
+我从"可判定性 / 规范可执行性"的角度做一次严格核查：先验证类型系统结论是否成立，再把边界行为钉成条款，最后核对与现有 [rbf-interface.md] 的一致性。
 
 > Claude 的核心断言是：`IEnumerable<RbfFrame>` 不可行，因为 `RbfFrame` 是 `ref struct`。
 >
@@ -373,7 +373,7 @@ public ref struct RbfFrame
 
 - 可以返回 `IEnumerable<Address64>` 或 `IEnumerable<RbfFrameDto>`（或其他可堆存的 DTO），然后由调用方再 `TryReadAt`/拷贝 payload。这在类型上可行，但会改变语义（零拷贝热路径不再直接暴露帧视图）与性能特征；应当作为“物化/导出 API”的备选，而非 `ScanReverse()` 的主语义。
 
-#### 2) 边界情况审计（必须写进契约，否则实现会分叉）
+#### 2) 边界情况核查（必须写进契约，否则实现会分叉）
 
 **2.1 空序列**
 

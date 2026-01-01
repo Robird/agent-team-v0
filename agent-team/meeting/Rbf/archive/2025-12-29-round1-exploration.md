@@ -2,7 +2,7 @@
 
 > **日期**：2025-12-29
 > **阶段**：需求分析前的通用设计探讨
-> **参与者**：Advisor-Claude, Advisor-DeepSeek, Auditor
+> **参与者**：Advisor-Claude, Advisor-DeepSeek, Advisor-GPT
 > **状态**：已被基于真实需求的重新设计取代
 
 本文件保留第一轮探索的完整记录，供参考。

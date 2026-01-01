@@ -46,7 +46,7 @@
 |:---|:-----|:----------|
 | `Seeker` | 设计顾问 | 概念架构、术语治理、系统类比 |
 | `Curator` | 设计顾问 | UX/DX、交互设计、视觉隐喻 |
-| `Craftsman` | 审计专家 | 规范审计、代码审阅、条款编号 |
+| `Craftsman` | 核查专家 | 规范核查、代码审阅、条款编号 |
 
 ### 前线组 (Field Team)
 
@@ -56,7 +56,7 @@
 | `Implementer` | 编码实现 | 功能开发、移植、重构 |
 | `QA` | 测试验证 | 测试编写、回归验证、Bug 复现 |
 | `DocOps` | 文档维护 | 文档维护、索引管理 |
-| `Craftsman` | 审计专家 | 规范审计、代码审阅 (Mode B) |
+| `Craftsman` | 核查专家 | 规范核查、代码审阅 (Mode B) |
 | `MemoryPalaceKeeper` | 记忆管理 | 便签整理、记忆归档、分类路由 |
 
 ## 畅谈会标签
@@ -89,7 +89,7 @@ chatroomFile: "agent-team/meeting/2025-12-21-xxx.md"
 targetFiles:
   - "atelia/docs/StateJournal/mvp-design-v2.md"
 appendHeading: "### Seeker 发言"
-scope: "术语一致性审计，不做实现建议"
+scope: "术语一致性核查，不做实现建议"
 outputForm: "Markdown 要点列表"
 ```
 

@@ -292,7 +292,7 @@ var child = dict.Get<DurableDict>(Keys.Child);
 
 ### Advisor-GPT 发言
 
-从“规范审计 / 可判定性”视角，我建议把本议题收敛成两层契约：
+从“规范核查 / 可判定性”视角，我建议把本议题收敛成两层契约：
 
 1) **容器本体（DurableDict）**：不持有 Workspace；只承诺“持久化文档容器”的最小可测语义（Try-pattern、Detached 行为、枚举一致性）。
 2) **访问器（Accessor / View）**：显式绑定 Workspace（或 ObjectLoader），承诺“透明 Lazy Load / LazyRef 生成 / 强类型读取”的行为。
@@ -366,7 +366,7 @@ public sealed class DurableDict : IDurableObject, IEnumerable<KeyValuePair<ulong
 并且：
 - **禁止**把 `ulong` 作为通用 value 直接接受（否则 ObjRef/Ptr64 在运行时不可区分）。如需兼容旧代码，可只在内部/obsolete API 中暂存 `ulong`，并明确它只表示 Ptr64。
 
-> 这一条是“审计硬钉”：否则未来加入 ObjRef 后，运行时语义会出现 silent corruption 风险（同样的 `ulong` 无法决定走 LoadObject 还是当作地址）。
+> 这一条是“核查硬钉”：否则未来加入 ObjRef 后，运行时语义会出现 silent corruption 风险（同样的 `ulong` 无法决定走 LoadObject 还是当作地址）。
 
 ---
 
@@ -429,7 +429,7 @@ public static class DurableDictAccessorExtensions {
 - 如果历史代码/文档已有 `Enumerate()`，可以保留为 `[Obsolete]` 过渡别名：
     - `Enumerate()` 的实现必须等价于 `Entries`（返回同一序列语义），并在文档中声明最终会移除。
 
-理由（审计角度）：
+理由（核查角度）：
 - `Entries/Keys/Values` 是 .NET 集合语义最稳定的一组名词；
 - `Enumerate` 动词在 API surface 上容易引入“是否 lazy、是否 snapshot、是否有副作用（I/O）”的争议。
 
@@ -480,7 +480,7 @@ var v = dict.Access(ws).TryGet<long>(k);
 
 ---
 
-> 审计结论一句话：**把“容器纯度（无 I/O）”与“访问器可 I/O（透明 lazy load）”分层，是本议题最小可判定、最小迁移风险的收敛点**。
+> 核查结论一句话：**把“容器纯度（无 I/O）”与“访问器可 I/O（透明 lazy load）”分层，是本议题最小可判定、最小迁移风险的收敛点**。
 ---
 
 ### 主持人总结 (刘德智)
