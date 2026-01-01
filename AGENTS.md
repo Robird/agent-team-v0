@@ -103,7 +103,7 @@ outputForm: "Markdown 要点列表"
 整理记忆？ → `agent-team/how-to/maintain-memory.md`
 记录洞见？ → `agent-team/how-to/accumulate-memory.md`
 主持畅谈会？ → `agent-team/how-to/run-jam-session.md`
-多人实时协作？ → `agent-team/how-to/collaborate-realtime.md`
+实施实时协作模式？ → `agent-team/how-to/collaborate-realtime.md`
 战略战术双会话？ → `agent-team/how-to/dual-session-pattern.md`
 基于规范代码审阅？ → `agent-team/how-to/review-code-with-spec.md`
 拆分测试文件？ → `agent-team/how-to/split-test-files.md`

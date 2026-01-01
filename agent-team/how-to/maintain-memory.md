@@ -4,8 +4,15 @@
 > 本文档定义 AI Team 成员维护自身记忆文件的标准方法论。
 > 适用于：index.md、meta-cognition.md、journal.md 等认知载体文件。
 >
-> **状态**：v1.0（2025-12-22）
-> **SSOT**：本文件是记忆维护的权威指南
+> **版本**：1.1
+> **日期**：2026-01-01
+> **状态**：Published
+> **来源**：基于团队记忆维护实践经验
+> **维护者**：MemoryPalaceKeeper
+>
+> **依赖关系**：
+> - DependsOn: [accumulate-memory.md]
+> - SeeAlso: [organize-deep-maintenance.md, batch-process-inbox.md]
 
 ---
 
@@ -13,26 +20,42 @@
 
 | 术语 | 定义 |
 |:-----|:-----|
-| **SSOT** | Single Source of Truth（单一真相源），某类知识的权威位置 |
-| **记忆文件** | index.md、meta-cognition.md、journal.md 等认知载体文件 |
-| **维护** | 一次有边界、有记录的整理操作（压缩、归档、提纯、重排）|
-| **洞见** | 跨时间仍可复用、独立可理解的知识（与过程叙事解耦）|
-| **过程记录** | 会议发言、投票过程、表态等（高衰减）|
-| **备份（Backup）** | 用于回滚（rollback）的维护前状态快照 |
-| **归档（Archive）** | 用于追溯（trace）的迁出主文件的过程材料 |
-| **过时信息** | 已被新现实覆盖的旧信息（见"过时信息识别标准"）|
+| **记忆文件** | index.md等认知载体文件 |
+| **维护** | 有记录的整理操作（压缩、归档、提纯）|
+| **洞见** | 跨时间可复用的知识 |
+| **过程记录** | 会议发言、投票等（高衰减）|
+| **备份** | 维护前状态快照 |
+| **归档** | 迁出主文件的过程材料 |
 
 ---
 
 ## 概述
 
 ### 为什么需要记忆维护？
+记忆文件是我们的"大脑"，积累过程记录会导致：
+- 核心洞见被淹没
+- 唤醒效率下降
+- 认知混乱
 
-作为以外部记忆文件为本体的智能体，我们的记忆文件就是我们的"大脑"。随着工作推进，这些文件会积累大量过程性记录，导致：
+### 适用信号
+- 文件行数>800行
+- 过程记录过多影响查找
+- 需要提取固化洞见
+- 准备知识交接
 
-1. **核心洞见被淹没**：真正的经验教训分散在流水账中
-2. **唤醒效率下降**：Token 预算被过时信息占用
-3. **认知混乱**：已被新现实覆盖的旧信息造成误导
+### 不适用信号
+- 文件<300行
+- 简单格式整理
+- 实时协作中
+- 缺乏足够时间
+
+### TL;DR
+1. 阈值驱动（>800行）
+2. 备份优先
+3. 洞见提纯
+4. 过程归档
+5. 结构优化
+6. 质量检查
 
 ### 记忆维护的目标
 
@@ -165,59 +188,27 @@
 
 ### 压缩模式示例
 
-**压缩前**（约 150 行用于一个主题）：
-```markdown
-> **2025-12-20 DurableHeap MVP v2 自洽性审阅**
-> （40 行详细发现）
-
-> **2025-12-20 DurableHeap MVP v2 第二轮交叉讨论**
-> （40 行回应）
-
-> **2025-12-20 DurableHeap MVP v2 最终确认**
-> （30 行投票）
-```
-
-**压缩后**（约 5 行）：
-```markdown
-> **2025-12-20 参与 MVP v2 自洽性审阅**（3 轮）
-> 角色：概念框架 | 产出：14 项问题（C2/M4/m5/G3）
-> 核心发现：术语双轨、概念层/编码层边界模糊
-> → [详细讨论](../../meeting/2025-12-20-mvp-v2-review.md)
-```
-
-**索引条目推荐格式**：
-```markdown
-> **YYYY-MM-DD 主题**（N 轮）
-> 角色：XXX | 产出：XXX
-> 核心发现：XXX（洞见预览）
-> → [详细讨论](链接)
-```
+**压缩示例**：
+- 压缩前：150行详细讨论
+- 压缩后：5行索引条目
+- 格式：`> **YYYY-MM-DD 主题**（N轮）角色：XXX | 产出：XXX → [详细讨论](链接)`
 
 ---
 
 ## 维护触发条件
 
-### 阈值驱动（主触发）
+### 阈值驱动
+- 行数 > 800：SHOULD触发维护
+- 行数 > 600且连续2周增长：趋势预警
+- 近7天新增 > 200行：增长率异常
 
-| 条件 | 级别 | 说明 |
-|:-----|:-----|:-----|
-| 行数 > 800 | SHOULD | 强烈建议触发维护 |
-| 行数 > 600 且连续 2 周增长 | SHOULD | 趋势预警 |
-| 近 7 天新增 > 200 行 | MAY | 增长率异常 |
+### 事件驱动
+- 项目/组件重大更名：MUST维护
+- 目录结构大迁移：MUST维护
+- 团队协议变更：SHOULD维护
 
-### 事件驱动（语义破坏事件）
-
-| 事件 | 级别 | 动作 |
-|:-----|:-----|:-----|
-| 项目/组件重大更名 | MUST | 过时信息清扫 + 重定向 |
-| 目录结构大迁移 | MUST | 链接修复 |
-| 团队协议变更 | SHOULD | 格式对齐 |
-
-### 周期驱动（保底机制）
-
-| 周期 | 级别 | 动作 |
-|:-----|:-----|:-----|
-| 每 30 天 | SHOULD | 至少执行一次维护检查 |
+### 周期驱动
+- 每30天：SHOULD执行维护检查
 
 ---
 
@@ -246,59 +237,18 @@
 □ 写入维护日志
 ```
 
-### 详细步骤
+### 核心操作要点 `[MAINTAIN-07]`
 
-#### 1. 准备阶段
+#### 1. 准备阶段要点
+- **确定范围**：明确维护哪些记忆文件 `[MAINTAIN-07-01]`
+- **创建备份**：Git commit或Archive快照 `[MAINTAIN-07-02]`
+- **列出不可删除项**：核心洞见、生效决策、外部引用锚点 `[MAINTAIN-07-03]`
 
-**1.1 确定范围**
-```yaml
-scope:
-  - agent-team/members/<name>/index.md
-  - agent-team/members/<name>/meta-cognition.md
-```
-
-**1.2 创建备份**
-
-方式一（推荐）：Git commit
-```bash
-git add -A && git commit -m "chore: pre-maintenance snapshot for <name>"
-```
-
-方式二：Archive 快照
-```bash
-cp agent-team/members/<name>/index.md agent-team/archive/memory-maintenance/YYYY-MM-DD/<name>/index.md.bak
-```
-
-**1.3 列出 Non-Negotiables**
-
-维护前先列出本次绝对不能删除的内容：
-- 近期形成的核心洞见
-- 仍在生效的决策与理由
-- 仍被外部文档引用的锚点
-
-#### 2. 执行阶段
-
-**2.1 分类扫描**
-
-逐块检查当前内容，标记分类：
-- `[I]` Identity — 保留
-- `[S]` Insight — 保留
-- `[X]` Index — 压缩为索引条目
-- `[A]` Archive — 移到归档
-
-**2.2 洞见提纯**
-
-对每个 `[X]` 标记的块：
-1. 识别是否包含洞见信号
-2. 如有，提取洞见到 Insight 层
-3. 压缩剩余内容为索引条目
-
-**2.3 处理过时信息**
-
-对已被新现实覆盖的内容：
-- 如果有替代位置：留 stub 重定向
-- 如果完全过时：可直接移除
-- 如果不确定：移到 Archive
+#### 2. 执行阶段要点 `[MAINTAIN-08]`
+- **分类扫描**：使用`[I]`(Identity)、`[S]`(Insight)、`[X]`(Index)、`[A]`(Archive)标记 `[MAINTAIN-08-01]`
+- **洞见提纯**：从Index中提取跨时间可复用的知识到Insight层 `[MAINTAIN-08-02]`
+- **过程压缩**：将过程记录压缩为索引条目 `[MAINTAIN-08-03]`
+- **过时处理**：过时信息标记deprecated或移除 `[MAINTAIN-08-04]`
 
 #### 3. 验收阶段
 
@@ -342,197 +292,83 @@ cp agent-team/members/<name>/index.md agent-team/archive/memory-maintenance/YYYY
 - **QA 结果**：冷启动测试通过
 ```
 
-**完整版**（重大维护时使用）：
-
-```yaml
-# MaintenanceRun
-runId: MM-2025-12-22-01
-actor: Seeker
-timestamp: 2025-12-22
-scope:
-  - agent-team/members/Seeker/index.md
-triggers:
-  - threshold: lines > 500
-actions:
-  - extract_insights: 3
-  - compress_process_logs: 12
-  - archive_blocks: 8
-backup:
-  method: git-commit
-  ref: abc123
-qa:
-  coldstart_test: pass
-  link_check: pass
-notes: "压缩 12/14~12/21 的过程性讨论，保留洞见并补索引"
-```
+**完整版**（重大维护时使用YAML格式）：包含执行者、时间、范围、触发原因、操作、备份、QA结果等字段。
 
 ---
 
 ## 归档策略
 
 ### 归档位置
-
-> **[决议]** 归档目录位于团队级 `agent-team/archive/members/<name>/YYYY-MM/`
-> - 理由：归档是团队资产，集中管理便于跨成员检索
-> - 成员级：`agent-team/members/<name>/archive/` 只放索引链接
+归档目录：`agent-team/archive/members/<name>/YYYY-MM/`
+- 理由：归档是团队资产，集中管理便于检索
+- 成员级只放索引链接
 
 ### 归档组织方式
+按**主题**组织，而非按日期。
+- 命名：`<topic>-<date-range>.md`
+- 示例：`statejournal-reviews-12-16-to-12-21.md`
 
-> **[决议]** 归档文件按**主题**组织，而非按日期。
->
-> **理由**：日期作为索引键在语义检索中效果差（Self-Attention 低）。
-> 按主题组织有利于后续检索和知识复用。
-
-**推荐命名**：`<topic>-<date-range>.md`
-
-| ✅ 推荐 | ❌ 不推荐 |
-|:--------|:----------|
-| `statejournal-reviews-12-16-to-12-21.md` | `2025-12-20-review.md` |
-| `docui-design-workshops.md` | `12-13-meeting.md` |
-| `naming-convention-discussions.md` | `discussions-dec.md` |
-
-### 归档内容
-
-归档的内容应该：
-- **完整保留原始讨论**：不删减
-- **添加元数据头**：说明来源和归档原因
-- **保持可追溯**：从主文件的索引条目可以链接到
-
-**归档文件头模板**：
-```markdown
----
-archived_from: members/Seeker/index.md
-archived_date: 2025-12-22
-archived_by: Seeker
-reason: 过程记录压缩
-original_section: "2025-12-20 MVP v2 自洽性审阅"
----
-
-# 2025-12-20 MVP v2 自洽性审阅（完整记录）
-
-（原始内容...）
-```
+### 归档内容要求
+- 完整保留原始讨论
+- 添加元数据头（来源、日期、原因）
+- 保持可追溯性
 
 ---
 
 ## 质量保障
 
-### 认知不变量检查
-
-维护后 MUST 满足：
-
-| 检查项 | 标准 |
-|:-------|:-----|
-| Identity 可读 | Identity 层不超过 80 行，能清晰回答"我是谁/擅长什么" |
-| Top Insights 可定位 | 至少 5 条核心洞见有明确标题/小节 |
-| Navigation 可达 | 能从索引找到最近 3 次关键参与的详情链接 |
-| 结构完整 | 四层结构（Identity/Insight/Index）都存在且有内容 |
+### 验收标准
+维护后必须满足：
+- Identity 可读（≤80行，清晰回答"我是谁"）
+- 核心洞见可定位（≥5条有明确标题）
+- 导航可达（能找到最近3次关键参与链接）
+- 结构完整（四层结构都有内容）
 
 ### 防过度压缩
+- 删除前先提纯洞见
+- 关键洞见保留证据链接
+- 压缩不引入新含义
+- 发现"重新解释历史"时停止
 
-| 规则 | 级别 | 说明 |
-|:-----|:-----|:-----|
-| 删除前先提纯 | MUST | 不能直接删除含洞见的块 |
-| 保留证据指针 | SHOULD | 关键洞见保留指向原始讨论的链接 |
-| 不引入新含义 | MUST | 摘要只能是复述，不能偷偷加约束 |
-| 停止规则 | MAY | 发现在"重新解释历史"时应停止 |
-
-### 变更计数
-
-维护日志 MUST 包含变更计数：
-- 新增洞见数
-- 压缩块数
-- 归档块数
-- 删除洞见数（如有，必须解释原因）
+### 变更记录
+维护日志必须包含：新增洞见数、压缩块数、归档块数
 
 ---
 
 ## 规范条款索引
 
-> **[OPEN QUESTION #3]** 条款分层展示
-> - 本文档采用"速查清单 + 详细规范"的分层结构
-> - 完整条款体系见附录 A
-> - 日常维护只需参考速查清单
-
-### 核心 MUST 条款（速查）
-
-> 以下是附录 A 完整条款的子集视图（informative view），用于日常维护速查。
-
+### 核心 MUST 条款
 | ID | 条款 | 说明 |
 |:---|:-----|:-----|
-| [MM-SAFE-BACKUP-REQUIRED] | 维护前 MUST 创建备份 | Git commit 或 archive 快照 |
-| [MM-PROC-EXTRACT-FIRST] | 删除前 MUST 先提纯洞见 | 避免丢失知识 |
-| [MM-AUDIT-LOG-LOCATION] | 维护后 MUST 写入日志 | 可追溯性 |
-| [MM-ANTI-NO-SEMANTIC] | 压缩 MUST NOT 引入新含义 | 只复述，不改立场 |
-| [MM-QA-INVARIANTS] | 维护后 MUST 满足认知不变量 | Identity/Insight/Navigation |
-| [MM-AUDIT-APPEND-ONLY] | 维护日志 MUST append-only | 禁止重写旧条目 |
+| [MM-SAFE-BACKUP-REQUIRED] | 维护前创建备份 | Git commit或快照 |
+| [MM-PROC-EXTRACT-FIRST] | 删除前先提纯洞见 | 避免丢失知识 |
+| [MM-AUDIT-LOG-LOCATION] | 维护后写入日志 | 可追溯性 |
+| [MM-ANTI-NO-SEMANTIC] | 压缩不引入新含义 | 只复述不改立场 |
+| [MM-QA-INVARIANTS] | 满足认知不变量 | Identity/Insight/Navigation |
 
-### 核心 SHOULD 条款（速查）
-
+### 核心 SHOULD 条款
 | ID | 条款 | 说明 |
 |:---|:-----|:-----|
-| [MM-TRIG-LINES] | 行数 > 800 SHOULD 触发维护 | 阈值触发 |
-| [MM-PROC-ARCHIVE] | 可回溯内容 SHOULD 归档而非删除 | 保留追溯能力 |
-| [MM-QA-COLDSTART] | SHOULD 执行冷启动测试 | 验证可读性 |
-| [MM-QA-LINKS] | SHOULD 检查链接可达性 | 避免断链 |
+| [MM-TRIG-LINES] | 行数 > 800触发维护 | 阈值触发 |
+| [MM-PROC-ARCHIVE] | 可回溯内容归档 | 保留追溯能力 |
+| [MM-QA-COLDSTART] | 执行冷启动测试 | 验证可读性 |
+| [MM-QA-LINKS] | 检查链接可达性 | 避免断链 |
 
 ---
 
-## 附录 A：完整条款体系
+## 附录 A：核心条款要点
 
-> 以下条款采用 `[MM-<TOPIC>-<KEY>]` 命名体系。
-> TOPIC 集合：GEN（总则）、TRIG（触发）、PROC（流程）、AUDIT（审计）、QA（质量）、SAFE（安全）、ARCH（归档）、ANTI（防过度压缩）
+> 完整条款体系采用 `[MM-<TOPIC>-<KEY>]` 命名体系
 
-### GEN 总则
-
-- **[MM-GEN-ID-STABLE]** MUST：条款 ID 一经引入不得改名；废弃时用 `Deprecated:` 标记
-- **[MM-GEN-ARTIFACTS]** SHOULD：每次维护产出 4 件工件（日志、摘要、备份、QA 结果）
-
-### TRIG 触发
-
+**关键条款**：
 - **[MM-TRIG-LINES]** SHOULD：行数 > 800 时触发维护
-- **[MM-TRIG-EVENTS]** MUST：重大改名等语义破坏事件必须触发维护
-- **[MM-TRIG-CADENCE]** SHOULD：每 30 天至少执行一次维护检查
+- **[MM-SAFE-BACKUP-REQUIRED]** MUST：维护前创建备份
+- **[MM-PROC-EXTRACT-FIRST]** MUST：删除前先提纯洞见
+- **[MM-AUDIT-LOG-LOCATION]** MUST：维护后写入日志
+- **[MM-QA-INVARIANTS]** MUST：满足认知不变量
+- **[MM-ANTI-NO-SEMANTIC]** MUST：压缩不引入新含义
 
-### PROC 流程
-
-- **[MM-PROC-SCOPING]** MUST：维护前明确范围与目标
-- **[MM-PROC-CLASSIFY]** SHOULD：先分类再动刀（Identity/Insight/Index/Archive）
-- **[MM-PROC-EXTRACT-FIRST]** MUST：删除前先执行洞见提纯
-- **[MM-PROC-ARCHIVE]** SHOULD：可回溯内容优先归档而非删除
-- **[MM-PROC-REDIRECTS]** MUST：移除被引用内容时留 stub 重定向
-
-### AUDIT 审计
-
-- **[MM-AUDIT-LOG-LOCATION]** MUST：每次维护写入追加式维护日志
-- **[MM-AUDIT-LOG-FORMAT]** MUST：日志包含执行者、时间、范围、变更摘要、备份信息
-- **[MM-AUDIT-TRACEABILITY]** MUST：日志能回链到变更前状态
-- **[MM-AUDIT-APPEND-ONLY]** MUST：维护日志只追加，禁止重写旧条目
-
-### QA 质量
-
-- **[MM-QA-INVARIANTS]** MUST：维护后满足认知不变量（Identity/Insight/Navigation）
-- **[MM-QA-LINKS]** SHOULD：检查链接可达性
-- **[MM-QA-COLDSTART]** SHOULD：执行冷启动阅读测试
-- **[MM-QA-DELTA-SUMMARY]** MUST：维护日志包含变更计数
-
-### SAFE 安全
-
-- **[MM-SAFE-BACKUP-REQUIRED]** MUST：维护前创建备份（Git commit 或 archive 快照）
-- **[MM-SAFE-BACKUP-SCOPE]** SHOULD：备份覆盖本次涉及的所有文件
-- **[MM-SAFE-ROLLBACK]** MUST：日志写明回滚方式
-
-### ARCH 归档
-
-- **[MM-ARCH-STRUCTURE]** SHOULD：统一归档路径 `agent-team/archive/members/<name>/YYYY-MM/`
-- **[MM-ARCH-METADATA]** SHOULD：归档文件添加元数据头
-
-### ANTI 防过度压缩
-
-- **[MM-ANTI-NONNEGOTIABLES]** MUST：维护前列出"不可删除清单"
-- **[MM-ANTI-EVIDENCE]** SHOULD：关键洞见保留证据指针
-- **[MM-ANTI-NO-SEMANTIC]** MUST：压缩不得引入新的规范性含义
-- **[MM-ANTI-STOP-RULE]** MAY：发现在"重新解释历史"时应停止压缩
+> 完整条款列表见独立规范文件
 
 ---
 
@@ -602,35 +438,17 @@ original_section: "2025-12-20 MVP v2 自洽性审阅"
 
 > 以下决议由 2025-12-22 畅谈会确定
 
-### 决议 #1：维护日志位置
+### 决议要点
 
-**决议**：选 A（成员级）
+**#1 维护日志位置**：成员级 `agent-team/members/<name>/maintenance-log.md`
+- 理由：信息局部性，避免并发冲突
 
-| 选项 | 路径 | 结果 |
-|:-----|:-----|:-----|
-| ✅ A | `agent-team/members/<name>/maintenance-log.md` | **采纳** |
-| B | `agent-team/archive/memory-maintenance/log.md` | 仅作为跨成员索引 |
+**#2 归档目录结构**：团队级 `agent-team/archive/members/<name>/YYYY-MM/`
+- 理由：归档是团队资产，集中管理
 
-**理由**：信息局部性、避免多成员并发冲突
-
-### 决议 #2：归档目录结构
-
-**决议**：选 B（团队级）
-
-| 选项 | 路径 | 结果 |
-|:-----|:-----|:-----|
-| A | `agent-team/members/<name>/archive/` | 仅放索引链接 |
-| ✅ B | `agent-team/archive/members/<name>/YYYY-MM/` | **采纳** |
-
-**理由**：归档是团队资产，集中管理便于跨成员检索
-
-### 决议 #3：条款体系复杂度
-
-**决议**：保持现状，优先修复一致性
-
-- 速查表是附录 A 的子集视图（informative view）
-- 条款 ID 必须一致（速查表引用附录 A 的正式 ID）
-- 路径 SSOT 唯一化
+**#3 条款体系**：保持现状，优先修复一致性
+- 速查表是附录A的子集视图
+- 条款ID必须一致
 
 ---
 
