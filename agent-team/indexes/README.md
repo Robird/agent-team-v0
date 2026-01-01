@@ -97,7 +97,7 @@
 
 ### 2025-12-31 – Terminology Naming Convention
 - **#delta-2025-12-31-terminology-convention** – 术语命名规范制定：
-  - 多单词术语：`Title-Kebab` 格式（`Why-Tier`、`App-For-LLM`）
+  - 多单词术语：`Title-Kebab` 格式（`Resolve-Tier`、`App-For-LLM`）
   - 缩写规则：注册表白名单全大写，其他首字母大写
   - Registry 位置：`agent-team/wiki/terminology-registry.yaml`
   - 规范更新：`atelia/docs/spec-conventions.md` 新增第 4 章

@@ -359,17 +359,17 @@
 - 避免格式漂移导致 grep/lint 失效
 
 #### Artifact-Tiers 层级重命名审计 (2026-01-02)
-> Why-Tier 重命名相关审计要点汇总。
+> Resolve-Tier 重命名相关审计要点汇总。
 
-**Why-Tier → Wish-Tier 审计要点**：
+**Resolve-Tier → Wish-Tier 审计要点**：
 - **关键红旗**：`Wish` 已是系统域核心术语（Wish 系统/Wish 文档/WishId），引入 `Wish-Tier` 会造成长期同形异义
 - `wishes/specs/wish-system-rules.md` 存在 `[F-WISH-Tier-...]` 条款 ID，若 `Wish-Tier` 成为真实层级名会产生语义误导
 - **若执行重命名**：必须同步修订 `artifact-tiers.md`（SSOT）、`spec-conventions.md`（闭集/迁移/alias）、`terminology-registry.yaml`、以及 Wish 系统规则/模板中的枚举闭集
 - **去歧义建议**：将 `[F-WISH-Tier-PROGRESS-*]` 更名为 `[F-WISH-LAYER-PROGRESS-*]`（旧 ID → 新 ID 映射保留）
 
-**Why-Tier → Resolve-Tier & Biding 状态审计要点**：
-- **影响面**：SSOT 级别术语变更，波及 Stage Token（`[AA:WHY]`）、Wish 系统 `Layer` 闭集、模板与历史文档检索
-- **新红旗**：`terminology-registry.yaml` 闭集是 `Why-Layer...`，而文档体系大量使用 `Why-Tier...`；改名会放大"Layer vs Tier 域不一致"问题
+**Resolve-Tier → Resolve-Tier & Biding 状态审计要点**：
+- **影响面**：SSOT 级别术语变更，波及 Stage Token（`[AA:RESOLVE]`）、Wish 系统 `Layer` 闭集、模板与历史文档检索
+- **新红旗**：`terminology-registry.yaml` 闭集是 `Why-Layer...`，而文档体系大量使用 `Resolve-Tier...`；改名会放大"Layer vs Tier 域不一致"问题
 - **建议**：顺便裁决并补齐机器闭集（引入 `tier_terms` 或统一命名域）
 - **Biding 落地**：作为 Wish 生命周期状态（Active/Biding/Completed/Abandoned）引入，**必须**强制 `NextReviewOn`/复审节律，否则极易演化为"僵尸堆积/软放弃"
 

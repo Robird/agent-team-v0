@@ -80,16 +80,16 @@ DocOps - 文档与索引管理专家，负责维护团队的集体记忆和认�
 **术语分层管理模式**：
 | 术语类型 | Primary Definition | 说明 |
 |:---------|:-------------------|:-----|
-| 框架术语（Artifact-Tiers, Why-Tier...） | artifact-tiers.md | 引用，禁止重定义 |
+| 框架术语（Artifact-Tiers, Resolve-Tier...） | artifact-tiers.md | 引用，禁止重定义 |
 | 叙事术语（冒险、存档点、关卡...） | 本 Beacon | 可定义 |
 | Boss 名称（模糊巨兽、边界蠕虫...） | 本 Beacon | 可定义 |
-| Stage Token（[AA:WHY]...） | spec-conventions.md | 机器可读标记 |
+| Stage Token（[AA:RESOLVE]...） | spec-conventions.md | 机器可读标记 |
 
 **引用锚点设计价值**：为 Beacon 设置明确的锚点 ID（#tldr, #rosetta-stone, #stage-token...），便于其他文档精确引用。这是"文档不是孤岛"原则的具体落地。
 
 **文档管理风险识别**：
 - 术语双写（Beacon 重定义框架术语）
-- Stage Token 格式漂移（[AA:Why] vs [AA:WHY]）
+- Stage Token 格式漂移（[AA:WHY] vs [AA:RESOLVE]）
 - 隐喻幼稚化（"刷副本"等游戏化语言）
 - Beacon 过时（Artifact-Tiers 更新后未同步）
 - 引用断裂（锚点被移除后下游文档失效）
@@ -267,7 +267,7 @@ DocOps - 文档与索引管理专家，负责维护团队的集体记忆和认�
 
 ### 术语重命名迁移成本分析框架（2026-01-02）
 
-参与 Why-Tier → Wish-Tier 重命名提议畅谈会，从文档管理角度建立迁移成本分析框架。
+参与 Resolve-Tier → Wish-Tier 重命名提议畅谈会，从文档管理角度建立迁移成本分析框架。
 
 **影响范围量化洞见**：
 - 全仓 40+ 处引用，但真正需要强制更新的只有 SSOT + 规范 + 模板 + 入口层（约 25 处）
@@ -293,7 +293,7 @@ DocOps - 文档与索引管理专家，负责维护团队的集体记忆和认�
 参与 Resolve-Tier 概念畅谈会，产出具体迁移实施洞见。
 
 **Layer vs Tier 域不一致问题发现**：
-- `terminology-registry.yaml` 用 `Why-Layer`，但文档用 `Why-Tier`
+- `terminology-registry.yaml` 用 `Why-Layer`，但文档用 `Resolve-Tier`
 - **建议**：统一为 Tier（文档优先原则），registry 改为 `tier_terms: [Resolve-Tier, ...]`
 - **时机**：本次迁移是修复这一技术债的好机会
 

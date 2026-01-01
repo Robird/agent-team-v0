@@ -118,7 +118,7 @@ yq '.layer_terms[]' terminology-registry.yaml
 ./agent-team/scripts/check-terminology-consistency.sh
 
 # 搜索特定术语的使用
-grep -r "Why-Tier" --include="*.md" agent-team/wiki atelia/docs
+grep -r "Resolve-Tier" --include="*.md" agent-team/wiki atelia/docs
 
 # 查看术语表版本
 head -10 artifact-tiers.md | grep "版本"

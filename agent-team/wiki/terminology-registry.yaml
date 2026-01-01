@@ -5,8 +5,8 @@
 # 最后更新: 2025-12-31
 # 参考: [2025-12-31 畅谈会记录](../meeting/2025-12-31-terminology-naming-convention.md)
 
-version: "1.0.0"
-last_updated: "2025-12-31"
+version: "1.1.0"
+last_updated: "2026-01-02"
 
 # 全大写缩写白名单
 # 这些缩写在文档术语域中使用全大写形式
@@ -31,14 +31,15 @@ acronyms_uppercase:
   # 其他常见缩写
   - OK    # Okay (高频使用)
 
-# 层级术语闭集
+# 层级术语闭集 (Tier Terms)
 # 这些是固定的层级术语，不允许创建新的层级术语
-layer_terms:
-  - Why-Layer
-  - Shape-Layer
-  - Rule-Layer
-  - Plan-Layer
-  - Craft-Layer
+# 注意：统一使用 Tier 后缀（不是 Layer）
+tier_terms:
+  - Resolve-Tier  # 原 Why-Tier，v1.1.0 更名
+  - Shape-Tier
+  - Rule-Tier
+  - Plan-Tier
+  - Craft-Tier
 
 # 其他复合术语示例
 # 这些是项目中已建立的复合术语，作为参考
@@ -55,27 +56,32 @@ compound_terms:
 # 术语变体映射
 # 记录每个术语的合法变体形式，用于搜索和规范化
 term_variants:
-  # 层级术语变体
-  Why-Layer:
-    - Why Layer
-    - WhyLayer
-    - why-layer
-  Shape-Layer:
-    - Shape Layer
-    - ShapeLayer
-    - shape-layer
-  Rule-Layer:
-    - Rule Layer
-    - RuleLayer
-    - rule-layer
-  Plan-Layer:
-    - Plan Layer
-    - PlanLayer
-    - plan-layer
-  Craft-Layer:
-    - Craft Layer
-    - CraftLayer
-    - craft-layer
+  # 层级术语变体 (Tier Terms)
+  # 注意：Why-Tier 已废弃，使用 Resolve-Tier
+  Resolve-Tier:
+    - Resolve Tier
+    - ResolveTier
+    - resolve-tier
+    - Why-Tier        # DEPRECATED alias
+    - Why Tier        # DEPRECATED alias
+    - WhyTier         # DEPRECATED alias
+    - why-tier        # DEPRECATED alias
+  Shape-Tier:
+    - Shape Tier
+    - ShapeTier
+    - shape-tier
+  Rule-Tier:
+    - Rule Tier
+    - RuleTier
+    - rule-tier
+  Plan-Tier:
+    - Plan Tier
+    - PlanTier
+    - plan-tier
+  Craft-Tier:
+    - Craft Tier
+    - CraftTier
+    - craft-tier
   
   # 缩写变体
   ID:
@@ -99,10 +105,11 @@ management:
   
   # 使用指导
   usage_guidance:
-    - "文档术语域：使用 Title-Kebab 格式（如 `Why-Layer`）"
-    - "文件名域：使用 lower-kebab-case 格式（如 `why-layer.md`）"
-    - "代码标识符域：遵循语言惯例（如 `WhyLayer`）"
+    - "文档术语域：使用 Title-Kebab 格式（如 `Resolve-Tier`）"
+    - "文件名域：使用 lower-kebab-case 格式（如 `resolve-tier.md`）"
+    - "代码标识符域：遵循语言惯例（如 `ResolveTier`）"
     - "缩写检查：不在本列表中的缩写使用首字母大写形式"
+    - "历史术语：Why-Tier 已废弃，统一使用 Resolve-Tier"
   
   # 工具集成
   tool_integration:

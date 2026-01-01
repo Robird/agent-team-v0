@@ -35,7 +35,7 @@ tags: []
 
 | Artifact Tier | 状态 | 产物链接 | 备注 |
 |:--------------|:-----|:---------|:-----|
-| Why-Tier | ⚪ 未开始 | — | |
+| Resolve-Tier | ⚪ 未开始 | — | |
 | Shape-Tier | ⚪ 未开始 | — | |
 | Rule-Tier | ⚪ 未开始 | — | |
 | Plan-Tier | ⚪ 未开始 | — | |

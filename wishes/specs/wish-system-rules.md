@@ -53,7 +53,7 @@
 - **[F-WISH-ONE-LINE-MOTIVATION]** MUST：Wish 文档必须包含"一句话动机"（≤ 50 字）。
 - **[F-WISH-GOALS-NONGOALS-SECTION]** MUST：Wish 文档必须包含"目标与边界"章节，明确 Goals 和 Non-Goals。
 - **[F-WISH-ACCEPTANCE-SECTION]** MUST：Wish 文档必须包含"验收标准"章节，至少 1 条可判定的验收条件。
-- **[F-WISH-TIER-PROGRESS-TABLE]** MUST：Wish 文档必须包含"层级进度"表格，追踪 Why-Tier 到 Craft-Tier 各层级状态。
+- **[F-WISH-TIER-PROGRESS-TABLE]** MUST：Wish 文档必须包含"层级进度"表格，追踪 Resolve-Tier 到 Craft-Tier 各层级状态。
 - **[F-WISH-TIER-PROGRESS-LINKS]** MUST：层级进度表格中的产物链接必须指向实际文件或明确标注 `N/A` 及原因。
 - **[F-WISH-CHANGELOG-SECTION]** MUST：Wish 文档必须包含"变更日志"章节，记录状态变更历史。
 
@@ -71,10 +71,12 @@
 
 - **[F-WISH-DIR-EXCLUSIVE]** MUST：Wish 文件必须存放在以下互斥目录之一：
   - `wishes/active/` — 活跃 Wish
+  - `wishes/biding/` — 待定 Wish（战略待机）
   - `wishes/completed/` — 已完成 Wish
   - `wishes/abandoned/` — 已放弃 Wish
 - **[F-WISH-DIR-UNIQUE]** MUST：同一 Wish 不得在多个目录同时存在。
 - **[S-WISH-STATUS-MATCH-DIR]** MUST：文档内 `status` 字段必须与所在目录一致。
+- **[S-WISH-STATUS-ENUM]** MUST：`status` 枚举扩展为 `Active | Biding | Completed | Abandoned`。
 
 ### §3.2 文件命名
 
@@ -104,7 +106,7 @@
 - **[F-ISSUE-REQUIRED-FIELDS]** MUST：每个 Issue 必须包含以下字段：
   - `IssueId`: 唯一标识，格式 `I-XXXX`
   - `Status`: 状态枚举 — `Open` | `InProgress` | `Blocked` | `Done` | `Deferred`
-  - `Tier`: 所属层级 — `Why-Tier` | `Shape-Tier` | `Rule-Tier` | `Plan-Tier` | `Craft-Tier`
+  - `Tier`: 所属层级 — `Resolve-Tier` | `Shape-Tier` | `Rule-Tier` | `Plan-Tier` | `Craft-Tier`
   - `RelatedWishId`: 关联 Wish，孤立 Issue 标记为 `Orphan`
   - `Owner`: 负责人/角色
   - `LastUpdated`: 最后更新日期
@@ -128,12 +130,23 @@
 ```mermaid
 stateDiagram-v2
   [*] --> Active
+  Active --> Biding
+  Biding --> Active
   Active --> Completed
   Active --> Abandoned
+  Biding --> Abandoned
 ```
 
 ### §6.2 转换条件
 
+- **[S-WISH-ACTIVE-TO-BIDING]** MUST：Active → Biding 需满足：
+  - 写明 `BidingReason`（暂时搁置的原因，如资源不足、外部依赖、策略等待）
+  - 填写 `NextReviewOn`（下次复审日期，防僵尸堆积）
+  - 不允许存在 `Status=InProgress` 的关联 Issue（语义冲突）
+- **[S-WISH-BIDING-TO-ACTIVE]** MUST：Biding → Active 需满足：
+  - 原有阻塞条件已解除
+  - 团队有带宽重新投入
+  - 追加 Change Log 记录激活原因
 - **[S-WISH-ACTIVE-TO-COMPLETED]** MUST：Active → Completed 需满足：
   - 验收标准中全部条件已勾选
   - 所有关联 Issue 处于 `Done` 或 `Deferred` 状态
@@ -141,8 +154,18 @@ stateDiagram-v2
 - **[S-WISH-ACTIVE-TO-ABANDONED]** MUST：Active → Abandoned 需满足：
   - 写明放弃原因（例如：被更高优先级替代、不可行、与方向冲突）
   - 若被替代，必须填写 `SupersededBy` 链接到替代 WishId
+- **[S-WISH-BIDING-TO-ABANDONED]** MUST：Biding → Abandoned 需满足：
+  - 在复审点明确放下
+  - 追加 Change Log 记录放弃原因
+  - 若被替代，必须填写 `SupersededBy`
 - **[S-WISH-REOPEN-SHOULD-NOT]** SHOULD：Completed/Abandoned → Active（复活）默认禁止，建议创建新 Wish 并引用旧 Wish。
 - **[S-WISH-REOPEN-REQUIRES-FIELDS]** MAY：若确需复活，必须在 Wish 内追加 `ReopenedOn` 与原因。
+
+### §6.3 Biding 状态专项条款
+
+- **[S-WISH-BIDING-REVIEW-DEADLINE]** MUST：`NextReviewOn` 不得晚于进入 Biding 起 90 天（团队默认复审周期）。
+- **[S-WISH-BIDING-EXIT-REQUIRES-LOG]** MUST：Biding → (Active/Abandoned) 必须追加 Change Log 记录，并更新 `updated` 字段。
+- **[S-WISH-BIDING-SUPERSEDED-BY]** MUST：若 Biding → Abandoned 且原因是"被替代"，必须填写 `SupersededBy`（沿用现有 abandoned 语义）。
 
 ### §6.3 更新时机
 
@@ -224,7 +247,7 @@ stateDiagram-v2
 ### 层级术语
 | 层级 | 统一格式 | 语义术语 | 说明 |
 |:-----|:---------|:---------|:-----|
-| Why-Tier | **Why-Tier** | Why | 价值层 |
+| Resolve-Tier | **Resolve-Tier** | Resolve | 价值层 |
 | Shape-Tier | **Shape-Tier** | Shape | 契约层 |
 | Rule-Tier | **Rule-Tier** | Rule | 约束层（使用单数） |
 | Plan-Tier | **Plan-Tier** | Plan | 策略层 |
@@ -240,6 +263,6 @@ stateDiagram-v2
 |:-----|:-----|:-----|:---------|
 | 0.5.0 | 2026-01-01 | DocOps | §9 术语更新：添加 Artifact-Tiers 框架术语，替代 L1-L5 数字称谓 |
 | 0.4.0 | 2025-12-31 | DocOps | §1 术语精简：只保留 Wish 特有术语，全局概念引用术语表 |
-| 0.3.0 | 2025-12-31 | Team Leader | 术语统一：移除L1-L5，采用Why-Tier等统一格式 |
+| 0.3.0 | 2025-12-31 | Team Leader | 术语统一：移除L1-L5，采用Resolve-Tier等统一格式 |
 | 0.2.0 | 2025-12-30 | DocOps | 术语更新：What→Shape, How→Plan, Build→Craft；添加 §9 术语演变说明 |
 | 0.1.0 | 2025-12-30 | Implementer | 初始创建，基于畅谈会共识 |

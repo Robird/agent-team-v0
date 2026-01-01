@@ -29,7 +29,7 @@
 
 | 层级 | 全称 | 核心问题 | 隐喻 | 判据类型 | 一句话解释 |
 |:-----|:-----|:---------|:-----|:---------|:-----------|
-| Why-Tier | 价值层 | 值得做吗？ | 罗盘 | 人类价值判断 | 这问题值得解决吗？ |
+| Resolve-Tier | 价值层 | 值得做吗？ | 罗盘 | 人类价值判断 | 这问题值得解决吗？ |
 | Shape-Tier | 契约层 | 用户看到什么？ | 门面 | 易用性+完备性 | 用户看到什么边界？ |
 | Rule-Tier | 约束层 | 什么是合法的？ | 法典 | 形式化检验 | 什么是合法的？ |
 | Plan-Tier | 策略层 | 走哪条路？ | 地图 | 量化评估 | 走哪条路？ |
@@ -37,7 +37,7 @@
 
 ### 术语解释
 
-#### Why-Tier（价值层）
+#### Resolve-Tier（价值层）
 - **本质**：价值判断与动机澄清
 - **产出**：问题陈述、动机文档、价值主张
 - **正确性判据**：共鸣度、紧迫性、战略对齐
@@ -73,7 +73,7 @@
 
 > **决策记录**：[2026-01-01 畅谈会](../../meeting/2026-01-01-l1-l5-concept-naming-jam.md)
 
-**Artifact-Tiers**（产物层级）是统摄 Why/Shape/Rule/Plan/Craft 五个产物层级的认知框架。
+**Artifact-Tiers**（产物层级）是统摄 Resolve/Shape/Rule/Plan/Craft 五个产物层级的认知框架。
 
 ### 核心特征
 
@@ -89,8 +89,8 @@
 | 概念 | 规范写法 | 说明 |
 |:-----|:---------|:-----|
 | **框架名** | `Artifact-Tiers` | 首次引用时使用 |
-| **单层称谓** | `Why-Tier`, `Shape-Tier`, `Rule-Tier`, `Plan-Tier`, `Craft-Tier` | 保持现有命名 |
-| **代码标识** | `ArtifactTier.Why`, `ArtifactTier.Shape`, `ArtifactTier.Rule`, `ArtifactTier.Plan`, `ArtifactTier.Craft` | enum 值使用语义名 |
+| **单层称谓** | `Resolve-Tier`, `Shape-Tier`, `Rule-Tier`, `Plan-Tier`, `Craft-Tier` | 保持现有命名 |
+| **代码标识** | `ArtifactTier.Resolve`, `ArtifactTier.Shape`, `ArtifactTier.Rule`, `ArtifactTier.Plan`, `ArtifactTier.Craft` | enum 值使用语义名 |
 | **中文对照** | `产物层级` | 直译，自明性强 |
 
 ### 使用示例
@@ -101,7 +101,7 @@
 
 | Artifact Tier | 状态 | 产物链接 |
 |:--------------|:-----|:---------|
-| Why-Tier | 🟢 完成 | [动机文档](...) |
+| Resolve-Tier | 🟢 完成 | [动机文档](...) |
 | Shape-Tier | 🟡 进行中 | [API 设计](...) |
 | Rule-Tier | ⚪ 未开始 | — |
 | Plan-Tier | ⚪ 未开始 | — |
@@ -113,7 +113,7 @@
 // 枚举定义
 public enum ArtifactTier
 {
-    Why,    // Why-Tier
+    Resolve,    // Resolve-Tier
     Shape,  // Shape-Tier
     Rule,   // Rule-Tier
     Plan,   // Plan-Tier
@@ -130,18 +130,18 @@ public class Document
 
 **讨论中的使用**：
 - "这个问题属于哪个 Artifact Tier？"
-- "在 Tiers 框架下，我们先定义 Why-Tier..."
+- "在 Tiers 框架下，我们先定义 Resolve-Tier..."
 - "这个决策在 Shape-Tier 已经确定，Craft-Tier 不能随意更改"
 
 ### 与旧术语的关系
 
 **替代关系**：
 - `Artifact-Tiers` 替代旧的数字式 `L1-L5` 称谓
-- 保持 `Why/Shape/Rule/Plan/Craft` 作为单层语义名
+- 保持 `Resolve/Shape/Rule/Plan/Craft` 作为单层语义名
 
 **过渡期约定**（2026-01-01 至 2026-01-31）：
 1. **新文档**：必须使用 `Artifact-Tiers` / `Tiers`
-2. **旧文档**：可保留 "L1-L5"，建议添加注释 `<!-- L1-L5 即 Artifact-Tiers 中的 Why/Shape/Rule/Plan/Craft -->`
+2. **旧文档**：可保留 "L1-L5"，建议添加注释 `<!-- L1-L5 即 Artifact-Tiers 中的 Resolve/Shape/Rule/Plan/Craft -->`
 3. **口头讨论**：两种说法均可，逐步过渡
 
 ### 注意
@@ -166,7 +166,7 @@ public class Document
 
 | Artifact Tier | 状态 | 产物链接 |
 |:--------------|:-----|:---------|
-| Why-Tier | 🟢 完成 | [动机文档](...) |
+| Resolve-Tier | 🟢 完成 | [动机文档](...) |
 | Shape-Tier | 🟡 进行中 | [API 设计](...) |
 | Rule-Tier | ⚪ 未开始 | — |
 | Plan-Tier | ⚪ 未开始 | — |
@@ -185,12 +185,24 @@ public class Document
 // 推荐：使用 ArtifactTier（2026-01-01 新增）
 public enum ArtifactTier
 {
-    Why,    // Why-Tier
+    Resolve,    // Resolve-Tier
     Shape,  // Shape-Tier
     Rule,   // Rule-Tier（注意：单数）
     Plan,   // Plan-Tier
     Craft   // Craft-Tier
 }
+
+// 可添加Description属性显示完整格式
+[Description("Resolve-Tier")]
+Resolve,
+[Description("Shape-Tier")]
+Shape,
+[Description("Rule-Tier")]
+Rule,
+[Description("Plan-Tier")]
+Plan,
+[Description("Craft-Tier")]
+Craft
 ```
 
 **类/接口命名**：
@@ -219,7 +231,7 @@ public class BuildExecutor { }     // 使用 Craft
 
 **清晰表达**：
 - "这个决策属于 Plan-Tier"
-- "我们需要先澄清 Why-Tier 的动机"
+- "我们需要先澄清 Resolve-Tier 的动机"
 - "Rule-Tier 的条款需要形式化"
 - "在 Artifact-Tiers 框架下，这个问题属于哪个 Tier？"
 
@@ -270,7 +282,7 @@ public class BuildExecutor { }     // 使用 Craft
 或使用具体引用：
 
 - Artifact-Tiers 框架定义：参见术语表"产物层级"部分
-- Why-Tier 层定义：参见术语表"价值层"部分
+- Resolve-Tier 层定义：参见术语表"价值层"部分
 - 术语演变历史：v0.1 → v1.0 → v1.4.0（新增 Artifact-Tiers）
 ```
 
@@ -303,19 +315,19 @@ public class BuildExecutor { }     // 使用 Craft
 │                                                     │
 │  统一使用语义术语格式：                               │
 │                                                     │
-│  🗣️ 完整格式：Why-Tier → Shape-Tier → Rule-Tier →  │
+│  🗣️ 完整格式：Resolve-Tier → Shape-Tier → Rule-Tier →  │
 │              Plan-Tier → Craft-Tier                │
-│  📊 表格中：Why-Tier, Shape-Tier, Rule-Tier...    │
-│  💻 代码枚举：ArtifactTier.Why, ArtifactTier.Shape... │
+│  📊 表格中：Resolve-Tier, Shape-Tier, Rule-Tier...    │
+│  💻 代码枚举：ArtifactTier.Resolve, ArtifactTier.Shape... │
 │                                                     │
 │  📍 语义解释：                                        │
-│     Why-Tier = 价值层（为什么做）                    │
+│     Resolve-Tier = 价值层（为什么做）                    │
 │     Shape-Tier = 契约层（长什么样）                  │
 │     Rule-Tier = 约束层（什么约束）                   │
 │     Plan-Tier = 策略层（怎么做）                     │
 │     Craft-Tier = 物化层（代码实现）                  │
 │                                                     │
-│  💡 记忆口诀：Why-Shape-Rule-Plan-Craft               │
+│  💡 记忆口诀：Resolve-Shape-Rule-Plan-Craft               │
 │              （为什么-样子-规则-计划-手艺）            │
 │                                                     │
 │  ⚠️ 重要提醒：                                        │
@@ -332,38 +344,13 @@ public class BuildExecutor { }     // 使用 Craft
 ```
 推荐格式：语义名 + 主题
 ────────────────────────────
-why-overview.md
+resolve-overview.md
 shape-api.md  
 rule-constraints.md
 plan-roadmap.md
 craft-implementation.md
 ```
 
-### 代码枚举示例
-
-```csharp
-// 推荐：使用 ArtifactTier 枚举（2026-01-01 新增）
-public enum ArtifactTier
-{
-    Why,   // Why-Tier
-    Shape, // Shape-Tier
-    Rule,  // Rule-Tier（注意：单数）
-    Plan,  // Plan-Tier
-    Craft  // Craft-Tier
-}
-
-// 可添加Description属性显示完整格式
-[Description("Why-Tier")]
-Why,
-[Description("Shape-Tier")]
-Shape,
-[Description("Rule-Tier")]
-Rule,
-[Description("Plan-Tier")]
-Plan,
-[Description("Craft-Tier")]
-Craft
-```
 ---
 
 ## 命名规范
@@ -381,10 +368,79 @@ Craft
 
 ---
 
+## Why vs Wish vs Resolve 关系图
+
+> **决策记录**：[2026-01-02 畅谈会](../meeting/2026-01-02-resolve-tier-concept-jam.md)
+
+```mermaid
+graph TD
+    %% 核心概念
+    Why[Why-Tier<br/>DEPRECATED] -->|重命名为| Resolve[Resolve-Tier<br/>分析+决策]
+    Wish[Wish 系统<br/>愿望管理] -->|包含| Resolve
+    
+    %% Resolve-Tier 定义
+    Resolve -->|包含| Analysis[分析<br/>解]
+    Resolve -->|包含| Decision[决策<br/>决]
+    
+    %% 跨语言验证
+    Analysis -->|中文| Chinese[解]
+    Analysis -->|英文| English[analysis]
+    Analysis -->|德文| German[entscheiden<br/>分离+决定]
+    
+    Decision -->|中文| Chinese2[决]
+    Decision -->|英文| English2[decision]
+    Decision -->|德文| German2[entscheiden]
+    
+    %% Wish 系统状态
+    Wish -->|状态| Active[Active<br/>活跃]
+    Wish -->|状态| Biding[Biding<br/>待定]
+    Wish -->|状态| Completed[Completed<br/>完成]
+    Wish -->|状态| Abandoned[Abandoned<br/>放弃]
+    
+    %% 关系说明
+    Resolve -.->|驱动| Wish
+    Wish -.->|产出| Artifact[Artifact-Tiers<br/>产物层级]
+    
+    %% 样式
+    classDef deprecated fill:#f9f,stroke:#333,stroke-width:2px
+    classDef resolve fill:#9cf,stroke:#333,stroke-width:2px
+    classDef wish fill:#cf9,stroke:#333,stroke-width:2px
+    classDef state fill:#ff9,stroke:#333,stroke-width:1px
+    
+    class Why deprecated
+    class Resolve resolve
+    class Wish wish
+    class Active,Biding,Completed,Abandoned state
+```
+
+### 关系解释
+
+1. **Why-Tier → Resolve-Tier**：
+   - Why-Tier 已弃用，重命名为 Resolve-Tier
+   - Resolve = 分析（解）+ 决策（决），跨语言验证
+
+2. **Resolve-Tier 与 Wish 系统**：
+   - Resolve-Tier 驱动 Wish 系统的创建
+   - Wish 系统管理愿望的完整生命周期
+   - Wish 系统新增 Biding（待定）状态，用于战略等待
+
+3. **状态机扩展**：
+   - Active → Biding（资源不足、外部依赖）
+   - Biding → Active（阻塞解除、带宽恢复）
+   - Biding → Abandoned（复审后明确放下）
+
+4. **术语一致性**：
+   - Resolve-Tier 是 Artifact-Tiers 的第一层
+   - Wish 系统是愿望管理的实现机制
+   - 两者协同工作，确保价值判断到具体执行的连贯性
+
+---
+
 ## 版本历史
 
 | 版本 | 日期 | 变更说明 |
 |:-----|:-----|:---------|
+| v1.5.0 | 2026-01-02 | 新增 Why vs Wish vs Resolve 关系图，记录 Resolve-Tier 迁移决策 |
 | v1.4.0 | 2026-01-01 | 新增 Artifact-Tiers（产物层级）框架定义，替代 L1-L5 数字称谓 |
 | v1.3.0 | 2025-12-31 | 清理写法规范，添加 Redirect Stub 指向 `spec-conventions.md` |
 | v1.2.0 | 2025-12-31 | 添加三层 SSOT 结构导航提示 |

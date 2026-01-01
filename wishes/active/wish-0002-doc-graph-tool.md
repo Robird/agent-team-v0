@@ -47,7 +47,7 @@ produce:
 
 | Artifact Tier | 状态 | 产物链接 | 备注 |
 |:--------------|:-----|:---------|:-----|
-| Why-Tier | 🟢 完成 | [畅谈会记录](../../agent-team/meeting/Meta/2025-12-30-layers-of-dev.md) | 监护人阐述动机 |
+| Resolve-Tier | 🟢 完成 | [畅谈会记录](../../agent-team/meeting/Meta/2025-12-30-layers-of-dev.md) | 监护人阐述动机 |
 | Shape-Tier | 🟡 进行中 | [API 设计草案](../../atelia/docs/DocGraph/api.md) | 初版 API 外观已定义 |
 | Rule-Tier | ⚪ 未开始 | — | 待定义规范条款 |
 | Plan-Tier | ⚪ 未开始 | — | 待选择技术方案（Markdig/YamlDotNet） |

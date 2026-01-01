@@ -365,7 +365,7 @@
   - **类比**：学开车时的意识负担——新手时刻想踩离合换挡，老手自然协调
 
 - **层级快速检测启发式 (Quick-Detection Heuristics)**:
-  - "会改变问题方向吗？" → Why-Tier
+  - "会改变问题方向吗？" → Resolve-Tier
   - "会改变使用方式吗？" → Shape-Tier What
   - "是术语/条款问题吗？" → Rule-Tier
   - "是算法/数据结构选择吗？" → Plan-Tier How

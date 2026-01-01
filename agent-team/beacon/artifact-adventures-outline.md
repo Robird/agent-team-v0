@@ -139,7 +139,7 @@
 
 | 层级 | 章节名 | 核心冲突 | 通关标志 | 情绪调性 |
 |:-----|:-------|:---------|:---------|:---------|
-| **Why-Tier** | 启程之问 | 值得 vs 不值得 | 明确的问题陈述 | 期待 + 怀疑 |
+| **Resolve-Tier** | 启程之问 | 值得 vs 不值得 | 明确的问题陈述 | 期待 + 怀疑 |
 | **Shape-Tier** | 边界之勘 | 太大 vs 太小 | 用户可见的界面 | 兴奋 + 焦虑 |
 | **Rule-Tier** | 法则之铸 | 严格 vs 宽松 | 可执行的条款 | 严肃 + 笃定 |
 | **Plan-Tier** | 路径之择 | 多条路的取舍 | 清晰的实现计划 | 专注 + 紧张 |
@@ -162,7 +162,7 @@
 
 | 登山阶段 | Adventure 阶段 | 挑战类型 |
 |:---------|:---------------|:---------|
-| 选择山峰 | Why-Tier | 值得攀登吗？ |
+| 选择山峰 | Resolve-Tier | 值得攀登吗？ |
 | 勘察路线 | Shape-Tier | 边界在哪里？ |
 | 制定规则 | Rule-Tier | 什么是安全的？ |
 | 规划营地 | Plan-Tier | 怎么到达？ |
@@ -172,7 +172,7 @@
 
 | 层级 | Boss 名称 | 攻击方式 | 克服方法 |
 |:-----|:---------|:---------|:---------|
-| **Why-Tier** | 模糊巨兽 | 用迷雾淹没你 | 强迫写出一句话问题陈述 |
+| **Resolve-Tier** | 模糊巨兽 | 用迷雾淹没你 | 强迫写出一句话问题陈述 |
 | **Shape-Tier** | 边界蠕虫 | 不断吞噬或扩张范围 | 画出"用户看到什么"的界面图 |
 | **Rule-Tier** | 约束幽灵 | 隐藏等你违反时跳出 | 显式列出所有约束条款 |
 | **Plan-Tier** | 岔路迷宫 | 让你在选择中迷失 | 列出备选方案，强制排序 |
@@ -182,7 +182,7 @@
 
 | 层级 | 存档点（交付物） | 存档格式 |
 |:-----|:-----------------|:---------|
-| **Why-Tier** | Problem Statement | 一段话 / Issue 描述 |
+| **Resolve-Tier** | Problem Statement | 一段话 / Issue 描述 |
 | **Shape-Tier** | API Surface / 界面草图 | 接口定义 / 线框图 |
 | **Rule-Tier** | Spec 条款 | Markdown 规范（MUST/SHOULD/MAY） |
 | **Plan-Tier** | Implementation Plan | 任务列表 / Roadmap |
@@ -201,7 +201,7 @@
 **Stage Token 格式**（用于文档、PR、会议）：
 
 ```
-[AA:WHY] | [AA:SHAPE] | [AA:RULE] | [AA:PLAN] | [AA:CRAFT]
+[AA:RESOLVE] | [AA:SHAPE] | [AA:RULE] | [AA:PLAN] | [AA:CRAFT]
 ```
 
 **约束**：
@@ -212,7 +212,7 @@
 **文档头部模板**：
 
 ```yaml
-Stage: [AA:WHY]
+Stage: [AA:RESOLVE]
 Savepoint: <链接到当前层交付物>
 Next: <下一步动作，动词开头>
 ```
@@ -358,7 +358,7 @@ Next: 定义主要约束条款
 **当前状态**：
 | Artifact Tier | 状态 | Adventure 语言 |
 |:--------------|:-----|:---------------|
-| Why-Tier | 🟢 完成 | 启程完成 |
+| Resolve-Tier | 🟢 完成 | 启程完成 |
 | Shape-Tier | 🟢 完成 | 边界已勘 |
 | Rule-Tier | 🟢 完成 | 法则已铸 |
 | Plan-Tier | 🟡 进行中 | 择路中 |
@@ -374,7 +374,7 @@ Next: 定义主要约束条款
 **当前状态**：
 | Artifact Tier | 状态 | Adventure 语言 |
 |:--------------|:-----|:---------------|
-| Why-Tier | 🟢 完成 | 启程完成 |
+| Resolve-Tier | 🟢 完成 | 启程完成 |
 | Shape-Tier | 🟡 进行中 | 边界勘察中 |
 | Rule-Tier | ⚪ 未开始 | — |
 | Plan-Tier | ⚪ 未开始 | — |
@@ -396,7 +396,7 @@ Next: 定义主要约束条款
 **背景**：在 StateJournal 设计中，曾纠结于指针类型的命名。
 
 **Adventure 视角复盘**：
-- **Why-Tier**：需要一个表示"可能失效的位置引用"的概念
+- **Resolve-Tier**：需要一个表示"可能失效的位置引用"的概念
 - **Shape-Tier 挑战**：两个候选名称 `SizedPtr` vs `Address64`
 - **核心冲突**：技术准确性 vs 语义可读性
 - **Boss 遭遇**："边界蠕虫"——每次讨论范围都在变化

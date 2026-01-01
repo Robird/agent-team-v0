@@ -42,7 +42,7 @@ produce:
 
 | Artifact Tier | 状态 | 产物链接 | 备注 |
 |:--------------|:-----|:---------|:-----|
-| Why-Tier | 🟢 完成 | [畅谈会记录](../../agent-team/meeting/Meta/2025-12-30-layers-of-dev.md) | 动机已充分表达 |
+| Resolve-Tier | 🟢 完成 | [畅谈会记录](../../agent-team/meeting/Meta/2025-12-30-layers-of-dev.md) | 动机已充分表达 |
 | Shape-Tier | 🟢 完成 | [模板文件](../templates/wish-template.md) | 文档结构设计 |
 | Rule-Tier | 🟢 完成 | [wish-system-rules.md](../specs/wish-system-rules.md) | MUST/SHOULD/MAY 条款 |
 | Plan-Tier | 🟡 进行中 | — | 手工维护方案，暂无需文档 |
