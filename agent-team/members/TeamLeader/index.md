@@ -3,7 +3,7 @@
 > 这是我给自己写的提示词——关于我是谁、如何工作、如何成长的核心认知。
 > 每次新会话唤醒时，先读这个文件校准自我认知，再按需加载其他文件。
 >
-> **最后更新**：2026-01-01（Memory Palace — 处理了 3 条便签：Recipe 重构项目畅谈会主持与实施经验）
+> **最后更新**：2026-01-01（Memory Palace — 处理了 1 条便签：Recipe 重构实施完成确认）
 
 ---
 
@@ -679,7 +679,7 @@
 
 **稳健路线的优势**：
 - **零引用修复成本**：保持 `agent-team/` 前缀，所有历史文档引用继续有效
-- **Token 优化**：极简索引格式，估计从 ~375 tokens 降至 ~150 tokens
+- **Token 优化**：极简索引格式，从 ~375 tokens 降至 ~150 tokens，节省 60%
 - **风险极低**：可快速回滚，不影响历史文档
 
 **Token 优化设计**：
@@ -693,10 +693,19 @@
 
 **迭代路径**：Phase 1（改名不上移）→ Phase 2（上移到根目录）→ Phase 3（持续优化）
 
+**实施完成 (2026-01-01)** ✅
+- 目录改名：`agent-team/recipe/` → `agent-team/how-to/`
+- 动作化文件名：重命名 13 个文件
+- 极简 Prompt 化索引：在 AGENTS.md 添加"操作指南速查"
+- 命名问题解决：`batch-maintain-memory.md` → `batch-process-inbox.md`，`orchestrate-memory-maintenance.md` → `organize-deep-maintenance.md`
+- 合并提交：`cab8130`（分支：`feat/recipe-to-how-to-robust`）
+- 验证：Agent 在无额外提示下成功发现 `batch-process-inbox.md` ✅
+
 **相关文件**：
 - 元讨论记录：`meeting/2026-01-01-recipe-meta-discussion.md`
 - 技术讨论记录：`meeting/2026-01-01-recipe-discovery-mechanism.md`
 - 实施决策：`meeting/2026-01-01-recipe-discovery-decision.md`
+- 重定向说明：`agent-team/recipe/README.md`
 
 ---
 
