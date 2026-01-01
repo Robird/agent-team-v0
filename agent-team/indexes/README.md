@@ -97,7 +97,7 @@
 
 ### 2025-12-31 – Terminology Naming Convention
 - **#delta-2025-12-31-terminology-convention** – 术语命名规范制定：
-  - 多单词术语：`Title-Kebab` 格式（`Why-Layer`、`App-For-LLM`）
+  - 多单词术语：`Title-Kebab` 格式（`Why-Tier`、`App-For-LLM`）
   - 缩写规则：注册表白名单全大写，其他首字母大写
   - Registry 位置：`agent-team/wiki/terminology-registry.yaml`
   - 规范更新：`atelia/docs/spec-conventions.md` 新增第 4 章
@@ -105,7 +105,7 @@
 
 ### 2025-12-31 – Terminology SSOT Structure Decision
 - **#delta-2025-12-31-terminology-ssot-structure** – 术语 SSOT 三层结构决策：
-  - Layer 1（概念语义）：`agent-team/wiki/terminology.md`
+  - Layer 1（概念语义）：`agent-team/wiki/artifact-tiers.md`
   - Layer 2（写法规范）：`atelia/docs/spec-conventions.md` §4
   - Layer 3（机器可读）：`agent-team/wiki/terminology-registry.yaml`
   - 决策：拒绝将术语表合并到 Wish 系统，保持团队知识库核心资产地位

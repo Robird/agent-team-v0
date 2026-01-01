@@ -25,9 +25,9 @@
 
 ## 核心术语
 
-> **Artifact-Tiers（产物层级）**：统摄 Why/Shape/Rule/Plan/Craft 五个产物层级的认知框架，替代旧的数字式 L1-L5 称谓。
+> **Artifact-Tiers（产物层级）**：统摄 Why/Shape/Rule/Plan/Craft 产物层级的认知框架。
 
-**五层级方法论**：
+**Artifact-Tiers层级方法论**：
 | 层级 | 核心问题 | 隐喻 | 一句话解释 |
 |:-----|:---------|:-----|:-----------|
 | **Why-Tier** | 值得做吗？ | 罗盘 | 这问题值得解决吗？ |

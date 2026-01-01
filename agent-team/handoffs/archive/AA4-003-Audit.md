@@ -24,7 +24,7 @@ Refreshed on 2025-11-26 (Sprint 03 Run R40). CL7 still owns cursor word navigati
 - `ts/src/vs/editor/contrib/wordOperations/test/browser/wordOperations.test.ts` and `wordOperations.intl.test.ts` → expand `CursorWordOperationsTests` (wordPart, Intl boundaries, word accessibility, delete contexts).
 - `ts/src/vs/editor/contrib/multicursor/test/browser/multicursor.test.ts` + `cursorColumnSelection.test.ts` → new `CursorMultiSelectionTests` modules covering add/remove cursors, injected text adjustments, overlapping merges, column copy/paste.
 - `ts/src/vs/editor/contrib/snippet/test/browser/snippetController2.test.ts` & `snippetSession.test.ts` → `SnippetControllerTests` / `SnippetSessionTests` validating undo stops, placeholder transforms, choices, `$0`, nested snippets.
-- `ts/src/vs/editor/common/cursor/cursorMoveCommands.test.ts` (and delete/type operation tests) → command-layer tests ensuring select-line, column select, and word navigation commands route through the new controller.
+- `ts/src/vs/editor/common/cursor/cursorMoveCommands.test.ts` (and delete/type operation tests) → command-Layer tests ensuring select-line, column select, and word navigation commands route through the new controller.
 - `ts/src/vs/editor/test/common/controller/cursorWordOperations.random.test.ts` (and related fuzz) → deterministic cursor/snippet fuzz harness similar to existing PieceTree fuzz infrastructure.
 - Markdown snapshot parity: once snippet + multi-c owners land, add `MarkdownRendererTests.MultiCursorAndSnippet` to assert doc output ties to Porter’s DocUI flows (currently “Pending” in the TestMatrix).
 

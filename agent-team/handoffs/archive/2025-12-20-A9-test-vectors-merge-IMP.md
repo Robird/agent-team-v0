@@ -29,7 +29,7 @@
 ## 遗留问题
 
 - A4 任务（给现有 MUST/SHOULD 条款编号）尚未完成，映射表中的条款 ID 待确认
-- A7（Wire Format ASCII 图）和 A8（TL;DR）仍为后续任务
+- A7（Wire Format ASCII 图）和 A8（核心洞察）仍为后续任务
 
 ## Changefeed Anchor
 
