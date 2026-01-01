@@ -6,6 +6,8 @@ owner: "监护人刘世超"
 created: 2025-12-30
 updated: 2025-12-30
 tags: [meta, infrastructure]
+produce:
+  - "wishes/specs/wish-system-spec.md"
 ---
 
 # Wish: Wish 系统自举

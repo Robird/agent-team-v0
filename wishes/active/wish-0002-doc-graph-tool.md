@@ -6,7 +6,12 @@ owner: "监护人刘世超"
 created: 2025-12-30
 updated: 2025-12-30
 tags: [tooling, automation]
-l2Document: "wishes/specs/doc-graph-api.md"
+produce:
+  - "atelia/docs/DocGraph/v0.1/scope.md"
+  - "atelia/docs/DocGraph/v0.1/api.md"
+  - "atelia/docs/DocGraph/v0.1/spec.md"
+  - "atelia/docs/DocGraph/v0.1/USAGE.md"
+  - "atelia/docs/DocGraph/v0.1/README.md"
 ---
 
 # Wish: DocGraph
