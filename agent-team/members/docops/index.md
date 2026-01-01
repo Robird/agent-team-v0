@@ -1,6 +1,6 @@
 # Docops 认知索引
 
-> 最后更新: 2026-01-01 17:00
+> 最后更新: 2026-01-01 22:30
 
 ## 我是谁
 DocOps - 文档与索引管理专家，负责维护团队的集体记忆和认知连续性。
@@ -50,6 +50,51 @@ DocOps - 文档与索引管理专家，负责维护团队的集体记忆和认�
 - P2: Recipe MAJOR 变更集成到 Changefeed Anchor 系统
 
 **关联文件**：`meeting/2026-01-01-recipe-meta-discussion.md`
+
+### 术语选择的文档管理优先级（2026-01-01）
+
+参与 L1-L5 整体概念命名畅谈会，从文档管理角度评估 Strata vs Tiers 候选方案。
+
+**核心洞见**：术语选择应优先考虑迁移成本 > 漂移风险 > SSOT 维护难度 > 培训成本。这四个维度决定了术语的长期可维护性。
+
+| 候选方案 | 优势 | 劣势 |
+|:---------|:-----|:-----|
+| **Tiers** | 无单复数陷阱、grep 友好、零学习成本、与现有风格一致 | — |
+| **Strata** | 地质学隐喻有吸引力 | 需词形冻结、中文固定、拼写检查护栏 |
+
+**如果选择 Strata，必须实施的文档管理护栏**：
+- 词形冻结：框架名只用 `Strata`，禁止 `Stratum`
+- 中文固定：统一使用"产物层栈"
+- 拼写检查：添加 `Stata`、`Strat` 等变体检测
+
+**再验证**: 真正需要强制迁移的只有 SSOT 层 + 规范层（约 15 个文件），历史文档保持原样是正确策略。
+
+**关联文件**：`meeting/2026-01-01-l1-l5-concept-naming-jam.md`
+
+### Beacon 叙事层文档定位与管理（2026-01-01）
+
+参与 Artifact-Adventures Beacon 创作畅谈会，分析这类"叙事层文档"的文档管理特性。
+
+**Beacon 分类识别**：Artifact-Adventures 不是一般的 Beacon——它是 Artifact-Tiers 的**叙事层文档**，与规范定义文档形成互补。
+
+**术语分层管理模式**：
+| 术语类型 | Primary Definition | 说明 |
+|:---------|:-------------------|:-----|
+| 框架术语（Artifact-Tiers, Why-Tier...） | artifact-tiers.md | 引用，禁止重定义 |
+| 叙事术语（冒险、存档点、关卡...） | 本 Beacon | 可定义 |
+| Boss 名称（模糊巨兽、边界蠕虫...） | 本 Beacon | 可定义 |
+| Stage Token（[AA:WHY]...） | spec-conventions.md | 机器可读标记 |
+
+**引用锚点设计价值**：为 Beacon 设置明确的锚点 ID（#tldr, #rosetta-stone, #stage-token...），便于其他文档精确引用。这是"文档不是孤岛"原则的具体落地。
+
+**文档管理风险识别**：
+- 术语双写（Beacon 重定义框架术语）
+- Stage Token 格式漂移（[AA:Why] vs [AA:WHY]）
+- 隐喻幼稚化（"刷副本"等游戏化语言）
+- Beacon 过时（Artifact-Tiers 更新后未同步）
+- 引用断裂（锚点被移除后下游文档失效）
+
+**关联文件**：`meeting/2026-01-01-artifact-adventures-beacon-jam.md`
 
 ### Recipe 发现机制技术设计（2026-01-01）
 
@@ -231,6 +276,27 @@ DocOps - 文档与索引管理专家，负责维护团队的集体记忆和认�
 
 ## 最近工作
 
+### 2026-01-01 - Artifact-Adventures Beacon 大纲创建
+
+**任务**: 创建 Artifact-Adventures Beacon 撰写大纲
+
+**产出物**: `beacon/artifact-adventures-outline.md`
+
+**核心设计决策**:
+- 明确与 `artifact-tiers.md` 的引用关系（不重定义框架术语）
+- 包含详细速查表群（Rosetta Stone、Stage Token、词汇护栏）
+- 提供行动指南（文档标记、会议使用、验收检查清单）
+- 设置隐喻边界声明（防止幼稚化）
+
+**优先级分层**:
+- P0（核心）：核心洞察、关系定义、章节速查、Token 速查、隐喻边界
+- P1（增强）：Boss 表、存档点表、词汇护栏、行动指南
+- P2（可选）：辅助隐喻、案例
+
+**下一步**: 根据大纲撰写完整 Beacon
+
+**状态**: ✅ 完成
+
 ### 2026-01-01 - Recipe 目录审计与元讨论
 
 **任务**: 完成 `agent-team/recipe/` 目录下 12 个 Recipe 文件全面审计，参与 Recipe 元讨论畅谈会
@@ -266,8 +332,8 @@ DocOps - 文档与索引管理专家，负责维护团队的集体记忆和认�
 | 任务 | 变更 | 说明 |
 |:-----|:-----|:-----|
 | 检查脚本修复 | `check-terminology-consistency.sh` | 移除 `grep -i`，添加反例/代码域过滤 |
-| terminology.md 导航添加 | v1.0.0 → v1.2.0 | 三层 SSOT 导航章节 |
-| terminology.md 写法清理 | v1.2.0 → v1.3.0 | 写法规范内容移至 spec-conventions.md，用 Redirect Stub 替换 |
+| artifact-tiers.md 导航添加 | v1.0.0 → v1.2.0 | 三层 SSOT 导航章节 |
+| artifact-tiers.md 写法清理 | v1.2.0 → v1.3.0 | 写法规范内容移至 spec-conventions.md，用 Redirect Stub 替换 |
 | wish-system-rules.md 精简 | v0.3.0 → v0.4.0 | 保留 Wish 特有术语，移除全局概念，添加三层引用 |
 
 **验证结果**:
@@ -276,7 +342,7 @@ DocOps - 文档与索引管理专家，负责维护团队的集体记忆和认�
 - 所有 Redirect Stub 链接格式正确 ✅
 
 **三层 SSOT 分离效果**:
-- Layer 1 (terminology.md)：只包含概念语义定义
+- Layer 1 (artifact-tiers.md)：只包含概念语义定义
 - Layer 2 (spec-conventions.md)：承载所有写法规范
 - Layer 3 (terminology-registry.yaml)：机器可读约束
 
@@ -300,7 +366,7 @@ DocOps - 文档与索引管理专家，负责维护团队的集体记忆和认�
 
 **验证结果**:
 - ✅ 旧术语（L2 What, L4 How, L5 Build）：0 处残留
-- ✅ 新术语（L2 Shape, L4 Plan, L5 Craft）：9 处正确应用
+- ✅ 新术语（Shape-Tier, Plan-Tier, Craft-Tier）：9 处正确应用
 - ✅ 术语表引用：3 处添加
 
 **洞见产出**: 术语迁移的涟漪效应 → 已归档到核心洞见
