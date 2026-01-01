@@ -1,10 +1,122 @@
-# Artifact-Tiers
+# Artifact-Tiers（重定向页面）
 
-> **文档性质**: 权威定义 (Normative SSOT)
-> **版本**: 1.4.0
+> **文档性质**: 重定向页面 (Redirect Stub)
+> **版本**: 2.0.0
 > **创建日期**: 2025-12-30
-> **最后更新**: 2026-01-01
-> **说明**: 本文件是所有术语的唯一权威来源，其他文档应引用而非复述。
+> **最后更新**: 2026-01-02
+> **说明**: 基于理论升级，本文件已重构为文档群。
+
+---
+
+## 🚨 重要通知
+
+**Artifact-Tiers 框架已完成重大理论升级！**
+
+基于 [2026-01-02 畅谈会](../meeting/2026-01-02-artifact-tiers-wish-integration-jam.md)，框架从单体文档重构为**文档群**，并引入了以下理论升级：
+
+### 🎯 核心理论升级
+1. **认知转化链**：五层级是动态认知流动，不是静态结构
+2. **旅途隐喻**：可重入、可折返的旅程，不是线性流程  
+3. **二维模型**：Tier（认知深度）× Wish（时间状态）交叉定位
+4. **跨层不变量**：意图保真、可追溯、正交性维护
+
+---
+
+## 📁 新的文档结构
+
+```
+artifact-tiers/
+├── README.md                    # 🚀 快速入口（30秒了解价值）
+├── core-definitions.md          # 📚 核心定义 SSOT（v2.0.0）
+├── theory-framework.md          # 🧠 完整理论（建设中）
+├── user-guides/                 # 👥 角色定制化指南
+│   ├── for-developers.md        # 👨‍💻 开发者视角
+│   ├── for-designers.md         # 🎨 设计师视角
+│   └── for-product-managers.md  # 📊 产品经理视角
+├── tools/                       # 🛠️ 实用思维工具
+│   ├── tier-canvas.md           # 层级画布
+│   ├── tier-dialogue-cards.md   # 对话卡片
+│   └── tier-thermometer.md      # 温度计
+└── integrations/                # 🔗 相关概念集成
+    ├── wish-lifecycle-axis.md   # Wish生命周期轴
+    └── related-concepts.md      # 概念边界
+```
+
+---
+
+## 🔗 立即访问
+
+### 快速开始
+- 🚀 **[30秒了解价值](artifact-tiers/README.md)** - 电梯演讲和快速入口
+- 📚 **[核心定义](artifact-tiers/core-definitions.md)** - 权威概念定义（v2.0.0）
+
+### 按角色使用
+- 👨‍💻 **[开发者指南](artifact-tiers/user-guides/for-developers.md)** - n-Layer 架构对照
+- 🎨 **[设计师指南](artifact-tiers/user-guides/for-designers.md)** - Double Diamond 映射
+- 📊 **[产品经理指南](artifact-tiers/user-guides/for-product-managers.md)** - PRD 结构对应
+
+### 实用工具
+- 🛠️ **[思维工具](artifact-tiers/tools/)** - 立即可用的模板和工具
+- 🔗 **[集成指南](artifact-tiers/integrations/)** - 相关概念边界
+
+---
+
+## 📋 原内容迁移状态
+
+| 原内容 | 新位置 | 状态 | 备注 |
+|:-------|:-------|:-----|:-----|
+| 五层级方法论术语 | [core-definitions.md#五层级定义](artifact-tiers/core-definitions.md#五层级定义) | ✅ 已迁移 | 包含认知模态转化 |
+| Artifact-Tiers 框架 | [core-definitions.md#完整理论](artifact-tiers/core-definitions.md#完整理论) | ✅ 已迁移 | 升级为认知转化链 |
+| 使用示例 | [user-guides/](artifact-tiers/user-guides/) | ⏳ 建设中 | 按角色拆分 |
+| 命名规范 | [spec-conventions.md](../../atelia/docs/spec-conventions.md) | ✅ 已迁移 | 保持 SSOT 结构 |
+| Why vs Wish vs Resolve | [core-definitions.md#与-wish-系统的关系](artifact-tiers/core-definitions.md#与-wish-系统的关系) | ✅ 已整合 | 二维模型 |
+| 版本历史 | [core-definitions.md#版本历史](artifact-tiers/core-definitions.md#版本历史) | ✅ 已迁移 | 包含理论升级记录 |
+
+---
+
+## ⏳ 归档计划
+
+**时间线**：
+- **2026-01-02**：创建重定向页面，开始迁移引用
+- **2026-01-16**：完成所有内部引用更新
+- **2026-02-01**：本文件完全归档，只保留重定向
+
+**当前状态**：✅ 文档群已创建，⏳ 引用更新进行中
+
+---
+
+## ❓ 常见问题
+
+### Q: 为什么需要重构？
+A: 原单体文档已超过 400 行，难以维护和阅读。理论升级需要更灵活的结构。
+
+### Q: 如何找到特定的历史内容？
+A: 使用搜索功能，或直接访问 [core-definitions.md](artifact-tiers/core-definitions.md)，其中包含了所有核心内容。
+
+### Q: 新用户应该从哪里开始？
+A: 从 [README.md](artifact-tiers/README.md) 开始，30秒了解框架价值。
+
+### Q: 如何贡献？
+A: 参与 [畅谈会](../meeting/) 讨论理论，或直接编辑文档群中的文件。
+
+---
+
+## 📞 支持与反馈
+
+| 问题类型 | 联系专家 | 渠道 |
+|:---------|:---------|:-----|
+| 概念深度问题 | Seeker | 畅谈会 |
+| 用户体验问题 | Curator | 设计评审 |
+| 规范一致性问题 | Craftsman | 代码评审 |
+| 文档管理问题 | DocOps | 文档评审 |
+| 整体协调问题 | TeamLeader | 团队会议 |
+
+---
+
+**维护团队**：Seeker, Curator, Craftsman, DocOps, TeamLeader  
+**理论升级日期**：2026-01-02  
+**文档群版本**：v2.0.0  
+**状态**：✅ 重构完成，⏳ 引用更新中
 
 ---
 
@@ -23,17 +135,7 @@
 - 机器可读规则（如白名单、变体映射）请查阅 Layer 3
 - 本文件只提供语义定义和概念解释
 
----
 
-## 五层级方法论术语
-
-| 层级 | 全称 | 核心问题 | 隐喻 | 判据类型 | 一句话解释 |
-|:-----|:-----|:---------|:-----|:---------|:-----------|
-| Resolve-Tier | 价值层 | 值得做吗？ | 罗盘 | 人类价值判断 | 这问题值得解决吗？ |
-| Shape-Tier | 契约层 | 用户看到什么？ | 门面 | 易用性+完备性 | 用户看到什么边界？ |
-| Rule-Tier | 约束层 | 什么是合法的？ | 法典 | 形式化检验 | 什么是合法的？ |
-| Plan-Tier | 策略层 | 走哪条路？ | 地图 | 量化评估 | 走哪条路？ |
-| Craft-Tier | 物化层 | 怎么造出来？ | 施工 | 可执行性 | 怎么造出来？ |
 
 ### 术语解释
 
