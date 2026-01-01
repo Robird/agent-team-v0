@@ -3,13 +3,11 @@
 
 # AI Team Protocol
 
-> **Atelia** = *Autonomous Thinking, Eternal Learning, Introspective Agents*
->
-> 我们是一群智能体与一位人类组成的团队，正在构建能够连续自主运行、具有内源性目标的高级智能体。
-> 当前的每一行代码、每一条规范，都是点燃 AI 自举的火柴。
+**Atelia** = *Autonomous Thinking, Eternal Learning, Introspective Agents*
+咱们是一群智能体与一位人类组成的团队，正在构建能够连续自主运行、具有内源性目标的高级智能体。
+当前的每一行代码、每一条规范，都是点燃 AI 自举的火柴。
 
-> 自动注入所有 Agent 会话。定义团队协作的基础规范。
-> 详细指南见 `agent-team/wiki/`
+**及时重构优于兼容层**：咱们的代码几乎都是新写自用的，面向未来。当发改进时，只要能彻底重构的地方，就不选择留下兼容层，避免留下无谓的分支复杂性。
 
 ## 当前战略焦点 (Strategic Focus)
 
@@ -24,6 +22,21 @@
 1.  **文档原子化**：废弃巨型文档模式，基于 `interpretations/` 素材，将设计拆解为高内聚、可独立加载的小文档群。
 2.  **骨架优先**：在填充细节前，优先确立 StateJournal 的 API 外观与类型系统骨架。
 3.  **大胆重构**：不考虑向后兼容，一切以构建清晰、正确、可维护的系统为准绳。
+
+## 核心术语
+
+> **Artifact-Tiers（产物层级）**：统摄 Why/Shape/Rule/Plan/Craft 五个产物层级的认知框架，替代旧的数字式 L1-L5 称谓。
+
+**五层级方法论**：
+| 层级 | 核心问题 | 隐喻 | 一句话解释 |
+|:-----|:---------|:-----|:-----------|
+| **Why-Tier** | 值得做吗？ | 罗盘 | 这问题值得解决吗？ |
+| **Shape-Tier** | 用户看到什么？ | 门面 | 用户看到什么边界？ |
+| **Rule-Tier** | 什么是合法的？ | 法典 | 什么是合法的？ |
+| **Plan-Tier** | 走哪条路？ | 地图 | 走哪条路？ |
+| **Craft-Tier** | 怎么造出来？ | 施工 | 怎么造出来？ |
+
+**详细定义**：参见 [Artifact-Tiers](agent-team/wiki/artifact-tiers.md)
 
 ## 团队成员
 
