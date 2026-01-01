@@ -8,7 +8,7 @@
 
 ---
 
-## 0. 结论摘要（TL;DR）
+## 0. 结论摘要（核心洞察）
 
 - **对 `rbf-format.md`（v0.15）**：实现整体上**符合 SSOT**（Fence/FrameBytes 布局、StatusLen 计算、CRC32C 覆盖范围、Reverse Scan + Resync 行为）。
   - v0.15 已修订旧版本的内部矛盾（最小 HeadLen、FrameStatus 填充值域），现文档与实现一致。

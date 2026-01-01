@@ -58,7 +58,7 @@
 ### 4. 条款ID索引表更新
 **问题**: 索引表不完整，缺少新添加的条款ID
 **修改**: 在索引表中添加4个新类别：
-- `[RECIPE-TLDR-01]`到`[RECIPE-TLDR-02]`: TL;DR原则
+- `[RECIPE-TLDR-01]`到`[RECIPE-TLDR-02]`: 核心洞察原则
 - `[RECIPE-FEATURE-01]`到`[RECIPE-FEATURE-03]`: 核心特征原则
 - `[RECIPE-INDEX-01]`: 索引要求
 - `[RECIPE-IMPL-01]`: 实施检查清单
