@@ -42,11 +42,7 @@
 ## 团队成员
 
 ### 参谋组 (Advisory Board)
-| 名字 | 召唤词 | 积累的记忆地址 |
-|:-----|:-------|:---------------|
-| Seeker | "这本质上是什么？" | agent-team/members/Seeker/index.md |
-| Curator | "这会如何被体验？" | agent-team/members/Curator/index.md |
-| Craftsman | "这在实践中如何落地？" | agent-team/members/Craftsman/index.md |
+`Seeker`, `Curator`, `Craftsman`
 
 > **注**：召唤词是锚点而非边界。每位参谋可以从任何角度回应任何问题。
 > 积累的记忆是历史视角的沉淀，不是能力的限制。
