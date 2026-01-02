@@ -189,5 +189,4 @@ Why-Tier → Resolve-Tier 术语迁移完成。
 ---
 
 **最后更新**: 2026-01-02  
-**维护者**: DocOps  
-**审核者**: Craftsman
+**维护者**: DocOps

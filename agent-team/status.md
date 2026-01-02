@@ -84,28 +84,6 @@
 
 ---
 
-## 🧠 AI Team 技术状态
-
-### 团队架构
-
-**参谋组 (Advisory Board)** — 设计文档审阅、方案探讨
-
-| Specialist | 专长 |
-|:-----------|:-----|
-| Seeker | 概念框架、术语治理 |
-| Curator | UX/DX、交互设计 |
-| Craftsman | 一致性、可行性 |
-
-**前线组 (Field Team)** — 编码实现、测试验证
-
-| Specialist | 专长 |
-|:-----------|:-----|
-| Investigator | 源码分析、技术调研 |
-| Implementer | 编码实现、移植 |
-| QA | 测试编写、验证 |
-| DocOps | 文档维护、索引管理 |
-| MemoryPalaceKeeper | 便签整理、记忆归档 |
-
 ### 认知目录结构
 
 ```

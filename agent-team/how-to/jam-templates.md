@@ -6,7 +6,6 @@
 > **最后更新**：2026-01-02
 > **说明**：畅谈会相关模板集合，供快速复制使用。
 > **维护者**：TeamLeader
-> **核查者**：Craftsman
 
 ---
 
@@ -232,47 +231,47 @@
 ### 标准邀请格式
 
 ```yaml
-# @Seeker
-taskTag: "#review"
-chatroomFile: "agent-team/meeting/2026-01-02-xxx.md"
-appendHeading: "### Seeker 发言"
-scope: "术语一致性核查，不做实现建议"
-outputForm: "Markdown要点列表"
+# @<AgentName>
+taskTag: "#review" # 或 #design, #decision, #jam
+chatroomFile: "agent-team/meeting/YYYY-MM-DD-<topic>.md"
+appendHeading: "### <AgentName> 发言"
+scope: "<ScopeDescription>"
+outputForm: "<OutputFormat>"
 ```
 
 ### 带目标文件
 
 ```yaml
-# @Craftsman
+# @<AgentName>
 taskTag: "#review"
-chatroomFile: "agent-team/meeting/2026-01-02-xxx.md"
+chatroomFile: "agent-team/meeting/YYYY-MM-DD-<topic>.md"
 targetFiles:
-  - "atelia/docs/StateJournal/mvp-design-v2.md"
-appendHeading: "### Craftsman 发言"
-scope: "从可判定性角度审阅接口设计"
-outputForm: "FixList（问题+定位+建议）"
+  - "<FilePath>"
+appendHeading: "### <AgentName> 发言"
+scope: "<ScopeDescription>"
+outputForm: "<OutputFormat>"
 ```
 
 ### 实施邀请
 
 ```yaml
-# @Implementer
+# @<AgentName>
 taskTag: "#design"
-chatroomFile: "agent-team/meeting/2026-01-02-xxx.md"
-appendHeading: "### Implementer 实施报告"
-scope: "基于讨论共识，实现XX功能"
-implementationTarget: "src/features/xxx.ts"
+chatroomFile: "agent-team/meeting/YYYY-MM-DD-<topic>.md"
+appendHeading: "### <AgentName> 实施报告"
+scope: "<ScopeDescription>"
+implementationTarget: "<FilePath>"
 outputForm: "实施报告模板"
 ```
 
 ### 开放式邀请
 
 ```yaml
-# @Curator
+# @<AgentName>
 taskTag: "#jam"
-chatroomFile: "agent-team/meeting/2026-01-02-xxx.md"
-appendHeading: "### Curator 发言"
-scope: "自由畅想，无限制"
+chatroomFile: "agent-team/meeting/YYYY-MM-DD-<topic>.md"
+appendHeading: "### <AgentName> 发言"
+scope: "<ScopeDescription>"
 outputForm: "任何形式"
 ```
 
