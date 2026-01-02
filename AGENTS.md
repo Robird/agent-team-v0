@@ -83,6 +83,31 @@
 | 记忆维护 | `agent-team/wiki/memory-maintenance-skill.md` |
 | **操作指南** | **`agent-team/how-to/`** |
 
+## Wish 系统
+
+> **一句话**：Wish = 你想做什么 + 做出了什么。开发意图的起点与产物追踪器。
+
+| 想做什么 | 怎么做 |
+|:---------|:-------|
+| 查看全局 | 读 `wishes/index.md` |
+| 创建 Wish | 复制 `wishes/templates/wish-template.md` → `wishes/active/` |
+| 完成 Wish | 移动到 `wishes/completed/` |
+| 放弃 Wish | 移动到 `wishes/abandoned/` |
+
+**详细定义** → `wishes/README.md`
+
+## DocGraph
+
+> **一句话**：文档关系验证器。校验 Wish 的 `produce` 与产物的 `produce_by` 双向链接。
+
+| 想做什么 | 怎么做 |
+|:---------|:-------|
+| 验证链接 | `cd atelia/src/DocGraph && dotnet run -- validate ../../../` |
+| 自动修复 | `dotnet run -- fix ../../../ --yes` |
+| 生成汇总 | `dotnet run -- generate ../../../` |
+
+**详细定义** → `atelia/docs/DocGraph/v0.1/USAGE.md` · **frontmatter 规范** → `agent-team/how-to/maintain-frontmatter.md`
+
 ## 操作指南速查
 需要命名？ → `agent-team/how-to/name-things-well.md`
 整理记忆？ → `agent-team/how-to/maintain-memory.md`
