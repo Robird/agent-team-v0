@@ -12,16 +12,16 @@
 
 | 情境 | 跳转 |
 |:-----|:-----|
-| "我正在创建新的 Wish 文档" | → [§1 Wish 文档模板](#1-wish-文档模板) |
-| "我正在创建 Wish 的产物文档" | → [§2 产物文档模板](#2-产物文档模板) |
-| "我想添加术语定义（glossary）" | → [§3 扩展字段](#3-扩展字段可选) |
-| "我想添加问题跟踪（issues）" | → [§3 扩展字段](#3-扩展字段可选) |
-| "DocGraph 验证报错了" | → [§4 常见错误与修复](#4-常见错误与修复) |
-| "我想验证我写的是否正确" | → [§5 验证命令](#5-验证命令) |
+| "我正在创建新的 Wish 文档" | → [Wish 文档模板](#wish-文档模板) |
+| "我正在创建 Wish 的产物文档" | → [产物文档模板](#产物文档模板) |
+| "我想添加术语定义（glossary）" | → [扩展字段](#扩展字段可选) |
+| "我想添加问题跟踪（issues）" | → [扩展字段](#扩展字段可选) |
+| "DocGraph 验证报错了" | → [常见错误与修复](#常见错误与修复) |
+| "我想验证我写的是否正确" | → [验证命令](#验证命令) |
 
 ---
 
-## 1. Wish 文档模板
+## Wish 文档模板
 
 **位置**：`wishes/active/wish-XXXX-<slug>.md` 或 `wishes/completed/`
 
@@ -63,7 +63,7 @@ tags: [tooling, automation]
 
 ---
 
-## 2. 产物文档模板
+## 产物文档模板
 
 **位置**：被 Wish 文档的 `produce` 字段引用的任意位置
 
@@ -90,9 +90,9 @@ produce_by:
 
 ---
 
-## 3. 扩展字段（可选）
+## 扩展字段（可选）
 
-### 3.1 `glossary` — 术语表
+### `glossary` — 术语表
 
 用于声明本文档定义的术语，供 `GlossaryVisitor` 汇总到 `docs/glossary.gen.md`。
 
@@ -112,7 +112,7 @@ glossary:
 - 语法简洁，减少视觉噪声
 - 保持顺序语义（YAML 序列）
 
-### 3.2 `issues` — 问题跟踪
+### `issues` — 问题跟踪
 
 用于记录本文档相关的待解决问题，供 `IssueAggregator` 汇总。
 
@@ -129,9 +129,9 @@ issues:
 
 ---
 
-## 4. 常见错误与修复
+## 常见错误与修复
 
-### 4.1 `DOCGRAPH_RELATION_DANGLING_LINK`
+### `DOCGRAPH_RELATION_DANGLING_LINK`
 
 **含义**：`produce` 指向的文件不存在
 
@@ -140,7 +140,7 @@ issues:
 2. 确认目标文件是否已创建
 3. 如果计划中的产物尚未创建，先创建空文件或移除引用
 
-### 4.2 `DOCGRAPH_RELATION_MISSING_BACKLINK`
+### `DOCGRAPH_RELATION_MISSING_BACKLINK`
 
 **含义**：产物文档缺少 `produce_by` 字段，或其值不包含引用它的 Wish
 
@@ -151,13 +151,13 @@ produce_by:
   - "wishes/active/wish-XXXX.md"  # 替换为实际的 Wish 路径
 ```
 
-### 4.3 `DOCGRAPH_FRONTMATTER_REQUIRED_FIELD_MISSING`
+### `DOCGRAPH_FRONTMATTER_REQUIRED_FIELD_MISSING`
 
 **含义**：必填字段缺失
 
 **修复**：根据文档类型添加缺失字段（见 §1 和 §2）
 
-### 4.4 `DOCGRAPH_YAML_PARSE_ERROR`
+### `DOCGRAPH_YAML_PARSE_ERROR`
 
 **含义**：YAML 语法错误
 
@@ -168,7 +168,7 @@ produce_by:
 
 ---
 
-## 5. 验证命令
+## 验证命令
 
 编写完 frontmatter 后，运行以下命令验证：
 

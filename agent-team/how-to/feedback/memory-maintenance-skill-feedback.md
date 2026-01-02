@@ -2,7 +2,7 @@
 
 > **目标文档**：`agent-team/how-to/memory-maintenance-skill.md` (v1.0)  
 > **反馈来源**：Advisory Board 批量维护实战（2025-12-25）  
-> **参与成员**：Advisor-Claude, Craftsman, Advisor-DeepSeek  
+> **参与成员**：Seeker, Craftsman, Curator  
 > **状态**：待畅谈与修订
 
 ---
@@ -13,14 +13,14 @@
 - **触发原因**：进入大量编码任务前，让参谋组轻装上阵
 - **维护类型**：预防性维护（非触发阈值的紧急维护）
 - **成员状态**：
-  - Advisor-Claude: 666 行（接近监控线）
+  - Seeker: 666 行（接近监控线）
   - Craftsman: 578 行（健康区）
-  - Advisor-DeepSeek: 552 行（健康区）
+  - Curator: 552 行（健康区）
 
 **维护结果**：
-- Advisor-Claude: 666→495 行（26% 压缩）
+- Seeker: 666→495 行（26% 压缩）
 - Craftsman: 578→332 行（43% 压缩）
-- Advisor-DeepSeek: 552→144 行（74% 压缩）
+- Curator: 552→144 行（74% 压缩）
 - **所有成员通过冷启动测试**
 
 ---
@@ -33,7 +33,7 @@
 
 **有效性**：⭐⭐⭐⭐⭐
 
-**Advisor-Claude 评价**：
+**Seeker 评价**：
 > "指导性极强，每次维护都能快速定位'哪些内容属于哪层'"
 
 **Craftsman 评价**：
@@ -48,10 +48,10 @@
 
 **有效性**：⭐⭐⭐⭐⭐
 
-**Advisor-Claude 评价**：
+**Seeker 评价**：
 > "帮助判断'这是值得保留的洞见还是可压缩的过程记录'"
 
-**Advisor-DeepSeek 评价**：
+**Curator 评价**：
 > "**'洞见提纯' (Insight Extraction)** 的概念非常棒。它强迫我思考'这不仅仅是一次会议，这背后的通用原则是什么？'"
 
 **关键价值**：
@@ -63,7 +63,7 @@
 
 **有效性**：⭐⭐⭐⭐
 
-**Advisor-Claude 评价**：
+**Seeker 评价**：
 > "准备阶段/执行阶段/验收阶段的 checklist 有效防止遗漏"
 
 **关键价值**：
@@ -75,7 +75,7 @@
 
 **有效性**：⭐⭐⭐⭐
 
-**Advisor-Claude 评价**：
+**Seeker 评价**：
 > "比按日期更易检索（本次新增 update-history.md 验证了这点）"
 
 **Craftsman 实践**：
@@ -95,7 +95,7 @@
 
 #### 改进 #1: 增加"增量维护速查清单"
 
-**提出者**：Advisor-Claude  
+**提出者**：Seeker  
 **优先级**：HIGH
 
 **问题描述**：
@@ -142,15 +142,15 @@
 
 #### 改进 #2: 明确"洞见密度优先于行数限制"
 
-**提出者**：Advisor-Claude, Advisor-DeepSeek  
+**提出者**：Seeker, Curator  
 **优先级**：HIGH
 
 **问题描述**：
 
-**Advisor-Claude**：
+**Seeker**：
 > "技能书建议 450-600 行，但这是'行数预算'不是'压缩目标'。如果洞见密度高，可能需要放宽到 500-550。"
 
-**Advisor-DeepSeek**：
+**Curator**：
 > "建议将行数目标改为'密度目标'。144 行的高密度原则比 400 行的流水账更有价值。"
 
 **具体需求**：
@@ -188,7 +188,7 @@
 
 ### 权衡建议
 
-- **高密度型 Agent**（如 Advisor-DeepSeek）：优先"提纯为原则"，行数可低至 150-200
+- **高密度型 Agent**（如 Curator）：优先"提纯为原则"，行数可低至 150-200
 - **索引密集型 Agent**（如 Team Leader）：需要保留更多参与历史，行数可放宽至 500-600
 ```
 
@@ -196,7 +196,7 @@
 
 #### 改进 #3: 优化"最后更新"区块的写入策略
 
-**提出者**：Advisor-Claude  
+**提出者**：Seeker  
 **优先级**：MEDIUM
 
 **问题描述**：
@@ -248,7 +248,7 @@
 
 #### 改进 #4: 增加"合并重复"的判断标准
 
-**提出者**：Advisor-Claude  
+**提出者**：Seeker  
 **优先级**：MEDIUM
 
 **问题描述**：
@@ -302,7 +302,7 @@
 
 #### 改进 #5: 归档策略的"两级归档"建议
 
-**提出者**：Advisor-DeepSeek  
+**提出者**：Curator  
 **优先级**：LOW
 
 **问题描述**：
@@ -346,13 +346,13 @@ archive/members/Craftsman/2025-12/
 
 **第一级**：按时间保留完整原始记录
 ```
-archive/members/Advisor-DeepSeek/2025-12/
+archive/members/Curator/2025-12/
   └── raw-insights-log.md  # 完整保留所有被压缩的内容
 ```
 
 **第二级**（未来执行）：按主题重组
 ```
-archive/members/Advisor-DeepSeek/by-topic/
+archive/members/Curator/by-topic/
   ├── ux-dx-principles.md
   ├── docui-design.md
   └── statejournal-feedback.md
@@ -376,7 +376,7 @@ archive/members/Advisor-DeepSeek/by-topic/
 
 #### 改进 #6: 表格压缩的权衡指导
 
-**提出者**：Advisor-Claude  
+**提出者**：Seeker  
 **优先级**：LOW
 
 **问题描述**：
@@ -433,7 +433,7 @@ archive/members/Advisor-DeepSeek/by-topic/
 
 ### 发现的覆盖情况
 
-**Advisor-DeepSeek 发现**：
+**Curator 发现**：
 1. **StateJournal API 设计重复讨论**
    - 旧方案：`Commit` 方法
    - 新方案：`Flush` 方法（更准确）
@@ -473,7 +473,7 @@ archive/members/Advisor-DeepSeek/by-topic/
 
 ### 实验性探索
 
-- [ ] **Advisor-DeepSeek 的"高密度结晶"模式**：是否值得推广？
+- [ ] **Curator 的"高密度结晶"模式**：是否值得推广？
   - 适用场景：设计顾问、理论研究型 Agent
   - 不适用场景：需要大量参与历史的协调型 Agent（如 Team Leader）
   - 建议：在技能书中作为"可选模式"介绍
@@ -482,9 +482,9 @@ archive/members/Advisor-DeepSeek/by-topic/
 
 ## 附录：完整维护日志链接
 
-- [Advisor-Claude 维护日志](../../members/Advisor-Claude/maintenance-log.md)
+- [Seeker 维护日志](../../members/Seeker/maintenance-log.md)
 - [Craftsman 维护日志](../../members/Craftsman/maintenance-log.md)
-- [Advisor-DeepSeek 维护日志](../../members/Advisor-DeepSeek/maintenance-log.md)
+- [Curator 维护日志](../../members/Curator/maintenance-log.md)
 
 ---
 
