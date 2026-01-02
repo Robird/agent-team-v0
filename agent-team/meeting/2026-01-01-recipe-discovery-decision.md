@@ -41,7 +41,7 @@
 ### 决策1：立即执行目录迁移和改名
 
 **方案**：
-- 将`agent-team/recipe/`移动到根目录`/how-to/`
+- 将`agent-team/how-to/`移动到根目录`/how-to/`
 - 保持现有文件名不变（Phase 1）
 - 后续根据实验效果决定是否进行文件名动作化改造（Phase 2）
 
@@ -77,7 +77,7 @@
 ### 决策4：保障知识连续性
 
 **方案**：
-1. 在原位置`agent-team/recipe/`留下重定向Stub
+1. 在原位置`agent-team/how-to/`留下重定向Stub
 2. 在`indexes/README.md`添加Changefeed Anchor
 3. 历史文档中的旧链接保持原样（历史事实）
 
@@ -90,11 +90,11 @@
 
 ### Phase 0：准备（Day 0）
 - [ ] 创建实施分支：`feat/recipe-to-how-to`
-- [ ] 记录当前引用数量：`grep -r "agent-team/recipe" --include="*.md" | wc -l`
+- [ ] 记录当前引用数量：`grep -r "agent-team/how-to" --include="*.md" | wc -l`
 - [ ] 备份当前状态
 
 ### Phase 1：结构迁移（Day 1）
-- [ ] `git mv agent-team/recipe how-to`
+- [ ] `git mv agent-team/how-to how-to`
 - [ ] 批量修复SSOT层引用（AGENTS.md、.agent.md文件）
 - [ ] 创建重定向Stub
 - [ ] 实现Prompt化索引
@@ -105,7 +105,7 @@
 - [ ] 更新`indexes/README.md`
 
 ### Phase 3：验证（Day 3）
-- [ ] 全量grep验证：`grep -r "agent-team/recipe" --include="*.md" | grep -v "chat-log"`
+- [ ] 全量grep验证：`grep -r "agent-team/how-to" --include="*.md" | grep -v "chat-log"`
 - [ ] 抽查链接可跳转性
 - [ ] 验证Git历史保留
 
@@ -135,7 +135,7 @@
 ## 需要监护人批准的事项
 
 1. **✅ 是否批准实施决策？**
-   - 目录迁移：`agent-team/recipe/` → `/how-to/`
+   - 目录迁移：`agent-team/how-to/` → `/how-to/`
    - Prompt化索引：在AGENTS.md中新增情境触发器
    - 快速验证实验：1天.copilotignore切换法测试
 

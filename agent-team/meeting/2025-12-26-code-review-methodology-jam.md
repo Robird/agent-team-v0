@@ -889,7 +889,7 @@ StateJournal 有 43 条条款，如果一次性全量审阅，容易因为 Recip
 
 1. **生成器**: 编写一个简单的脚本 `scripts/generate-review-brief.js`，根据 YAML 模板生成 Markdown 任务包。
 2. **试点**: 手动组装 `Core` 模块的任务包，作为 **One-Shot** 喂给 SubAgent，看看它吐出的 Finding 是否符合 EVA-v1 格式。
-3. **文档**: 将上述格式和计划写入 `agent-team/recipe/code-review-recipe-v1.md`。
+3. **文档**: 将上述格式和计划写入 `agent-team/how-to/code-review-recipe-v1.md`。
 
 **决策请求**：
 @TeamLeader，是否同意先对 `Core` 模块进行 "校准审阅"？如果同意，我将协助 Claude 准备第一个任务包。
@@ -1019,7 +1019,7 @@ StateJournal 有 43 条条款，如果一次性全量审阅，容易因为 Recip
 
 ### Phase 0: Recipe 文档化（今日）
 
-1. **创建 Recipe 文件**：`agent-team/recipe/spec-driven-code-review.md`
+1. **创建 Recipe 文件**：`agent-team/how-to/spec-driven-code-review.md`
 2. **合并 FixList**：应用 GPT 的 6 项修复
 3. **整合模板**：Mission Brief + Finding schema
 

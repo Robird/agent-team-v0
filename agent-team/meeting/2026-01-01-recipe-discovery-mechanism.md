@@ -109,7 +109,7 @@
 这是最关键的建议，因为它解决了**发现阶段**的根本障碍。
 
 **当前问题诊断**：
-- `agent-team/recipe/` 路径过深，在 2000 字符的 BFS 渲染中可能被截断
+- `agent-team/how-to/` 路径过深，在 2000 字符的 BFS 渲染中可能被截断
 - 即使显示了目录名 `recipe/`，Agent 也需要**额外的认知跳跃**才能意识到"这里有可用的操作指南"
 
 **隐喻：机场标识系统**
@@ -310,7 +310,7 @@
 
 **Phase 2：引用修复（1 天）**
 1. 批量搜索修复历史文档中的链接
-2. 在原 `agent-team/recipe/` 位置留下重定向说明
+2. 在原 `agent-team/how-to/` 位置留下重定向说明
 
 **Phase 3：验证实验（1 周）**
 1. 运行无提示加载实验
@@ -376,7 +376,7 @@ Prompt 化索引正是将 Recipe 从"背景压力"转化为"情境触发"的具�
 
 ```bash
 # 核心操作（一行命令）
-mv /repos/focus/agent-team/recipe /repos/focus/how-to
+mv /repos/focus/agent-team/how-to /repos/focus/how-to
 ```
 
 文件系统层面这是一个简单的重命名+移动操作，Git 会正确追踪文件历史（`git mv` 等效）。
@@ -389,7 +389,7 @@ mv /repos/focus/agent-team/recipe /repos/focus/how-to
 
 | 引用类型 | 数量（估计） | 修复难度 | 示例 |
 |:---------|:-------------|:---------|:-----|
-| AGENTS.md 中的显式路径 | 2-3 处 | ⭐ 简单 | `agent-team/recipe/jam-session-guide.md` |
+| AGENTS.md 中的显式路径 | 2-3 处 | ⭐ 简单 | `agent-team/how-to/jam-session-guide.md` |
 | .agent.md 文件中的路径 | 2 处 | ⭐ 简单 | Moderator.agent.md, team-leader.agent.md |
 | Meeting 文件中的历史链接 | 20+ 处 | ⭐⭐ 中等 | 各种畅谈会记录 |
 | Recipe 内部的交叉引用 | 5-8 处 | ⭐⭐ 中等 | `memory-maintenance-skill.md` → `memory-accumulation-spec.md` |
@@ -405,21 +405,21 @@ mv /repos/focus/agent-team/recipe /repos/focus/how-to
 git checkout -b feat/recipe-to-how-to
 
 # Phase 2: 移动
-git mv agent-team/recipe how-to
+git mv agent-team/how-to how-to
 
 # Phase 3: 批量修复引用（使用 sed）
-find . -type f -name "*.md" -exec sed -i 's|agent-team/recipe/|how-to/|g' {} +
+find . -type f -name "*.md" -exec sed -i 's|agent-team/how-to/|how-to/|g' {} +
 
 # Phase 4: 特殊处理相对路径
 # 需要手动检查 ../../recipe/ 这类相对引用
 
 # Phase 5: 验证
-grep -r "agent-team/recipe" --include="*.md" | grep -v "chat-log"
+grep -r "agent-team/how-to" --include="*.md" | grep -v "chat-log"
 # 期望：无结果（除历史会话外）
 
 # Phase 6: 留下重定向说明
-mkdir -p agent-team/recipe
-cat > agent-team/recipe/README.md << 'EOF'
+mkdir -p agent-team/how-to
+cat > agent-team/how-to/README.md << 'EOF'
 # Recipe 目录已迁移
 
 > **迁移日期**: 2026-01-01
@@ -428,7 +428,7 @@ cat > agent-team/recipe/README.md << 'EOF'
 > 为提高 AI Agent 的自动发现能力，Recipe 目录已迁移到根目录。
 > 
 > 请更新你的引用：
-> - 旧：`agent-team/recipe/xxx.md`
+> - 旧：`agent-team/how-to/xxx.md`
 > - 新：`how-to/xxx.md`
 EOF
 ```
@@ -486,7 +486,7 @@ EOF
 3. 允许团队先验证目录移动效果
 
 ```
-PR 1: agent-team/recipe → /how-to/（保持文件名不变）
+PR 1: agent-team/how-to → /how-to/（保持文件名不变）
 PR 2: 文件名动作化改造（可选，根据效果决定）
 ```
 
@@ -656,7 +656,7 @@ interface ExperimentData {
 
 ```
 Week 1:
-├── Day 1-2: 目录迁移 (agent-team/recipe → /how-to/)
+├── Day 1-2: 目录迁移 (agent-team/how-to → /how-to/)
 ├── Day 3: 引用修复 + 验证
 ├── Day 4-5: Prompt 化索引实现 + AGENTS.md 更新
 └── Day 6-7: 快速验证实验 (.copilotignore 方法)
@@ -681,7 +681,7 @@ git checkout main -- AGENTS.md
 
 **迁移前**：
 - [ ] 备份：`git stash` 或创建分支
-- [ ] 扫描：`grep -r "agent-team/recipe" --include="*.md" | wc -l` 记录引用数量
+- [ ] 扫描：`grep -r "agent-team/how-to" --include="*.md" | wc -l` 记录引用数量
 
 **迁移后**：
 - [ ] 验证：同一命令，期望结果为 0（或仅 chat-log）
@@ -873,7 +873,7 @@ Prompt 化索引应该**紧跟"关键路径"**，形成一个连贯的导航区�
 
 ### 3.2 重定向 Stub 设计
 
-在原位置 `agent-team/recipe/` 留下重定向说明：
+在原位置 `agent-team/how-to/` 留下重定向说明：
 
 ```markdown
 # ⚠️ Recipe 目录已迁移
@@ -886,8 +886,8 @@ Prompt 化索引应该**紧跟"关键路径"**，形成一个连贯的导航区�
 
 | 旧路径 | 新路径 |
 |:-------|:-------|
-| `agent-team/recipe/jam-session-guide.md` | `how-to/run-jam-session.md` |
-| `agent-team/recipe/naming-skill-guide.md` | `how-to/name-things-well.md` |
+| `agent-team/how-to/jam-session-guide.md` | `how-to/run-jam-session.md` |
+| `agent-team/how-to/naming-skill-guide.md` | `how-to/name-things-well.md` |
 | ... | ... |
 
 ## 如果你看到这个文件
@@ -907,11 +907,11 @@ Prompt 化索引应该**紧跟"关键路径"**，形成一个连贯的导航区�
 ## Recipe 迁移验收清单
 
 ### 迁移前准备
-- [ ] `grep -r "agent-team/recipe" --include="*.md" | wc -l` 记录初始引用数量
+- [ ] `grep -r "agent-team/how-to" --include="*.md" | wc -l` 记录初始引用数量
 - [ ] 备份当前状态（git stash 或分支）
 
 ### Phase 1: 结构迁移
-- [ ] `git mv agent-team/recipe how-to`
+- [ ] `git mv agent-team/how-to how-to`
 - [ ] 文件重命名（动作化命名）
 - [ ] 创建重定向 Stub
 
@@ -923,7 +923,7 @@ Prompt 化索引应该**紧跟"关键路径"**，形成一个连贯的导航区�
 - [ ] 更新 `agent-team/indexes/README.md`（如需要）
 
 ### Phase 3: 验证
-- [ ] `grep -r "agent-team/recipe" --include="*.md" | grep -v "chat-log" | grep -v "README.md"`
+- [ ] `grep -r "agent-team/how-to" --include="*.md" | grep -v "chat-log" | grep -v "README.md"`
       期望：仅剩历史文档 + 重定向 Stub 中的说明
 - [ ] 抽查 5 个 Markdown 链接可跳转
 - [ ] `git log --follow how-to/run-jam-session.md` 确认历史保留
@@ -940,7 +940,7 @@ Prompt 化索引应该**紧跟"关键路径"**，形成一个连贯的导航区�
 ```markdown
 ### 2026-01-01 – Recipe Discovery Mechanism
 - **#delta-2026-01-01-recipe-discovery** – Recipe 发现机制重构：
-  - 目录迁移：`agent-team/recipe/` → `/how-to/`
+  - 目录迁移：`agent-team/how-to/` → `/how-to/`
   - 文件重命名：动作化命名（`run-jam-session.md` 等）
   - AGENTS.md 更新：新增 Prompt 化索引章节
   - 畅谈会记录：`meeting/2026-01-01-recipe-discovery-mechanism.md`
@@ -972,7 +972,7 @@ Prompt 化索引应该**紧跟"关键路径"**，形成一个连贯的导航区�
 
 当前新成员引导路径：
 ```
-AGENTS.md（入口）→ 关键路径表格 → agent-team/wiki/ → ... → agent-team/recipe/
+AGENTS.md（入口）→ 关键路径表格 → agent-team/wiki/ → ... → agent-team/how-to/
 ```
 
 迁移后更新为：

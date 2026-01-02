@@ -695,7 +695,7 @@ Recipe最容易“看起来对、其实不可执行”。我建议把可测试�
 
 ### 4.3 依赖与引用的“显式图谱”
 
-建议引入一个轻量的Recipe索引（可以是 `agent-team/recipe/index.md` 或未来DocGraph派生视图）：
+建议引入一个轻量的Recipe索引（可以是 `agent-team/how-to/index.md` 或未来DocGraph派生视图）：
 - 列出每个Recipe：版本、状态、owner、dependsOn、supersedes、deprecatedBy
 - 形成“Recipe依赖图”，让维护者能快速定位受影响范围（变更传播半径）
 
@@ -1502,7 +1502,7 @@ Recipe (更新)
 
 ### Craftsman 审阅意见
 
-> 核查对象：`agent-team/recipe/recipe-meta-recipe-draft.md`（v0.1, 2026-01-01, Draft）
+> 核查对象：`agent-team/how-to/recipe-meta-recipe-draft.md`（v0.1, 2026-01-01, Draft）
 > 
 > 核查目标：完整性/一致性、自符合（是否满足其定义的“好Recipe”标准）、质量门禁与审查流程可执行性、版本管理清晰度。
 

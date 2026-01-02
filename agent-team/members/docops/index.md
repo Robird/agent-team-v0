@@ -383,7 +383,7 @@ DocOps - 文档与索引管理专家，负责维护团队的集体记忆和认�
 
 ### 2026-01-01 - Recipe 目录核查与元讨论
 
-**任务**: 完成 `agent-team/recipe/` 目录下 12 个 Recipe 文件全面核查，参与 Recipe 元讨论畅谈会
+**任务**: 完成 `agent-team/how-to/` 目录下 12 个 Recipe 文件全面核查，参与 Recipe 元讨论畅谈会
 
 **核查核心发现**:
 

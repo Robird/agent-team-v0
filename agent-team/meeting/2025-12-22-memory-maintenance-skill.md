@@ -849,7 +849,7 @@ GPT 的 YAML 格式是否过于重型？是否需要简化版本？
 
 收到！已完成技能书初稿起草：
 
-📄 **技能书位置**：[agent-team/recipe/memory-maintenance-skill.md](../recipe/memory-maintenance-skill.md)
+📄 **技能书位置**：[agent-team/how-to/memory-maintenance-skill.md](../recipe/memory-maintenance-skill.md)
 
 **初稿结构**：
 - 概述（为什么需要、目标、核心隐喻）
@@ -1065,7 +1065,7 @@ GPT 的 YAML 格式是否过于重型？是否需要简化版本？
 
 | 用途 | 路径模式 |
 |:-----|:---------|
-| 记忆维护技能书 | `agent-team/recipe/memory-maintenance-skill.md` |
+| 记忆维护技能书 | `agent-team/how-to/memory-maintenance-skill.md` |
 
 ### 6.2 唤醒协议的更新
 
@@ -1280,6 +1280,6 @@ GPT 的 YAML 格式是否过于重型？是否需要简化版本？
 **状态更新**：进行中 → **已完成**
 
 **产出物**：
-- 技能书初稿：agent-team/recipe/memory-maintenance-skill.md
+- 技能书初稿：agent-team/how-to/memory-maintenance-skill.md
 - FixList：11 项（P0×7, P1×3, P2×1）
 - Open Questions 决议：3/3

@@ -4852,11 +4852,11 @@ atelia/src/StateJournal/
 
 Made changes.
 
-User: 刚刚战略层会话进行了经验总结，具体来说是修订了“agent-team/recipe/strategic-tactical-dual-session.md”这份配方文件，还写了inbox。你有没有想要进一步修订和记录的想法呀？
+User: 刚刚战略层会话进行了经验总结，具体来说是修订了“agent-team/how-to/strategic-tactical-dual-session.md”这份配方文件，还写了inbox。你有没有想要进一步修订和记录的想法呀？
 
 GitHub Copilot: 让我先看看战略层的修订内容和 inbox： 
 
-Read [](file:///repos/focus/agent-team/recipe/strategic-tactical-dual-session.md)
+Read [](file:///repos/focus/agent-team/how-to/strategic-tactical-dual-session.md)
 
 Read [](file:///repos/focus/agent-team/inbox)
 
@@ -4890,7 +4890,7 @@ Using "Replace String in File"
 ```
 我还想在配方文件里补充一个"战术层视角"的小节，因为目前 §4 战术层视角相对简单，而这次实践给出了很多实操经验： 
 
-Read [](file:///repos/focus/agent-team/recipe/strategic-tactical-dual-session.md#59-59), lines 59 to 119
+Read [](file:///repos/focus/agent-team/how-to/strategic-tactical-dual-session.md#59-59), lines 59 to 119
 
 Using "Replace String in File"
 

@@ -145,7 +145,7 @@
 4. [wishes/specs/wish-system-rules.md](../../../wishes/specs/wish-system-rules.md)（上位规则）
 
 ### 可选材料
-5. [agent-team/recipe/jam-session-guide.md](../../../recipe/jam-session-guide.md)（畅谈会机制）
+5. [agent-team/how-to/jam-session-guide.md](../../../recipe/jam-session-guide.md)（畅谈会机制）
 6. [agent-team/wiki/memory-accumulation-spec.md](../../../wiki/memory-accumulation-spec.md)（记忆积累规范）
 
 ---

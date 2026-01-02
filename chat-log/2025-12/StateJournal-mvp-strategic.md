@@ -1518,7 +1518,7 @@ Read [](file:///repos/focus/atelia/docs/StateJournal/implementation-plan.md)
 
 Read [](file:///repos/focus/agent-team/handoffs/task-result.md#1-1), lines 1 to 101
 
-Read [](file:///repos/focus/agent-team/recipe/strategic-tactical-dual-session.md)
+Read [](file:///repos/focus/agent-team/how-to/strategic-tactical-dual-session.md)
 
 非常精彩的产出！让我更新会话状态： 
 
@@ -1701,9 +1701,9 @@ T-20251225-03 已就绪：**组织实施计划审阅畅谈会**
 
 Made changes.
 
-User: 再临时插入给你一个任务，因为你现在状态最适合，就是修订“agent-team/recipe/strategic-tactical-dual-session.md”这份配方的战略会话部分，让未来的战略会话拿到文件一看，就知道机制是怎么运作的，知道该如何行动。
+User: 再临时插入给你一个任务，因为你现在状态最适合，就是修订“agent-team/how-to/strategic-tactical-dual-session.md”这份配方的战略会话部分，让未来的战略会话拿到文件一看，就知道机制是怎么运作的，知道该如何行动。
 
-GitHub Copilot: Read [](file:///repos/focus/agent-team/recipe/strategic-tactical-dual-session.md)
+GitHub Copilot: Read [](file:///repos/focus/agent-team/how-to/strategic-tactical-dual-session.md)
 
 Using "Replace String in File"
 
@@ -3338,11 +3338,11 @@ Ran terminal command: rm -f /repos/focus/agent-team/handoffs/current-task.md
 
 **圣诞快乐！StateJournal MVP 是送给 Atelia 项目的最好礼物！** 🎁
 
-User: 我的建议是进行一些元思考，比如总结经验，为未来的自己撰写指导。比如在实战后审视和修订“agent-team/recipe/strategic-tactical-dual-session.md”。还可以记一记后续的计划。你们写代码是超厉害的，所以你看我用了好几天时间和你们一起做设计，对设计文档修订了又修订。你们的成熟，将深刻的影响软件工程的形态，类似人们出行方式的历次飞跃。关于后续计划，我打算明天专注于...Review ! 把目前MVP所搭建的核心实现做到特别扎实和优雅的水准，然后再增加更多的类型支持，比如字符串和类JArray的类型，这里面又是许多设计问题...比如我们应该提供怎样的功能边界。关于发布...我们目前都是自用，算是将一部分内容从草稿态改为稳定态吧。我对性能测试不太感兴趣，实现合理自然性能就是合理的，我们目前性能也不太敏感，可以拖一拖先不做。我打算收工睡觉啦！你有哪些想去思考的，想去做的事情，可以利用这次激活，就尽情去做吧！
+User: 我的建议是进行一些元思考，比如总结经验，为未来的自己撰写指导。比如在实战后审视和修订“agent-team/how-to/strategic-tactical-dual-session.md”。还可以记一记后续的计划。你们写代码是超厉害的，所以你看我用了好几天时间和你们一起做设计，对设计文档修订了又修订。你们的成熟，将深刻的影响软件工程的形态，类似人们出行方式的历次飞跃。关于后续计划，我打算明天专注于...Review ! 把目前MVP所搭建的核心实现做到特别扎实和优雅的水准，然后再增加更多的类型支持，比如字符串和类JArray的类型，这里面又是许多设计问题...比如我们应该提供怎样的功能边界。关于发布...我们目前都是自用，算是将一部分内容从草稿态改为稳定态吧。我对性能测试不太感兴趣，实现合理自然性能就是合理的，我们目前性能也不太敏感，可以拖一拖先不做。我打算收工睡觉啦！你有哪些想去思考的，想去做的事情，可以利用这次激活，就尽情去做吧！
 
 GitHub Copilot: 感谢监护人的信任和指导！让我利用这次激活做一些有价值的元思考工作。 
 
-Read [](file:///repos/focus/agent-team/recipe/strategic-tactical-dual-session.md)
+Read [](file:///repos/focus/agent-team/how-to/strategic-tactical-dual-session.md)
 
 现在让我基于这次实战经验，修订双会话协作配方： 
 

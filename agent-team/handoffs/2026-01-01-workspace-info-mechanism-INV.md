@@ -139,7 +139,7 @@ override async prepare(...) {
 由于广度优先算法：
 - **recipe/** 目录名称会出现在顶层（如果空间足够）
 - recipe 的子目录/文件是否展开取决于剩余空间
-- 与 `agent-team/recipe/` 相比，根目录的 `recipe/` 更可能被展开（因为路径更短，节省字符）
+- 与 `agent-team/how-to/` 相比，根目录的 `recipe/` 更可能被展开（因为路径更短，节省字符）
 
 ### Q4: 有没有办法控制 workspace_info 的内容或深度？
 

@@ -711,7 +711,7 @@ El Psy Kongroo. 🔬🎄
 - 缺口：缺少“信息表示/图表/ASCII art”的约束，导致各文档在图表载体选择上会自然分叉。
 - 放置位置：新增为第 3 章最自然（第 1 章讲语言，第 2 章讲可引用锚点，第 3 章讲可读/可解析载体）。
 
-### 2.2 agent-team/recipe/jam-session-guide.md（SSOT 声明与现实冲突）
+### 2.2 agent-team/how-to/jam-session-guide.md（SSOT 声明与现实冲突）
 
 - 该文件自称“Team Leader 组织研讨会的 SSOT”，但核心信息（参谋组互补关系、典型流程）主要承载在大段 box-drawing ASCII 图里，**缺少等价的线性 SSOT**。
 - 这类“组织结构/流程”非常适合 Mermaid（graph/flowchart/sequence），或者嵌套列表。
@@ -777,7 +777,7 @@ El Psy Kongroo. 🔬🎄
 
 ### P1（本周）：修 SSOT 文档破口（高杠杆）
 
-1. agent-team/recipe/jam-session-guide.md：把两段大 ASCII 图替换为 Mermaid（或嵌套列表），保留 ASCII 版本则必须降级为 Illustration 并声明 SSOT。
+1. agent-team/how-to/jam-session-guide.md：把两段大 ASCII 图替换为 Mermaid（或嵌套列表），保留 ASCII 版本则必须降级为 Illustration 并声明 SSOT。
 2. atelia/docs/StateJournal/mvp-design-v2.md：对“位布局框图”加一句显式标注（Illustration），并声明“公式/表”为 SSOT。
 
 ### P2（持续治理）：用轻量 lint 防止复发

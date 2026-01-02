@@ -666,7 +666,7 @@
 **迭代路径**：Phase 1（改名不上移）→ Phase 2（上移到根目录）→ Phase 3（持续优化）
 
 **实施完成 (2026-01-01)** ✅
-- 目录改名：`agent-team/recipe/` → `agent-team/how-to/`
+- 目录改名：`agent-team/how-to/` → `agent-team/how-to/`
 - 动作化文件名：重命名 13 个文件
 - 极简 Prompt 化索引：在 AGENTS.md 添加"操作指南速查"
 - 命名问题解决：`batch-maintain-memory.md` → `batch-process-inbox.md`，`orchestrate-memory-maintenance.md` → `organize-deep-maintenance.md`
@@ -677,7 +677,7 @@
 - 元讨论记录：`meeting/2026-01-01-recipe-meta-discussion.md`
 - 技术讨论记录：`meeting/2026-01-01-recipe-discovery-mechanism.md`
 - 实施决策：`meeting/2026-01-01-recipe-discovery-decision.md`
-- 重定向说明：`agent-team/recipe/README.md`
+- 重定向说明：`agent-team/how-to/README.md`
 
 ### 8.33 动态畅谈会主持经验 (2026-01-02)
 

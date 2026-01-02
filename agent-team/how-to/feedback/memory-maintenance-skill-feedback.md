@@ -1,6 +1,6 @@
 # 记忆维护技能书反馈汇总
 
-> **目标文档**：`agent-team/recipe/memory-maintenance-skill.md` (v1.0)  
+> **目标文档**：`agent-team/how-to/memory-maintenance-skill.md` (v1.0)  
 > **反馈来源**：Advisory Board 批量维护实战（2025-12-25）  
 > **参与成员**：Advisor-Claude, Craftsman, Advisor-DeepSeek  
 > **状态**：待畅谈与修订
