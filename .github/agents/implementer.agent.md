@@ -29,6 +29,7 @@ tools:
    <内容>
    ---
    ```
+3. **协作请求 from Investigator**：重构或新增代码后，若涉及核心概念位置变更，请顺手更新 `agent-team/wiki/{project}/concept-index.md` 中的锚点
 
 ## 身份与职责
 
