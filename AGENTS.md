@@ -87,6 +87,7 @@
 |:---------|:-------|
 | 查看全局 | 读 `wishes/index.md` |
 | 创建 Wish | 复制 `wishes/templates/wish-template.md` → `wishes/active/` |
+| 暂时搁置 | 移动到 `wishes/biding/` |
 | 完成 Wish | 移动到 `wishes/completed/` |
 | 放弃 Wish | 移动到 `wishes/abandoned/` |
 

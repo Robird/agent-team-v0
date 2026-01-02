@@ -18,7 +18,7 @@ produce:
 
 **目标 (Goals)**:
 - [x] 定义 Wish 文档的标准格式和必填字段
-- [x] 建立 `wishes/` 目录结构（active/completed/abandoned）
+- [x] 建立 `wishes/` 目录结构（biding/active/completed/abandoned）
 - [x] 创建 index.md 作为单体入口（派生视图）
 - [x] 定义 L3 条款文件（MUST/SHOULD/MAY 规范）
 - [ ] 团队成员熟悉并能 5 秒内判断问题层级

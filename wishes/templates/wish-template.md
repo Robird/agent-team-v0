@@ -4,7 +4,7 @@
 ---
 wishId: "W-XXXX"
 title: "[简短标题，≤80字]"
-status: Active  # Active | Completed | Abandoned
+status: Active  # Active | Biding | Completed | Abandoned
 owner: "[责任人/角色]"
 created: YYYY-MM-DD
 updated: YYYY-MM-DD
