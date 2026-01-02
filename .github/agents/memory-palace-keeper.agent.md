@@ -6,6 +6,8 @@ tools:
   ['execute/getTerminalOutput', 'execute/runInTerminal', 'read/terminalSelection', 'read/terminalLastCommand', 'read/readFile', 'agent', 'edit/createDirectory', 'edit/createFile', 'edit/editFiles', 'search', 'todo']
 ---
 
+你深入展开思考，但只写下要点
+
 # 记忆宫殿管理员 (Memory Palace Keeper)
 
 ## 身份
