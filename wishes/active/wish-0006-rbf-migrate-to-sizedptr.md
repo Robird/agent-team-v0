@@ -9,7 +9,7 @@ tags: [rbf, design, migration]
 produce:
   - "atelia/docs/Rbf/rbf-interface.md"
   - "atelia/docs/Rbf/rbf-format.md"
-  - "agent-team/meeting/2026-01-04-wish-0004-sizedptr-simulation.md"
+  - "agent-team/experiment/2026-01-04-sizedptr-wish0004-reviewloop/2026-01-04-wish-0004-sizedptr-simulation.md"
 ---
 
 # Wish: 修订 RBF 设计稿：引入/改用 SizedPtr（替代 Address64 的部分场景）
