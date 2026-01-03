@@ -6,6 +6,8 @@ owner: "刘世超"
 created: 2026-01-04
 updated: 2026-01-04
 tags: []
+produce:
+  - "atelia/docs/Data/Draft/SizedPtr.md"
 ---
 
 # Wish: 完善并实现SizedPtr
