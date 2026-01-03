@@ -1,7 +1,7 @@
 ---
-wishId: "W-XXXX"
+wishId: "W-0004"
 title: "完善并实现SizedPtr"
-status: Active
+status: Completed
 owner: "刘世超"
 created: 2026-01-04
 updated: 2026-01-04
@@ -14,12 +14,6 @@ produce:
 
 > **一句话动机**: 在Atelia.Data中实现一种将地址和长度打包为64bit的胖指针--SizedPtr
 
-已有初步设想文档`atelia/docs/Data/Draft/SizedPtr.md`
-bit分配方案尚未敲定：
-  - 尚未排除为不同工况提供多种类型。但不倾向于这个方案，因为其增加了复杂性。
-  - 尚未排除用1到2个bit来记录bit划分。但不倾向于这个方案，因为其增加了复杂性。
-命名和API设计这类UX/DX问题尚未敲定方案
-首个目标用户是将`atelia/docs/Rbf/rbf-interface.md`中的`Address64`类型替换掉。
 已有初步设想文档`atelia/docs/Data/Draft/SizedPtr.md`
 bit分配方案尚未敲定：
   - 尚未排除为不同工况提供多种类型。但不倾向于这个方案，因为其增加了复杂性。
@@ -77,3 +71,4 @@ bit分配方案尚未敲定：
 | 日期 | 执行者 | 变更 | 原因 |
 |:-----|:-------|:-----|:-----|
 | 2026-01-04 | [name] | 创建 | 初始创建 |
+| 2026-01-04 | AI Team | 标记 Completed | 已在 Atelia.Data 实现 `SizedPtr` 且单元测试通过；后续接入 RBF/目录重构拆分为新 Wish |
