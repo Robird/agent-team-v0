@@ -171,6 +171,10 @@
    - 解决：详情写 handoff，index.md 只放状态和索引
    - **目标**：index.md 控制在 300-450 行
 
+4. **记忆维护核心原则**（2026-01-03）
+   - "去重而非删减"——重复内容比冗长内容更损害认知效率
+   - 识别重复信号：关键词重叠率>60%、相同主题多处表述
+
 ### 工具使用技巧
 
 - **grep 先行**：任何批量替换前先用 grep 确认范围
@@ -194,6 +198,26 @@
 ---
 
 ## 项目知识参考
+
+### DocGraph
+
+**文档体系**：
+- 规范文档：`atelia/docs/DocGraph/v0.1/`
+- 用法指南：`atelia/docs/DocGraph/v0.1/USAGE.md`
+
+**扩展点：新增 Wish 状态**（2026-01-03）
+
+| 位置 | 修改内容 |
+|:-----|:---------|
+| `DocumentGraphBuilder.cs` | `DefaultWishDirectories` 数组 + `DeriveStatus()` 映射 |
+| `DocumentNode.cs` | `Status` 属性注释更新 |
+| `scope.md` / `USAGE.md` | Root Nodes 节扫描目录列表 |
+| `wish-template.md` / `AGENTS.md` | Status 枚举注释 |
+
+**设计决策：验证严重性降级**（2026-01-03）
+- 必填字段缺失从 `Error` → `Warning`（单文档问题不阻断整体收集）
+- 受影响：`docId`, `produce`, `produce_by`, `title`
+- 测试：`Validate_ShouldWarn*` 命名，Warning exit code = 1
 
 ### StateJournal
 
