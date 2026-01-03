@@ -1,11 +1,13 @@
 ---
-wishId: "W-XXXX"
+wishId: "W-0003"
 title: "实验-需求与贡献驱动的畅谈会"
 status: Active
 owner: "监护人刘世超"
 created: 2026-01-02
-updated: 2026-01-02
+updated: 2026-01-03
 tags: []
+produce:
+  - "agent-team/how-to/run-jam-session.md"
 ---
 
 # Wish: 实验-响应驱动畅谈会
