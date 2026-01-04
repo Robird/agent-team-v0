@@ -66,3 +66,19 @@
 - **状态**：待确认
 - **成熟度**：Confirmed（经与监护人深度讨论并采纳）
 ---
+
+### 提名 [类型：Recommend]
+- **内容**：情景化畅谈会六项关键洞见（语境锚点/示能性竞争/模式解锁/信号协议/可调参数/收银小票产出）
+- **证据**：agent-team/members/TeamLeader/index.md#4.7
+- **提名者**：MemoryPalaceKeeper（基于 TeamLeader 的便签）
+- **状态**：待确认
+- **成熟度**：Emerging（多 Agent 实验但尚未在多场景验证）
+---
+
+### 提名 [类型：Recommend]
+- **内容**：调度员 Avatar 模式——通过生活化角色（酒吧老板老张）减少主持人社交重量
+- **证据**：agent-team/members/TeamLeader/index.md#4.7
+- **提名者**：MemoryPalaceKeeper（基于 TeamLeader 的便签）
+- **状态**：待确认
+- **成熟度**：Emerging（单次实验成功，待更多验证）
+---
