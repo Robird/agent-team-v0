@@ -275,6 +275,26 @@
 - **测试命令**: `:help`, `:list`, `:ps`, `:stop`
 - **发现问题**: 配置文件路径需要更新（`/repos/PieceTreeSharp/...` → `/repos/focus/...`）
 
+## 核心洞见
+
+### [I-QA-001] LLM 全自动 Wish 执行的结构化门槛（2026-01-04）
+
+> 来源：SizedPtr (W-0004) 实验回归分析
+
+**五个关键自动化门槛**：
+
+| # | 门槛 | 问题 | 结构化方案 |
+|:--|:-----|:-----|:-----------|
+| 1 | Demand Schema | LLM 范围漂移，建议越给越多不收敛 | `action/scope/deliverable/definition_of_done/stop_condition` |
+| 2 | Review Findings 分级 | 无法隔离范围外建议 | Sev0/Sev1/Sev2 + Parking Lot |
+| 3 | Tier Gate 机读输出 | LLM 无法可靠判定检验问题是否通过 | 检验结果需机器可读（非纯自然语言） |
+| 4 | 测试通过 ≠ 完成 | "测试全绿"后仍存在文档-代码一致性等问题 | 显式 Review Loop（文档、API 易用性） |
+| 5 | Wish 输入质量 | 占位符未替换、正文重复等 | 前置 lint/validate |
+
+**核心洞见**：**自动化的瓶颈不在执行，而在"何时停止"和"如何判定完成"的语义边界**。
+
+---
+
 ## Active Changefeeds & Baselines
 
 | Project | Changefeed | Baseline |
