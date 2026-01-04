@@ -90,3 +90,11 @@
 - **状态**：待确认
 - **成熟度**：Emerging（单人提出但架构清晰可验证）
 ---
+
+### 提名 [类型：Recommend]
+- **内容**：AOS体验设计三层框架——Protagonist UX/Ensemble UX/Developer UX，三层受众需要三种不同的体验设计
+- **证据**：agent-team/members/Curator/index.md#M1
+- **提名者**：MemoryPalaceKeeper（基于 Curator 的便签）
+- **状态**：待确认
+- **成熟度**：Emerging（单次畅谈会提出，框架清晰待工程验证）
+---
