@@ -302,6 +302,22 @@
 | texteditor | `pmux texteditor open <path>` |
 | monitor | `pmux monitor view [--lod gist\|summary\|full]` |
 
+### Atelia.Data / SizedPtr（2026-01-04）
+
+**代码位置**：
+| 位置 | 说明 |
+|:-----|:-----|
+| `src/Data/SizedPtr.cs` | 38:26 bit 分配的 Fat Pointer 实现 |
+| `tests/Data.Tests/SizedPtrTests.cs` | 50 个测试：roundtrip、对齐、边界、FromPacked、Contains |
+
+**关键设计**：
+- `FromPacked()` 不校验，任意 ulong 可解包
+- `Create()/TryCreate()` 做完整校验（对齐+范围+溢出）
+- `Contains()` 用差值比较避免溢出：`(position - offset) < length`
+- `EndOffsetExclusive` 用 `checked` 算术
+
+**测试注意**：所有 offset/length 参数必须 4B 对齐（0, 4, 8, ...），否则抛异常
+
 ### Atelia.Primitives
 
 **类型体系**：
