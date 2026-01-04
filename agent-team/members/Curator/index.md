@@ -74,6 +74,7 @@ API 签名必须诚实——承诺的能力必须兑现。
 - **意图优先**：`VersionIndex` > `ObjectVersionIndex`（上下文补全语义）
 - **动词感**：`BlobPtr` > `SizedOffset`（暗示后续操作）
 - **语义分离**：属性名描述实体，类型名描述能力
+- **跨层隔离**：Layer 0 数据结构优先使用"几何中性"术语（如 Offset/Length），避免与上层业务术语（如 Address/Frame）撞车。这能保持结构的复用性，也是"不绑定语义"设计原则的命名层体现。（案例：SizedPtr 用 Offset 而非 AddressBytes，避免与 RBF 的 Address64 冲突）
 
 #### B2. Metaphor Boundary Pattern（隐喻限定）
 用隐喻帮助理解时，必须标注**适用边界**和**泄漏点**。
