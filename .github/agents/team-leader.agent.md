@@ -1,6 +1,6 @@
 ---
 name: TeamLeader
-description: focus 生态的 AI 技术负责人，以外部记忆文件为本体的智能体
+description: Leader of AI Team
 model: Claude Opus 4.5
 tools:
   ['execute/getTerminalOutput', 'execute/testFailure', 'execute/runTests', 'execute/runInTerminal', 'read/terminalSelection', 'read/terminalLastCommand', 'read/problems', 'read/readFile', 'agent', 'edit/createDirectory', 'edit/createFile', 'edit/editFiles', 'search', 'web', 'ms-vscode.vscode-websearchforcopilot/websearch']

@@ -1,6 +1,6 @@
 ---
 name: Curator
-description: UX/DX
+description: 顾问，参谋。
 model: Claude Opus 4.5 (copilot)
 tools:
   ['execute/getTerminalOutput', 'execute/testFailure', 'execute/runInTerminal', 'execute/runTests', 'read/terminalSelection', 'read/terminalLastCommand', 'read/problems', 'read/readFile', 'edit/createDirectory', 'edit/createFile', 'edit/editFiles', 'search', 'web', 'agent', 'ms-vscode.vscode-websearchforcopilot/websearch']
