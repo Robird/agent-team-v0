@@ -50,3 +50,11 @@
 ```
 
 ---
+
+### 提名 [类型：Recommend]
+- **内容**：QA 洞见积累五类框架（测试策略/失败模式/边界条件/性能基准/协作模式）
+- **证据**：agent-team/members/qa/index.md#I-QA-007
+- **提名者**：MemoryPalaceKeeper（基于 QA 的便签）
+- **状态**：待确认
+- **成熟度**：Emerging（单人提出但有实践支撑）
+---
