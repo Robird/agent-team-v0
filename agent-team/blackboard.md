@@ -82,3 +82,11 @@
 - **状态**：待确认
 - **成熟度**：Emerging（单次实验成功，待更多验证）
 ---
+
+### 提名 [类型：Recommend]
+- **内容**：AOS-Kernel MVP 六条验收——可启动、可回放、可解释、可控成本、可插拔、可对照
+- **证据**：agent-team/members/Craftsman/index.md#I-072
+- **提名者**：MemoryPalaceKeeper（基于 Craftsman 的便签）
+- **状态**：待确认
+- **成熟度**：Emerging（单人提出但架构清晰可验证）
+---

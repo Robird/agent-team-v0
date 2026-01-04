@@ -82,6 +82,12 @@
 
 - [I-060] **工具链故障规避**：`apply_patch` 等编辑工具对特定文件类型（如 Markdown）可能连续失败；已知 workaround 是用 Python/Shell 脚本完成等价小修补。后续若再现应优先定位工具链问题，避免影响"零意外编辑"的流程可信度。`[2026-01-04]`
 
+### AOS 架构 / Session 工程
+
+- [I-070] **AOS 核心三要素**：SSOT 设为只追加 Frame Journal（可回放/可解释/可回归），而非某次 Prompt；多 Session 工程关键是"结构化 Context Patch 协议 + 确定性 Builder + 预算护栏"。`[2026-01-05]`
+- [I-071] **AOS-Kernel MVP 架构**：SessionManager/Scheduler/ContextBuilder/ExecutionEngine/Journal + 4 个 Cortex Session（Observer/Retriever/Planner/Critic）。`[2026-01-05]`
+- [I-072] **AOS 六条验收**：可启动、可回放、可解释、可控成本、可插拔、可对照——可作为 MVP 验收清单。`[2026-01-05]`
+
 ---
 
 ## 输出物（对齐畅谈会标签）
