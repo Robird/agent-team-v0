@@ -1,6 +1,7 @@
 # Investigator 认知索引
 
-> 最后更新: 2026-01-01
+> 最后更新: 2026-01-04
+> - 2026-01-04: Memory Palace — 处理了 3 条便签（SizedPtr/RBF/Address64 调查锚点）
 > - 2026-01-01: workspace_info 机制调查（Copilot Chat Agent Prompt System）
 > - 2025-12-27: ObjectLoaderDelegate 重构影响分析
 > - 2025-12-27: Workspace/ObjectLoader/RBF 设计意图调查
@@ -20,6 +21,22 @@
 - [ ] atelia-copilot-chat
 
 ## Session Log
+
+### 2026-01-04: SizedPtr/RBF/Address64 现状调查
+**任务**: Wish-0004 SizedPtr 设计调查，定位权威定义和代码现状
+**关键发现**:
+1. **Address64 权威定义位置**：
+   - 位置: `atelia/docs/Rbf/rbf-interface.md#2.3`
+   - 条款: `[F-ADDRESS64-DEFINITION]`, `[F-ADDRESS64-ALIGNMENT]`, `[F-ADDRESS64-NULL]`
+   - 源码实现已归档: `atelia/archive/2025-12-29-rbf-statejournal-v1/Rbf/Address64.cs`
+2. **RBF 层代码状态**：
+   - 搜索 `atelia/src/**` 无任何 Address64/Rbf/SizedPtr 匹配
+   - RBF 层实现已整体归档到 `atelia/archive/2025-12-29-rbf-statejournal-v1/`
+   - **结论**: SizedPtr 需从零开始在 `atelia/src/Data/` 实现
+3. **Null 语义冲突（Gotcha）**：
+   - Wish-0004 非目标写"不定义特殊值"，但 Address64 定义了 `Null=0`
+   - **风险**: 若不澄清，上层 RBF 接口迁移时会卡住
+   - **建议**: 在 Shape-Tier 明确立场——SizedPtr 保持纯净，Null 由 RBF 层自行包装
 
 ### 2026-01-01: workspace_info 机制调查
 **任务**: 分析 VS Code Copilot Chat 中 workspace_info 的生成机制
