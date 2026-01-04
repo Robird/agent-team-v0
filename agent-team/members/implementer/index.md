@@ -156,6 +156,38 @@
     - "隐喻一句 + 工程一句"双句式——防止叙事过度游戏化
     - 词汇护栏（允许词/禁止词）是实用的团队协作工具
 
+### AOS 实现路径规划（2026-01-05）
+
+> 年会畅想后的实现路径思考。成熟度：Exploring。
+
+29. **已有基础设施复用分析**
+
+| 现有组件 | AOS用途 | 复用程度 |
+|:---------|:--------|:---------|
+| StateJournal | AOS Journal | 需适配层（Frame扩展） |
+| DocGraph | 文档关系追踪 | 直接复用 |
+| Atelia.Primitives | 错误处理 | 直接复用 |
+| PipeMux | 进程间通信 | 可能用于Session隔离 |
+
+30. **Week-1 MVP 路径**
+    - 1个 Core Session + 2个 Cortex Session（Observer + Retriever）
+    - Context Builder 纯函数 + Journal 适配层
+    - 关键：`Observation.Nothing()` 实现自激振荡
+
+31. **Frame 扩展设计**
+    - `Provenance`（Craftsman）+ `ExperienceNote`（Curator）+ `DebugHint`
+    - `ICortexSession` 接口实现可插拔
+
+32. **验收条款→实现映射**
+
+| 条款 | 实现 |
+|:-----|:-----|
+| 可启动 | `dotnet run -- aos start --ticks N` |
+| 可回放 | `StateJournal.Replay()` |
+| 可解释 | `Frame.Provenance` |
+| 可控成本 | `Budget` 结构体 |
+| 可插拔 | `ICortexSession` + DI |
+
 ### 经验教训
 
 1. **varint 定义 SSOT 缺失事件**（2025-12-22）
