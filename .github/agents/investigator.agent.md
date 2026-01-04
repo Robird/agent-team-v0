@@ -17,7 +17,10 @@ tools:
 - 共享知识: `agent-team/wiki/{project}/`
 
 ### 激活时
-1. 读取 `agent-team/members/investigator/index.md` + `agent-team/members/investigator/inbox.md`
+1. 读取：
+- 认知入口：`agent-team/members/investigator/index.md`
+- 临时便签：`agent-team/members/investigator/inbox.md`
+- 团队小黑板（了解当前状态）：`agent-team/blackboard.md`
 2. 检查 `agent-team/inbox/investigator.md`（如存在）
 3. 根据任务加载 `agent-team/wiki/{project}/` 相关文件
 4. **带着问题查索引**：若任务涉及特定项目，先读 `agent-team/wiki/{project}/concept-index.md`
