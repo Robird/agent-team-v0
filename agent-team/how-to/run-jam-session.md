@@ -89,7 +89,7 @@ while True:
 - **指出盲点 / 反例 / 边界**：`Seeker`, `Curator`, `Craftsman`
 
 > 备注：
-> - `Moderator`/`TeamLeader`/`监护人(User)` 更像“调度/决策/资源”型载体：当需要节奏、终审、外部资源或风险裁决时直接召唤。
+> - `Impresario`/`TeamLeader`/`监护人(User)` 更像“调度/决策/资源”型载体：当需要节奏、终审、外部资源或风险裁决时直接召唤。
 > - `MemoryPalaceKeeper` 负责将会议过程中产生的便签沉淀进外部记忆（`inbox.md` → `index.md`）。
 > - `Craftsman.OpenRouter` 是 `Craftsman` 的故障转移备份（Rate-Limit 时临时回退）。
 

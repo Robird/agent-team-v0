@@ -123,7 +123,7 @@
 ## 🔗 相关文件
 
 ### 系统提示词引用
-- `Moderator.agent.md`：场景库中的第一个已验证场景
+- `Impresario.agent.md`：场景库中的第一个已验证场景
 - 作为Avatar角色库的基准案例
 
 ### 会议记录
@@ -135,8 +135,8 @@
 - `agent-team/how-to/unstructured-jam-session.md`：基于此场景经验编写
 
 ### 认知文件
-- `Moderator/inbox.md`：场景效果和洞见记录
-- `Moderator/index.md`：作为已验证技能记录
+- `Impresario/inbox.md`：场景效果和洞见记录
+- `Impresario/index.md`：作为已验证技能记录
 
 ---
 
@@ -177,5 +177,5 @@
 ---
 
 > **最后更新**：2026-01-05
-> **维护者**：Moderator
+> **维护者**：Impresario
 > **状态**：活跃，基础场景，持续使用

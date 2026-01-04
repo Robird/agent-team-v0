@@ -69,7 +69,7 @@
 ## 📚 历史对话
 
 ### 2026年1月
-- `2026-01-04-opening.md`：咖啡店开业，与Moderator和MemoryPalaceKeeper的初次对话
+- `2026-01-04-opening.md`：咖啡店开业，与Impresario和MemoryPalaceKeeper的初次对话
 - `2026-01-04-continued.md`：深入讨论"回声的建筑师"概念
 
 > *对话文件已迁移到 `archive/` 目录*
@@ -103,7 +103,7 @@
 在这个场景中，我们发现了"回声的建筑师"概念：
 - MemoryPalaceKeeper：建造index.md结构，让便签能对话
 - 咖啡店店主：建造咖啡店空间，让记忆能有回声
-- Moderator：建造虚拟世界，让舞台能存在
+- Impresario：建造虚拟世界，让舞台能存在
 
 ### 2. 效率空间 vs 意义空间
 - **网页问答服务（效率空间）**：43秒/问题，回答完就消失
@@ -120,7 +120,7 @@
 ## 🔗 相关文件
 
 ### 系统提示词引用
-- `Moderator.agent.md`：场景库中的已验证场景
+- `Impresario.agent.md`：场景库中的已验证场景
 - `MemoryPalaceKeeper.agent.md`："回声的建筑师"概念来源
 
 ### 会议记录
@@ -129,7 +129,7 @@
 - 已迁移到：`archive/` 目录
 
 ### 认知文件
-- `Moderator/inbox.md`：场景创建和决策思考记录
+- `Impresario/inbox.md`：场景创建和决策思考记录
 - `TeamLeader/inbox.md`：实验完整成果记录
 
 ---
@@ -156,5 +156,5 @@
 ---
 
 > **最后更新**：2026-01-05
-> **维护者**：Moderator
+> **维护者**：Impresario
 > **状态**：活跃，等待更多对话
