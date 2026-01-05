@@ -2,7 +2,7 @@
 docId: "B-0002-Theory"
 title: "Team-Leader 心智模型（Wish 驱动的多 Tier 推进）"
 produce_by:
-  - "wishes/active/wish-0003-exp-demand-contribute-jam.md"
+  - "wish/W-0003-jam-session/wish.md"
 status: "Draft"
 version: "0.1"
 created: "2026-01-03"

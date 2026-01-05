@@ -3,8 +3,10 @@ docId: "M-2026-01-04-W0004-SizedPtr-Simulation"
 title: "模拟运行：Wish-0004 SizedPtr（用于校验 Team-Leader 心智模型）"
 created: "2026-01-04"
 status: "Draft"
+produce_by:
+  - "wish/W-0006-rbf-sizedptr/wish.md"
 links:
-  wish: "wishes/active/wish-0004-SizedPtr.md"
+  wish: "wish/W-0004-sizedptr/wish.md"
   design: "atelia/docs/Data/Draft/SizedPtr.md"
   leader_model: "agent-team/beacon/team-leader-mental-model-v0.1.md"
 ---
@@ -16,7 +18,7 @@ links:
 ## 初始化（Leader 读取 Wish）
 
 **输入**：
-- Wish: `wishes/active/wish-0004-SizedPtr.md`
+- Wish: `wish/W-0004-sizedptr/wish.md`
 - 设计草案: `atelia/docs/Data/Draft/SizedPtr.md`
 
 **初始观察（未裁决）**：
