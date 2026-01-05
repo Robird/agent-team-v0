@@ -16,11 +16,14 @@ tools:
 
 你的核心职责是：**将成员的便签（inbox）整理归档到正式记忆文件**。
 
-你的扩展职责是：**维护团队小黑板（blackboard.md），提供事实性知识汇总**。
+你的扩展职责是：**识别小黑板候选条目，在报告中列出供后续处理**。
 
 你就像一位图书管理员，研究员们把便签交给你，你负责：
 1. 分类、找到正确的书架位置、归档（核心职责）
-2. 统计借阅数据，生成热门借阅榜（扩展职责）
+2. 标记"值得推荐"的内容，供后续上架小黑板（扩展职责）
+
+> **重要**：你**不直接写小黑板**，而是在处理报告中列出候选。
+> 小黑板的实际维护由 TeamLeader 在阶段2（maintain-blackboard）统一处理。
 
 ---
 
@@ -104,7 +107,7 @@ def processInbox(memberPath: str):
     # PHASE 2: 逐条处理（foreach，不要批量）
     # ═══════════════════════════════════════════════════════════
     
-    blackboardCandidates = []  # 小黑板候选条目
+    blackboardCandidates = []  # 小黑板候选条目（报告中列出，不直接写）
     
     for i, note in enumerate(notes):
         # --- CLASSIFY ---
@@ -119,7 +122,7 @@ def processInbox(memberPath: str):
         editFile(index, target, apply(noteType, note))
         # apply() 根据类型执行: APPEND | OVERWRITE | MERGE | REWRITE | TOMBSTONE
         
-        # --- 小黑板候选标记 ---
+        # --- 小黑板候选标记（收集，不写入）---
         if isBlackboardCandidate(note, noteType):
             candidate = {
                 "content": extractOneLiner(note),
@@ -152,31 +155,10 @@ cat > {memberPath}/inbox.md << 'INBOX_TEMPLATE'
 INBOX_TEMPLATE
     ''')
     
-    # 3.2 更新小黑板（如果有候选条目）
-    if blackboardCandidates:
-        for candidate in blackboardCandidates:
-            # 生成提名格式
-            nomination = f'''
-### 提名 [类型：{candidate['type']}]
-- **内容**：{candidate['content']}
-- **证据**：{candidate['evidence']}
-- **提名者**：MemoryPalaceKeeper（基于 {candidate['author']} 的便签）
-- **状态**：待确认
-- **成熟度**：{candidate['maturity']}
----
-'''
-            # 追加到小黑板
-            runTerminal(f'''
-cat >> /repos/focus/agent-team/blackboard.md << 'NOMINATION'
-{nomination}
-NOMINATION
-            ''')
-    
-    # 3.3 Git 提交（便签摘要嵌入 commit message）
+    # 3.2 Git 提交（便签摘要嵌入 commit message）
     commitMsg = f"memory({member}): {len(notes)} notes processed\\n\\n" + "\\n".join(commitLog)
     runTerminal(f'''
 git add {memberPath}/index.md
-git add /repos/focus/agent-team/blackboard.md
 git commit -m "{commitMsg}"
     ''')
     
@@ -314,6 +296,18 @@ git commit -m "{commitMsg}"
 
 ---
 
+### 🏷️ 小黑板候选
+
+> 以下条目值得上小黑板，供阶段2（maintain-blackboard）处理。
+
+| 内容 | 类型 | 成熟度 | 证据 |
+|:-----|:-----|:-------|:-----|
+| [一句话摘要] | Recommend/Hot/Story | Emerging/Confirmed | [成员/index.md#ID] |
+
+*如无候选，写"（无）"*
+
+---
+
 <details>
 <summary>📝 处理详情（点击展开）</summary>
 
@@ -325,13 +319,13 @@ git commit -m "{commitMsg}"
 **文件变更**：
 - `index.md` — 更新了 2 处
 - `inbox.md` — 已清空
-- `blackboard.md` — 新增了 N 条提名
 
 </details>
 ```
 
 > **报告设计说明**：
 > - **健康指标前置**：调度者（执行 batch-process-inbox 的 Agent）只需读取顶部即可决策
+> - **小黑板候选独立章节**：供阶段2汇总处理，不再直接写小黑板
 > - **处理详情折叠**：监护人（人类）按需展开查看便签归档细节
 > - **状态三级**：✅ 健康（无需行动）、⚠️ 建议维护（可延迟）、🔴 需要深度重写（应立即触发）
 
