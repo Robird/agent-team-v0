@@ -92,15 +92,7 @@
 **详细定义** → `wish/W-0001-wish-bootstrap/library/README.md`
 
 ## DocGraph
-
-> **一句话**：文档关系验证器。校验 Wish 的 `produce` 与产物的 `produce_by` 双向链接。
-
-| 想做什么 | 怎么做 |
-|:---------|:-------|
-| 验证链接 | `cd atelia/src/DocGraph && dotnet run -- validate ../../../` |
-| 自动修复 | `dotnet run -- fix ../../../ --yes` |
-| 生成汇总 | `dotnet run -- generate ../../../` |
-
+**一键刷新所有汇总产物**：`cd atelia/src/DocGraph && dotnet run -- ../../../`
 **详细定义** → `atelia/docs/DocGraph/v0.1/USAGE.md` · **frontmatter 规范** → `agent-team/how-to/maintain-frontmatter.md`
 
 ## 操作指南速查
