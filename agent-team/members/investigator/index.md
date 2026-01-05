@@ -1,6 +1,7 @@
 # Investigator 认知索引
 
-> 最后更新: 2026-01-05
+> 最后更新: 2026-01-06
+> - 2026-01-06: Memory Palace — 处理了 4 条便签（Address64 替代性分析续、W-0006/W-0007 锚点汇总）
 > - 2026-01-05: DocGraph 代码调查（Visitor 扩展机制、produce 验证路径、7 条便签）
 > - 2026-01-04: Memory Palace — 处理了 3 条便签（SizedPtr/RBF/Address64 调查锚点）
 > - 2026-01-01: workspace_info 机制调查（Copilot Chat Agent Prompt System）
@@ -53,6 +54,34 @@
 | produce 声明 vs Visitor 输出路径不一致 | fix 阶段用空模板覆盖手动文件 | produce 只声明 `.gen.md` 路径 |
 
 **置信度**: ✅ 全部验证过
+
+#### 5. 关键锚点汇总
+**W-0006 Address64/SizedPtr 锚点**：
+- Address64 权威定义: [rbf-interface.md#L111-L122](atelia/docs/Rbf/rbf-interface.md#L111-L122)
+- SizedPtr 权威定义: [atelia/src/Data/SizedPtr.cs](atelia/src/Data/SizedPtr.cs)
+- 关键冲突: Address64 有 Null 语义，SizedPtr 无——需分层策略
+- 代码状态: RBF 历史代码已归档到 `atelia/archive/2025-12-29-rbf-statejournal-v1/`
+
+**W-0007 Issue 状态锚点**：
+- I-ID-DESIGN: 已在 [Shape.md#L60-L80](wish/W-0007-docgraph-goal-issue-aggregation/artifacts/Shape.md) 定义，代码实现于 `IssueAggregator.cs`
+- Visitor 架构: `GlossaryVisitor`, `GoalAggregator`, `IssueAggregator`, `ReachableDocumentsVisitor`, `TwoTierAggregatorBase`
+- C-MORE-VISITORS / C-MORE-TESTS 是长期演进目标，非阻塞性
+
+### 2026-01-05: SizedPtr/Address64 替代性分析（续）
+**任务**: W-0006 相关的 Address64 使用点分析，验证 SizedPtr 完全替代可行性
+**关键发现**:
+1. **Address64 使用点定位**：
+   - 类型定义: `rbf-interface.md#L82-L97`（§2.3）
+   - 接口签名: 9 处（grep 验证）
+   - Wire format: `rbf-format.md#L292-L302`（§7）
+   - DataTail: `rbf-format.md#L310`（使用"地址"而非类型名）
+2. **核心结论**：所有 9 处使用都是"定位 Frame"用途，SizedPtr 可完全替代
+3. **Gotcha: DataTail 的"纯位置"假象**：
+   - **现象**: DataTail 定义为"地址"，似乎只需位置不需长度
+   - **后果**: 如果据此保留 Address64，会造成 Address64/SizedPtr 共存的复杂性
+   - **规避**: DataTail 实际语义是"文件 EOF 位置"，`SizedPtr.OffsetBytes` 完全等价
+
+**置信度**: ✅ 验证过
 
 ### 2026-01-04: SizedPtr/RBF/Address64 现状调查
 **任务**: Wish-0004 SizedPtr 设计调查，定位权威定义和代码现状
