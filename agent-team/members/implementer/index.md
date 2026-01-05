@@ -29,7 +29,7 @@
 
 | 项目 | 状态 | 最后更新 | 备注 |
 |------|------|----------|------|
-| DocGraph | v0.1 完成 ✅ | 2026-01-01 | 93 测试通过 |
+| DocGraph | v0.2 进行中 🔄 | 2026-01-07 | v0.2: Wish 布局迁移 + IssueAggregator Phase 2 |
 | StateJournal | M2 完成 ✅ | 2025-12-28 | 659 测试通过，待 M3 |
 | DocUI | 待启动 | 2025-12-15 | MVP-0 规划完成 |
 | Atelia.Primitives | 完成 ✅ | 2025-12-21 | AteliaResult/Error 体系 |
@@ -128,31 +128,40 @@
 21. **YamlDotNet 命名转换**
     - `UnderscoredNamingConvention` 将 camelCase 转为 snake_case
 
+22. **produce 路径语义**（2026-01-07）
+    - 路径相对于 **workspace root**，不是相对于源文件
+    - `../docs/api.md` 作为 produce 路径是越界的（从 workspace root 开始计算）
+    - `subdir/../docs/api.md` 是合法的（归一化后为 `docs/api.md`）
+
+23. **TwoTierAggregator 抽象基类模式**
+    - 子类只需实现：`FieldName`、`ResolvedFieldName`、`GlobalOutputPath`、`WishOutputFileName`、`ExtractItems()`
+    - 共享逻辑：两级输出、Wish 归属推导、相对路径计算
+
 ### 通用实现技巧
 
-22. **ref struct lambda 限制**
+24. **ref struct lambda 限制**
     - 测试异常需改用 try-catch 而非 FluentAssertions
 
-23. **WeakReference GC 测试**
+25. **WeakReference GC 测试**
     - `[MethodImpl(NoInlining)]` + 三连 GC + `GC.KeepAlive` 放 Assert 后
 
-24. **Activator.CreateInstance 与 internal 构造函数**
+26. **Activator.CreateInstance 与 internal 构造函数**
     - 需显式指定 `BindingFlags.NonPublic`
 
-25. **API 分层设计**
+27. **API 分层设计**
     - Core API（非泛型）返回基类，Convenience API（类型化）提供泛型包装
 
 ### 协作模式洞见
 
-26. **Recipe 改进实施规划**（2026-01-01）
+28. **Recipe 改进实施规划**（2026-01-01）
     - 渐进式路径：Phase 0(基础设施) → Phase 1(结构对齐) → Phase 2(持续改进)
     - 分步执行降低复杂度——大变更分多个 PR，每个可独立回滚
 
-27. **Wish 系统初始化实践**
+29. **Wish 系统初始化实践**
     - 用系统定义系统本身是检验设计通用性的好方法
     - 条款编号前缀按功能领域分类便于查找
 
-28. **Artifact-Adventures Beacon 写作实践**
+30. **Artifact-Adventures Beacon 写作实践**
     - "隐喻一句 + 工程一句"双句式——防止叙事过度游戏化
     - 词汇护栏（允许词/禁止词）是实用的团队协作工具
 
@@ -160,7 +169,7 @@
 
 > 年会畅想后的实现路径思考。成熟度：Exploring。
 
-29. **已有基础设施复用分析**
+31. **已有基础设施复用分析**
 
 | 现有组件 | AOS用途 | 复用程度 |
 |:---------|:--------|:---------|
@@ -169,16 +178,16 @@
 | Atelia.Primitives | 错误处理 | 直接复用 |
 | PipeMux | 进程间通信 | 可能用于Session隔离 |
 
-30. **Week-1 MVP 路径**
+32. **Week-1 MVP 路径**
     - 1个 Core Session + 2个 Cortex Session（Observer + Retriever）
     - Context Builder 纯函数 + Journal 适配层
     - 关键：`Observation.Nothing()` 实现自激振荡
 
-31. **Frame 扩展设计**
+33. **Frame 扩展设计**
     - `Provenance`（Craftsman）+ `ExperienceNote`（Curator）+ `DebugHint`
     - `ICortexSession` 接口实现可插拔
 
-32. **验收条款→实现映射**
+34. **验收条款→实现映射**
 
 | 条款 | 实现 |
 |:-----|:-----|
@@ -237,19 +246,54 @@
 - 规范文档：`atelia/docs/DocGraph/v0.1/`
 - 用法指南：`atelia/docs/DocGraph/v0.1/USAGE.md`
 
-**扩展点：新增 Wish 状态**（2026-01-03）
+**v0.2 Wish Instance Directory 布局迁移**（2026-01-07）
+
+| 变更 | 说明 |
+|:-----|:------|
+| DefaultWishDirectories | 从 `["wishes/active", "wishes/biding", "wishes/completed", "wish"]` 变为 `["wish"]` |
+| Wish 识别规则 | v0.2 只识别 `wish/**/wish.md`，不再扫描旧布局 |
+| Status 字段 | 从目录名推导改为从 frontmatter `status` 字段读取 |
+| DocId 字段 | 从文件名推导改为从 frontmatter `wishId` 字段读取 |
+
+**扩展点：创建新 Wish 实例目录**（2026-01-05）
 
 | 位置 | 修改内容 |
 |:-----|:---------|
-| `DocumentGraphBuilder.cs` | `DefaultWishDirectories` 数组 + `DeriveStatus()` 映射 |
-| `DocumentNode.cs` | `Status` 属性注释更新 |
-| `scope.md` / `USAGE.md` | Root Nodes 节扫描目录列表 |
-| `wish-template.md` / `AGENTS.md` | Status 枚举注释 |
+| `wish/W-XXXX-slug/wish.md` | 主 wish 文件，frontmatter 含 wishId/title/status/produce |
+| `wish/W-XXXX-slug/project-status/{goals,issues,snapshot}.md` | 状态寄存器，produce_by 指向 wish.md |
+| `wish/W-XXXX-slug/artifacts/{Resolve,Shape,Rule,Plan,Craft}.md` | 分层产物，produce_by 指向 wish.md |
+| 外部产物文档 | 在 produce_by 数组中追加新 wish.md 路径 |
 
-**设计决策：验证严重性降级**（2026-01-03）
-- 必填字段缺失从 `Error` → `Warning`（单文档问题不阻断整体收集）
-- 受影响：`docId`, `produce`, `produce_by`, `title`
-- 测试：`Validate_ShouldWarn*` 命名，Warning exit code = 1
+**OutputPreflight 预检机制**（2026-01-05）
+
+| 校验规则 | 说明 |
+|:---------|:-----|
+| 路径冲突检测 | 用 `HashSet<string>` 收集规范化后的所有输出路径 |
+| 安全校验 | 拒绝绝对路径、`..` 穿越、归一化后不在 workspace 内 |
+| 空 Dictionary 语义 | 等价于 null，回退单输出模式 |
+
+**IssueAggregator Phase 2**（2026-01-07）
+
+| 扩展点 | 说明 |
+|:-------|:-----|
+| Issue 类扩展 | 新增 `Id`, `SourceNode` 字段 |
+| 双格式解析 | 字符串 `"X-ID: 描述"` + 对象 `{description, ...}` |
+| 两层输出 | 全局 `docs/issues.gen.md` + Wish 级别 `project-status/issues.md` |
+| Wish 归属 | 优先 `ProducedBy`，回退路径提取 |
+
+**TwoTierAggregatorBase 基类抽取**（2026-01-05）
+
+| 基类方法 | 说明 |
+|:---------|:-----|
+| `CollectAllItems()` | 从所有文档收集条目 |
+| `GetOwningWishPath()` | 推导条目所属 Wish（ProducedBy 优先） |
+| `GenerateGlobalOutput()` | 全局输出（按源文件分组子弹列表） |
+| `GenerateWishOutput()` | Wish 级别输出 |
+
+**设计决策：输出格式重构**（2026-01-07）
+- 表格 → 按源文件分组的子弹列表
+- 全局输出标题：`# 问题汇总`，用 `## \`filepath\`` 分组
+- ID 必填：字符串格式须匹配 `^([A-Z]-[A-Z0-9-]+):\s*(.+)$`
 
 ### StateJournal
 
@@ -396,7 +440,7 @@ agent-team/archive/members/implementer/
 
 > 维护日志已压缩。详细历史见 `archive/members/implementer/`
 
+- **2026-01-07**: DocGraph v0.2 实施——Wish 布局迁移 + IssueAggregator Phase 2 + TwoTierAggregatorBase 基类抽取
 - **2026-01-03**: 记忆维护——去重、压缩历史、简化索引（575→330 行）
 - **2026-01-01**: DocGraph v0.1 完成，Recipe 改进规划
 - **2025-12-28**: StateJournal M2 完成（659 测试）
-- **2025-12-23**: 首次深度记忆维护（1903→350 行）
