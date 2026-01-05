@@ -6,10 +6,13 @@ produce_by:
 goals:
   - id: "P-PHASE1"
     description: "规划 Phase 1 接口扩展"
+    status: "resolved"
   - id: "P-PHASE2"
     description: "规划 Phase 2 Issue 扩展"
+    status: "resolved"
   - id: "P-PHASE3"
     description: "规划 Phase 3 Goals 聚合"
+    status: "resolved"
 ---
 
 # W-0007 Plan-Tier: 实现计划

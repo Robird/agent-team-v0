@@ -9,11 +9,14 @@ produce:
 goals:
   - id: "G-SCHEMA"
     description: "设计 goals/issues 的 frontmatter schema"
+    status: "resolved"
 issues:
   - id: "I-ID-DESIGN"
     description: "ID 机制设计待决策"
+    status: "resolved"
   - id: "I-EXISTING-ISSUES"
     description: "现有 issues 字段格式兼容性"
+    status: "resolved"
 ---
 
 # W-0007 Resolve-Tier: 动机与方案探索

@@ -6,10 +6,13 @@ produce_by:
 goals:
   - id: "S-SCHEMA"
     description: "定义 goals/issues 的 frontmatter schema"
+    status: "resolved"
   - id: "S-OUTPUT"
     description: "定义两层输出的格式"
+    status: "resolved"
   - id: "S-ID"
     description: "定义 ID 命名规范"
+    status: "resolved"
 issues:
   - id: "S-FORMAT"
     description: "输出格式从表格改为 heading + 子弹列表"

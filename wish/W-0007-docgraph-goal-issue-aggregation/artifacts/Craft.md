@@ -6,10 +6,13 @@ produce_by:
 goals:
   - id: "C-PHASE1"
     description: "实现 Phase 1 接口扩展"
+    status: "resolved"
   - id: "C-PHASE2"
     description: "实现 Phase 2 Issue 扩展"
+    status: "resolved"
   - id: "C-PHASE3"
     description: "实现 Phase 3 Goals 聚合"
+    status: "resolved"
 ---
 
 # W-0007 Craft-Tier: 实现记录
