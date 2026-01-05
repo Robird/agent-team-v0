@@ -12,8 +12,6 @@ produce:
   - "atelia/docs/Rbf/rbf-format.md"
   - "agent-team/experiment/2026-01-04-sizedptr-wish0004-reviewloop/2026-01-04-wish-0004-sizedptr-simulation.md"
   # 本实例内部文档
-  - "wish/W-0006-rbf-sizedptr/project-status/goals.md"
-  - "wish/W-0006-rbf-sizedptr/project-status/issues.md"
   - "wish/W-0006-rbf-sizedptr/project-status/snapshot.md"
   - "wish/W-0006-rbf-sizedptr/artifacts/Resolve.md"
   - "wish/W-0006-rbf-sizedptr/artifacts/Shape.md"
@@ -61,7 +59,7 @@ produce:
 
 ## 关联 Issue
 
-见：[project-status/issues.md](project-status/issues.md)
+见：[project-status/issues.gen.md](project-status/issues.gen.md)
 
 ## 背景
 

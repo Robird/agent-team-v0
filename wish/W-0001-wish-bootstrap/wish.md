@@ -16,8 +16,6 @@ produce:
   - "wish/W-0001-wish-bootstrap/library/templates/snapshot-template.md"
   - "wish/W-0001-wish-bootstrap/library/README.md"
   # 本实例内部文档
-  - "wish/W-0001-wish-bootstrap/project-status/goals.md"
-  - "wish/W-0001-wish-bootstrap/project-status/issues.md"
   - "wish/W-0001-wish-bootstrap/project-status/snapshot.md"
   - "wish/W-0001-wish-bootstrap/artifacts/Resolve.md"
   - "wish/W-0001-wish-bootstrap/artifacts/Shape.md"
@@ -66,7 +64,7 @@ produce:
 
 ## 关联 Issue
 
-见：[project-status/issues.md](project-status/issues.md)
+见：[project-status/issues.gen.md](project-status/issues.gen.md)
 
 ## 背景
 

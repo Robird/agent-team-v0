@@ -7,10 +7,13 @@ produce:
   - "wish/W-0007-docgraph-goal-issue-aggregation/artifacts/briefs/architecture-brief.md"
   - "wish/W-0007-docgraph-goal-issue-aggregation/artifacts/briefs/feasibility-report.md"
 goals:
-  - "G-SCHEMA: 设计 goals/issues 的 frontmatter schema"
+  - id: "G-SCHEMA"
+    description: "设计 goals/issues 的 frontmatter schema"
 issues:
-  - "I-ID-DESIGN: ID 机制设计待决策"
-  - "I-EXISTING-ISSUES: 现有 issues 字段格式兼容性"
+  - id: "I-ID-DESIGN"
+    description: "ID 机制设计待决策"
+  - id: "I-EXISTING-ISSUES"
+    description: "现有 issues 字段格式兼容性"
 ---
 
 # W-0007 Resolve-Tier: 动机与方案探索

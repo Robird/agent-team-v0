@@ -13,8 +13,6 @@ produce:
   - "atelia/docs/DocGraph/v0.2/migration-plan.md"
 
   # 本 Wish 实例的状态寄存器
-  - "wish/W-0005-wish-instance-directory/project-status/goals.md"
-  - "wish/W-0005-wish-instance-directory/project-status/issues.md"
   - "wish/W-0005-wish-instance-directory/project-status/snapshot.md"
 
   # 本 Wish 实例的分层产物（每层一个文档）
@@ -72,7 +70,7 @@ produce:
 
 ## 关联 Issue
 
-见：`project-status/issues.md`
+见：`project-status/issues.gen.md`
 
 ## 变更日志 (Change Log)
 

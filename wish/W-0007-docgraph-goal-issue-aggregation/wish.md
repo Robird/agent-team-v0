@@ -7,8 +7,6 @@ created: 2026-01-05
 updated: 2026-01-05
 tags: [tooling, docgraph, automation]
 produce:
-  - "wish/W-0007-docgraph-goal-issue-aggregation/project-status/goals.md"
-  - "wish/W-0007-docgraph-goal-issue-aggregation/project-status/issues.md"
   - "wish/W-0007-docgraph-goal-issue-aggregation/project-status/snapshot.md"
   - "wish/W-0007-docgraph-goal-issue-aggregation/artifacts/Resolve.md"
   - "wish/W-0007-docgraph-goal-issue-aggregation/artifacts/Shape.md"
@@ -26,7 +24,7 @@ produce:
 **目标 (Goals)**:
 - [ ] 设计 goals/issues 的 frontmatter schema（含语义锚点 ID）
 - [ ] 扩展 DocGraph，新增 Wish 级别的 goals/issues 聚合 Visitor
-- [ ] 自动生成 `project-status/goals.md` 和 `project-status/issues.md`
+- [ ] 自动生成 `project-status/goals.gen.md` 和 `project-status/issues.gen.md`
 - [ ] 支持已解决 issues 的归档机制
 
 **非目标 (Non-Goals)**:
@@ -49,13 +47,13 @@ produce:
 | Shape-Tier | 🟢 完成 | [artifacts/Shape.md](artifacts/Shape.md) | frontmatter schema、输出格式 |
 | Rule-Tier | ⏭️ 跳过 | [artifacts/Rule.md](artifacts/Rule.md) | 无需形式化约束 |
 | Plan-Tier | 🟢 完成 | [artifacts/Plan.md](artifacts/Plan.md) | 三阶段实现计划 |
-| Craft-Tier | 🟡 进行中 | [artifacts/Craft.md](artifacts/Craft.md) | 待实现 |
+| Craft-Tier | � 完成 | [artifacts/Craft.md](artifacts/Craft.md) | 三阶段实现完成 |
 
 > **状态符号**: ⚪ 未开始 | 🟡 进行中 | 🟢 完成 | 🔴 阻塞 | ➖ N/A
 
 ## 关联 Issue
 
-见：[project-status/issues.md](project-status/issues.md)
+见：[project-status/issues.gen.md](project-status/issues.gen.md)
 
 ## 背景
 

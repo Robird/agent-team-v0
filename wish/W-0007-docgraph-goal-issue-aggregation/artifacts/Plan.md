@@ -4,9 +4,12 @@ title: "W-0007 Plan-Tier"
 produce_by:
   - "wish/W-0007-docgraph-goal-issue-aggregation/wish.md"
 goals:
-  - "P-PHASE1: 规划 Phase 1 接口扩展"
-  - "P-PHASE2: 规划 Phase 2 Issue 扩展"
-  - "P-PHASE3: 规划 Phase 3 Goals 聚合"
+  - id: "P-PHASE1"
+    description: "规划 Phase 1 接口扩展"
+  - id: "P-PHASE2"
+    description: "规划 Phase 2 Issue 扩展"
+  - id: "P-PHASE3"
+    description: "规划 Phase 3 Goals 聚合"
 ---
 
 # W-0007 Plan-Tier: 实现计划

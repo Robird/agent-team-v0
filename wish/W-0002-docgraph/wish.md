@@ -14,8 +14,6 @@ produce:
   - "atelia/docs/DocGraph/v0.1/USAGE.md"
   - "atelia/docs/DocGraph/v0.1/README.md"
   # 本实例内部文档
-  - "wish/W-0002-docgraph/project-status/goals.md"
-  - "wish/W-0002-docgraph/project-status/issues.md"
   - "wish/W-0002-docgraph/project-status/snapshot.md"
   - "wish/W-0002-docgraph/artifacts/Resolve.md"
   - "wish/W-0002-docgraph/artifacts/Shape.md"
@@ -65,7 +63,7 @@ produce:
 
 ## 关联 Issue
 
-见：[project-status/issues.md](project-status/issues.md)
+见：[project-status/issues.gen.md](project-status/issues.gen.md)
 
 ## 背景
 

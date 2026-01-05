@@ -10,8 +10,6 @@ produce:
   # 外部产物文档
   - "agent-team/how-to/run-jam-session.md"
   # 本实例内部文档
-  - "wish/W-0003-jam-session/project-status/goals.md"
-  - "wish/W-0003-jam-session/project-status/issues.md"
   - "wish/W-0003-jam-session/project-status/snapshot.md"
   - "wish/W-0003-jam-session/artifacts/Resolve.md"
   - "wish/W-0003-jam-session/artifacts/Shape.md"
@@ -56,7 +54,7 @@ produce:
 
 ## 关联 Issue
 
-见：[project-status/issues.md](project-status/issues.md)
+见：[project-status/issues.gen.md](project-status/issues.gen.md)
 
 ## 背景
 

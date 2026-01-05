@@ -8,8 +8,6 @@ updated: 2026-01-05
 tags: [sample, migrated]
 produce:
   - "atelia/docs/Data/Draft/SizedPtr.md"
-  - "wish/W-0004-sizedptr/project-status/goals.md"
-  - "wish/W-0004-sizedptr/project-status/issues.md"
   - "wish/W-0004-sizedptr/project-status/snapshot.md"
   - "wish/W-0004-sizedptr/artifacts/Resolve.md"
   - "wish/W-0004-sizedptr/artifacts/Shape.md"
@@ -50,7 +48,7 @@ produce:
 
 ## 关联 Issue
 
-见：`project-status/issues.md`
+见：`project-status/issues.gen.md`
 
 ## 变更日志 (Change Log)
 

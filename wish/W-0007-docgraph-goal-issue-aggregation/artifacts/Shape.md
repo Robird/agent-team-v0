@@ -4,9 +4,25 @@ title: "W-0007 Shape-Tier"
 produce_by:
   - "wish/W-0007-docgraph-goal-issue-aggregation/wish.md"
 goals:
-  - "S-SCHEMA: 定义 goals/issues 的 frontmatter schema"
-  - "S-OUTPUT: 定义两层输出的格式"
-  - "S-ID: 定义 ID 命名规范"
+  - id: "S-SCHEMA"
+    description: "定义 goals/issues 的 frontmatter schema"
+  - id: "S-OUTPUT"
+    description: "定义两层输出的格式"
+  - id: "S-ID"
+    description: "定义 ID 命名规范"
+issues:
+  - id: "S-FORMAT"
+    description: "输出格式从表格改为 heading + 子弹列表"
+    status: "resolved"
+  - id: "S-PATH"
+    description: "全局聚合路径统一到 wish-panels/"
+    status: "resolved"
+  - id: "S-EXT"
+    description: "生成文件统一 .gen.md 扩展名"
+    status: "resolved"
+  - id: "S-DUAL-FORMAT"
+    description: "移除字符串格式支持，统一对象格式"
+    status: "resolved"
 ---
 
 # W-0007 Shape-Tier: API 外观与输出格式
@@ -15,47 +31,46 @@ goals:
 
 ### 1.1 goals 字段
 
-**格式**：字符串数组，每项为 `"ID: 描述"`
+**格式**：对象数组（**ID 必填**）
 
 ```yaml
 goals:
-  - "R-MOTIVATION: 阐明动机和价值"
-  - "S-SCHEMA: 定义 frontmatter 格式"
-  - "P-VISITOR: 实现 Visitor 扩展"
+  - id: "R-MOTIVATION"
+    description: "阐明动机和价值"
+  - id: "S-SCHEMA"
+    description: "定义 frontmatter 格式"
 ```
 
 **字段说明**：
 
-| 组成部分 | 格式 | 示例 |
-|:---------|:-----|:-----|
-| **ID** | `{Tier前缀}-{关键词}` | `R-MOTIVATION`, `S-SCHEMA` |
-| **分隔符** | `: `（冒号+空格） | — |
-| **描述** | 自然语言，≤50 字 | "阐明动机和价值" |
+| 字段 | 格式 | 必填 | 示例 |
+|:-----|:-----|:-----|:-----|
+| `id` | `{Tier前缀}-{关键词}` | ✅ | `R-MOTIVATION`, `S-SCHEMA` |
+| `description` | 自然语言，≤50 字 | ✅ | "阐明动机和价值" |
 
 ### 1.2 issues 字段
 
-**格式**：对象数组（兼容现有）或字符串数组（新格式）
+**格式**：对象数组（**ID 必填**）
 
-**对象格式（现有，保持兼容）**：
 ```yaml
 issues:
-  - description: "问题描述"
-    status: "open"
-    assignee: "负责人"
-    id: "I-KEYWORD"  # 可选，新增字段
+  - id: "R-DECISION"
+    description: "需要决定聚合粒度"
+    status: "open"  # 可选，默认 "open"
+  - id: "S-FORMAT"
+    description: "输出格式已统一"
+    status: "resolved"
 ```
 
-**字符串格式（新增）**：
-```yaml
-issues:
-  - "R-DECISION: 需要决定聚合粒度"
-  - "S-COMPAT: 现有格式兼容性"
-```
+**字段说明**：
 
-**双格式支持规则**：
-- 字符串格式：默认 `status: active`，无 `assignee`
-- 对象格式：完整控制所有字段
-- 两种格式可混用
+| 字段 | 格式 | 必填 | 默认值 | 示例 |
+|:-----|:-----|:-----|:-------|:-----|
+| `id` | `{Tier前缀}-{关键词}` | ✅ | — | `R-MOTIVATION` |
+| `description` | 自然语言，≤50 字 | ✅ | — | "阐明动机和价值" |
+| `status` | `"open"` \| `"resolved"` | ❌ | `"open"` | `"resolved"` |
+
+> **注**：goals 字段格式相同，也支持 status 属性。
 
 ### 1.3 ID 命名规范
 
@@ -84,11 +99,25 @@ issues:
 
 ## 2. 输出格式
 
-### 2.1 Wish 级别输出
+### 2.1 统一格式：Heading + 子弹列表
 
-**路径**：`wish/W-XXXX-slug/project-status/goals.md` 和 `issues.md`
+所有聚合输出（Goals、Issues）使用统一格式：
 
-**goals.md 格式**：
+- **按源文件分组**：用 heading 显示文件路径
+- **子弹列表**：`- ID: 描述`
+
+这种格式的优点：
+1. **统一**：全局和 Wish 级别使用相同模式
+2. **灵活**：列表项可增删，不像表格要求列数一致
+3. **直观**：路径作为 heading，一眼看到条目来源
+
+### 2.2 Wish 级别输出
+
+**路径**：`wish/W-XXXX-slug/project-status/goals.gen.md` 和 `issues.gen.md`
+
+> **注**：使用 `.gen.md` 扩展名，表明由工具生成，防止误编辑。
+
+**格式示例**：
 
 ```markdown
 <!-- 本文档由 DocGraph 工具自动生成，手动编辑无效 -->
@@ -98,44 +127,35 @@ issues:
 
 ## Active Goals
 
-| ID | Tier | 描述 | 来源 |
-|:---|:-----|:-----|:-----|
-| R-MOTIVATION | Resolve | 阐明动机和价值 | [Resolve.md](../artifacts/Resolve.md) |
-| S-SCHEMA | Shape | 定义 frontmatter 格式 | [Shape.md](../artifacts/Shape.md) |
+### `artifacts/Resolve.md`
+
+- R-MOTIVATION: 阐明动机和价值
+
+### `artifacts/Shape.md`
+
+- S-SCHEMA: 定义 frontmatter 格式
+- S-OUTPUT: 定义两层输出的格式
 
 ## Resolved Goals
 
-（已完成的目标，从 artifacts 的 resolved_goals 字段收集）
+### `artifacts/Resolve.md`
+
+- R-DECISION: 聚合粒度已决策
 ```
 
-**issues.md 格式**：
+### 2.3 全局级别输出
+
+**路径**：`wish-panels/goals.gen.md` 和 `wish-panels/issues.gen.md`
+
+> **注**：全局聚合统一输出到 `wish-panels/` 目录，与 `reachable-documents.gen.md` 等全局视图文件保持一致。
+
+**格式示例**：
 
 ```markdown
 <!-- 本文档由 DocGraph 工具自动生成，手动编辑无效 -->
+<!-- 再生成命令：docgraph -->
 
-# W-XXXX Issues
-
-## Active Issues
-
-| ID | Tier | 描述 | 状态 | 来源 |
-|:---|:-----|:-----|:-----|:-----|
-| R-DECISION | Resolve | 需要决定聚合粒度 | open | [Resolve.md](../artifacts/Resolve.md) |
-
-## Resolved Issues
-
-（已解决的问题，从 artifacts 的 resolved_issues 字段收集）
-```
-
-### 2.2 全局级别输出
-
-**路径**：`docs/goals.gen.md` 和 `docs/issues.gen.md`
-
-**格式**：按 Wish 分组的汇总表
-
-```markdown
-<!-- 本文档由 DocGraph 工具自动生成，手动编辑无效 -->
-
-# 全局 Goals 汇总
+# 目标汇总
 
 ## 统计概览
 
@@ -143,76 +163,73 @@ issues:
 - Active：X
 - Resolved：Y
 
-## W-0001 Wish 系统自举
+## `wish/W-0007-docgraph/artifacts/Shape.md`
 
-| ID | Tier | 描述 | 来源 |
-|:---|:-----|:-----|:-----|
-| ... | ... | ... | ... |
+- S-SCHEMA: 定义 frontmatter 格式
+- S-OUTPUT: 定义两层输出的格式
 
-## W-0007 DocGraph Goals/Issues 聚合
+## `wish/W-0007-docgraph/artifacts/Plan.md`
 
-| ID | Tier | 描述 | 来源 |
-|:---|:-----|:-----|:-----|
-| ... | ... | ... | ... |
+- P-PHASE1: 规划 Phase 1 接口扩展
 ```
 
 ---
 
-## 3. 状态追踪
+## 3. 状态追踪与聚合策略
 
-### 3.1 Active vs Resolved
+### 3.1 状态值
 
-**区分方式**：使用独立字段
+使用 `status` 字段标记条目状态：
 
-```yaml
-# Active goals/issues
-goals:
-  - "S-SCHEMA: 定义 frontmatter 格式"
-issues:
-  - "R-DECISION: 需要决定聚合粒度"
+| 值 | 含义 | 默认 |
+|:---|:-----|:-----|
+| `"open"` | 尚未完成/解决 | ✅ |
+| `"resolved"` | 已完成/已解决 | — |
 
-# Resolved（可选，用于归档）
-resolved_goals:
-  - "R-MOTIVATION: 阐明动机和价值"
-resolved_issues:
-  - "R-SCOPE: 聚合粒度已决策"
-```
+**状态迁移**：完成时修改 `status: "open"` → `status: "resolved"`。
 
-**规则**：
-- `goals` / `issues` 字段：当前 active 的条目
-- `resolved_goals` / `resolved_issues`：已完成/已解决的条目
-- 生成时分别聚合到 Active 和 Resolved 区域
+### 3.2 聚合策略
 
-### 3.2 状态迁移
+**全局聚合** (`wish-panels/*.gen.md`)：
+- **只显示 Active**：默认只渲染 `status != "resolved"` 的条目
+- **统计概览**：显示 Active 和 Resolved 数量
+- **目的**：快速知道还有哪些事情要做，获得聚焦
 
-手动维护：完成时从 `goals` 移动到 `resolved_goals`。
+**Wish 级别聚合** (`project-status/*.gen.md`)：
+- **分区显示**：Active 和 Resolved 分别列出
+- **目的**：项目内部回顾，查看进展历史
 
 ---
 
-## 4. 与 snapshot.md 的集成
+## 4. 实现架构
 
-**snapshot.md 的 focus 字段**：
+### 4.1 TwoTierAggregatorBase 基类
 
-```yaml
-focus:
-  kind: "Goal"  # Goal | Issue
-  id: "S-SCHEMA"  # 引用 goals/issues 中的 ID
-  tier: "Shape"
+所有两级聚合器继承自 `TwoTierAggregatorBase<TItem>`，共享：
+- 两级输出逻辑（全局 + Wish 级别）
+- 按源文件分组的输出格式
+- Active/Resolved 分区
+
+### 4.2 继承关系
+
 ```
-
-**约束**：`focus.id` 必须存在于当前 Wish 的 active goals 或 issues 中。
+TwoTierAggregatorBase<TItem>
+├── IssueAggregator (TItem = Issue)
+└── GoalAggregator (TItem = Goal)
+```
 
 ---
 
 ## 5. 验收标准
 
-- [ ] frontmatter 解析支持新的 goals 字段
-- [ ] frontmatter 解析支持 issues 的字符串格式（双格式兼容）
-- [ ] 生成 Wish 级别的 goals.md 和 issues.md
-- [ ] 生成全局级别的 goals.gen.md 和 issues.gen.md
-- [ ] resolved_goals / resolved_issues 归档到 Resolved 区域
+- [x] frontmatter 解析支持 goals 字段（ID 必填）
+- [x] frontmatter 解析支持 issues 字段（ID 必填）
+- [x] 生成 Wish 级别的 goals.md 和 issues.md
+- [x] 生成全局级别的 goals.gen.md 和 issues.gen.md
+- [x] resolved_goals / resolved_issues 归档到 Resolved 区域
+- [x] 输出格式统一为 heading + 子弹列表
 
 ---
 
 **状态**：🟢 完成
-**更新**：2026-01-05
+**更新**：2026-01-05（格式重构）
