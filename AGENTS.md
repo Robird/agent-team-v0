@@ -21,7 +21,7 @@
     - 分解巨大的设计文件`atelia/docs/StateJournal/mvp-design-v2.md`为一组更小的可以组合使用的文档，因为单体文件太大导致`Claude Opus 4.5`已不能正确按照设计文档编写代码
 - 维持项目内的众多文档出于LLM Agent可理解和使用的形态
   - 撰写和维护团队内Agent的入门知识文件[AGENTS.md]，也就是本文件
-  - 建立基于[Wish](wishes/active/wish-0001-wish-system-bootstrap.md)和[Artifact-Tiers](agent-team/wiki/artifact-tiers.md)的分圈层推进的软件开发方法
+  - 建立基于[Wish](wish/W-0001-wish-bootstrap/wish.md)和[Artifact-Tiers](agent-team/wiki/artifact-tiers.md)的分圈层推进的软件开发方法
   - 基于[DocGraph](atelia/docs/DocGraph/v0.1/README.md)的glossary和issues汇总。分散撰写与维护，自动汇总关键信息形成鸟瞰视图。
 
 ## 核心术语
@@ -85,13 +85,11 @@
 
 | 想做什么 | 怎么做 |
 |:---------|:-------|
-| 查看全局 | 读 `wishes/index.md` |
-| 创建 Wish | 复制 `wishes/templates/wish-template.md` → `wishes/active/` |
-| 暂时搁置 | 移动到 `wishes/biding/` |
-| 完成 Wish | 移动到 `wishes/completed/` |
-| 放弃 Wish | 移动到 `wishes/abandoned/` |
+| 查看全局 | 读 `wish-panels/` 下的汇总面板 |
+| 创建 Wish | 复制 `wish/W-0001-wish-bootstrap/library/templates/wish-template.md` 到 `wish/W-XXXX-<slug>/wish.md` |
+| 查看规范 | 读 `wish/W-0001-wish-bootstrap/library/specs/wish-system-rules.md` |
 
-**详细定义** → `wishes/README.md`
+**详细定义** → `wish/W-0001-wish-bootstrap/library/README.md`
 
 ## DocGraph
 

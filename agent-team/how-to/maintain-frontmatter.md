@@ -23,13 +23,15 @@
 
 ## Wish 文档模板
 
-**位置**：`wishes/active/wish-XXXX-<slug>.md` 或 `wishes/completed/`
+**位置**：`wish/W-XXXX-<slug>/wish.md`（Wish 实例目录布局）
 
 **必填字段**：
 
 ```yaml
 ---
+wishId: "W-XXXX"
 title: "Wish 标题"
+status: Active
 produce:
   - "atelia/docs/SomeFeature/api.md"
   - "atelia/docs/SomeFeature/spec.md"
@@ -41,9 +43,9 @@ produce:
 | `title` | string | Wish 标题（必填） |
 | `produce` | string[] | 产物文档路径列表（必填，workspace 相对路径） |
 
-**隐式推导字段**（无需手动填写）：
-- `docId`：从文件名推导（`wish-0002.md` → `W-0002`）
-- `status`：从目录推导（`active/` → `"active"`，`completed/` → `"completed"`）
+**隐式推导字段**（v0.2 实例目录布局）：
+- `docId`：优先来自 frontmatter 的 `wishId`（`W-XXXX`）
+- `status`：来自 frontmatter 的 `status`（输出会转为小写，例如 `Active` → `"active"`）
 
 **完整示例**：
 
@@ -74,7 +76,7 @@ tags: [tooling, automation]
 docId: "W-0002-L2"
 title: "API 设计文档"
 produce_by:
-  - "wishes/active/wish-0002-doc-graph-tool.md"
+  - "wish/W-0002-docgraph/wish.md"
 ---
 ```
 
@@ -148,7 +150,7 @@ issues:
 ```yaml
 # 在产物文档的 frontmatter 中添加：
 produce_by:
-  - "wishes/active/wish-XXXX.md"  # 替换为实际的 Wish 路径
+  - "wish/W-XXXX-<slug>/wish.md"  # 替换为实际的 Wish 路径
 ```
 
 ### `DOCGRAPH_FRONTMATTER_REQUIRED_FIELD_MISSING`
@@ -178,7 +180,7 @@ cd atelia/src/DocGraph
 dotnet run -- validate ../../../
 
 # 或者验证特定目录
-dotnet run -- validate ../../../wishes/
+dotnet run -- validate ../../../wish/
 ```
 
 **预期输出**（成功时）：
@@ -199,9 +201,9 @@ dotnet run -- validate ../../../wishes/
 | 规则 | 正确示例 | 错误示例 |
 |:-----|:---------|:---------|
 | 使用 workspace 相对路径 | `atelia/docs/DocGraph/api.md` | `./atelia/docs/DocGraph/api.md` |
-| 使用 `/` 分隔符 | `wishes/active/wish-0002.md` | `wishes\active\wish-0002.md` |
+| 使用 `/` 分隔符 | `wish/W-0002-docgraph/wish.md` | `wish\W-0002-docgraph\wish.md` |
 | 不以 `/` 开头 | `atelia/docs/file.md` | `/atelia/docs/file.md` |
-| 不使用 `../` | `wishes/active/wish.md` | `../wishes/active/wish.md` |
+| 不使用 `../` | `wish/W-0002-docgraph/wish.md` | `../wish/W-0002-docgraph/wish.md` |
 
 ---
 

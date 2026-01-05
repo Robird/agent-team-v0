@@ -2,7 +2,7 @@
 docId: "W-0003-Recipe"
 title: "畅谈会主持指南"
 produce_by:
-  - "wishes/active/wish-0003-exp-demand-contribute-jam.md"
+  - "wish/W-0003-jam-session/wish.md"
 ---
 
 # 畅谈会主持指南 (Jam Session Hosting Guide)
