@@ -13,6 +13,7 @@ produce:
   - "wish/W-0001-wish-bootstrap/library/specs/wish-instance-directory-spec.md"
   - "wish/W-0001-wish-bootstrap/library/templates/wish-template.md"
   - "wish/W-0001-wish-bootstrap/library/templates/issue-template.md"
+  - "wish/W-0001-wish-bootstrap/library/templates/snapshot-template.md"
   - "wish/W-0001-wish-bootstrap/library/README.md"
   # 本实例内部文档
   - "wish/W-0001-wish-bootstrap/project-status/goals.md"
