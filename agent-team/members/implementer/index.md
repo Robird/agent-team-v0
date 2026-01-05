@@ -378,7 +378,7 @@
 | texteditor | `pmux texteditor open <path>` |
 | monitor | `pmux monitor view [--lod gist\|summary\|full]` |
 
-### Atelia.Data / SizedPtr（2026-01-04）
+### Atelia.Data / SizedPtr（2026-01-06）
 
 **代码位置**：
 | 位置 | 说明 |
@@ -393,6 +393,14 @@
 - `EndOffsetExclusive` 用 `checked` 算术
 
 **测试注意**：所有 offset/length 参数必须 4B 对齐（0, 4, 8, ...），否则抛异常
+
+**W-0006 文档修订**（2026-01-06）：
+| 文件 | 修改项 |
+|:-----|:-------|
+| `rbf-interface.md` | §2.3 Address64→SizedPtr+NullPtr、接口签名×4、示例×2、条款索引×3 |
+| `rbf-format.md` | §1术语、§7重写（SizedPtr Wire Format）、§8 DataTail更新、条款索引×1 |
+
+**条款更名**：`[F-ADDRESS64-*]` → `[F-SIZEDPTR-*]` / `[F-RBF-NULLPTR]`；`RbfFrame.Address` → `RbfFrame.Ptr`
 
 ### Atelia.Primitives
 
@@ -440,6 +448,7 @@ agent-team/archive/members/implementer/
 
 > 维护日志已压缩。详细历史见 `archive/members/implementer/`
 
+- **2026-01-06**: W-0006 RBF/SizedPtr 文档修订——Address64→SizedPtr 术语迁移、条款重命名、接口签名更新
 - **2026-01-07**: DocGraph v0.2 实施——Wish 布局迁移 + IssueAggregator Phase 2 + TwoTierAggregatorBase 基类抽取
 - **2026-01-03**: 记忆维护——去重、压缩历史、简化索引（575→330 行）
 - **2026-01-01**: DocGraph v0.1 完成，Recipe 改进规划
