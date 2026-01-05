@@ -1,6 +1,7 @@
 # Investigator 认知索引
 
-> 最后更新: 2026-01-04
+> 最后更新: 2026-01-05
+> - 2026-01-05: DocGraph 代码调查（Visitor 扩展机制、produce 验证路径、7 条便签）
 > - 2026-01-04: Memory Palace — 处理了 3 条便签（SizedPtr/RBF/Address64 调查锚点）
 > - 2026-01-01: workspace_info 机制调查（Copilot Chat Agent Prompt System）
 > - 2025-12-27: ObjectLoaderDelegate 重构影响分析
@@ -21,6 +22,37 @@
 - [ ] atelia-copilot-chat
 
 ## Session Log
+
+### 2026-01-05: DocGraph 代码调查
+**任务**: Wish-0007 相关的 DocGraph 源码调查，定位 Visitor 扩展点和 produce 验证机制
+**关键发现**:
+
+#### 1. Visitor 扩展机制
+| 类型 | 位置 | 备注 |
+|:-----|:-----|:-----|
+| **扩展入口** | `RunCommand.cs#L95-L101` | `GetVisitors()` 硬编码列表 |
+| **frontmatter 字段** | `GlossaryVisitor.cs#L93-L103` | `KnownFrontmatterFields` 静态类 |
+| **Wish 归属推导** | `DocumentNode.ProducedBy` | 比路径正则更健壮 |
+
+#### 2. produce 验证 → 空文件创建路径
+- `DocumentGraphBuilder.cs#L402` — `ValidateProduceRelations()` 检测文件不存在
+- `DocumentGraphBuilder.cs#L424` — 添加 `CreateMissingFileAction`
+- `CreateMissingFileAction.cs#L89` — `Execute()` 写入模板内容
+- **关键问题**: 不区分"手动维护"和"自动生成"的产物文件
+
+#### 3. 多输出 Visitor 实现路径
+1. `IDocumentGraphVisitor.cs` — 接口扩展点
+2. `RunCommand.cs#L147` — `GetVisitors()` 注册入口
+3. `RunCommand.cs#L104-L130` — Visitor 执行循环
+- **建议**: 接口扩展 `GenerateMultiple()` 而非拆分 Visitor 类
+
+#### 4. Gotcha 陷阱
+| 陷阱 | 后果 | 规避 |
+|:-----|:-----|:-----|
+| IssueAggregator 已存在 | 重复造轮子 | W-0007 应改为"扩展"而非"新建" |
+| produce 声明 vs Visitor 输出路径不一致 | fix 阶段用空模板覆盖手动文件 | produce 只声明 `.gen.md` 路径 |
+
+**置信度**: ✅ 全部验证过
 
 ### 2026-01-04: SizedPtr/RBF/Address64 现状调查
 **任务**: Wish-0004 SizedPtr 设计调查，定位权威定义和代码现状
