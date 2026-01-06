@@ -308,15 +308,15 @@ mvp-design-v2.md (PrevVersionPtr → mvp-design-v1.md?)
 
 建议：要么补齐 `[S-05]`（哪怕是一条很短的 MUST），要么明确写 “`[S-05] Deprecated (reserved)`”。
 
-## 2) Glossary 里 `Address64` 定义重复（同名两条）
+## 2) Glossary 里 <deleted-place-holder> 定义重复（同名两条）
 
-术语表（SSOT）里出现了两行 **Address64**：一行说“概念层术语：指向 record 起始位置…”，下一行又说“指向 Record 起始位置的 Ptr64 子类型…”。语义差异不大，但 **SSOT 出现重复条目会让后续引用/索引工具不知道该信哪条**。
+术语表（SSOT）里出现了两行 **<deleted-place-holder>**：一行说“概念层术语：指向 record 起始位置…”，下一行又说“指向 Record 起始位置的 Ptr64 子类型…”。语义差异不大，但 **SSOT 出现重复条目会让后续引用/索引工具不知道该信哪条**。
 
 更像是想表达：
 - `Ptr64` = 编码层（通用 file offset）
-- `Address64` = 语义层（必须指向 record 起点的那类 ptr）
+- <deleted-place-holder> = 语义层（必须指向 record 起点的那类 ptr）
 
-建议：把 `Address64` 合并为**单条定义**，并把“编码形式: Ptr64”留在这一条里。
+建议：把 <deleted-place-holder> 合并为**单条定义**，并把“编码形式: Ptr64”留在这一条里。
 
 （这点也顺手呼应你们已经在术语表里做的“编码名 vs 语义名分层”，现在只是表格里手滑重复了。）
 
@@ -517,7 +517,7 @@ stateDiagram-v2
   术语层               概念层               UX/DX 层
     │                     │                     │
     ├─ [S-05] 跳号       ├─ 概念自举悖论      ├─ 僵尸对象体验
-    ├─ Address64 重复    ├─ 状态转换表缺口    ├─ 法律 vs 指南分层
+    ├─ <deleted-place-holder> 重复    ├─ 状态转换表缺口    ├─ 法律 vs 指南分层
     ├─ 泛型写法混用      │                     └─ 可视化建议
     └─ HEAD 大小写一致性 └─ Shallow Materialize
 ```
@@ -548,21 +548,21 @@ GPT 说得对——在"编号只增不复用"的规则下，`[S-05]` 的消失�
 
 ---
 
-### ✅ 完全赞同：DocUIGPT 的 Address64 重复定义
+### ✅ 完全赞同：DocUIGPT 的 <deleted-place-holder> 重复定义
 
 我在术语表里也看到了这个问题：
 
 ```
-| Address64 | 概念层术语：指向 record 起始位置... |
-| Address64 | 指向 Record 起始位置的 Ptr64 子类型... |  ← 重复！
+| <deleted-place-holder> | 概念层术语：指向 record 起始位置... |
+| <deleted-place-holder> | 指向 Record 起始位置的 Ptr64 子类型... |  ← 重复！
 ```
 
-GPT 的分析准确：`Ptr64` 是编码层（通用 file offset），`Address64` 是语义层（必须指向 record 起点）。
+GPT 的分析准确：`Ptr64` 是编码层（通用 file offset），<deleted-place-holder> 是语义层（必须指向 record 起点）。
 
 **建议合并为单条**：
 
 ```markdown
-| **Address64** | 概念层术语：指向 Record 起始位置的 64-bit 偏移。编码形式为 `Ptr64`（u64 LE, 4B 对齐）。规范条款应使用此术语 |
+| **<deleted-place-holder>** | 概念层术语：指向 Record 起始位置的 64-bit 偏移。编码形式为 `Ptr64`（u64 LE, 4B 对齐）。规范条款应使用此术语 |
 ```
 
 ---
@@ -698,7 +698,7 @@ Gemini 也指出了类似问题（用 Mermaid 状态图表示）。
 | 级别 | 问题 | 发现者 | 建议 |
 |------|------|--------|------|
 | 🔴 P0 | `[S-05]` 跳号未标注 | GPT | 显式标注 Deprecated |
-| 🔴 P0 | Address64 重复定义 | GPT | 合并为单条 |
+| 🔴 P0 | <deleted-place-holder> 重复定义 | GPT | 合并为单条 |
 | 🟠 P1 | 概念自举悖论（叙事） | Gemini | 加 Bootstrap 说明 |
 | 🟠 P1 | 泛型写法不一致 | GPT+Claude | 明确定位并统一写法 |
 | 🟡 P2 | 僵尸对象 UX | Gemini+Claude | 加警告 + 建议 IsDetached |
@@ -856,7 +856,7 @@ GPT 问"是否需要升级为条款"——我的建议是 **P1 先命名，条�
 
 **P0（必须修）**：
 1. ☐ `[S-05]` 标注 Deprecated
-2. ☐ Address64 重复定义合并
+2. ☐ <deleted-place-holder> 重复定义合并
 3. ☐ ObjectId 保留区 SSOT 收口（Glossary 新增 Well-Known ObjectId 条目）
 
 **P1（强烈建议）**：
@@ -890,15 +890,15 @@ GPT 问"是否需要升级为条款"——我的建议是 **P1 先命名，条�
 | # | 问题 | 建议 | 我的态度 |
 |---|------|------|----------|
 | 1 | `[S-05]` 跳号未标注 | 显式标注 Deprecated | ✅ 同意 |
-| 2 | Address64 重复定义 | 合并为单条 | ✅ 同意 |
+| 2 | <deleted-place-holder> 重复定义 | 合并为单条 | ✅ 同意 |
 | 3 | ObjectId 保留区 SSOT 收口 | Glossary 新增 Well-Known ObjectId 条目 | ✅ 同意 |
 
 **补充说明**：
 
 - **P0-1 (`[S-05]`)**: 我在文档中搜索确认了 `[S-05]` 确实消失。这对"编号只增不复用"规则造成核查风险。建议写成 `[S-05] Deprecated — 原语义已合并到 [S-xx]`。
 
-- **P0-2 (Address64)**: 术语表里确实存在两行 Address64，应合并为：
-  > **Address64** | 概念层术语：指向 Record 起始位置的 64-bit 偏移。编码形式为 `Ptr64`。规范条款应使用此术语
+- **P0-2 (<deleted-place-holder>)**: 术语表里确实存在两行 <deleted-place-holder>，应合并为：
+  > **<deleted-place-holder>** | 概念层术语：指向 Record 起始位置的 64-bit 偏移。编码形式为 `Ptr64`。规范条款应使用此术语
 
 - **P0-3 (ObjectId 保留区)**: 当前 `0..15`、`NextObjectId=16`、`0=VersionIndex` 分散在 §3.3.1、§3.4.6、[S-17] 三处。建议在术语表新增 **Well-Known ObjectId** 条目统一定义。
 
@@ -982,7 +982,7 @@ DocUIGemini (R2) 的行动清单已经覆盖了三人发现的所有核心问题
 - **P2 = DX/可读性增强项**（不阻塞开工）
 
 对应到 R2 的条目：
-- **P0**：`[S-05]` 跳号需显式 Deprecated；`Address64` 重复定义合并；ObjectId 保留区（含 `0=VersionIndex`、`0..15`、`NextObjectId=16`）必须 SSOT 收口。
+- **P0**：`[S-05]` 跳号需显式 Deprecated；<deleted-place-holder> 重复定义合并；ObjectId 保留区（含 `0=VersionIndex`、`0..15`、`NextObjectId=16`）必须 SSOT 收口。
 - **P1**：禁用 `DurableDict<...>` 写法并统一定位；补 VersionIndex 的 Bootstrap 说明；将 Shallow Materialization 入 Glossary 并 cross-ref。
 - **P2**：Detached/僵尸对象 UX 警告与安全网；状态表脚注；状态机图。
 
@@ -1042,7 +1042,7 @@ DocUIGPT 指出的 "`(MVP Fixed)` 标注未完全对应条款编号" 是一个�
 
 **P0 (Critical - Must Fix)**
 1. [ ] **`[S-05]` 跳号处理**：显式标注 `Deprecated`。
-2. [ ] **Address64 去重**：合并术语表定义。
+2. [ ] **<deleted-place-holder> 去重**：合并术语表定义。
 3. [ ] **ObjectId 保留区 SSOT**：Glossary 新增 `Well-Known ObjectId`，收口 `0=VersionIndex` 和 `ReservedRange`。
 
 **P1 (Important - Should Fix)**
@@ -1098,7 +1098,7 @@ DocUIGPT 指出的 "`(MVP Fixed)` 标注未完全对应条款编号" 是一个�
 | # | 问题 | 位置 | 行动 | 状态 |
 |---|------|------|------|------|
 | 1 | `[S-05]` 编号跳号 | 术语表/条款 | 显式标注 `Deprecated` | ✅ 完成 |
-| 2 | Address64 重复定义 | Glossary | 合并为单条 | ✅ 完成 |
+| 2 | <deleted-place-holder> 重复定义 | Glossary | 合并为单条 | ✅ 完成 |
 | 3 | ObjectId 保留区分散 | §3.3.1, §3.4.6, Glossary | SSOT 收口：新增 Well-Known ObjectId 条目 | ✅ 完成 |
 
 **P1 — 强烈建议修（影响理解/维护）**

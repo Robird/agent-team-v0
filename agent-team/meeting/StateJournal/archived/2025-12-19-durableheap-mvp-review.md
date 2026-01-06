@@ -363,9 +363,9 @@ stateDiagram-v2
       - 语义层：`TotalLen`（更不容易与 payload length 混淆）
       - 字段层：`HeadLen` 与 `TailLen`（两者数值相同），并在第一次出现时明确：它们都等于 `TotalLen`。
 
-2. **`Address64 / Ptr64 / ObjectVersionPtr` 已做区分，但正文仍混用**
-    - 术语表规定概念层用 `Address64`，编码名用 `Ptr64`；但正文大量在概念层句子里继续写 `Ptr64`。
-    - 建议：只要不是在“二进制字段名/编码布局”小节，就统一写 `Address64`/`ObjectVersionPtr`；在布局里再写 `Ptr64(u64 LE)`。
+2. **`<deleted-place-holder> / Ptr64 / ObjectVersionPtr` 已做区分，但正文仍混用**
+    - 术语表规定概念层用 <deleted-place-holder>，编码名用 `Ptr64`；但正文大量在概念层句子里继续写 `Ptr64`。
+    - 建议：只要不是在“二进制字段名/编码布局”小节，就统一写 <deleted-place-holder>/`ObjectVersionPtr`；在布局里再写 `Ptr64(u64 LE)`。
 
 3. **`KeyValuePairType` 实际上是 Value Tag/ValueKind**
     - 你们把“低 4 bit 是 `ValueType`”塞进了一个叫 `KeyValuePairType` 的 byte，这个命名容易让读者误以为它包含 key 的类型。

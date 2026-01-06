@@ -33,7 +33,7 @@ FrameBytes 布局:
 
 1. **概念分层增加**：FrameData 和 Payload 被分为两层，增加认知负担
 2. **破坏 4 字节对齐**：Payload 起始于奇数偏移（HeadLen+1），失去 4B 对齐
-3. **地址语义模糊**：`RbfFrameBuilder.Commit` 返回的 `Address64` 指向哪里？Tag 处还是 Payload 处？
+3. **地址语义模糊**：`RbfFrameBuilder.Commit` 返回的 <deleted-place-holder> 指向哪里？Tag 处还是 Payload 处？
 4. **泛用性不足**：只有 1 字节，类似把 fourCC 移出文件并截断
 
 ### 待讨论的选项
@@ -225,7 +225,7 @@ StateJournal Payload:
 - ✅ RBF 成为"纯信封"，概念边界清晰
 - ✅ 上层完全控制 payload 结构（包括类型字段的大小和位置）
 - ⚠️ RBF 层无法实现 Padding 帧机制——需要重新设计 Auto-Abort
-- ⚠️ Address64 的语义变得完全干净（指向 Payload 起始）
+- ⚠️ <deleted-place-holder> 的语义变得完全干净（指向 Payload 起始）
 
 **Auto-Abort 的替代方案**：
 - 方案 B1：使用"空帧"（PayloadLen=0）作为墓碑
@@ -276,7 +276,7 @@ FrameBytes（建议）:
                 - 保持"FrameTag"名称（而非 FrameKind）
                 - 扩展为 4B，对齐一致
                 - RBF 仅定义 Tag=0 为 Padding，其他值由上层解释
-                - Address64 指向 HeadLen（不变）
+                - <deleted-place-holder> 指向 HeadLen（不变）
 ```
 
 **核心论证**：
@@ -531,7 +531,7 @@ Offset (h) 00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F
 ### 场景 B：调试解析错误 (The "Where am I?" Problem)
 
 > **用户**：Bob，正在调试一个损坏的日志文件。
-> **行为**：`RbfFrameBuilder.Commit()` 返回了一个 `Address64`。
+> **行为**：`RbfFrameBuilder.Commit()` 返回了一个 <deleted-place-holder>。
 > **问题**：这个地址指向哪里？
 > **现状**：指向 HeadLen。
 > **操作**：Bob 想看 Payload。他需要计算 `Address + 4 (HeadLen) + 1 (Tag)`。
@@ -712,7 +712,7 @@ FrameBytes:
 **解决的问题**：
 1. 概念分层：Tag 成为独立字段
 2. 4B 对齐：Payload 起始于 `HeadLen + 8`
-3. 地址语义：`Address64` 明确指向 `HeadLen`
+3. 地址语义：<deleted-place-holder> 明确指向 `HeadLen`
 4. 泛用性：4B 支持 fourCC 风格标识
 
 **附属决策**：

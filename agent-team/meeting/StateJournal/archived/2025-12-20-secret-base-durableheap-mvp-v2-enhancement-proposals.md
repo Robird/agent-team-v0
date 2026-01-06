@@ -429,7 +429,7 @@
 1. **三位审阅者达成共识**：无人支持 MVP 阶段引入 MSB hack
 2. **概念清晰度**：Checkpoint = 截断点，这是最符合直觉的语义
 3. **预留演进路径**：如果未来确实需要非断链，可以：
-   - 使用显式字段（如 `CheckpointPrevPtr: Address64?`）
+   - 使用显式字段（如 `CheckpointPrevPtr: <deleted-place-holder>?`）
    - 或者在 v2 重新设计 Commit Record 格式
 
 **Normative Contract 建议**：

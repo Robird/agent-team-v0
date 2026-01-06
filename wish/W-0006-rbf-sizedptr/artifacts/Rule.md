@@ -7,7 +7,7 @@ produce_by:
 
 # W-0006 Rule-Tier
 
-> **一句话**：定义 NullPtr 约定、废弃 Address64、列出条款变更清单。
+> **一句话**：定义 NullPtr 约定、废弃 <deleted-place-holder>、列出条款变更清单。
 
 ---
 
@@ -61,33 +61,33 @@ if (ptr.Packed == 0) { /* 无效引用 */ }
 ### 设计依据
 
 监护人建议（原话）：
-> 把 Address64 的 Null 相关成员函数改为 RBF 层的静态函数/常量。在 RBF 层定义：`public static SizedPtr NullPtr => default;`，表示"我们 RBF 层是如何定义 SizedPtr 中的特殊值的"。
+> 把 <deleted-place-holder> 的 Null 相关成员函数改为 RBF 层的静态函数/常量。在 RBF 层定义：`public static SizedPtr NullPtr => default;`，表示"我们 RBF 层是如何定义 SizedPtr 中的特殊值的"。
 
 **关键澄清**：SizedPtr 作为几何类型不自带 Null 语义（`Packed=0` 数学上表示空区间 `(0,0)`）。Null 语义是 **RBF 层的业务约定**，不影响 SizedPtr 的纯净性。
 
 ---
 
-## 2. Address64 完全移除
+## 2. <deleted-place-holder> 完全移除
 
 ### 条款 [R-RBF-ADDRESS64-REMOVED]
 
-**规则**：Address64 类型及其所有成员完全移除，不再出现在 RBF 设计文档和代码中。
+**规则**：<deleted-place-holder> 类型及其所有成员完全移除，不再出现在 RBF 设计文档和代码中。
 
 **迁移映射**：
 
 | 原成员 | 迁移目标 | 说明 |
 |:-------|:---------|:-----|
-| `Address64` 类型 | `SizedPtr` | 完全替代 |
-| `Address64.Value` | `SizedPtr.OffsetBytes` | 语义等价 |
-| `Address64.Null` | `RbfInterface.NullPtr` | 移至 RBF 层常量 |
-| `Address64.IsNull` | `ptr == default` | 标准值类型判等 |
-| `new Address64(value)` | `SizedPtr.FromOffsetAndLength()` | 需同时提供 length |
+| <deleted-place-holder> 类型 | `SizedPtr` | 完全替代 |
+| `<deleted-place-holder>.Value` | `SizedPtr.OffsetBytes` | 语义等价 |
+| `<deleted-place-holder>.Null` | `RbfInterface.NullPtr` | 移至 RBF 层常量 |
+| `<deleted-place-holder>.IsNull` | `ptr == default` | 标准值类型判等 |
+| `new <deleted-place-holder>(value)` | `SizedPtr.FromOffsetAndLength()` | 需同时提供 length |
 
 ### 设计依据
 
 **Investigator 调查结论**（[w0006-address64-value-check.md](../../../agent-team/handoffs/w0006-address64-value-check.md)）：
 
-> Address64 可以完全移除。没有发现不可替代的存在价值。
+> <deleted-place-holder> 可以完全移除。没有发现不可替代的存在价值。
 
 **关键证据**：
 - 接口层用途：全部可被 SizedPtr 替代，且 SizedPtr 提供更好的"一次 IO"能力
@@ -123,10 +123,10 @@ if (ptr.Packed == 0) { /* 无效引用 */ }
 
 | 位置 | 原类型 | 新类型 |
 |:-----|:------|:------|
-| `IRbfFramer.Append()` 返回值 | `Address64` | `SizedPtr` |
-| `RbfFrameBuilder.Commit()` 返回值 | `Address64` | `SizedPtr` |
-| `IRbfScanner.TryReadAt()` 参数 | `Address64` | `SizedPtr` |
-| `RbfFrame.Address` 属性 | `Address64` | `RbfFrame.Ptr`（`SizedPtr`） |
+| `IRbfFramer.Append()` 返回值 | <deleted-place-holder> | `SizedPtr` |
+| `RbfFrameBuilder.Commit()` 返回值 | <deleted-place-holder> | `SizedPtr` |
+| `IRbfScanner.TryReadAt()` 参数 | <deleted-place-holder> | `SizedPtr` |
+| `RbfFrame.Address` 属性 | <deleted-place-holder> | `RbfFrame.Ptr`（`SizedPtr`） |
 
 ---
 
@@ -154,5 +154,5 @@ if (ptr.Packed == 0) { /* 无效引用 */ }
 
 - **概念边界**：[Shape.md](Shape.md)
 - **决策动机**：[Resolve.md](Resolve.md) §6-7
-- **Address64 调查报告**：[w0006-address64-value-check.md](../../../agent-team/handoffs/w0006-address64-value-check.md)
+- **<deleted-place-holder> 调查报告**：[w0006-address64-value-check.md](../../../agent-team/handoffs/w0006-address64-value-check.md)
 

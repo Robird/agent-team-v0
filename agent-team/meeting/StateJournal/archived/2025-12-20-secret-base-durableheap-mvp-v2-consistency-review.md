@@ -446,7 +446,7 @@
   - 风险：当 `_dirtyKeys` 与 diff 计算不一致时静默跳过，会掩盖逻辑 bug；实际实现更应该抛异常或至少进入诊断路径。
   - 解决方向：改成 `throw`（或 `Debug.Fail + throw`），并在正文强调 `_dirtyKeys` 精确性是 MUST（你们已有 `[S-14]`）。
 
-3) **`Ptr64`/`Address64` 约定很好，但个别字段属于“文件位置”而非“record 地址”，术语可能需要更精确**
+3) **`Ptr64`/<deleted-place-holder> 约定很好，但个别字段属于“文件位置”而非“record 地址”，术语可能需要更精确**
   - 例：`DataTail` 当前用 `Ptr64` 表达 EOF（包含 magic）。它不是“指向 record 起始位置”的地址。
   - 解决方向：要么在 Glossary 明确 `Ptr64` 在 MVP 中是“4B 对齐的 file offset”（更宽），要么引入 `FileOffset64`（概念层）并让 `DataTail` 用它。
 

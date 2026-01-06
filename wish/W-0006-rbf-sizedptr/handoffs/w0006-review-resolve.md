@@ -14,7 +14,7 @@
 - **类型**：证据完整性
 - **严重性**：Sev2
 - **位置**：§2 P1 / L63-L65；§2 P2 / L76-L78
-- **问题描述**：P1 证据声称 `rbf-interface.md#L120` 定义了 `[F-ADDRESS64-NULL]`，P2 证据声称 `rbf-interface.md#L125-L135` 的 Frame 定义"只有 Address64"。但当前 `atelia/docs/Rbf/rbf-interface.md`（在仓库现状中）已经以 `SizedPtr` 作为核心接口类型，并出现 RBF 层 `NullPtr = default` 的示例；未见 Address64 相关段落。这使得 P1/P2 的证据在"事后审阅"语境下不可复核。
+- **问题描述**：P1 证据声称 `rbf-interface.md#L120` 定义了 `[F-ADDRESS64-NULL]`，P2 证据声称 `rbf-interface.md#L125-L135` 的 Frame 定义"只有 <deleted-place-holder>"。但当前 `atelia/docs/Rbf/rbf-interface.md`（在仓库现状中）已经以 `SizedPtr` 作为核心接口类型，并出现 RBF 层 `NullPtr = default` 的示例；未见 <deleted-place-holder> 相关段落。这使得 P1/P2 的证据在"事后审阅"语境下不可复核。
 - **证据**：Resolve 的证据链接文本与 `rbf-interface.md` 当前内容趋势相悖（现文档中有 `SizedPtr Append(...)` 等表述）。
 - **工程问题本质**：Resolve-Tier 是设计决策的**输入产物**，其引用的证据应指向决策形成时的文档状态。当被引用的源文档根据决策结果被修订后，Resolve 中的证据就失去了复核价值。这是**证据保存策略**问题。
 - **建议修复**：
@@ -42,10 +42,10 @@
 - **类型**：设计决策逻辑
 - **严重性**：Sev2
 - **位置**：§6 D3 / L183-L191；§6 D4 / L199-L205
-- **问题描述**：D3 以"改造 Address64 的 Null 成员"为实施抓手，但 D4 又提出 Address64 可能整体可移除。两者并非必然冲突，但 Resolve 未说明优先级/顺序：是先迁移 Null 语义再删除 Address64，还是直接定义 RBF.NullPtr 并删除 Address64（无需"改造成员函数"）。
-- **证据**：D3 明确提到"Address64 的 Null 相关成员函数"（L185），D4 认为 Address64 可能不再需要（L199-L205）。
+- **问题描述**：D3 以"改造 <deleted-place-holder> 的 Null 成员"为实施抓手，但 D4 又提出 <deleted-place-holder> 可能整体可移除。两者并非必然冲突，但 Resolve 未说明优先级/顺序：是先迁移 Null 语义再删除 <deleted-place-holder>，还是直接定义 RBF.NullPtr 并删除 <deleted-place-holder>（无需"改造成员函数"）。
+- **证据**：D3 明确提到"<deleted-place-holder> 的 Null 相关成员函数"（L185），D4 认为 <deleted-place-holder> 可能不再需要（L199-L205）。
 - **工程问题本质**：两个相关决策之间存在**隐式依赖**，但未显式说明执行路径。这会导致后续 Plan-Tier 产出时需要"猜测"Resolve 的意图。
-- **建议修复**：在 D3 追加一句"若最终移除 Address64，则该步骤等价为：把 Null 语义从 Address64 迁移到 RBF 层后删除 Address64"。
+- **建议修复**：在 D3 追加一句"若最终移除 <deleted-place-holder>，则该步骤等价为：把 Null 语义从 <deleted-place-holder> 迁移到 RBF 层后删除 <deleted-place-holder>"。
 
 ---
 

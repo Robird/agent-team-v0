@@ -251,7 +251,7 @@
 | 5 | 代码示例准确性 | Major | `DurableDict<K,V>` 伪代码在类型系统上不可编译/不成立：`HashSet<ulong>` + `(ulong)(object)key`、`Comparer<K>.Default`、未定义的 `DiffEntry`/`IRecordWriter`，且与“key 固定为 ulong”的 MVP 取舍冲突 | 4.4.4 |
 | 6 | 规范语言 | Major | 文中大量使用 MUST/SHOULD，但未声明采用 RFC 2119/8174 语义；缺少“Normative Language”小节会让核查与实现一致性变弱 | 4.4.3（不变式）及全文 |
 | 7 | 命名约定 / 术语边界 | Minor | `RBF framing` 作为术语被频繁使用但未在术语表注册；“framing/record separator/frame separator”表述混用，建议 SSOT 统一 | 2.6 Q20 + 4.2.1 |
-| 8 | 命名约定 / 一致性 | Minor | 概念层 `Address64` / `ObjectVersionPtr` 与编码名 `Ptr64` 在正文中交替出现，读者难以判断何处是“语义类型”何处是“线格式名” | 术语表 + 4.2.1 + 4.2.5 |
+| 8 | 命名约定 / 一致性 | Minor | 概念层 <deleted-place-holder> / `ObjectVersionPtr` 与编码名 `Ptr64` 在正文中交替出现，读者难以判断何处是“语义类型”何处是“线格式名” | 术语表 + 4.2.1 + 4.2.5 |
 | 9 | 文档结构 | Minor | “决策表”内含被后续决策覆盖/作废的条目（例如 Q4 被 Q16 覆盖），但没有“Superseded/Deprecated Question”标记规则，降低可追溯性 | 3（决策表） |
 | 10 | 格式/可查找性 | Minor | “关键常量/编码表”分散：`Magic`、`RecordKind`、`ObjectKind`、`ValueType` 的值域与域隔离规则没有集中表格，影响实现与测试向量编写 | 4.2.1/4.2.2/4.2.5/4.4.2 |
 
@@ -330,12 +330,12 @@
 
 建议把 4.2.1 的 framing 作为一个正式术语块（例如 **RBF Framing**：`[Magic][Len][Payload][Pad][Len][CRC32C][Magic]`），并把“Magic 不属于 record”作为 MUST 不变式写入。
 
-**#8 `Address64`/`Ptr64`/`ObjectVersionPtr` 的层次标注不足 [Minor]**
+**#8 <deleted-place-holder>/`Ptr64`/`ObjectVersionPtr` 的层次标注不足 [Minor]**
 
-术语表里试图区分“语义名 vs 编码名”，但正文仍频繁混用 `Ptr64`（编码）与 `Address64/ObjectVersionPtr`（语义），读者很难判断某段是在定义 wire-format 还是在定义概念。
+术语表里试图区分“语义名 vs 编码名”，但正文仍频繁混用 `Ptr64`（编码）与 `<deleted-place-holder>/ObjectVersionPtr`（语义），读者很难判断某段是在定义 wire-format 还是在定义概念。
 
 建议固定写法：
-- 概念层一律用 `Address64/ObjectVersionPtr/VersionIndexPtr/DataTail`；
+- 概念层一律用 `<deleted-place-holder>/ObjectVersionPtr/VersionIndexPtr/DataTail`；
 - 编码层在首次出现时标注一次：`Ptr64 := u64 LE byte offset (4B aligned; 0=null)`，之后仅在“线格式/编码规范”小节使用 `Ptr64`。
 
 **#9 决策表的“作废题”缺少机制 [Minor]**

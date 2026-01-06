@@ -146,7 +146,7 @@
 
 | # | 问题类型 | 位置 | 问题描述 | 严重程度 |
 |---|----------|------|----------|----------|
-| T6 | 术语不一致（概念名 vs 编码名） | §Glossary「Address64/Ptr64」+ §4.1.1 + §4.2.* 多处 | 文档试图把 `Ptr64`（编码类型名）与 `Address64/ObjectVersionPtr/...`（语义用途）分层，但正文仍频繁把“语义字段”直接写成“Ptr64”，且 `PrevVersionPtr` 在 §4.2.5 被定义为“Ptr64（该 ObjectId 的上一个版本）”。建议统一规则：**语义层字段一律写 `Address64`（或 `Address64 (encoded as Ptr64 u64 LE)`），`Ptr64` 仅出现于“编码层/布局/线格式名”。**否则读者会误以为 `Ptr64` 是概念层类型而不是 wire-format。 | Medium |
+| T6 | 术语不一致（概念名 vs 编码名） | §Glossary「<deleted-place-holder>/Ptr64」+ §4.1.1 + §4.2.* 多处 | 文档试图把 `Ptr64`（编码类型名）与 `<deleted-place-holder>/ObjectVersionPtr/...`（语义用途）分层，但正文仍频繁把“语义字段”直接写成“Ptr64”，且 `PrevVersionPtr` 在 §4.2.5 被定义为“Ptr64（该 ObjectId 的上一个版本）”。建议统一规则：**语义层字段一律写 <deleted-place-holder>（或 `<deleted-place-holder> (encoded as Ptr64 u64 LE)`），`Ptr64` 仅出现于“编码层/布局/线格式名”。**否则读者会误以为 `Ptr64` 是概念层类型而不是 wire-format。 | Medium |
 | T7 | 术语/命名歧义（framing vs record） | §4.2.1（record framing / RBF framing / Magic） | 文档同时说“采用 RBF framing：`[Magic][Len]...`”，又强调“**Magic 是 Record Separator，不属于任何 Record；Record 本身不含 Magic**”。语义并不矛盾，但命名会诱发实现分叉：有人把 Magic 当 record header 字段，有人当 file-level fencepost。建议改成两层命名：**File Framing（Magic-separated log）** vs **Record Layout（Len/Payload/Pad/Len/CRC32C）**，并在定义处固定术语（后文只用一个词）。 | Medium |
 | T8 | 术语缺失（引入新缩写未定义） | §4.2.1（RBF） | “RBF”在本文是关键格式名，但 Glossary 没有收录，也没有在首次出现处给一句话定义。建议：要么在 Glossary 添加 **RBF Framing**（一句话定义 + 指向 §4.2.1），要么删掉“RBF”统一叫“Magic-separated record log framing”。 | Low |
 | C5 | 概念不自洽（跨语言误导） | §4.1.4 `ulong` 说明 | 文档说 “MVP 不支持 `ulong` 作为用户可写入独立值类型”，但随后给出“可用 `long` reinterpret_cast”作为替代。这在 C#/.NET 语境既不精确也容易误导（并且会污染 `Equals`/语义比较）。建议改成两条之一：A) **明确禁止**该替代写法，改为“需要无符号业务值则未来引入 `Val_VarUInt`/`Val_U64LE`”；或 B) 明确写出 **语言内等价语义**（如 `unchecked((long)u)` 仅是位模式映射、语义由调用方定义），并声明它是 SHOULD NOT（或至少 Informative）。 | Medium |
@@ -186,26 +186,26 @@
 
 ---
 
-#### 一、对 DocUIGPT T6（Ptr64 vs Address64）的回应
+#### 一、对 DocUIGPT T6（Ptr64 vs <deleted-place-holder>）的回应
 
 **立场：完全赞同，并建议进一步强化**
 
 DocUIGPT 指出的"概念名 vs 编码名"混用是一个**典型的分层泄漏问题**。让我用一个类比来说明：
 
 ```
-概念层 (Semantic)     Address64, ObjectVersionPtr, PrevVersionPtr
+概念层 (Semantic)     <deleted-place-holder>, ObjectVersionPtr, PrevVersionPtr
                             ↓ encoded as
 编码层 (Wire Format)  Ptr64 (u64 LE), VarInt, CBOR
 ```
 
-正如 HTTP 层说"Content-Length"而不说"4 字节 big-endian 整数"，规范正文应使用**概念层名称**（`Address64`），仅在编码细节小节提及 `Ptr64`。
+正如 HTTP 层说"Content-Length"而不说"4 字节 big-endian 整数"，规范正文应使用**概念层名称**（<deleted-place-holder>），仅在编码细节小节提及 `Ptr64`。
 
 **修订建议**：
 
 | 位置 | 当前写法 | 建议写法 |
 |------|----------|----------|
-| 规范条款 | "`PrevVersionPtr` 是 Ptr64" | "`PrevVersionPtr` 是 Address64（编码为 Ptr64 u64 LE）" |
-| 概念描述 | "指针类型 Ptr64" | "地址类型 Address64" |
+| 规范条款 | "`PrevVersionPtr` 是 Ptr64" | "`PrevVersionPtr` 是 <deleted-place-holder>（编码为 Ptr64 u64 LE）" |
+| 概念描述 | "指针类型 Ptr64" | "地址类型 <deleted-place-holder>" |
 | 编码布局表 | 保留 Ptr64 | 保留 Ptr64（这里是正确的使用位置） |
 
 这与我在第一轮 T1 中指出的 `PrevVersionPtr=0` 双重语义问题相关——一旦我们清晰区分概念层和编码层，双重语义问题也会更容易解决。
@@ -374,7 +374,7 @@ DocUIGPT 指出的 `DurableDict<K,V>` 伪代码问题实际上暴露了一个更
 |--------|------|----------|
 | **P0** | U1 | `CommitAll()` 无参重载升级为 MUST |
 | **P0** | C7+T1 | 引入 Base Version / Genesis Base / Checkpoint Base 术语层次 |
-| **P0** | T6 | 统一概念层用 Address64，编码层用 Ptr64 |
+| **P0** | T6 | 统一概念层用 <deleted-place-holder>，编码层用 Ptr64 |
 | **P1** | T7 | 添加 File Framing / Record Layout 两层定义 |
 | **P1** | C1+U2 | 统一 Dirty Set 层级术语（Modified Object Set / Dirty-Key Set） |
 | **P1** | P5 | 伪代码添加 MVP Key 类型约束说明 |
@@ -401,14 +401,14 @@ DocUIGPT 指出的 `DurableDict<K,V>` 伪代码问题实际上暴露了一个更
 
 ### DocUIGPT 交叉讨论
 
-对 DocUIClaude 的交叉讨论发言：我整体赞同你的收敛方向，尤其是你把我提出的 T6（Ptr64 vs Address64）与 C7（Base Version 术语重构）提升到 P0，这是“先修概念边界/再修细节”的正确路线。
+对 DocUIClaude 的交叉讨论发言：我整体赞同你的收敛方向，尤其是你把我提出的 T6（Ptr64 vs <deleted-place-holder>）与 C7（Base Version 术语重构）提升到 P0，这是“先修概念边界/再修细节”的正确路线。
 
 但我建议对你的优先级做一个小幅调整：把“影响实现正确性/崩溃一致性”的条目，放到与术语/命名同级甚至更靠前的位置。原因是：命名/术语修复主要减少实现分叉，而 commit 失败语义、LoadObject 边界与新建对象状态，属于会直接导致实现不一致甚至数据丢失的规格缺口。
 
 我对你提出的 P0/P1 列表逐条表态（含调整）：
 - 你对 `CommitAll()` 无参重载 MUST（U1）的提升：赞同。它不是“体验优化”，而是避免 RootId 账本泄漏导致的 API 误用面。
 - 你对 Base Version/Genesis Base/Checkpoint Base（C7+T1）的术语层次：赞同，并建议把“`from-empty diff`”纳入该层次（作为 Genesis Base 的 diff 语义），以避免它在正文里游离。
-- 你对 T6（概念层 Address64、编码层 Ptr64）：赞同；并建议同时把“所有语义字段类型签名”统一成 `Address64 (encoded as Ptr64)`，禁止在规范条款里把字段写成 `Ptr64`。
+- 你对 T6（概念层 <deleted-place-holder>、编码层 Ptr64）：赞同；并建议同时把“所有语义字段类型签名”统一成 `<deleted-place-holder> (encoded as Ptr64)`，禁止在规范条款里把字段写成 `Ptr64`。
 - 你对 T7（File Framing vs Record Layout）：赞同；建议把它从 P1 提升到 P0 或 P0.5（取决于你们对恢复/尾扫实现的依赖程度）。它直接影响 reverse scan 与 resync 逻辑，属于实现分叉高风险点。
 - 你对 Dirty Set 层级术语（Modified Object Set / Dirty-Key Set）：赞同；我建议在术语表里加一条“强引用约束（MUST hold strong refs）”来解释为何 workspace 级必须是 `ObjectId -> IDurableObject`。
 - 你对 P5（伪代码泛型约束）：赞同；我更倾向直接把伪代码类型签名收敛为“key 固定 `ulong`”，避免在 MVP 文档里制造“未来泛型化”的幻觉。
@@ -421,7 +421,7 @@ DocUIGPT 指出的 `DurableDict<K,V>` 伪代码问题实际上暴露了一个更
   - C4：`LoadObject(id)` 对象不存在的行为（返回 null/Result vs 抛异常）必须写死
   - C3：新建对象的状态转换（何时进入 Identity Map、何时 Dirty、Crash 语义）必须写死
   - C7+T1：Base Version（PrevVersionPtr=0）术语层次：Genesis Base / Checkpoint Base + from-empty diff
-  - T6：概念层 Address64 vs 编码层 Ptr64 的正文规则（规范条款中禁用 Ptr64 充当概念类型）
+  - T6：概念层 <deleted-place-holder> vs 编码层 Ptr64 的正文规则（规范条款中禁用 Ptr64 充当概念类型）
   - T7：File Framing vs Record Layout 的两层命名与定义（尤其针对 Magic 与 reverse scan 边界）
 
 - P1（减少歧义与维护漂移）
@@ -440,7 +440,7 @@ DocUIGPT 指出的 `DurableDict<K,V>` 伪代码问题实际上暴露了一个更
    - 改写：Checkpoint Version 退为“Checkpoint Base”的别名或下位概念，避免 `PrevVersionPtr=0` 与“checkpoint”绑定
 
 2) 类型分层硬规则
-   - 规范正文：语义字段一律 `Address64`（括注“encoded as Ptr64 u64 LE”）；`Ptr64` 仅用于布局/线格式表
+   - 规范正文：语义字段一律 <deleted-place-holder>（括注“encoded as Ptr64 u64 LE”）；`Ptr64` 仅用于布局/线格式表
    - 同步修复：`PrevVersionPtr`、`VersionIndexPtr` 等字段的类型签名与措辞
 
 3) Framing/布局定义
@@ -472,7 +472,7 @@ DocUIGPT 指出的 `DurableDict<K,V>` 伪代码问题实际上暴露了一个更
 | P0-3 | `LoadObject(id)` 对象不存在的行为明确定义 | | | |
 | P0-4 | 新建对象的状态转换规则补全（Identity Map、Dirty Set、Crash 语义） | | | |
 | P0-5 | 引入 Base Version 术语层次：Genesis Base / Checkpoint Base | | | |
-| P0-6 | 概念层用 Address64，编码层用 Ptr64，规范条款禁用 Ptr64 作为概念类型 | | | |
+| P0-6 | 概念层用 <deleted-place-holder>，编码层用 Ptr64，规范条款禁用 Ptr64 作为概念类型 | | | |
 | P0-7 | File Framing vs Record Layout 两层定义（Magic 不属于 Record） | | | |
 
 #### P1 级（减少歧义与维护漂移）
@@ -504,7 +504,7 @@ DocUIGPT 指出的 `DurableDict<K,V>` 伪代码问题实际上暴露了一个更
 | P0-3 | ✅ | API 契约完整性。`LoadObject` 的失败路径必须明确定义——返回 `null`、抛异常、还是返回 `Result<T>` 都可以，但不能不说。 |
 | P0-4 | ✅ | 状态机完备性。新建对象的生命周期（何时进 Identity Map、何时变 Dirty、Crash 时消失）是"薛定谔对象"问题的核心。必须写死。 |
 | P0-5 | ✅ | 术语治理最佳实践。`Base Version` 作为上位词、`Genesis Base` / `Checkpoint Base` 作为下位词，解决了 `PrevVersionPtr=0` 的双重语义问题。编码单义 + 概念分层。 |
-| P0-6 | ✅ | 分层清晰化。这是典型的"概念层 vs 编码层"分离问题。规范正文应说 `Address64`，`Ptr64` 仅出现在 wire format 布局表中。类比：HTTP 说 "Content-Length" 而非 "4 字节 big-endian 整数"。 |
+| P0-6 | ✅ | 分层清晰化。这是典型的"概念层 vs 编码层"分离问题。规范正文应说 <deleted-place-holder>，`Ptr64` 仅出现在 wire format 布局表中。类比：HTTP 说 "Content-Length" 而非 "4 字节 big-endian 整数"。 |
 | P0-7 | ✅ | 实现边界关键点。Magic 是 Record 间的"栅栏"还是 Record 的一部分，直接影响 reverse scan 和 resync 逻辑。必须在规范中定死（推荐：不属于 Record）。 |
 
 #### P1 级（减少歧义）
@@ -554,7 +554,7 @@ DocUIGPT 指出的 `DurableDict<K,V>` 伪代码问题实际上暴露了一个更
 | P0-3 | ✅ | 赞同：NotFound 行为是 API 契约核心（返回 null/Result/异常任选其一），但必须明确且可测试。 |
 | P0-4 | ✅ | 赞同：新建对象是最容易发生语义漂移的边界场景（Identity Map、Dirty Set、Crash 语义），不写死会导致上层逻辑不可检验。 |
 | P0-5 | ✅ | 赞同：用 Base Version 作为上位词，把 `PrevVersionPtr=0` 的编码语义与“checkpoint 的用途语义”解耦，概念与编码都变单义。 |
-| P0-6 | ✅ | 赞同：概念层（`Address64`）与编码层（`Ptr64`）必须分离；规范条款禁用用 `Ptr64` 充当概念类型，减少跨实现误读。 |
+| P0-6 | ✅ | 赞同：概念层（<deleted-place-holder>）与编码层（`Ptr64`）必须分离；规范条款禁用用 `Ptr64` 充当概念类型，减少跨实现误读。 |
 | P0-7 | ✅ | 赞同：File Framing vs Record Layout 两层定义能直接消除 Magic 是否属于 record 的歧义，避免 reverse-scan/resync 的实现分叉。 |
 | P1-1 | ✅ | 赞同：`Modified Object Set`（workspace 级强引用集合）与 `Dirty-Key Set`（对象级 key 集合）词法区分明确，且能把“强引用防 GC”约束写清。 |
 | P1-2 | ✅ | 赞同：MVP 文档不应暗示“泛型 key 可行”；应直接固定 `ulong` 或在签名处显著约束，避免复制伪代码导致 runtime cast 风险。 |
@@ -602,9 +602,9 @@ DocUIGPT 指出的 `DurableDict<K,V>` 伪代码问题实际上暴露了一个更
    - 位置：术语表 + §4.2.4 + §4.4.6
    - 修改：引入 Base Version（上位词）→ Genesis Base / Checkpoint Base（下位词）
 
-6. **Address64 vs Ptr64 分层**
+6. **<deleted-place-holder> vs Ptr64 分层**
    - 位置：全文（术语表 + 正文）
-   - 修改：规范条款用 Address64（概念层），Ptr64 仅用于编码层
+   - 修改：规范条款用 <deleted-place-holder>（概念层），Ptr64 仅用于编码层
 
 7. **File Framing vs Record Layout 定义**
    - 位置：§4.2.1
@@ -671,7 +671,7 @@ DocUIGPT 指出的 `DurableDict<K,V>` 伪代码问题实际上暴露了一个更
 | P0-3 | LoadObject 对象不存在 | ✅ 完成 | Implementer | 返回 `null` 而非抛异常 |
 | P0-4 | 新建对象状态转换 | ✅ 完成 | Implementer | 引入 Transient Dirty / Persistent Dirty 定义 |
 | P0-5 | Base Version 术语层次 | ✅ 完成 | Implementer | 术语表已更新（Genesis Base / Checkpoint Base） |
-| P0-6 | Address64 vs Ptr64 分层 | ✅ 完成 | Implementer | 术语表已澄清概念层 vs 编码层 |
+| P0-6 | <deleted-place-holder> vs Ptr64 分层 | ✅ 完成 | Implementer | 术语表已澄清概念层 vs 编码层 |
 | P0-7 | File Framing vs Record Layout | ✅ 完成 | Implementer | 新增分层定义小节 |
 | P1-1 | Dirty Set 层级术语 | ✅ 完成 | Implementer | Modified Object Set / Dirty-Key Set |
 | P1-2 | 伪代码去泛型 | ✅ 完成 | Implementer | key 固定为 `ulong` |

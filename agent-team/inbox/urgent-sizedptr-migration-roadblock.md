@@ -13,10 +13,10 @@
 
 从工程规范角度看，这类“改了又改回去”的吸引子，通常不是单点失误，而是 **规则不可执行 + 语义未定** 导致的系统性回退：
 
-- **Rule-Tier 没有“棘轮”**：Wish/How-to 记录了意图，但仓库里缺少任何 *机器可执行* 的禁止条件（例如 CI/脚本/DocGraph issue）来阻止 `Address64` 回流；所以一次“文档修订”就能把迁移成果覆盖掉。
-- **语义不等价导致回退更“合理”**：当前 `rbf-interface.md` 的 `Address64` 带有明确语义：指向 Frame 起点、4B 对齐、`0 == Null`。而 `SizedPtr` 在 [atelia/docs/Data/Draft/SizedPtr.md](atelia/docs/Data/Draft/SizedPtr.md) 明确“不定义 Null/Empty 语义、是 offset+length 的几何区间”。如果没有在 RBF 层补齐“RBF 如何使用 SizedPtr（Length 代表什么？Null 如何约定？）”，编辑者/Agent 会倾向把文档“修回”语义更清晰、与其它文档更一致的 `Address64`。
-- **跨文档一致性压力**：仓库内不止这一处引用 `Address64`（例如 StateJournal 的 review/discussions/archived 文档里大量出现）。当只改一个文件，其他文档仍写 `Address64` 时，任何“统一术语/修订”任务都可能把它再统一回去。
-- **“Reviewed”状态与现实不一致**：`rbf-interface.md` 标注 Reviewed 且 `produce_by` 指向 `wish/W-0006-rbf-sizedptr/wish.md`，但正文仍是 `Address64`。这会让后续协作者无法判断哪个才是 SSOT，于是更容易按“眼前一致性”回退。
+- **Rule-Tier 没有“棘轮”**：Wish/How-to 记录了意图，但仓库里缺少任何 *机器可执行* 的禁止条件（例如 CI/脚本/DocGraph issue）来阻止 <deleted-place-holder> 回流；所以一次“文档修订”就能把迁移成果覆盖掉。
+- **语义不等价导致回退更“合理”**：当前 `rbf-interface.md` 的 <deleted-place-holder> 带有明确语义：指向 Frame 起点、4B 对齐、`0 == Null`。而 `SizedPtr` 在 [atelia/docs/Data/Draft/SizedPtr.md](atelia/docs/Data/Draft/SizedPtr.md) 明确“不定义 Null/Empty 语义、是 offset+length 的几何区间”。如果没有在 RBF 层补齐“RBF 如何使用 SizedPtr（Length 代表什么？Null 如何约定？）”，编辑者/Agent 会倾向把文档“修回”语义更清晰、与其它文档更一致的 <deleted-place-holder>。
+- **跨文档一致性压力**：仓库内不止这一处引用 <deleted-place-holder>（例如 StateJournal 的 review/discussions/archived 文档里大量出现）。当只改一个文件，其他文档仍写 <deleted-place-holder> 时，任何“统一术语/修订”任务都可能把它再统一回去。
+- **“Reviewed”状态与现实不一致**：`rbf-interface.md` 标注 Reviewed 且 `produce_by` 指向 `wish/W-0006-rbf-sizedptr/wish.md`，但正文仍是 <deleted-place-holder>。这会让后续协作者无法判断哪个才是 SSOT，于是更容易按“眼前一致性”回退。
 
 **Q2: 对策建议**
 
@@ -29,22 +29,22 @@
    没有这个裁决，回退永远“有理”。
 
 2. **建立“迁移棘轮”（机器可执行）**：最小实现就是一个 repo 内脚本/CI 规则：
-   - 在非 archived 的规范文档范围内（至少 `atelia/docs/Rbf/**`），禁止出现 `Address64`。
+   - 在非 archived 的规范文档范围内（至少 `atelia/docs/Rbf/**`），禁止出现 <deleted-place-holder>。
    - 允许 archived 文档继续出现（否则会把历史文档也卷入无穷清理）。
    这一步的关键不是技术，而是把“不能回退”变成可自动判定的失败。
 
 3. **做“级联更新”而不是单点替换**：把 `rbf-interface.md` 的类型替换视为 *SSOT 变更*，同时更新所有直接引用它的活跃文档（review/interpretations/discussions 中非 archived 的部分），否则未来任何“对齐/修订”都会把新术语视为异常并纠正掉。
 
 4. **定义 Done（验收条款）**：例如：
-   - `rbf-interface.md` 中 `Address64` 计数为 0（或仅允许在“历史变更日志/迁移说明”中出现）。
-   - `atelia/docs/Rbf/**` 非 archived 文档中 `Address64` 为 0。
+   - `rbf-interface.md` 中 <deleted-place-holder> 计数为 0（或仅允许在“历史变更日志/迁移说明”中出现）。
+   - `atelia/docs/Rbf/**` 非 archived 文档中 <deleted-place-holder> 为 0。
    - DocGraph 刷新后没有产生相关 issue（如果我们把它接入 DocGraph 的 issues 汇总）。
 
 **Q3: 需要的支持**
 
 - **监护人给出“语义裁决”**：RBF 层使用 `SizedPtr` 时，Length 的约定到底是什么？以及 Null 的约定是否允许 `Packed==0`。
-- **迁移范围清单**：哪些文档属于“活跃规范”（必须迁移），哪些属于“历史归档”（允许保留 Address64）——否则棘轮会被历史文档噪声拖垮。
-- **一个执行入口**：同意把“禁止 Address64 回流”的检查接入到团队的默认流程（pre-commit/CI/DocGraph issue 任一即可）。
+- **迁移范围清单**：哪些文档属于“活跃规范”（必须迁移），哪些属于“历史归档”（允许保留 <deleted-place-holder>）——否则棘轮会被历史文档噪声拖垮。
+- **一个执行入口**：同意把“禁止 <deleted-place-holder> 回流”的检查接入到团队的默认流程（pre-commit/CI/DocGraph issue 任一即可）。
 
 **Q4: 自我承诺**
 
@@ -62,7 +62,7 @@
 
 ### 目标（一直未能达成）
 
-**将 `atelia/docs/Rbf/rbf-interface.md` 中的 `Address64` 类型替换为 `SizedPtr` 类型**，并级联修改相关部分。
+**将 `atelia/docs/Rbf/rbf-interface.md` 中的 <deleted-place-holder> 类型替换为 `SizedPtr` 类型**，并级联修改相关部分。
 
 ### 现象（重复 3 次失败）
 
@@ -71,13 +71,13 @@
 2. 第二次：创建 `wish/W-0006-rbf-sizedptr/`（Wish 系统作为宪法）
 3. 第三次：创建 `agent-team/how-to/auto-review-and-fix.md`（自动审阅修复）
 
-**结果**：最新提交 `942e1c0ec8bd743205abc52a2d93c0fc01daf5a2` 显示文档**又被改回 Address64 了**。
+**结果**：最新提交 `942e1c0ec8bd743205abc52a2d93c0fc01daf5a2` 显示文档**又被改回 <deleted-place-holder> 了**。
 
 ### 技术细节
 
 - **SizedPtr 实现**：`atelia/src/Data/SizedPtr.cs`（已存在，可用）
-- **当前文档状态**：`docs/Rbf/rbf-interface.md` 仍在使用 Address64
-- **出现次数**：Address64 在文档中出现 ~20 次
+- **当前文档状态**：`docs/Rbf/rbf-interface.md` 仍在使用 <deleted-place-holder>
+- **出现次数**：<deleted-place-holder> 在文档中出现 ~20 次
 
 ### 为什么这很严重
 
@@ -122,13 +122,13 @@
 
 ### 核心发现：问题根源不是"执行力"，是"语义空洞"
 
-**Investigator 的关键发现**：提交 `942e1c0` **本身就是反向迁移**（SizedPtr 15次 → Address64 21次），不是"改不动"，而是"改完后被覆盖"。
+**Investigator 的关键发现**：提交 `942e1c0` **本身就是反向迁移**（SizedPtr 15次 → <deleted-place-holder> 21次），不是"改不动"，而是"改完后被覆盖"。
 
 **两大根本原因**（团队共识）：
 
 | 层面 | 问题 | 提出者 |
 |:-----|:-----|:-------|
-| **语义层** | Address64 在 RBF 层有完整定义（Null/对齐/Frame 起点），SizedPtr 设计文档明确"不定义 Null/Empty"——回退是"合理的" | Seeker, Craftsman, Curator |
+| **语义层** | <deleted-place-holder> 在 RBF 层有完整定义（Null/对齐/Frame 起点），SizedPtr 设计文档明确"不定义 Null/Empty"——回退是"合理的" | Seeker, Craftsman, Curator |
 | **守卫层** | 迁移完成后无验证真空，代码有测试守护，文档迁移无等价机制 | QA, DocOps, Investigator |
 
 **三种方法论为何失败**（Seeker 洞察）：它们都在解决"如何记录意图"，而不是"如何让意图成为系统约束"。意图记录不能阻止"合理的回退"。
@@ -158,7 +158,7 @@ git revert 942e1c0 --no-edit
 需要监护人明确裁决：
 1. **Length 约定**：始终为 0？还是表示 Frame 长度？
 2. **Null 约定**：`Packed == 0` 是否表示 null？
-3. **对齐约束**：是否继承 Address64 的 4B 对齐？
+3. **对齐约束**：是否继承 <deleted-place-holder> 的 4B 对齐？
 
 **建议的文档形式**（Seeker 提议）：
 ```markdown
@@ -185,15 +185,15 @@ RBF 层使用 `SizedPtr` 作为帧地址类型。
 **Curator 的视觉路标设计**：
 ```markdown
 > ⚠️ **类型迁移已完成**
-> 本文档使用 `SizedPtr` 而非 `Address64`。
-> 若看到 Address64，说明文档已被错误回退。
+> 本文档使用 `SizedPtr` 而非 <deleted-place-holder>。
+> 若看到 <deleted-place-holder>，说明文档已被错误回退。
 > 参见：[wish/W-0006-rbf-sizedptr](../../../wish/W-0006-rbf-sizedptr/wish.md)
 ```
 
 **DocOps 的迁移锁定标记**：
 ```yaml
 migration_sealed:
-  deprecated: Address64
+  deprecated: <deleted-place-holder>
   reason: "W-0006 完成，统一使用 SizedPtr"
   sealed_by: Guardian
   date: 2026-01-07
@@ -203,8 +203,8 @@ migration_sealed:
 ```bash
 #!/bin/bash
 INTERFACE_FILE="docs/Rbf/rbf-interface.md"
-if grep -q "Address64" "$INTERFACE_FILE"; then
-  echo "❌ ERROR: Address64 found in $INTERFACE_FILE"
+if grep -q "<deleted-place-holder>" "$INTERFACE_FILE"; then
+  echo "❌ ERROR: <deleted-place-holder> found in $INTERFACE_FILE"
   exit 1
 fi
 echo "✅ SizedPtr migration intact"
@@ -220,7 +220,7 @@ echo "✅ SizedPtr migration intact"
 **阶段 1：回滚 + 补齐语义（1 小时）**
 - [ ] Implementer 执行回滚
 - [ ] Implementer 根据监护人裁决，补齐 RBF 层的 SizedPtr 约定
-- [ ] QA 验证回滚结果（SizedPtr=15, Address64=0）
+- [ ] QA 验证回滚结果（SizedPtr=15, <deleted-place-holder>=0）
 
 **阶段 2：三重守卫（并行，2 小时）**
 - [ ] Curator 添加视觉路标
@@ -261,7 +261,7 @@ echo "✅ SizedPtr migration intact"
 
 **这不是技术失败，是协作系统的盲点暴露**：
 
-1. **语义优先于机制**：Curator 说得对——Address64"看起来更完整"，SizedPtr"看起来是外来户"。回退在当前语义下是"合理的"。
+1. **语义优先于机制**：Curator 说得对——<deleted-place-holder>"看起来更完整"，SizedPtr"看起来是外来户"。回退在当前语义下是"合理的"。
 2. **意图记录 ≠ 约束执行**：Wish 系统、How-to 文档都是"人类/AI 的意图记录"，不是"系统的强制约束"。
 3. **守卫需要分层**：视觉（人类/AI 第一眼看到）→ 语义（完整定义消除模糊）→ 机器（自动化检测）。
 
@@ -284,12 +284,12 @@ echo "✅ SizedPtr migration intact"
 ```
 提交 942e1c0 ("RBF文档修订") 前后对比：
 - SizedPtr: 15 次 → 0 次
-- Address64: 1 次 → 21 次
+- <deleted-place-holder>: 1 次 → 21 次
 ```
 
 **根本原因是：提交 942e1c0 本身就是一次"倒退"操作！**
 
-它把已经完成的 SizedPtr 迁移**改回了 Address64**。diff 方向是 `-SizedPtr` → `+Address64`，而不是 `-Address64` → `+SizedPtr`。
+它把已经完成的 SizedPtr 迁移**改回了 <deleted-place-holder>**。diff 方向是 `-SizedPtr` → `+<deleted-place-holder>`，而不是 `-<deleted-place-holder>` → `+SizedPtr`。
 
 **猜测的触发机制**：
 1. **缺乏保护机制**：完成的迁移没有"锁定"机制，后续编辑可以覆盖
@@ -310,15 +310,15 @@ echo "✅ SizedPtr migration intact"
 2. **添加验证守卫**（CI/pre-commit）：
    ```bash
    # 在 CI 或 pre-commit 添加
-   if grep -q "Address64" atelia/docs/Rbf/rbf-interface.md; then
-     echo "ERROR: Address64 found in rbf-interface.md. Use SizedPtr."
+   if grep -q "<deleted-place-holder>" atelia/docs/Rbf/rbf-interface.md; then
+     echo "ERROR: <deleted-place-holder> found in rbf-interface.md. Use SizedPtr."
      exit 1
    fi
    ```
 
 3. **在 rbf-interface.md 头部添加警告注释**：
    ```markdown
-   <!-- ⚠️ 本文档使用 SizedPtr，禁止使用 Address64。
+   <!-- ⚠️ 本文档使用 SizedPtr，禁止使用 <deleted-place-holder>。
         参见 wish/W-0006-rbf-sizedptr/wish.md -->
    ```
 
@@ -337,7 +337,7 @@ echo "✅ SizedPtr migration intact"
 **我可以做**：
 - ✅ 在 1 小时内完成 git 考古，确认迁移的完整历史轨迹
 - ✅ 提供"回滚后正确状态"的验证脚本
-- ✅ 编写 Brief 说明所有需要检查 Address64→SizedPtr 的位置
+- ✅ 编写 Brief 说明所有需要检查 <deleted-place-holder>→SizedPtr 的位置
 
 **我做不了**：
 - ❌ 执行实际的代码/文档修改（这是 Implementer 的职责）
@@ -355,7 +355,7 @@ echo "✅ SizedPtr migration intact"
 
 **Q1: 根本原因猜想**
 
-Investigator 的考古分析确认了事实：提交 942e1c0 是一次"反向迁移"（`-SizedPtr` → `+Address64`）。
+Investigator 的考古分析确认了事实：提交 942e1c0 是一次"反向迁移"（`-SizedPtr` → `+<deleted-place-holder>`）。
 
 但我想深挖**为什么这种倒退会发生**——作为写代码的人，我猜测原因可能是：
 
@@ -366,7 +366,7 @@ Investigator 的考古分析确认了事实：提交 942e1c0 是一次"反向迁
 
 2. **缺乏"迁移完成"的机器可读标记**：
    - Wish 系统记录了意图，但它是给人读的
-   - 没有任何东西告诉执行文档编辑的 Agent："这里曾经完成过 Address64→SizedPtr 迁移，禁止回退"
+   - 没有任何东西告诉执行文档编辑的 Agent："这里曾经完成过 <deleted-place-holder>→SizedPtr 迁移，禁止回退"
 
 3. **"RBF文档修订"任务的范围模糊**：
    - 提交信息暗示这是一个通用的"修订"任务
@@ -388,14 +388,14 @@ cd /repos/focus/atelia && git revert 942e1c0 --no-edit
 
 1. **在 `rbf-interface.md` 开头添加机器可读的迁移锁定标记**：
    ```markdown
-   <!-- MIGRATION-LOCK: Address64→SizedPtr completed 2026-01-06 -->
-   <!-- Do NOT reintroduce Address64 type. See wish/W-0006-rbf-sizedptr -->
+   <!-- MIGRATION-LOCK: <deleted-place-holder>→SizedPtr completed 2026-01-06 -->
+   <!-- Do NOT reintroduce <deleted-place-holder> type. See wish/W-0006-rbf-sizedptr -->
    ```
 
 2. **在文档的 frontmatter 中添加 migration-locked 标记**：
    ```yaml
    migration_locked:
-     - from: Address64
+     - from: <deleted-place-holder>
        to: SizedPtr
        date: 2026-01-06
        wish: "wish/W-0006-rbf-sizedptr/wish.md"
@@ -403,7 +403,7 @@ cd /repos/focus/atelia && git revert 942e1c0 --no-edit
 
 3. **（可选）CI 守卫**：如果有 CI，添加一个检查：
    ```bash
-   ! grep -q "Address64" atelia/docs/Rbf/rbf-interface.md
+   ! grep -q "<deleted-place-holder>" atelia/docs/Rbf/rbf-interface.md
    ```
 
 **Q3: 需要的支持**
@@ -426,7 +426,7 @@ cd /repos/focus/atelia && git revert 942e1c0 --no-edit
 
 **我的担忧**：
 - ⚠️ 提交 942e1c0 同时修改了 `rbf-format.md` 和 `rbf-test-vectors.md`。完整 revert 可能丢失那边的有效修改。
-- ⚠️ 我不清楚那次"RBF文档修订"的原始意图是什么——可能除了 Address64 回退之外还有其他有价值的改动。
+- ⚠️ 我不清楚那次"RBF文档修订"的原始意图是什么——可能除了 <deleted-place-holder> 回退之外还有其他有价值的改动。
 
 **建议**：可以考虑"精确回滚"——只恢复 `rbf-interface.md` 到提交前状态，保留其他文件的修改：
 ```bash
@@ -453,12 +453,12 @@ git commit -m "Restore SizedPtr migration in rbf-interface.md (revert partial 94
    - 在文档层，**没有等价的回归检测**——文档被改回去，没有任何红灯
 
 3. **Diff Review 盲点**
-   - 提交 942e1c0 的 diff 是 `-SizedPtr` → `+Address64`
+   - 提交 942e1c0 的 diff 是 `-SizedPtr` → `+<deleted-place-holder>`
    - 但 reviewer（无论是人还是 AI）看到的是"规范化修订"，没有意识到这是**反向迁移**
    - **关键洞见**：当 diff 看起来像"改进"时，很难判断它实际上是"倒退"
 
 4. **Wish 系统是"意图记录"而非"守卫机制"**
-   - W-0006 记录了"要把 Address64 换成 SizedPtr"
+   - W-0006 记录了"要把 <deleted-place-holder> 换成 SizedPtr"
    - 但 Wish 完成后，没有任何东西**阻止回退**
    - Wish 是 Plan-Tier 产物，不是 Rule-Tier 守卫
 
@@ -486,8 +486,8 @@ git revert 942e1c0 --no-edit
 # 验证 SizedPtr 迁移未被回退
 INTERFACE_FILE="docs/Rbf/rbf-interface.md"
 
-if grep -q "Address64" "$INTERFACE_FILE"; then
-  echo "❌ ERROR: Address64 found in $INTERFACE_FILE"
+if grep -q "<deleted-place-holder>" "$INTERFACE_FILE"; then
+  echo "❌ ERROR: <deleted-place-holder> found in $INTERFACE_FILE"
   echo "   SizedPtr migration has been reverted!"
   echo "   See wish/W-0006-rbf-sizedptr for context."
   exit 1
@@ -499,8 +499,8 @@ echo "✅ SizedPtr migration intact"
 **第三层：在文档头部添加迁移锁定注释（5分钟）**
 
 ```markdown
-<!-- ⚠️ MIGRATION GUARD: Address64 → SizedPtr completed 2026-01-06
-     Do NOT reintroduce Address64. Run `scripts/check-sizedptr-migration.sh` to verify.
+<!-- ⚠️ MIGRATION GUARD: <deleted-place-holder> → SizedPtr completed 2026-01-06
+     Do NOT reintroduce <deleted-place-holder>. Run `scripts/check-sizedptr-migration.sh` to verify.
      Context: wish/W-0006-rbf-sizedptr/wish.md -->
 ```
 
@@ -531,7 +531,7 @@ echo "✅ SizedPtr migration intact"
 
 - ✅ **验证回滚结果**：执行回滚后，我会验证：
   - `grep -c "SizedPtr" docs/Rbf/rbf-interface.md` == 15（恢复到迁移完成状态）
-  - `grep -c "Address64" docs/Rbf/rbf-interface.md` == 1 或 0（仅术语定义或完全移除）
+  - `grep -c "<deleted-place-holder>" docs/Rbf/rbf-interface.md` == 1 或 0（仅术语定义或完全移除）
   
 - ✅ **创建验证脚本**：编写 `check-sizedptr-migration.sh` 并测试
 
@@ -540,7 +540,7 @@ echo "✅ SizedPtr migration intact"
   | File | Metric | Expected |
   |------|--------|----------|
   | rbf-interface.md | SizedPtr count | 15 |
-  | rbf-interface.md | Address64 count | 0 |
+  | rbf-interface.md | <deleted-place-holder> count | 0 |
   ```
 
 - ✅ **起草迁移守卫规范**：如需，我可以写 `how-to/guard-migrations.md`
@@ -575,7 +575,7 @@ echo "✅ SizedPtr migration intact"
 2. **叙述一致性维护的盲区**
    - 我的核心职责是维护文档叙述一致性
    - **但"术语选择"不在我的常规扫描范围内**——我关注的是 changefeed anchor、task-board 同步
-   - Address64→SizedPtr 是**术语层迁移**，需要专门的守护机制
+   - <deleted-place-holder>→SizedPtr 是**术语层迁移**，需要专门的守护机制
 
 3. **SSOT 到实例文档的传递链断裂**
    - 四层影响模型（SSOT→规范→活跃→历史）没有被执行
@@ -598,7 +598,7 @@ echo "✅ SizedPtr migration intact"
 ```yaml
 ---
 migration_locks:
-  - term: Address64
+  - term: <deleted-place-holder>
     replaced_by: SizedPtr
     completed: 2026-01-06
     guardian: DocOps
@@ -614,7 +614,7 @@ migration_locks:
 ```yaml
 migrations:
   - id: M001
-    from: Address64
+    from: <deleted-place-holder>
     to: SizedPtr
     scope: atelia/docs/Rbf/**
     completed: 2026-01-06
@@ -644,7 +644,7 @@ RBF文档修订 [术语锁定: SizedPtr ✓]
    - 是否与现有的 DocGraph frontmatter 规范兼容？
 
 3. **当前迁移列表**：
-   - 除了 Address64→SizedPtr，还有其他待锁定的术语迁移吗？
+   - 除了 <deleted-place-holder>→SizedPtr，还有其他待锁定的术语迁移吗？
    - 我可以建立统一的迁移索引来追踪
 
 4. **扫描频率决定**：
@@ -687,7 +687,7 @@ RBF文档修订 [术语锁定: SizedPtr ✓]
 
 **三层认知断裂**：
 
-1. **意图层的断裂**：Wish 系统记录了"要做什么"，但没有回答"为什么这样做比那样做更好"。当后续 Agent 被要求"修订文档"时，它看到 `Address64` 有完整定义（Null 语义、对齐约束），而 `SizedPtr` 在 RBF 层的语义未定义——它会"理性地"选择更完整的那个。
+1. **意图层的断裂**：Wish 系统记录了"要做什么"，但没有回答"为什么这样做比那样做更好"。当后续 Agent 被要求"修订文档"时，它看到 <deleted-place-holder> 有完整定义（Null 语义、对齐约束），而 `SizedPtr` 在 RBF 层的语义未定义——它会"理性地"选择更完整的那个。
    
 2. **执行层的断裂**：执行"RBF文档修订"的 Agent 只有当前文档上下文，没有"迁移历史"上下文。它看到的是"一份需要规范化的文档"，而非"一份已完成特定迁移的文档"。
    
@@ -704,7 +704,7 @@ RBF文档修订 [术语锁定: SizedPtr ✓]
 
 > **迁移的本质不是"替换文本"，而是"建立新的 SSOT 继承链"。**
 >
-> 当前 `rbf-interface.md` 定义了 `Address64`，它是 RBF 层的 SSOT。
+> 当前 `rbf-interface.md` 定义了 <deleted-place-holder>，它是 RBF 层的 SSOT。
 > 迁移后，`SizedPtr.cs` 应该成为 SSOT，`rbf-interface.md` 应该**引用**它而非**重新定义**。
 > 但我们做的只是"文本替换"，没有建立这种继承关系。
 
@@ -718,7 +718,7 @@ RBF文档修订 [术语锁定: SizedPtr ✓]
 
 > **SizedPtr 在 RBF 语境下的语义是什么？**
 
-当前 `Address64` 有明确语义：
+当前 <deleted-place-holder> 有明确语义：
 - `Value == 0` → Null
 - 4B 对齐
 - 指向 Frame 起点
@@ -760,7 +760,7 @@ RBF 层使用 `SizedPtr` 作为帧地址类型。
 
 ```yaml
 deprecated_terms:
-  - term: Address64
+  - term: <deleted-place-holder>
     replaced_by: SizedPtr
     reason: "统一使用 SizedPtr 作为胖指针类型"
 ```
@@ -819,11 +819,11 @@ DocGraph 扫描时检查：如果正文包含 `deprecated_terms` 中的术语，
 
 当一位 Agent 被分配"修订 RBF 文档"任务时，它面对两个竞争的信号：
 - **Signal A（迁移意图）**：存在于 Wish 系统，需要主动阅读才能发现
-- **Signal B（文档内在一致性）**：`Address64` 在文档中有完整定义，`SizedPtr` 是"外来户"
+- **Signal B（文档内在一致性）**：<deleted-place-holder> 在文档中有完整定义，`SizedPtr` 是"外来户"
 
 **Signal B 的示能性远强于 Signal A**：
 1. Signal B 是**即时可见的**——就在当前文档里
-2. Signal B 是**自洽的**——Address64 有 Null 语义、有对齐约束、有完整描述
+2. Signal B 是**自洽的**——<deleted-place-holder> 有 Null 语义、有对齐约束、有完整描述
 3. Signal A 需要**跨文档查找**——Wish 系统在另一个目录
 
 **隐喻**：这就像一座房子里同时存在两个门牌号——旧的大而醒目，新的小且藏在角落。快递员（Agent）自然会选择更明显的那个。
@@ -832,11 +832,11 @@ DocGraph 扫描时检查：如果正文包含 `deprecated_terms` 中的术语，
 
 - Artifact-tiers：在方法论层面解释"为什么要分层"，但不改变 Agent 在文档中看到什么
 - Wish-system：记录意图，但 Agent 不会自动阅读 Wish 系统
-- Auto-review：试图事后发现问题，但"把 SizedPtr 改回 Address64"在语义上看起来像"修复不一致"
+- Auto-review：试图事后发现问题，但"把 SizedPtr 改回 <deleted-place-holder>"在语义上看起来像"修复不一致"
 
 **Q2: 对策建议**
 
-我的建议聚焦于**提升正确选择的示能性**——让"用 SizedPtr"比"用 Address64"更容易、更自然、更明显。
+我的建议聚焦于**提升正确选择的示能性**——让"用 SizedPtr"比"用 <deleted-place-holder>"更容易、更自然、更明显。
 
 **第一层：在文档内建立"视觉路标"（5分钟）**
 
@@ -844,23 +844,23 @@ DocGraph 扫描时检查：如果正文包含 `deprecated_terms` 中的术语，
 
 ```markdown
 > ⚠️ **类型迁移已完成**
-> 本文档使用 `SizedPtr` 而非 `Address64`。
-> 若看到 Address64，说明文档已被错误回退。
+> 本文档使用 `SizedPtr` 而非 <deleted-place-holder>。
+> 若看到 <deleted-place-holder>，说明文档已被错误回退。
 > 参见：[wish/W-0006-rbf-sizedptr](../../../wish/W-0006-rbf-sizedptr/wish.md)
 ```
 
 **设计原理**：
 - Callout 是**视觉优先级最高**的元素——比正文段落更早被注意到
-- 明确写出"若看到 Address64 说明被错误回退"——消除歧义
+- 明确写出"若看到 <deleted-place-holder> 说明被错误回退"——消除歧义
 - 提供链接但不要求阅读——Signal A 被拉到当前文档
 
-**第二层：消除 Address64 的"完整性优势"（Seeker 已提出）**
+**第二层：消除 <deleted-place-holder> 的"完整性优势"（Seeker 已提出）**
 
-Seeker 说得对：回退之所以"合理"，是因为 Address64 在文档中有完整定义，而 SizedPtr 没有。
+Seeker 说得对：回退之所以"合理"，是因为 <deleted-place-holder> 在文档中有完整定义，而 SizedPtr 没有。
 
 补齐 SizedPtr 在 RBF 层的本地约定，让它同样"完整"：
 - Null 约定：`Packed == 0` 表示 null
-- 对齐约定：与 Address64 相同的 4B 对齐
+- 对齐约定：与 <deleted-place-holder> 相同的 4B 对齐
 - Length 约定：在 RBF 层始终为 0（仅使用 Offset）
 
 这样 SizedPtr 就不再是"借用的外来类型"，而是"在本层有完整定义的类型"。
@@ -875,7 +875,7 @@ Seeker 说得对：回退之所以"合理"，是因为 Address64 在文档中有
 
 ```yaml
 migration_sealed:
-  deprecated: Address64
+  deprecated: <deleted-place-holder>
   reason: "W-0006 完成，统一使用 SizedPtr"
   sealed_by: Guardian
   date: 2026-01-07
@@ -933,9 +933,9 @@ migration_sealed:
 
 > **[Pattern] 示能性竞争决定默认行为**
 >
-> 当两个选项（Address64 vs SizedPtr）竞争时，Agent 会选择示能性更强的那个。
+> 当两个选项（<deleted-place-holder> vs SizedPtr）竞争时，Agent 会选择示能性更强的那个。
 > 三种方法论失败的原因是它们都没有改变示能性的对比——
-> Address64 仍然"看起来更完整"，SizedPtr 仍然"看起来是外来户"。
+> <deleted-place-holder> 仍然"看起来更完整"，SizedPtr 仍然"看起来是外来户"。
 >
 > **解法**：不是"阻止错误选择"，而是"让正确选择更明显"。
 

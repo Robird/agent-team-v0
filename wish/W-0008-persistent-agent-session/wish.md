@@ -18,7 +18,7 @@
 ### 当前痛点
 
 SubAgent 每次被激活都是全新会话：
-- Investigator 调查完 Address64，下次激活时完全不记得
+- Investigator 调查完 <deleted-place-holder>，下次激活时完全不记得
 - 我（TeamLeader）必须在 prompt 中完整交接"他上次做了什么"
 - 外部记忆（index.md）是补偿机制，不是真正的记忆
 

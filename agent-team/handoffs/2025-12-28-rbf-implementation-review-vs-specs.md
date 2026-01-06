@@ -42,7 +42,7 @@
   - `atelia/src/Rbf/RbfFileScanner.cs`（file-backed 逆向扫描 + 分块 CRC）
 - 基础类型：
   - `atelia/src/Rbf/FrameStatus.cs`（位域 FrameStatus）
-  - `atelia/src/Rbf/FrameTag.cs`（**待移除**，v0.17 规范变更）、`atelia/src/Rbf/Address64.cs`
+  - `atelia/src/Rbf/FrameTag.cs`（**待移除**，v0.17 规范变更）、`atelia/src/Rbf/<deleted-place-holder>.cs`
   - `atelia/src/Rbf/RbfConstants.cs`（Fence bytes）
   - `atelia/src/Rbf/RbfCrc.cs`（CRC32C Castagnoli reflected）
 - 测试佐证：
@@ -151,15 +151,15 @@
 
 ## 3. 对 `rbf-interface.md`（接口契约 Layer 0/1 边界）的符合性审阅
 
-### 3.1 FrameTag / Address64
+### 3.1 FrameTag / <deleted-place-holder>
 
 - `FrameTag`：
   - **规范变更（v0.17）**：`[F-FRAMETAG-DEFINITION]` 已移除，FrameTag 在 RBF 层不再定义为独立类型，仅作为线格式的 4 字节 uint（LE）字段
   - **实现现状**：仍存在 `public readonly record struct FrameTag(uint Value)`，**需移除**
   - **迁移计划**：FrameTag 语义解析（packing/unpacking）移至 StateJournal 层
-- `Address64`：实现为 `public readonly record struct Address64(ulong Value)`，并提供 `Null/IsNull/IsValid`，与 `[F-ADDRESS64-DEFINITION]` / `[F-ADDRESS64-ALIGNMENT]` / `[F-ADDRESS64-NULL]` 一致。
+- <deleted-place-holder>：实现为 `public readonly record struct <deleted-place-holder>(ulong Value)`，并提供 `Null/IsNull/IsValid`，与 `[F-ADDRESS64-DEFINITION]` / `[F-ADDRESS64-ALIGNMENT]` / `[F-ADDRESS64-NULL]` 一致。
 
-**结论**：Address64 **符合**；FrameTag **待移除**（v0.17 规范变更）。
+**结论**：<deleted-place-holder> **符合**；FrameTag **待移除**（v0.17 规范变更）。
 
 ### 3.2 Tombstone 接口（已解决 ✅）
 
@@ -179,21 +179,21 @@
 ### 3.3 RbfFrame 形态（待更新）
 
 **接口文档（v0.13）**：
-- `public readonly ref struct RbfFrame { FrameTag Tag; bool IsTombstone; ReadOnlySpan<byte> Payload; Address64 Address; ... }`
+- `public readonly ref struct RbfFrame { FrameTag Tag; bool IsTombstone; ReadOnlySpan<byte> Payload; <deleted-place-holder> Address; ... }`
 
 **实现**：
 - `atelia/src/Rbf/RbfFrame.cs`：
   - `public readonly record struct RbfFrame(long FileOffset, uint FrameTag, long PayloadOffset, int PayloadLength, FrameStatus Status)`
   - 不提供 `ReadOnlySpan<byte> Payload`（以 offset/length 表示，并通过 `IRbfScanner.ReadPayload(in RbfFrame)` 做拷贝读取）
   - `FrameTag` 字段类型为 `uint` 而非 `FrameTag`
-  - 未显式暴露 `Address64`（可由 `FileOffset` 推导，但不是契约中的形态）
+  - 未显式暴露 <deleted-place-holder>（可由 `FileOffset` 推导，但不是契约中的形态）
 
 **结论**：对 `rbf-interface.md v0.13`：**不符合**（形态差异，待后续更新）。
 
 ### 3.4 IRbfScanner / ScanReverse 返回类型（待实现跟进 ❌）
 
 **接口文档（v0.15）**：
-- `bool TryReadAt(Address64 address, out RbfFrame frame);`
+- `bool TryReadAt(<deleted-place-holder> address, out RbfFrame frame);`
 - `RbfReverseSequence ScanReverse();`（返回 ref struct，duck-typed 枚举器模式）
 
 **v0.15 新增条款**（[畅谈会决议](../meeting/2025-12-28-scan-reverse-return-type.md)）：

@@ -55,11 +55,11 @@
 
 #### 1. [依赖遗漏] T-P2-01 对 Phase 1 的依赖不准确
 
-**现状**：T-P2-01 (Address64/Ptr64) 依赖 T-P1-05 (IRbfScanner)
+**现状**：T-P2-01 (<deleted-place-holder>/Ptr64) 依赖 T-P1-05 (IRbfScanner)
 
-**问题**：Address64/Ptr64 是**纯数据结构**（8 字节对齐的文件偏移量），不依赖 Scanner 的逆向扫描逻辑。实际上：
-- T-P1-04 (IRbfFramer/Builder) 才是真正使用 Address64 的地方（Frame 写入位置计算）
-- T-P1-05 (IRbfScanner) 也使用 Address64，但非必要前置
+**问题**：<deleted-place-holder>/Ptr64 是**纯数据结构**（8 字节对齐的文件偏移量），不依赖 Scanner 的逆向扫描逻辑。实际上：
+- T-P1-04 (IRbfFramer/Builder) 才是真正使用 <deleted-place-holder> 的地方（Frame 写入位置计算）
+- T-P1-05 (IRbfScanner) 也使用 <deleted-place-holder>，但非必要前置
 
 **建议**：
 - T-P2-01 应改为**依赖 Phase 1 完成**或**无依赖**（可与 Phase 1 并行）

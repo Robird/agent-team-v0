@@ -391,13 +391,13 @@ Next: 定义主要约束条款
 
 监护人建议使用简短的历史典故作为快速示例：
 
-#### SizedPtr vs Address64 案例
+#### SizedPtr vs <deleted-place-holder> 案例
 
 **背景**：在 StateJournal 设计中，曾纠结于指针类型的命名。
 
 **Adventure 视角复盘**：
 - **Resolve-Tier**：需要一个表示"可能失效的位置引用"的概念
-- **Shape-Tier 挑战**：两个候选名称 `SizedPtr` vs `Address64`
+- **Shape-Tier 挑战**：两个候选名称 `SizedPtr` vs <deleted-place-holder>
 - **核心冲突**：技术准确性 vs 语义可读性
 - **Boss 遭遇**："边界蠕虫"——每次讨论范围都在变化
 - **通关方式**：明确"用户如何理解这个概念"，而非"技术上如何实现"

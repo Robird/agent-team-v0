@@ -25,7 +25,7 @@
 - **原报告位置**：w0006-review-resolve.md / P2
 - **原严重性**：Sev1
 - **问题类型**：表述演进未对齐
-- **问题描述**：§1 把 Address64 与 SizedPtr 定义为"共存分工"（point-to vs range），但 §6/§7 给出最终决策是"SizedPtr 直接替代 Address64"。这是设计**演进**的记录问题（§1 是初始理解，§6/§7 是最终结论），不是逻辑矛盾。
+- **问题描述**：§1 把 <deleted-place-holder> 与 SizedPtr 定义为"共存分工"（point-to vs range），但 §6/§7 给出最终决策是"SizedPtr 直接替代 <deleted-place-holder>"。这是设计**演进**的记录问题（§1 是初始理解，§6/§7 是最终结论），不是逻辑矛盾。
 - **分类依据**：Resolve-Tier 文档记录了"从问题识别到决策形成"的过程，§1 代表初始视角，§6/§7 代表澄清后的结论。这种演进是合理的，只需统一叙事风格。
 - **建议修复**：
   - 在 §1 或 §6 添加一句说明设计认知的演进
@@ -38,9 +38,9 @@
 - **原报告位置**：w0006-review-resolve.md / P3
 - **原严重性**：Sev2
 - **问题类型**：叙事未同步
-- **问题描述**：§3 Scope 明确"语义边界定义：明确 Address64 vs SizedPtr 的使用场景和判断依据"，而 §7 说"对外全部用 SizedPtr"，不再需要"共存策略"。Scope 未根据最终决策同步收敛。
+- **问题描述**：§3 Scope 明确"语义边界定义：明确 <deleted-place-holder> vs SizedPtr 的使用场景和判断依据"，而 §7 说"对外全部用 SizedPtr"，不再需要"共存策略"。Scope 未根据最终决策同步收敛。
 - **分类依据**：这是设计演进后未更新 Scope 的叙事问题，不是逻辑错误。决策清晰，只是描述未对齐。
-- **建议修复**：将 Scope 的"语义边界定义"改写为"对外替代策略 + 对内是否保留 Address64 的决策点"
+- **建议修复**：将 Scope 的"语义边界定义"改写为"对外替代策略 + 对内是否保留 <deleted-place-holder> 的决策点"
 
 ---
 
@@ -49,11 +49,11 @@
 - **原报告位置**：w0006-review-resolve.md / P7
 - **原严重性**：Sev2
 - **问题类型**：措辞一致性
-- **问题描述**：frontmatter 描述风险为 "Address64.Value 与 SizedPtr.OffsetBytes 术语混淆"，正文 P4 描述为 "RBF 使用 Offset（Address64 的文件偏移）"。两处用了不同表达方式：frontmatter 用字段名 `Value`，正文用概念名 `Offset`。
-- **分类依据**：Address64 的字段名确实是 `Value`（已验证），正文的 `Offset` 是概念名。两者都正确，但表达方式不一致。
+- **问题描述**：frontmatter 描述风险为 "<deleted-place-holder>.Value 与 SizedPtr.OffsetBytes 术语混淆"，正文 P4 描述为 "RBF 使用 Offset（<deleted-place-holder> 的文件偏移）"。两处用了不同表达方式：frontmatter 用字段名 `Value`，正文用概念名 `Offset`。
+- **分类依据**：<deleted-place-holder> 的字段名确实是 `Value`（已验证），正文的 `Offset` 是概念名。两者都正确，但表达方式不一致。
 - **建议修复**：统一为一种表述：
   - 若强调字段名：正文也改用 `Value`
-  - 若强调概念：frontmatter 改为"Address64 的文件偏移概念与 SizedPtr.OffsetBytes 混淆风险"
+  - 若强调概念：frontmatter 改为"<deleted-place-holder> 的文件偏移概念与 SizedPtr.OffsetBytes 混淆风险"
 
 ---
 
@@ -64,7 +64,7 @@
 - **问题类型**：措辞精炼
 - **问题描述**：开头一句话判定为"值得引入"（偏"可选增强"语气），但 §6/§7 明确指出 SizedPtr 是接口层"核心类型"，不是可选增强。
 - **建议修复**：将一句话判定改为直接反映最终结论，例如：
-  > "SizedPtr 是 RBF Interface 层对外 Frame 句柄的核心类型，应替代 Address64。"
+  > "SizedPtr 是 RBF Interface 层对外 Frame 句柄的核心类型，应替代 <deleted-place-holder>。"
 
 ---
 
@@ -98,7 +98,7 @@
 - **原报告位置**：w0006-review-shape.md / P2
 - **原严重性**：Sev2
 - **问题类型**：措辞精炼/可执行性
-- **问题描述**：Resolve 中的 I-TERM-DRIFT-RISK 是"Address64.Value vs SizedPtr.OffsetBytes/Offset 术语混用"的风险。Shape 目前采用"Offset 一词专指 OffsetBytes"的约定，但存在两个问题：
+- **问题描述**：Resolve 中的 I-TERM-DRIFT-RISK 是"<deleted-place-holder>.Value vs SizedPtr.OffsetBytes/Offset 术语混用"的风险。Shape 目前采用"Offset 一词专指 OffsetBytes"的约定，但存在两个问题：
   1. 文档/代码里仍可能出现"Offset"（未带 Bytes），读者不确定它是"文件偏移"还是"区间 offset"。
   2. `rbf-format.md` 和其他文档会天然使用"offset"作为通用英文词，单靠"专指"难以形成可执行的写作约束。
 - **分类依据**：这是术语书写规范的可执行性问题，不涉及设计逻辑或工程可行性。
@@ -113,10 +113,10 @@
 - **原报告位置**：w0006-review-shape.md / P3
 - **原严重性**：Sev2
 - **问题类型**：格式/表述清晰度
-- **问题描述**：`SizedPtr.OffsetBytes` ↔ `Address64.Value` 行的备注写作"4B 对齐，38-bit（~1TB 范围）"，这对 `SizedPtr.OffsetBytes` 是正确的，但放在"新旧对照"行里，读者可能误读为"Address64.Value 也只有 ~1TB"。
-- **分类依据**：这是表格格式与措辞布局问题，Address64 的实际能力不受影响，只是呈现方式容易引起误读。
+- **问题描述**：`SizedPtr.OffsetBytes` ↔ `<deleted-place-holder>.Value` 行的备注写作"4B 对齐，38-bit（~1TB 范围）"，这对 `SizedPtr.OffsetBytes` 是正确的，但放在"新旧对照"行里，读者可能误读为"<deleted-place-holder>.Value 也只有 ~1TB"。
+- **分类依据**：这是表格格式与措辞布局问题，<deleted-place-holder> 的实际能力不受影响，只是呈现方式容易引起误读。
 - **建议修复**：将该行拆成更清晰的两段信息：
-  - 映射关系：`Address64.Value (file offset)` → `SizedPtr.OffsetBytes (file offset)`
+  - 映射关系：`<deleted-place-holder>.Value (file offset)` → `SizedPtr.OffsetBytes (file offset)`
   - 新约束：`SizedPtr` 受 38:26 与 4B 对齐约束（并把范围信息放到"新约束"列/脚注里），避免把旧类型也"顺带限幅"。
 
 ---
@@ -178,7 +178,7 @@
 - **问题类型**：表述清晰度
 - **问题描述**：当前写作 `RbfFrame.Address` → `SizedPtr Ptr`，读起来像"类型名+字段名重复"。实际表达是"属性名 Address 改为 Ptr，类型为 SizedPtr"。
 - **分类依据**：表述不够清晰，但意图可理解，不影响实施。
-- **建议修复**：改为"`RbfFrame.Address`（`Address64`）→ `RbfFrame.Ptr`（`SizedPtr`）"
+- **建议修复**：改为"`RbfFrame.Address`（<deleted-place-holder>）→ `RbfFrame.Ptr`（`SizedPtr`）"
 
 ---
 
@@ -221,16 +221,16 @@
 
 ---
 
-### D14: Phase 2 引用已不存在的 Address64.cs 文件
+### D14: Phase 2 引用已不存在的 <deleted-place-holder>.cs 文件
 
 - **原报告位置**：w0006-review-plan.md / Sev3-1
 - **原严重性**：Sev3
 - **问题类型**：计划条目准确性
-- **问题描述**：Phase 2 提到"删除 `Address64.cs`（已归档在 archive/）"，但工作区内已无该文件（源码已归档到 `atelia/archive/2025-12-29-rbf-statejournal-v1/Rbf/Address64.cs`）。
+- **问题描述**：Phase 2 提到"删除 `<deleted-place-holder>.cs`（已归档在 archive/）"，但工作区内已无该文件（源码已归档到 `atelia/archive/2025-12-29-rbf-statejournal-v1/Rbf/<deleted-place-holder>.cs`）。
 - **分类依据**：不阻塞 Phase 1 执行，只是 Phase 2 计划的准确性问题。
 - **建议修复**：
-  - 补充归档路径 `archive/2025-12-29-rbf-statejournal-v1/Rbf/Address64.cs`
-  - 或改为"清理 Address64 残留实现（如存在）"
+  - 补充归档路径 `archive/2025-12-29-rbf-statejournal-v1/Rbf/<deleted-place-holder>.cs`
+  - 或改为"清理 <deleted-place-holder> 残留实现（如存在）"
 
 ---
 

@@ -20,12 +20,12 @@ produce_by:
 **文档修订**：
 - `rbf-interface.md` v0.17 → v0.18
 - `rbf-format.md` v0.16 → v0.17
-- SizedPtr 完全替代 Address64
+- SizedPtr 完全替代 <deleted-place-holder>
 - 2 个文档修订耗时 0.5 小时
 
 **产物清单**：
 - 4 个 Artifact-Tiers 文档（Resolve/Shape/Rule/Plan）
-- 3 个调查报告（Resolve Brief、Address64 价值检查、执行记录）
+- 3 个调查报告（Resolve Brief、<deleted-place-holder> 价值检查、执行记录）
 - 2 个修订后的 RBF 文档
 
 **时间线**：
@@ -60,7 +60,7 @@ produce_by:
 
 **E1（Sev1）**："Resolve 引用的 rbf-interface.md 已被修订为 SizedPtr，证据不可复核"
 - **荒谬之处**：文档被修订**正是 Wish 成功的证据**，却被当成"证据缺失"
-- **倒果为因**：Resolve 说"要改 Address64→SizedPtr"，我们改了，Craftsman 说"现在看不到 Address64 了，证据缺失"
+- **倒果为因**：Resolve 说"要改 <deleted-place-holder>→SizedPtr"，我们改了，Craftsman 说"现在看不到 <deleted-place-holder> 了，证据缺失"
 
 **E2（Sev2）**："256MB 足够需要追溯之前在哪里分析过"
 - **过度要求**：监护人说了就是了，还要考古找"分析过程"的出处？
@@ -119,8 +119,8 @@ produce_by:
 
 ### 核心成果
 
-1. **SizedPtr 完全替代 Address64**
-   - Address64 类型及其 3 条相关条款完全移除
+1. **SizedPtr 完全替代 <deleted-place-holder>**
+   - <deleted-place-holder> 类型及其 3 条相关条款完全移除
    - SizedPtr 成为 RBF Interface 层的核心 Frame 句柄类型
 
 2. **NullPtr 约定定义**
@@ -134,7 +134,7 @@ produce_by:
 
 4. **产出物清单**
    - 4 个 Artifact-Tiers 文档（Resolve/Shape/Rule/Plan）
-   - 3 个调查报告（Resolve Brief、Address64 价值检查、执行记录）
+   - 3 个调查报告（Resolve Brief、<deleted-place-holder> 价值检查、执行记录）
    - 2 个修订后的 RBF 文档
 
 ### 方法论验证
@@ -155,7 +155,7 @@ produce_by:
 
 - ✅ **推进功能实现**：5 个 Tier 全部完成
 - ✅ **发现并记录问题**：4 个 issues 识别并 resolved
-- ✅ **问题解决**：Address64 存在价值调查完成
+- ✅ **问题解决**：<deleted-place-holder> 存在价值调查完成
 
 ### Phase 2 计划
 
@@ -173,7 +173,7 @@ produce_by:
 | 18:00 | 前置 | 畅谈会（Scope 与实施路径） | meeting/2026-01-05-scope-and-approach.md | 1h |
 | 21:00 | Resolve | Investigator 调研 + Seeker 产出 | Resolve.md（LGTM） | 1h |
 | 22:00 | Resolve | 监护人决策澄清 | Resolve.md §6-7 | 0.5h |
-| 22:30 | Shape+Rule | Address64 调查 + 产出 | Shape.md + Rule.md（LGTM） | 1h |
+| 22:30 | Shape+Rule | <deleted-place-holder> 调查 + 产出 | Shape.md + Rule.md（LGTM） | 1h |
 | 23:30 | Plan | Seeker 产出修订计划 | Plan.md | 0.5h |
 | 00:00 | Craft | Implementer 执行修订 | 2 个 RBF 文档 v0.18/v0.17 | 0.5h |
 
@@ -186,9 +186,9 @@ produce_by:
 ### K1: 监护人输入的指数级价值
 
 4 条决策澄清节省了至少数天的探索时间：
-- 避免了"Address64 vs SizedPtr 共存策略"的过度设计
+- 避免了"<deleted-place-holder> vs SizedPtr 共存策略"的过度设计
 - 直接确认了 SizedPtr 在 RBF 中的核心地位
-- 明确了 Address64 已无存在价值（可完全移除）
+- 明确了 <deleted-place-holder> 已无存在价值（可完全移除）
 
 ### K2: "识别问题即产出"的威力
 

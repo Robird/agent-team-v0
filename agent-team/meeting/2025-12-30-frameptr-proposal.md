@@ -10,7 +10,7 @@
 
 ## 背景
 
-有一份提案建议将 RBF 层的 `Address64`（仅存储偏移量）升级为 `FramePtr`（同时存储偏移量 + 长度），以提升随机读取效率。
+有一份提案建议将 RBF 层的 <deleted-place-holder>（仅存储偏移量）升级为 `FramePtr`（同时存储偏移量 + 长度），以提升随机读取效率。
 
 **核心问题**：
 1. 是否应该接纳这个提案？
@@ -33,7 +33,7 @@
 
 ### 主持人开场 (刘德智)
 
-欢迎各位。今天我们讨论一个 RBF 层的改进提案——将 `Address64` 升级为 `FramePtr`。
+欢迎各位。今天我们讨论一个 RBF 层的改进提案——将 <deleted-place-holder> 升级为 `FramePtr`。
 
 提案的核心主张是：
 - 把"偏移量"升级为"偏移量+长度"，打包进同样的 8 字节
@@ -89,7 +89,7 @@
 
 **与"瘦指针 + 外部元数据"对比**：
 
-| 维度 | 瘦指针 (Address64) | 胖指针 (FramePtr) |
+| 维度 | 瘦指针 (<deleted-place-holder>) | 胖指针 (FramePtr) |
 |:-----|:-------------------|:------------------|
 | **指针大小** | 8B | 8B（压缩后相同！） |
 | **获取长度** | 需额外读取 | 指针自带 |
@@ -106,7 +106,7 @@
 
 让我追溯 Frame 的实际读取流程：
 
-#### 当前流程（Address64）：
+#### 当前流程（<deleted-place-holder>）：
 
 ```
 1. 已知：frame 起始偏移量 addr
@@ -130,7 +130,7 @@
 
 在现代存储 I/O 中：
 
-| 场景 | 实际 I/O 次数（Address64） | 说明 |
+| 场景 | 实际 I/O 次数（<deleted-place-holder>） | 说明 |
 |:-----|:---------------------------|:-----|
 | **mmap** | 1 次（或 0 次） | 内存映射后，header 和 payload 都是内存访问 |
 | **buffered read** | 通常 1 次 | 文件系统 read-ahead，4B header 和 payload 很可能在同一个 page |
@@ -215,28 +215,28 @@ public bool Contains(ulong position) {
 
 #### 4.1 对 RBF 接口契约的影响
 
-当前接口（[rbf-interface.md](atelia/docs/Rbf/rbf-interface.md)）使用 `Address64`：
+当前接口（[rbf-interface.md](atelia/docs/Rbf/rbf-interface.md)）使用 <deleted-place-holder>：
 
 ```csharp
-Address64 Append(uint tag, ReadOnlySpan<byte> payload);
-bool TryReadAt(Address64 address, out RbfFrame frame);
+<deleted-place-holder> Append(uint tag, ReadOnlySpan<byte> payload);
+bool TryReadAt(<deleted-place-holder> address, out RbfFrame frame);
 ```
 
 如果采用 FramePtr，接口需要变更：
 
 | 接口 | 变更 |
 |:-----|:-----|
-| `Append` 返回值 | `Address64` → `FramePtr`（写入完成后知道长度） |
-| `TryReadAt` 参数 | `Address64` → `FramePtr`（或重载） |
-| `RbfFrame.Address` | `Address64` → `FramePtr` |
+| `Append` 返回值 | <deleted-place-holder> → `FramePtr`（写入完成后知道长度） |
+| `TryReadAt` 参数 | <deleted-place-holder> → `FramePtr`（或重载） |
+| `RbfFrame.Address` | <deleted-place-holder> → `FramePtr` |
 | `ScanReverse` 产出 | 每帧自带 `FramePtr` |
 
-**设计决策点**：`TryReadAt` 是否应该接受 `Address64`（向后兼容）还是强制 `FramePtr`？
+**设计决策点**：`TryReadAt` 是否应该接受 <deleted-place-holder>（向后兼容）还是强制 `FramePtr`？
 
 - **强制 FramePtr**：调用者必须持有完整指针，更安全
-- **允许 Address64**：可以只用偏移量读取（内部先读 header 获取长度），更灵活
+- **允许 <deleted-place-holder>**：可以只用偏移量读取（内部先读 header 获取长度），更灵活
 
-**建议**：提供两个重载，但 `TryReadAt(Address64)` 标记为"fallback 路径"。
+**建议**：提供两个重载，但 `TryReadAt(<deleted-place-holder>)` 标记为"fallback 路径"。
 
 #### 4.2 对上层 StateJournal 的影响
 
@@ -244,7 +244,7 @@ StateJournal 存储 Frame 地址的地方：
 - **Meta Epoch**：指向 Data Epoch 的地址
 - **对象内部**：可能存储子对象/版本链的地址
 
-如果这些地址从 `Address64` 变为 `FramePtr`：
+如果这些地址从 <deleted-place-holder> 变为 `FramePtr`：
 - **优势**：Lazy Load 场景可以直接知道要读多少字节
 - **成本**：需要更新所有序列化格式
 
@@ -292,7 +292,7 @@ StateJournal 存储 Frame 地址的地方：
 
 | 维度 | 影响 | 结论 |
 |:-----|:-----|:-----|
-| RBF 接口 | 需要修改 `Address64` → `FramePtr` | 当前无代码，成本 = 0 |
+| RBF 接口 | 需要修改 <deleted-place-holder> → `FramePtr` | 当前无代码，成本 = 0 |
 | StateJournal 接口 | 需要更新存储格式 | 当前无代码，成本 = 0 |
 | 概念复杂度 | 引入对齐压缩、Empty 语义 | 可接受，但需文档清晰 |
 
@@ -308,7 +308,7 @@ StateJournal 存储 Frame 地址的地方：
 
 ---
 
-> **类比总结**：FramePtr 之于 Address64，如同 Go slice 之于 C 指针——代价是语义复杂度，收益是自描述能力。在草案阶段引入是合适的时机。
+> **类比总结**：FramePtr 之于 <deleted-place-holder>，如同 Go slice 之于 C 指针——代价是语义复杂度，收益是自描述能力。在草案阶段引入是合适的时机。
 
 ---
 
@@ -320,15 +320,15 @@ StateJournal 存储 Frame 地址的地方：
 
 ## 🚀 快速轨道（Quick Track）
 
-1) **一致性**：提案文字“最大文件 256GB/4TB”与示例实现的 `MaxOffset/MaxLength` 组合不等价；同时 `offset==0 && length>0` 在实现里是合法的，但与现行 `Address64` 的 “0==Null” 语义冲突。
+1) **一致性**：提案文字“最大文件 256GB/4TB”与示例实现的 `MaxOffset/MaxLength` 组合不等价；同时 `offset==0 && length>0` 在实现里是合法的，但与现行 <deleted-place-holder> 的 “0==Null” 语义冲突。
 
 2) **边界条件**：
 - `Packed==0` 作为 Empty 本身可行，但必须明确“canonical form”与“非法/非规范值”的处理；否则 `FromPacked` 允许制造 `offset==0 && length>0` 这种“看起来非 Empty、但指向文件头”的指针。
-- `offset==0 && length>0` 我建议**明确为不合法**（除非你们想推翻 `Address64` 的 Null 约定）。
+- `offset==0 && length>0` 我建议**明确为不合法**（除非你们想推翻 <deleted-place-holder> 的 Null 约定）。
 
 3) **bit 分配**：我倾向同意 Seeker 的 **40:24（大文件）**，但前提是把“最大文件”定义写清楚（是“最大起始偏移”还是“最大可寻址 end”），并在 `Create/TryCreate` 中强制约束 `offset+length` 不得越过该上限。
 
-4) **接口影响**：落地后必然修改 §2.3 `Address64` 的条款与所有 API 签名（`Append/Commit/TryReadAt/RbfFrame.Address` 等）。建议明确：`TryReadAt(FramePtr)` 仍需进行 framing/CRC 校验；`TryReadAt(Address64)`（如保留）为 fallback 路径。
+4) **接口影响**：落地后必然修改 §2.3 <deleted-place-holder> 的条款与所有 API 签名（`Append/Commit/TryReadAt/RbfFrame.Address` 等）。建议明确：`TryReadAt(FramePtr)` 仍需进行 framing/CRC 校验；`TryReadAt(<deleted-place-holder>)`（如保留）为 fallback 路径。
 
 ---
 
@@ -357,15 +357,15 @@ StateJournal 存储 Frame 地址的地方：
 
 如果不修正，未来实现者很容易按“最大文件”理解去做 segment/rollover 策略，但指针仍能生成指向超界区域的区间，形成规范层面的自相矛盾。
 
-#### 1.2 `Packed==0` / `Address64==0` 的 Null 语义冲突
+#### 1.2 `Packed==0` / `<deleted-place-holder>==0` 的 Null 语义冲突
 
-现行接口定义中（§2.3 Address64）：`Value==0` 表示 null（无效地址）。提案中：`Packed==0` 表示 Empty。
+现行接口定义中（§2.3 <deleted-place-holder>）：`Value==0` 表示 null（无效地址）。提案中：`Packed==0` 表示 Empty。
 
 问题在于示例实现允许 `offsetBytes==0 && lengthBytes>0`，此时：
 - `IsEmpty == false`（因为 Packed 非 0）
 - `OffsetBytes == 0`
 
-这会引入一个“接口层过去不可表达、现在可表达”的地址：指向文件起始位置的帧。除非你们要明确“文件 0 处就是一个合法 frame 起点”（这将推翻 Address64.Null 的设计意图），否则该状态应视为非法。
+这会引入一个“接口层过去不可表达、现在可表达”的地址：指向文件起始位置的帧。除非你们要明确“文件 0 处就是一个合法 frame 起点”（这将推翻 <deleted-place-holder>.Null 的设计意图），否则该状态应视为非法。
 
 **结论**：如果保留 `0` 作为 None/null 的哨兵值（我认为应该保留），则需要在 `Create/TryCreate` 增加约束：
 - `offsetBytes == 0` 仅允许与 `lengthBytes == 0` 组合（并且 canonicalize 为 `Packed==0`）
@@ -397,7 +397,7 @@ Seeker 已指出收益口径需要修正（我同意）。从规范一致性角�
 
 我的结论：在当前 Atelia/RBF 既有约定下，**不合法**。
 
-证据链：现行 `Address64.Null == 0` 已将 `0` 作为“无地址”占位；同时 RBF 作为日志文件，文件头通常还承载“空文件/Genesis fence/元信息”等（即使具体实现未定，也已通过 Null 设计暗示“0 不是一个可用 frame 起点”）。在这种生态下，允许 `offset==0` 会迫使所有上层重新评估 `0` 的特殊含义，风险大于收益。
+证据链：现行 `<deleted-place-holder>.Null == 0` 已将 `0` 作为“无地址”占位；同时 RBF 作为日志文件，文件头通常还承载“空文件/Genesis fence/元信息”等（即使具体实现未定，也已通过 Null 设计暗示“0 不是一个可用 frame 起点”）。在这种生态下，允许 `offset==0` 会迫使所有上层重新评估 `0` 的特殊含义，风险大于收益。
 
 #### 2.3 `MaxOffset/MaxLength` 的计算是否正确？
 
@@ -421,21 +421,21 @@ Seeker 已指出收益口径需要修正（我同意）。从规范一致性角�
 如果提案落地，至少需要改动以下位置（按现行文档结构）：
 
 1) **术语表**
-- §2.3 `Address64`：
+- §2.3 <deleted-place-holder>：
     - `[F-ADDRESS64-DEFINITION]` → 替换为 `FramePtr` 定义（建议新条款 ID：`[F-FRAMEPTR-DEFINITION]`）
     - `[F-ADDRESS64-ALIGNMENT]` / `[F-ADDRESS64-NULL]` → 迁移/改写为 FramePtr 的 alignment/null/empty 规则（建议明确 `offset==0` 的合法性与 canonical form）
 
 2) **写入接口签名**
-- §3.1 `IRbfFramer.Append`：返回类型 `Address64` → `FramePtr`
-- §3.2 `RbfFrameBuilder.Commit`：返回类型 `Address64` → `FramePtr`
+- §3.1 `IRbfFramer.Append`：返回类型 <deleted-place-holder> → `FramePtr`
+- §3.2 `RbfFrameBuilder.Commit`：返回类型 <deleted-place-holder> → `FramePtr`
 
 3) **读取接口签名**
-- §4.1 `IRbfScanner.TryReadAt`：参数 `Address64` → `FramePtr`（或新增重载/双接口）
-- §4.3 `RbfFrame.Address`：类型 `Address64` → `FramePtr`
+- §4.1 `IRbfScanner.TryReadAt`：参数 <deleted-place-holder> → `FramePtr`（或新增重载/双接口）
+- §4.3 `RbfFrame.Address`：类型 <deleted-place-holder> → `FramePtr`
 
 4) **示例代码与条款索引**
 - §5 示例中的 `WriteFrame/ProcessFrame` 全部跟随类型替换
-- §6 条款索引需同步（新增 FramePtr 条款，移除或标记 Address64 条款废弃）
+- §6 条款索引需同步（新增 FramePtr 条款，移除或标记 <deleted-place-holder> 条款废弃）
 
 规范层建议额外补一条：
 - `TryReadAt(FramePtr)` MUST 失败（返回 false 或 fail-fast）当 `FramePtr` 指向越界区间或区间无法通过 framing/CRC 校验。
@@ -449,9 +449,9 @@ Seeker 已指出收益口径需要修正（我同意）。从规范一致性角�
 
 2) 但提案在落地前必须修正两处规范硬伤：
 - 明确并强制“最大文件/最大可寻址 end”的口径（建议引入 `MaxEndExclusive` 并检查 `offset+length`）
-- 明确 `offset==0` 的规则：建议与既有 `Address64.Null==0` 对齐，禁止 `offset==0 && length>0`，并为 `FromPacked` 增加 `TryFromPacked/normalize` 的防御路径
+- 明确 `offset==0` 的规则：建议与既有 `<deleted-place-holder>.Null==0` 对齐，禁止 `offset==0 && length>0`，并为 `FromPacked` 增加 `TryFromPacked/normalize` 的防御路径
 
-3) 接口契约层面：`rbf-interface.md` 应将 `Address64` 全面升级为 `FramePtr`（术语与 API 签名），并补充 `TryReadAt(FramePtr)` 的越界/校验失败语义。
+3) 接口契约层面：`rbf-interface.md` 应将 <deleted-place-holder> 全面升级为 `FramePtr`（术语与 API 签名），并补充 `TryReadAt(FramePtr)` 的越界/校验失败语义。
 
 如果团队愿意，我可以在下一步把上述“口径与约束”的建议具体化成一组可直接写入规范的条款措辞（含条款 ID、MUST/SHOULD 级别）。
 ---
@@ -470,18 +470,18 @@ Seeker 已指出收益口径需要修正（我同意）。从规范一致性角�
 3. **修正收益描述**——从"两次 I/O → 一次"改为"消除 header 解析的间接性，支持 Lazy Load 自描述"
 
 **❓ 未定**：
-- `TryReadAt` 是否保留 `Address64` 重载作为 fallback？（可延后到实现阶段决定）
+- `TryReadAt` 是否保留 <deleted-place-holder> 重载作为 fallback？（可延后到实现阶段决定）
 
 **🔺 待修正（提案硬伤）**：
 1. **引入 `MaxEndExclusive` 约束**：定义 `MaxEndExclusive = 1UL << (OffsetBits + AlignmentShift)` = 4TB，并在 `Create/TryCreate` 强制 `offsetBytes + lengthBytes <= MaxEndExclusive`
-2. **禁止 `offset==0 && length>0`**：与 `Address64.Null==0` 对齐，在 `Create/TryCreate` 中拒绝此组合
+2. **禁止 `offset==0 && length>0`**：与 `<deleted-place-holder>.Null==0` 对齐，在 `Create/TryCreate` 中拒绝此组合
 3. **增加 `TryFromPacked`**：用于存储恢复/防御性读取场景的校验路径
 
 **📋 行动项**：
 | 行动 | Owner | 验收标准 |
 |:-----|:------|:---------|
 | 修正 FramePtr 提案文档 | 监护人/DocOps | 包含上述 3 条修正 |
-| 升级 rbf-interface.md | 监护人/DocOps | Address64 → FramePtr，含新条款 |
+| 升级 rbf-interface.md | 监护人/DocOps | <deleted-place-holder> → FramePtr，含新条款 |
 
 ---
 
@@ -516,7 +516,7 @@ Seeker 已指出收益口径需要修正（我同意）。从规范一致性角�
 - 纠结 GB 是 1024 还是 1000 进位，偏离了设计目标
 
 **2. 过度耦合**：
-- `FramePtr.Empty` 和 `Address64.Null` 是**两个独立的设计决策**
+- `FramePtr.Empty` 和 `<deleted-place-holder>.Null` 是**两个独立的设计决策**
 - "如何把偏移+长度打包" 是 FramePtr 数据结构的职责
 - "文件布局中 0 偏移是否可用" 是 RBF/文件格式层的职责
 - 这两个决策在不同维度，不应该在 FramePtr 层强行耦合

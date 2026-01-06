@@ -105,13 +105,13 @@ AI 参与设计审阅时，最容易出现一种系统性偏差：
 ---
 id: D-SIZEDPTR-01
 kind: decision
-title: Use SizedPtr to replace Address64
+title: Use SizedPtr to replace <deleted-place-holder>
 enables: [G-ONEPASS-READ]
 depends_on: [DEF-SIZEDPTR-LAYOUT]
 validated_by: [T-ROUNDTRIP, T-ONEPASS-READ]
 ---
 
-用 `SizedPtr(offset,length)` 代替 `Address64(ulong)`。
+用 `SizedPtr(offset,length)` 代替 `<deleted-place-holder>(ulong)`。
 目的：一次性读取 slice，减少 seek/read 次数；并把 Null/边界语义放进类型不变量。
 ```
 
@@ -150,10 +150,10 @@ validated_by: [T-ROUNDTRIP, T-ONEPASS-READ]
 - `G-ONEPASS-READ`：一次性读取 frame slice，减少多次访问
 
 2) `obstacle`
-- `O-ADDR64-TOO-THIN`：`Address64` 只有地址，无法表达 slice 长度，导致多次读取
+- `O-ADDR64-TOO-THIN`：<deleted-place-holder> 只有地址，无法表达 slice 长度，导致多次读取
 
 3) `decision`
-- `D-SIZEDPTR-01`：用 `SizedPtr` 替代 `Address64`
+- `D-SIZEDPTR-01`：用 `SizedPtr` 替代 <deleted-place-holder>
 
 4) `definition`
 - `DEF-SIZEDPTR-LAYOUT`：bit layout / null 语义 / 边界约束 / 序列化映射
@@ -172,7 +172,7 @@ validated_by: [T-ROUNDTRIP, T-ONEPASS-READ]
 - `D-SIZEDPTR-01 depends_on DEF-SIZEDPTR-LAYOUT`
 - `D-SIZEDPTR-01 validated_by T-ROUNDTRIP, T-BOUNDARY, T-ONEPASS-READ`
 
-在这张图里，“历史文档某行提过 Address64”顶多属于 `context`，不可能成为阻塞主链。
+在这张图里，“历史文档某行提过 <deleted-place-holder>”顶多属于 `context`，不可能成为阻塞主链。
 
 ---
 

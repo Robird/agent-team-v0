@@ -5,7 +5,7 @@
 **描述**: 
 `TryReadAt` 的签名是：
 ```csharp
-bool TryReadAt(Address64 address, out RbfFrame frame);
+bool TryReadAt(<deleted-place-holder> address, out RbfFrame frame);
 ```
 
 返回 `false` 时，调用者无法区分：

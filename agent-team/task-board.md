@@ -96,7 +96,7 @@
 | ID | 任务 | 责任 | Status |
 |----|------|------|--------|
 | C-1 | 全文 grep `HEAD`/`head` 大小写一致性 | DocOps | ⏳ 延迟 |
-| C-2 | `Address64`/`Ptr64` 分层贯彻 | DocOps | ⏳ 延迟 |
+| C-2 | <deleted-place-holder>/`Ptr64` 分层贯彻 | DocOps | ⏳ 延迟 |
 | C-3 | 统一 `CRC32C(u32 LE)` 表述 | DocOps | ⏳ 延迟 |
 
 ---

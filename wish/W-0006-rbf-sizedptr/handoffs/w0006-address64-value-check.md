@@ -1,21 +1,21 @@
-# Address64 存在价值快速调查
+# <deleted-place-holder> 存在价值快速调查
 
 > **调查员**: Investigator
 > **调查日期**: 2026-01-05
 > **任务来源**: Wish W-0006
-> **背景**: 监护人澄清 SizedPtr 完全替代 Address64，需验证 Address64 是否仍有不可替代的存在价值
+> **背景**: 监护人澄清 SizedPtr 完全替代 <deleted-place-holder>，需验证 <deleted-place-holder> 是否仍有不可替代的存在价值
 
 ---
 
-## 1. Address64 使用点清单
+## 1. <deleted-place-holder> 使用点清单
 
 ### 1.1 rbf-interface.md 中的使用点（接口层）
 
 | 位置 | 用途 | 语义 | 是否需要长度？ |
 |:-----|:-----|:-----|:--------------|
 | [#L82-L97](../../../atelia/docs/Rbf/rbf-interface.md#L82) | §2.3 类型定义 | 8 字节 LE 文件偏移量 | **定义本身** |
-| [#L90](../../../atelia/docs/Rbf/rbf-interface.md#L90) | `Address64.Null` 常量 | `Value=0` 表示无效地址 | N/A |
-| [#L106-L107](../../../atelia/docs/Rbf/rbf-interface.md#L106) | §2.4 Frame 术语说明 | 写入返回 Address64，读取通过 Address64 定位 | ✅ 需要（读取时需知长度） |
+| [#L90](../../../atelia/docs/Rbf/rbf-interface.md#L90) | `<deleted-place-holder>.Null` 常量 | `Value=0` 表示无效地址 | N/A |
+| [#L106-L107](../../../atelia/docs/Rbf/rbf-interface.md#L106) | §2.4 Frame 术语说明 | 写入返回 <deleted-place-holder>，读取通过 <deleted-place-holder> 定位 | ✅ 需要（读取时需知长度） |
 | [#L134](../../../atelia/docs/Rbf/rbf-interface.md#L134) | `IRbfFramer.Append()` 返回值 | 新写入帧的起始地址 | ✅ 需要（否则无法一次读取） |
 | [#L187](../../../atelia/docs/Rbf/rbf-interface.md#L187) | `RbfFrameBuilder.Commit()` 返回值 | 新写入帧的起始地址 | ✅ 需要（同上） |
 | [#L262](../../../atelia/docs/Rbf/rbf-interface.md#L262) | `IRbfScanner.TryReadAt()` 参数 | 要读取的帧起始地址 | ✅ 需要（定位后需知长度） |
@@ -50,10 +50,10 @@
 
 | 使用场景 | 当前类型 | 实际需求 | SizedPtr 可替代？ |
 |:---------|:---------|:---------|:-----------------|
-| `Append()` 返回值 | Address64 | 返回 offset+length 能一次读取 | ✅ 完全可替代 |
-| `Commit()` 返回值 | Address64 | 同上 | ✅ 完全可替代 |
-| `TryReadAt()` 参数 | Address64 | 传入 SizedPtr 可直接定位+校验长度 | ✅ 完全可替代 |
-| `RbfFrame.Address` | Address64 | 配合 Payload 表达范围 | ✅ SizedPtr 更直接 |
+| `Append()` 返回值 | <deleted-place-holder> | 返回 offset+length 能一次读取 | ✅ 完全可替代 |
+| `Commit()` 返回值 | <deleted-place-holder> | 同上 | ✅ 完全可替代 |
+| `TryReadAt()` 参数 | <deleted-place-holder> | 传入 SizedPtr 可直接定位+校验长度 | ✅ 完全可替代 |
+| `RbfFrame.Address` | <deleted-place-holder> | 配合 Payload 表达范围 | ✅ SizedPtr 更直接 |
 | `DataTail` | 地址 | 表示 EOF 位置 | ✅ 可用 `SizedPtr(offset, 0)` |
 
 **唯一候选例外**：`DataTail`（文件截断点）
@@ -62,13 +62,13 @@
 - **SizedPtr 替代方案**：`SizedPtr(offset, 0)` 或 `SizedPtr(0, offset)` 表示空区间
 - **分析**：SizedPtr 的 `OffsetBytes` 可以完全表达相同语义。`Length=0` 的 SizedPtr 在数学上表示"空区间"，语义上可解读为"位置标记"
 
-### 2.2 关键洞察：Address64 的所有用途都是为了"定位 Frame"
+### 2.2 关键洞察：<deleted-place-holder> 的所有用途都是为了"定位 Frame"
 
 监护人的分析揭示了核心问题：
 
-> RBF append 数据返回的 Address64 只包含偏移，导致后续随机读取时需要：先读开头拿长度，再次读取全长，验证。如果用 RandomAccess 类进行 IO，需要至少 2 次独立的 IO。
+> RBF append 数据返回的 <deleted-place-holder> 只包含偏移，导致后续随机读取时需要：先读开头拿长度，再次读取全长，验证。如果用 RandomAccess 类进行 IO，需要至少 2 次独立的 IO。
 
-**结论**：Address64 的所有接口层用途（`Append` 返回、`TryReadAt` 参数、`RbfFrame.Address`）都指向同一个需求——**定位 Frame 并读取其内容**。SizedPtr 通过携带长度信息，彻底解决了这个问题。
+**结论**：<deleted-place-holder> 的所有接口层用途（`Append` 返回、`TryReadAt` 参数、`RbfFrame.Address`）都指向同一个需求——**定位 Frame 并读取其内容**。SizedPtr 通过携带长度信息，彻底解决了这个问题。
 
 ### 2.3 "纯位置"需求的真实情况
 
@@ -77,19 +77,19 @@
 **回答**：在 RBF 的设计中——**没有**。
 
 理由：
-1. **写入返回**：返回 Address64 后，调用方持久化这个地址，将来要读取。读取时需要知道长度才能一次 IO。返回 SizedPtr 是严格更优的。
-2. **读取定位**：传入 Address64 后，Scanner 需要先读 HeadLen 才知道帧边界。传入 SizedPtr 可以直接校验。
-3. **DataTail**：虽然语义上是"截断点"，但 SizedPtr 的 `OffsetBytes` 完全等价于 Address64 的 `Value`。
+1. **写入返回**：返回 <deleted-place-holder> 后，调用方持久化这个地址，将来要读取。读取时需要知道长度才能一次 IO。返回 SizedPtr 是严格更优的。
+2. **读取定位**：传入 <deleted-place-holder> 后，Scanner 需要先读 HeadLen 才知道帧边界。传入 SizedPtr 可以直接校验。
+3. **DataTail**：虽然语义上是"截断点"，但 SizedPtr 的 `OffsetBytes` 完全等价于 <deleted-place-holder> 的 `Value`。
 
 ---
 
 ## 3. Null 语义迁移分析
 
-### 3.1 当前 Address64.Null 的使用方式
+### 3.1 当前 <deleted-place-holder>.Null 的使用方式
 
 ```csharp
-public readonly record struct Address64(ulong Value) {
-    public static readonly Address64 Null = new(0);
+public readonly record struct <deleted-place-holder>(ulong Value) {
+    public static readonly <deleted-place-holder> Null = new(0);
     public bool IsNull => Value == 0;
 }
 ```
@@ -100,14 +100,14 @@ public readonly record struct Address64(ulong Value) {
 
 监护人已明确建议：
 
-> 把 Address64 的 Null 相关成员函数改为 RBF 层的静态函数/常量。
+> 把 <deleted-place-holder> 的 Null 相关成员函数改为 RBF 层的静态函数/常量。
 > 在 RBF 层定义：`public static SizedPtr NullPtr => default;`
 
 **具体迁移**：
 
 | 原代码 | 迁移后 |
 |:-------|:------|
-| `Address64.Null` | `RbfConstants.NullPtr` 或 `SizedPtr.Empty` |
+| `<deleted-place-holder>.Null` | `RbfConstants.NullPtr` 或 `SizedPtr.Empty` |
 | `address.IsNull` | `ptr == default` 或 `ptr.IsEmpty()` |
 
 ### 3.3 迁移障碍评估
@@ -123,7 +123,7 @@ public readonly record struct Address64(ulong Value) {
 
 ### 4.1 核心判断
 
-**Address64 可以完全移除**。没有发现不可替代的存在价值。
+**<deleted-place-holder> 可以完全移除**。没有发现不可替代的存在价值。
 
 ### 4.2 证据总结
 
@@ -137,24 +137,24 @@ public readonly record struct Address64(ulong Value) {
 ### 4.3 迁移策略
 
 **Phase 1: 文档修订（本 Wish 范围）**
-1. 移除 §2.3 Address64 定义
+1. 移除 §2.3 <deleted-place-holder> 定义
 2. 移除条款 `[F-ADDRESS64-DEFINITION]`, `[F-ADDRESS64-ALIGNMENT]`, `[F-ADDRESS64-NULL]`
 3. 引入 SizedPtr 定义（引用 Atelia.Data）
 4. 新增 RBF 层 Null 约定条款（如 `[F-RBF-NULLPTR]`）
-5. 更新所有接口签名：`Address64` → `SizedPtr`
-6. 更新 rbf-format.md §7：`Address64 / Ptr64` → `SizedPtr（Wire Format）`
+5. 更新所有接口签名：<deleted-place-holder> → `SizedPtr`
+6. 更新 rbf-format.md §7：`<deleted-place-holder> / Ptr64` → `SizedPtr（Wire Format）`
 
 **Phase 2: 代码实现（未来 Wish）**
-- 删除 `Address64.cs`（已归档在 archive/）
+- 删除 `<deleted-place-holder>.cs`（已归档在 archive/）
 - 更新 RBF 实现使用 SizedPtr
 
 ### 4.4 风险评估
 
 | 风险 | 等级 | 缓解措施 |
 |:-----|:-----|:---------|
-| 遗漏 Address64 使用点 | 低 | 本调查已穷举 RBF 文档所有出现 |
-| 术语混淆（旧文档引用） | 中 | 在变更日志中记录"Address64 → SizedPtr" |
-| StateJournal 文档引用 Address64 | 中 | 另一个 Wish 负责 StateJournal 更新 |
+| 遗漏 <deleted-place-holder> 使用点 | 低 | 本调查已穷举 RBF 文档所有出现 |
+| 术语混淆（旧文档引用） | 中 | 在变更日志中记录"<deleted-place-holder> → SizedPtr" |
+| StateJournal 文档引用 <deleted-place-holder> | 中 | 另一个 Wish 负责 StateJournal 更新 |
 
 ---
 
@@ -183,4 +183,4 @@ public readonly record struct Address64(ulong Value) {
 
 ---
 
-> **调查完成**。结论：Address64 已无存在价值，建议完全移除并迁移至 SizedPtr。
+> **调查完成**。结论：<deleted-place-holder> 已无存在价值，建议完全移除并迁移至 SizedPtr。

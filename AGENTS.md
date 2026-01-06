@@ -15,7 +15,7 @@
 - 设计并实现DocUI中的[Micro-Wizard](DocUI/docs/key-notes/micro-wizard.md)
   - 实现[StateJournal](atelia/docs/StateJournal/mvp-design-v2.md)
     - 实现[RBF(Reversible-Binary-Framing)](atelia/docs/Rbf/rbf-interface.md)
-      - 用[SizedPtr](atelia/docs/Data/Draft/SizedPtr.md)替代RBF接口文档中的`Address64`类型
+      - 用[SizedPtr](atelia/docs/Data/Draft/SizedPtr.md)替代RBF接口文档中的<deleted-place-holder>类型
         - 确定`Offset`和`Length`的bit分配方案
         - 在[Atelia.Data](atelia/src/Data)中实现`SizedPtr`
     - 分解巨大的设计文件`atelia/docs/StateJournal/mvp-design-v2.md`为一组更小的可以组合使用的文档，因为单体文件太大导致`Claude Opus 4.5`已不能正确按照设计文档编写代码

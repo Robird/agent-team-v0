@@ -173,7 +173,7 @@
 | 原版术语 | 新版术语 | 变更合理性 |
 |----------|----------|------------|
 | Record | Frame | ✅ 合理——Layer 0 只知道 Frame，不知道 Record 语义 |
-| Ptr64 | Ptr64 + Address64 | ✅ 合理——Address64 是类型化封装，语义更清晰 |
+| Ptr64 | Ptr64 + <deleted-place-holder> | ✅ 合理——<deleted-place-holder> 是类型化封装，语义更清晰 |
 
 ### 3.2 数值一致性
 

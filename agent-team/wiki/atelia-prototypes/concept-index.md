@@ -25,7 +25,6 @@ Atelia 是面向 LLM Agent 的自研框架，提供自主持续行动能力的�
 | **RBF** | `docs/Rbf/rbf-interface.md` | — | Reversible Binary Framing，二进制信封层 |
 | **Frame** | `docs/Rbf/rbf-format.md` | — | RBF 基本 I/O 单元 |
 | **FrameTag** | `docs/Rbf/rbf-format.md` | — | 4 字节帧类型标识符 |
-| **Address64** | `docs/Rbf/rbf-interface.md` | — | 8 字节文件偏移量 |
 | **SizedPtr** | `docs/Data/Draft/SizedPtr.md` | — | Packed Fat Pointer，Offset+Length 压缩存储 |
 | **IRbfFramer** | `docs/Rbf/rbf-interface.md` | — | RBF 帧写入器接口 |
 | **IRbfScanner** | `docs/Rbf/rbf-interface.md` | — | RBF 帧扫描器接口 |

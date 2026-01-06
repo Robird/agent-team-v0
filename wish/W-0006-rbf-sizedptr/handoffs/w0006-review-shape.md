@@ -50,7 +50,7 @@
 
 ## 优点记录
 
-- **与 Resolve §6-7 的最终决策一致**：Shape 从开头就采用"SizedPtr 完全替代 Address64"的叙事，与 Resolve D4、Rule §2 的"完全移除 Address64"一致。
+- **与 Resolve §6-7 的最终决策一致**：Shape 从开头就采用"SizedPtr 完全替代 <deleted-place-holder>"的叙事，与 Resolve D4、Rule §2 的"完全移除 <deleted-place-holder>"一致。
 - **监护人"写路径/读路径/定位与持久化"要点覆盖完整**：§3 明确记录了三用途，且与 `rbf-interface.md` 当前签名（Append/Commit/TryReadAt/Frame.Ptr）相匹配。
 - **与 Rule.md 的 NullPtr 约定一致**：Shape 使用 `RbfInterface.NullPtr = default(SizedPtr)` 与 `ptr == default` 的判等方式，与 Rule 的条款 `[R-RBF-NULLPTR]` 方向一致。
 

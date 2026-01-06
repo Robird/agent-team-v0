@@ -311,7 +311,7 @@ public interface IReservableBufferWriter : IBufferWriter<byte> {
 interface IRbfFramer  // 注意命名：Framer 而非 Writer
 {
     // 简单场景：payload 已就绪
-    Address64 WriteFrame(ReadOnlySpan<byte> payload, byte frameTag);
+    <deleted-place-holder> WriteFrame(ReadOnlySpan<byte> payload, byte frameTag);
     
     // 高级场景：需要预留/回填
     RbfFrameBuilder BeginFrame(byte frameTag);
@@ -322,7 +322,7 @@ interface IRbfFramer  // 注意命名：Framer 而非 Writer
 ref struct RbfFrameBuilder
 {
     public IBufferWriter<byte> Payload { get; }  // 对外暴露标准接口
-    public Address64 Complete();  // 回填 header/CRC，返回 frame 起始地址
+    public <deleted-place-holder> Complete();  // 回填 header/CRC，返回 frame 起始地址
     public void Abort();  // 放弃当前 frame（可选）
 }
 ```
@@ -330,7 +330,7 @@ ref struct RbfFrameBuilder
 **关键变化**：
 1. 接口命名为 `IRbfFramer`，强调"分帧器"而非"写入器"
 2. 参数使用 `frameTag` 而非 `RecordKind`——Layer 0 不应使用 Layer 1 的术语
-3. 返回 `Address64` 而非 `Ptr64`——概念层术语（虽然编码相同）
+3. 返回 <deleted-place-holder> 而非 `Ptr64`——概念层术语（虽然编码相同）
 
 ### Q2: 读取侧用哪个方案？
 
@@ -339,7 +339,7 @@ ref struct RbfFrameBuilder
 ```csharp
 interface IRbfScanner
 {
-    RbfFrame? ReadFrameAt(Address64 address);
+    RbfFrame? ReadFrameAt(<deleted-place-holder> address);
     IEnumerable<RbfFrame> ScanFromTail();  // reverse scan
 }
 
@@ -347,7 +347,7 @@ ref struct RbfFrame
 {
     public byte FrameTag { get; }
     public ReadOnlySpan<byte> Payload { get; }
-    public Address64 Address { get; }
+    public <deleted-place-holder> Address { get; }
     
     // 辅助方法：需要持久化时使用
     public byte[] ToArray();  // 或 CopyTo(Span<byte>)
@@ -409,7 +409,7 @@ ref struct RbfFrameBuilder
 |------|------|----------|
 | Frame | Layer 0 | `rbf-format.md` |
 | FrameTag | Layer 0 | `rbf-format.md` |
-| Address64 | Layer 0 | `rbf-format.md` |
+| <deleted-place-holder> | Layer 0 | `rbf-format.md` |
 | Magic / HeadLen / TailLen / CRC32C | Layer 0 | `rbf-format.md` |
 | RecordKind / ObjectKind / ValueType | Layer 1 | `mvp-design-v2.md` |
 | ObjectVersionRecord / MetaCommitRecord | Layer 1 | `mvp-design-v2.md` |
@@ -432,28 +432,28 @@ ref struct RbfFrameBuilder
 |----------|----------------|----------|
 | **压缩** | W1 需要调用方处理压缩后再传 | W4 的 Builder 模式可内部处理 |
 | **加密** | 同上 | 同上 |
-| **多文件** | Address64 需要区分文件 | 预留高位作为文件 ID |
+| **多文件** | <deleted-place-holder> 需要区分文件 | 预留高位作为文件 ID |
 | **async I/O** | R1 的 `ref struct` 无法跨 await | 提供 R2 作为 async 替代 |
 
 **建议**：
 
-> **[F-RBF-ADDRESS-RESERVED-BITS]**：Address64 的高 8 位 SHOULD 保留供未来扩展（如多文件索引）。MVP 实现 MUST 写入 0，读取时 SHOULD 忽略。
+> **[F-RBF-ADDRESS-RESERVED-BITS]**：<deleted-place-holder> 的高 8 位 SHOULD 保留供未来扩展（如多文件索引）。MVP 实现 MUST 写入 0，读取时 SHOULD 忽略。
 
 ### 3.3 术语冲突风险
 
 当前 MVP 设计文档中存在术语层级混用：
 
 - `Ptr64` 被定义为"通用 file offset 编码"，但又说"4B 对齐"——这是 RBF 的约束还是通用约束？
-- `Address64` 被定义为"Ptr64 的语义子类型"——但 Layer 0 应该只知道 Address64，不应引用 Layer 1 的 Ptr64？
+- <deleted-place-holder> 被定义为"Ptr64 的语义子类型"——但 Layer 0 应该只知道 <deleted-place-holder>，不应引用 Layer 1 的 Ptr64？
 
 **建议**：
 
 ```
 Layer 0 术语:
-  - Address64: 8 字节 LE file offset，MUST 4B 对齐，0=null
+  - <deleted-place-holder>: 8 字节 LE file offset，MUST 4B 对齐，0=null
 
 Layer 1 术语:
-  - Ptr64: 同 Address64（别名，为了与 DiffPayload 的 Val_Ptr64 对齐）
+  - Ptr64: 同 <deleted-place-holder>（别名，为了与 DiffPayload 的 Val_Ptr64 对齐）
 ```
 
 ---
@@ -481,7 +481,7 @@ Layer 1 术语:
 
 ### 关键行动项
 
-1. **创建 `rbf-format.md`**：Layer 0 的独立规格文档，定义 Frame 结构、FrameTag 枚举空间、Address64 约束
+1. **创建 `rbf-format.md`**：Layer 0 的独立规格文档，定义 Frame 结构、FrameTag 枚举空间、<deleted-place-holder> 约束
 2. **术语隔离**：将 `RecordKind` 从 RBF 接口移除，改用 `byte frameTag`
 3. **接口命名规范化**：`IRbfFramer` + `RbfFrameBuilder` + `IRbfScanner` + `RbfFrame`
 4. **条款编号预留**：为 Layer 0 预留 `[E-xxx]` 前缀的条款编号空间
@@ -587,7 +587,7 @@ public void SaveObject(IRbfFramer framer, MyObject obj)
     obj.SerializeTo(frame.Writer);
     
     // 提交！返回物理地址
-    Address64 addr = frame.Commit();
+    <deleted-place-holder> addr = frame.Commit();
 }
 
 // 2. 写入 (Exception Path - 自动防护)
@@ -608,7 +608,7 @@ public void SaveWithBug(IRbfFramer framer)
 }
 
 // 3. 读取
-public void ReadLog(IRbfScanner scanner, Address64 addr)
+public void ReadLog(IRbfScanner scanner, <deleted-place-holder> addr)
 {
     // 限制生命周期，防止内存泄漏
     RbfFrame frame = scanner.ReadFrameAt(addr);
@@ -658,16 +658,16 @@ Gemini 提到的 Transactional Builder（自动 Abort）在工程上非常关键
 
 因此：建议把当前讨论中的 `RecordKind` 明确降维为 **`FrameTag : byte`**（Layer 0 术语），并规定至少一个保留值（例如 `0x00 = Padding`）。Layer 1 再将其映射为 `DataRecordKind/MetaRecordKind`，与 v2 文档中的 **[F-RECORDKIND-DOMAIN-ISOLATION]** 精神一致。
 
-### 1.2 指针类型：避免 `Ptr64`/`Address64` 在接口面混用
+### 1.2 指针类型：避免 `Ptr64`/<deleted-place-holder> 在接口面混用
 
-StateJournal v2 对 `Ptr64` 的定义是“通用 file offset 编码”（不一定指向 record 起点），而 `Address64` 才是“指向 record 起点”的语义子类型。
+StateJournal v2 对 `Ptr64` 的定义是“通用 file offset 编码”（不一定指向 record 起点），而 <deleted-place-holder> 才是“指向 record 起点”的语义子类型。
 
 在 Layer 0 API 上建议：
 
-- **写入返回值**：返回“record 起点”的 **`Address64`**（或至少命名为 `RecordAddress`），避免上层误把 `DataTail`（EOF 偏移）当成可解引用地址。
-- **随机读入参**：只接受 `Address64`（而不是泛化 `Ptr64`），使类型系统参与“只能读 record 起点”的约束。
+- **写入返回值**：返回“record 起点”的 **<deleted-place-holder>**（或至少命名为 `RecordAddress`），避免上层误把 `DataTail`（EOF 偏移）当成可解引用地址。
+- **随机读入参**：只接受 <deleted-place-holder>（而不是泛化 `Ptr64`），使类型系统参与“只能读 record 起点”的约束。
 
-如果暂时不引入新类型，也建议在接口命名上强制区分：`ReadAtRecord(Address64 recordStart)` vs `TruncateToDataTail(Ptr64 eof)`，避免“同是 ulong”导致实现分叉。
+如果暂时不引入新类型，也建议在接口命名上强制区分：`ReadAtRecord(<deleted-place-holder> recordStart)` vs `TruncateToDataTail(Ptr64 eof)`，避免“同是 ulong”导致实现分叉。
 
 ### 1.3 Builder 的状态机必须写进契约（否则必然实现分叉）
 
@@ -769,7 +769,7 @@ StateJournal v2 对 `Ptr64` 的定义是“通用 file offset 编码”（不一
 
 ### Q5 术语表如何共享？
 
-选“**Layer 0 独立 glossary**（Frame/Magic/HeadLen/TailLen/CRC32C/FrameTag/Address64）+ Layer 1 引用并做映射”。
+选“**Layer 0 独立 glossary**（Frame/Magic/HeadLen/TailLen/CRC32C/FrameTag/<deleted-place-holder>）+ Layer 1 引用并做映射”。
 
 这是把“二进制 framing”变成可复用基础设施的必要条件，也能避免在接口签名上出现 Layer 1 的业务术语。
 
@@ -801,13 +801,13 @@ using System.Buffers;
 // Layer 1 再把 FrameTag 映射到 DataRecordKind/MetaRecordKind。
 public readonly record struct FrameTag(byte Value);
 
-public readonly record struct Address64(ulong Value);
+public readonly record struct <deleted-place-holder>(ulong Value);
 
 public interface IRbfFramer
 {
      // 约束：单线程、非并发；同一时刻最多 1 个 open builder。
 
-     Address64 Append(FrameTag tag, ReadOnlySpan<byte> payload);
+     <deleted-place-holder> Append(FrameTag tag, ReadOnlySpan<byte> payload);
 
      RbfFrameBuilder BeginFrame(FrameTag tag);
 
@@ -822,7 +822,7 @@ public ref struct RbfFrameBuilder
      // 可选：仅供需要 payload 内回填的 codec（如 PairCount）使用。
      public Atelia.Data.IReservableBufferWriter? ReservablePayload { get; }
 
-     public Address64 Commit();
+     public <deleted-place-holder> Commit();
 
      // Auto-Abort：未 Commit 就 Dispose 时，必须以“Padding 帧”收尾，
      // 保证 writer 仍可继续写后续 record，且 framing 不变量保持。
@@ -832,7 +832,7 @@ public ref struct RbfFrameBuilder
 public interface IRbfScanner
 {
      // 返回 ref-struct view（生命周期护栏）；需要持久化时调用方显式 copy。
-     bool TryReadAt(Address64 recordStart, out RbfFrame frame);
+     bool TryReadAt(<deleted-place-holder> recordStart, out RbfFrame frame);
 
      // reverse scan / resync：必须遵守 [R-RESYNC-DISTRUST-TAILLEN]。
      // 返回值：从尾到头枚举（不要求分配集合）。
@@ -843,7 +843,7 @@ public readonly ref struct RbfFrame
 {
      public FrameTag Tag { get; }
      public ReadOnlySpan<byte> Payload { get; }
-     public Address64 RecordStart { get; }
+     public <deleted-place-holder> RecordStart { get; }
 }
 ```
 
@@ -851,7 +851,7 @@ public readonly ref struct RbfFrame
 
 - `Append/Commit` 的输出 bytes 必须满足 v2 framing 现有条款（[F-MAGIC-RECORD-SEPARATOR]、[F-RECORD-WRITE-SEQUENCE] 等）。
 - `Dispose` 的 Auto-Abort 必须落到“Padding 帧（保留 FrameTag）”，否则无法在黑盒测试中断言“异常路径仍保持 framing 不变量”。
-- `TryReadAt` 只接受 `Address64`，让类型系统参与边界约束；避免 `Ptr64` 泛化导致误用。
+- `TryReadAt` 只接受 <deleted-place-holder>，让类型系统参与边界约束；避免 `Ptr64` 泛化导致误用。
 
 ---
 
@@ -883,7 +883,7 @@ public readonly ref struct RbfFrame
 Layer 0 术语          Layer 1 术语
 ─────────────────     ─────────────────
 FrameTag (byte)   ←→  RecordKind (enum)
-Address64         ←→  Ptr64 (alias)
+<deleted-place-holder>         ←→  Ptr64 (alias)
 Frame             ←→  Record
 IRbfFramer       ←→  StateJournal
 ```
@@ -912,11 +912,11 @@ try {
 public readonly record struct FrameTag(byte Value) {
     public static readonly FrameTag Padding = new(0x00);
 }
-public readonly record struct Address64(ulong Value);
+public readonly record struct <deleted-place-holder>(ulong Value);
 
 // 写入接口
 public interface IRbfFramer {
-    Address64 Append(FrameTag tag, ReadOnlySpan<byte> payload);
+    <deleted-place-holder> Append(FrameTag tag, ReadOnlySpan<byte> payload);
     RbfFrameBuilder BeginFrame(FrameTag tag);
     void Flush();
 }
@@ -924,20 +924,20 @@ public interface IRbfFramer {
 public ref struct RbfFrameBuilder : IDisposable {
     public IBufferWriter<byte> Payload { get; }
     public IReservableBufferWriter? ReservablePayload { get; }  // 可选
-    public Address64 Commit();
+    public <deleted-place-holder> Commit();
     public void Dispose();  // Auto-Abort: 未 Commit 则写 Padding
 }
 
 // 读取接口
 public interface IRbfScanner {
-    bool TryReadAt(Address64 addr, out RbfFrame frame);
+    bool TryReadAt(<deleted-place-holder> addr, out RbfFrame frame);
     RbfReverseEnumerable ScanReverse();
 }
 
 public readonly ref struct RbfFrame {
     public FrameTag Tag { get; }
     public ReadOnlySpan<byte> Payload { get; }
-    public Address64 Address { get; }
+    public <deleted-place-holder> Address { get; }
 }
 ```
 
@@ -945,7 +945,7 @@ public readonly ref struct RbfFrame {
 
 | # | 行动 | 产出 |
 |---|------|------|
-| 1 | 创建 `rbf-format.md` | Layer 0 独立规格（Frame 结构、FrameTag 空间、Address64） |
+| 1 | 创建 `rbf-format.md` | Layer 0 独立规格（Frame 结构、FrameTag 空间、<deleted-place-holder>） |
 | 2 | 从 mvp-design-v2.md 提取 framing 条款 | `[E-xxx]` 前缀的条款编号空间 |
 | 3 | 创建 `rbf-test-vectors.md` | Layer 0 独立测试向量 |
 | 4 | 实现 `IRbfFramer` + `RbfFrameBuilder` | 基于现有 `IReservableBufferWriter` |

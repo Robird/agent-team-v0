@@ -92,7 +92,7 @@ ObjectLoaderDelegate loader = _ =>
 
 ```csharp
 public interface IRbfScanner {
-    bool TryReadAt(Address64 address, out RbfFrame frame);
+    bool TryReadAt(<deleted-place-holder> address, out RbfFrame frame);
     IEnumerable<RbfFrame> ScanReverse();
     byte[] ReadPayload(in RbfFrame frame);
 }

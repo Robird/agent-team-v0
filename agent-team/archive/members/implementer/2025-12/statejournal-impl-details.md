@@ -132,11 +132,11 @@
 - 极简设计 `PrevVersionPtr(u64 LE) + DiffPayload(剩余全部)`
 
 ### DataRecordWriter/MetaRecordWriter
-- 封装 `IRbfFramer.BeginFrame` + payload 写入，返回 `Address64`
+- 封装 `IRbfFramer.BeginFrame` + payload 写入，返回 <deleted-place-holder>
 
 ### DataRecordReader/MetaRecordReader 对称设计
 - `ScanReverse()` 过滤+解析
-- `TryReadAt(Address64)` 随机读取
+- `TryReadAt(<deleted-place-holder>)` 随机读取
 
 ### 错误类型体系
 - 基类 `*RecordReaderError` 继承 `StateJournalError`

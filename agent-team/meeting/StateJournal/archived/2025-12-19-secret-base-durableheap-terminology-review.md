@@ -360,7 +360,7 @@ EpochRecord（逻辑） ──实现为──→ MetaCommitRecord（meta file �
 1. **`Resolve` → `Load`/`Get`**：同意方向，建议进一步拆分："映射解析"和"对象加载"用两个动词
 2. **`EpochMap` 误导**：同意，建议 `ObjectVersionMap` 或 `ObjectVersionIndex`
 3. **`ChangeSet` 隐式**：同意，建议用 **Write-Tracking** 描述机制
-4. **隐藏 `Ptr64`**：同意，用 `Address64` / `FileOffset64` 代替
+4. **隐藏 `Ptr64`**：同意，用 <deleted-place-holder> / `FileOffset64` 代替
 5. **`Snapshot` → `BaseVersion`/`Checkpoint`**：同意，倾向 **`CheckpointVersion`** 或 **`FullStateVersion`**
 
 ---
@@ -445,8 +445,8 @@ EpochRecord（逻辑） ──实现为──→ MetaCommitRecord（meta file �
 | Canonical 术语 | 定义 | Alias / Deprecated | Implementation Mapping |
 |---|---|---|---|
 | **ObjectId** | 对象的稳定身份 | — | `uint64` / `varuint` |
-| **Address64** | 指向 record 起始位置的 64-bit 偏移 | Deprecated: Ptr64（概念层） | 编码名 `Ptr64` |
-| **ObjectVersionPtr** | 指向对象版本记录的 Address64 | — | `Ptr64` 编码值 |
+| **<deleted-place-holder>** | 指向 record 起始位置的 64-bit 偏移 | Deprecated: Ptr64（概念层） | 编码名 `Ptr64` |
+| **ObjectVersionPtr** | 指向对象版本记录的 <deleted-place-holder> | — | `Ptr64` 编码值 |
 | **DataLogicalEnd** | data 文件最后已提交有效字节的末尾偏移 | Alias: DataTail | meta payload 字段 |
 
 ##### 3.4 提交与 HEAD
@@ -470,7 +470,7 @@ EpochRecord（逻辑） ──实现为──→ MetaCommitRecord（meta file �
 1. **概念术语**：统一 Title Case，全文一致
 2. **实现标识符**：仅在 Implementation Mapping 出现，用代码格式
 3. **缩写大写**：`HEAD`、`CRC32C`、`RBF` 全文同形
-4. **编码名 vs 语义名**：`Ptr64` 只作编码格式名；概念层用 `Address64`
+4. **编码名 vs 语义名**：`Ptr64` 只作编码格式名；概念层用 <deleted-place-holder>
 
 ---
 
@@ -489,7 +489,7 @@ EpochRecord（逻辑） ──实现为──→ MetaCommitRecord（meta file �
    - ✅ `Resolve` 缩小为内部"解析版本指针"语义
 
 3. **Ptr64 层次澄清**：
-   - ✅ 概念层用 `Address64`
+   - ✅ 概念层用 <deleted-place-holder>
    - ✅ `Ptr64` 仅作编码格式名
 
 4. **snapshot 歧义解决**：
@@ -626,8 +626,8 @@ EpochRecord（逻辑） ──实现为──→ MetaCommitRecord（meta file �
 | 术语 | 定义 | 别名/弃用 | 实现映射 |
 |------|------|----------|---------|
 | **ObjectId** | 对象的稳定身份 | — | `uint64` / `varuint` |
-| **Address64** | 指向 record 起始位置的 64-bit 偏移 | Deprecated: Ptr64（概念层） | 编码名 `Ptr64` |
-| **ObjectVersionPtr** | 指向对象版本记录的 Address64 | — | `Ptr64` 编码值 |
+| **<deleted-place-holder>** | 指向 record 起始位置的 64-bit 偏移 | Deprecated: Ptr64（概念层） | 编码名 `Ptr64` |
+| **ObjectVersionPtr** | 指向对象版本记录的 <deleted-place-holder> | — | `Ptr64` 编码值 |
 
 #### 提交与 HEAD
 
@@ -656,7 +656,7 @@ EpochRecord（逻辑） ──实现为──→ MetaCommitRecord（meta file �
 1. **概念术语**：统一 Title Case，全文一致
 2. **实现标识符**：仅在 Implementation Mapping 出现，用代码格式
 3. **缩写大写**：`HEAD`、`CRC32C` 全文同形
-4. **编码名 vs 语义名**：`Ptr64` 只作编码格式名；概念层用 `Address64`
+4. **编码名 vs 语义名**：`Ptr64` 只作编码格式名；概念层用 <deleted-place-holder>
 
 ---
 
@@ -697,7 +697,7 @@ EpochRecord（逻辑） ──实现为──→ MetaCommitRecord（meta file �
 2. **状态术语统一**：`Baseline` → `Committed State`，`Current State` → `Working State`
 3. **版本索引**：`EpochMap` → `VersionIndex`（15+ 处）
 4. **快照术语**：`snapshot` → `Checkpoint Version`
-5. **指针术语**：`Ptr64`（概念层）→ `Address64`
+5. **指针术语**：`Ptr64`（概念层）→ <deleted-place-holder>
 6. **加载 API**：`Resolve` → `LoadObject`
 7. **差分术语**：`On-Disk Diff` / `state diff` → `DiffPayload`
 8. **提交相关**：`EpochRecord` → `Commit Record`，`head` → `HEAD`

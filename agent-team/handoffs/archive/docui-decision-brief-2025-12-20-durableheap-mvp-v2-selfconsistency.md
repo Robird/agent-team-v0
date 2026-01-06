@@ -20,7 +20,7 @@ DurableHeap MVP v2 设计文档 (`DurableHeap/docs/mvp-design-v2.md`) 是一份�
 | # | 问题 | 严重度 | 发现者 | 建议方案 |
 |---|------|--------|--------|----------|
 | 1 | `[S-05]` 编号跳号未标 Deprecated | P0 | GPT | 显式标注 `[S-05] Deprecated` |
-| 2 | Address64 术语表重复定义 | P0 | GPT | 合并为单条定义 |
+| 2 | <deleted-place-holder> 术语表重复定义 | P0 | GPT | 合并为单条定义 |
 | 3 | ObjectId 保留区定义分散 | P0 | Claude+GPT | Glossary 新增 Well-Known ObjectId 条目 |
 | 4 | `DurableDict<...>` 泛型写法混用 | P1 | GPT+Claude | 禁用泛型写法，统一描述 |
 | 5 | Shallow Materialization 概念隐性 | P1 | Gemini+GPT | 入 Glossary + cross-ref |
@@ -36,7 +36,7 @@ DurableHeap MVP v2 设计文档 (`DurableHeap/docs/mvp-design-v2.md`) 是一份�
 
 ### 立即执行（P0）
 - [x] 在条款表中显式标注 `[S-05] Deprecated`
-- [x] 合并术语表中的两条 Address64 定义
+- [x] 合并术语表中的两条 <deleted-place-holder> 定义
 - [x] 术语表新增 **Well-Known ObjectId** 条目，集中定义 `0=VersionIndex`、`0..15` 保留区、`NextObjectId=16`
 
 ### 建议执行（P1）

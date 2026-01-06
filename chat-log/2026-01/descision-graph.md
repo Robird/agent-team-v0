@@ -199,7 +199,7 @@ Read [](file:///repos/focus/atelia/docs/Data/Draft)
 
 Searched for files matching `**/atelia/src/Data/**`, no matches
 
-Searched for regex `Address64|rbf-interface|SizedPtr` (`**/atelia/**`), no results
+Searched for regex `<deleted-place-holder>|rbf-interface|SizedPtr` (`**/atelia/**`), no results
 
 Searched for files matching `**/rbf-interface.md`, no matches
 
@@ -209,9 +209,9 @@ Read [](file:///repos/focus/atelia/src)
 
 Read [](file:///repos/focus/atelia/src/Data)
 
-Searched for regex `SizedPtr|Address64|Rbf|rbf-interface` (`**/atelia/**`), 200 results
+Searched for regex `SizedPtr|<deleted-place-holder>|Rbf|rbf-interface` (`**/atelia/**`), 200 results
 
-Searched for regex `rbf-interface\.md|Address64` (`**/atelia/docs/**`), 50 results
+Searched for regex `rbf-interface\.md|<deleted-place-holder>` (`**/atelia/docs/**`), 50 results
 
 Read [](file:///repos/focus/atelia/docs/StateJournal)
 
@@ -244,19 +244,19 @@ Searched for regex `rbf-interface\.md` (`**/atelia/docs/**`), 52 results
 
 Read [](file:///repos/focus/atelia/docs/Rbf/rbf-interface.md#1-1), lines 1 to 261
 
-Searched for regex `record struct Address64|struct Address64|Address64\(` (`**/atelia/src/**`), no results
+Searched for regex `record struct <deleted-place-holder>|struct <deleted-place-holder>|<deleted-place-holder>\(` (`**/atelia/src/**`), no results
 
 Read [](file:///repos/focus/atelia/src)
 
 Searched for files matching `**/atelia/src/**/Rbf*`, no matches
 
-Searched for text `Address64` (`**/atelia/src/**`), no results
+Searched for text <deleted-place-holder> (`**/atelia/src/**`), no results
 
 Read [](file:///repos/focus/atelia/docs/Rbf/rbf-interface.md#240-240), lines 240 to 459
 
 Investigate SizedPtr context
 
-Searched for text `Address64`, 20 results
+Searched for text <deleted-place-holder>, 20 results
 
 Searched for text `SizedPtr`, 15 results
 
@@ -270,19 +270,19 @@ Read [](file:///repos/focus/atelia/src)
 
 Read [](file:///repos/focus/atelia/src/Data)
 
-Searched for text `Address64` (`**/atelia/src/**`), no results
+Searched for text <deleted-place-holder> (`**/atelia/src/**`), no results
 
 Searched for text `SizedPtr` (`**/atelia/src/**`), no results
 
 Searched for text `Rbf` (`**/atelia/src/**`), no results
 
-Searched for text `Address64` (`**/atelia/archive/**`), 20 results
+Searched for text <deleted-place-holder> (`**/atelia/archive/**`), 20 results
 
-Read [](file:///repos/focus/atelia/archive/2025-12-29-rbf-statejournal-v1/StateJournal.Tests/Core/Address64Tests.cs)
+Read [](file:///repos/focus/atelia/archive/2025-12-29-rbf-statejournal-v1/StateJournal.Tests/Core/<deleted-place-holder>Tests.cs)
 
-Searched for regex `struct Address64|class Address64` (`**/atelia/archive/**/*.cs`), 3 results
+Searched for regex `struct <deleted-place-holder>|class <deleted-place-holder>` (`**/atelia/archive/**/*.cs`), 3 results
 
-Read [](file:///repos/focus/atelia/archive/2025-12-29-rbf-statejournal-v1/Rbf/Address64.cs)
+Read [](file:///repos/focus/atelia/archive/2025-12-29-rbf-statejournal-v1/Rbf/<deleted-place-holder>.cs)
 
 Read [](file:///repos/focus/atelia/src/Data/IReservableBufferWriter.cs)
 
@@ -312,11 +312,11 @@ Read [](file:///repos/focus/atelia/docs/Rbf/rbf-format.md#260-260), lines 260 to
 
 Read [](file:///repos/focus/atelia/src/Data/Data.csproj)
 
-为明确 SizedPtr 的真实“首个目标用户/替换动机”，我将读取 StateJournal 里提到 Address64/Ptr64 的关键解释文档，并把模拟推进过程与发现持续记到会议笔记里。 
+为明确 SizedPtr 的真实“首个目标用户/替换动机”，我将读取 StateJournal 里提到 <deleted-place-holder>/Ptr64 的关键解释文档，并把模拟推进过程与发现持续记到会议笔记里。 
 
 Read [](file:///repos/focus/atelia/docs/StateJournal/interpretations/versionindex.md#40-40), lines 40 to 86
 
-Searched for regex `ObjectVersionPtr|Ptr64|Address64` (`**/atelia/docs/StateJournal/**`), 80 results
+Searched for regex `ObjectVersionPtr|Ptr64|<deleted-place-holder>` (`**/atelia/docs/StateJournal/**`), 80 results
 
 Read [](file:///repos/focus/atelia/docs/StateJournal/mvp-design-v2.md#50-50), lines 50 to 170
 
@@ -347,7 +347,7 @@ Checked [](file:///repos/focus/agent-team/beacon/team-leader-mental-model-v0.1.m
 1) **模拟运行笔记（会议/工作记忆）**  
 - 2026-01-04-wish-0004-sizedptr-simulation.md  
 我已经写到 Iteration 1（调查/定位）并沉淀了：
-- Address64/Ptr64 的权威条款证据（rbf-interface.md §2.3、rbf-format.md §7）
+- <deleted-place-holder>/Ptr64 的权威条款证据（rbf-interface.md §2.3、rbf-format.md §7）
 - 当前“Wish 非目标 vs 接口契约 Null 语义”的冲突
 - 下一步两条可执行的 Rule/Shape 决策型 demand（带 deliverable/DoD/stop_condition）
 - **对 Leader 模型的压力测试发现（Gap 列表）**：Gap1~Gap4
@@ -364,7 +364,7 @@ Checked [](file:///repos/focus/agent-team/beacon/team-leader-mental-model-v0.1.m
 - 修订：在主循环里新增 `validateInputs(wish)` 步骤，并在 5.3 添加其语义约束与最小校验项。
 
 **Gap 2：缺少“跨文档/跨层 SSOT 冲突”的显式处理路径**  
-- 现象：Wish Non-Goals 说“不定义特殊值”，但 rbf-interface.md 明确 `Address64.Null = 0`。  
+- 现象：Wish Non-Goals 说“不定义特殊值”，但 rbf-interface.md 明确 `<deleted-place-holder>.Null = 0`。  
 - 修订：在 `identifyDemand` 下增加“**冲突优先原则**”：一旦发现 SSOT 矛盾，优先产出 `Clarify/Decide` demand，交付物必须是 Decision Log，而不是继续向 Craft 推进。
 
 **Gap 3：状态寄存器（project-status）落点/命名约定不明确**  
@@ -379,9 +379,9 @@ Checked [](file:///repos/focus/agent-team/beacon/team-leader-mental-model-v0.1.m
 
 ## 额外事实澄清（对 Wish-0004 本身很关键）
 你 Wish/草案里提到的 rbf-interface.md 路径是存在的：  
-- rbf-interface.md（我已读到 Address64 条款）
+- rbf-interface.md（我已读到 <deleted-place-holder> 条款）
 
-Address64/Ptr64 的规范性约束是明确的：  
+<deleted-place-holder>/Ptr64 的规范性约束是明确的：  
 - `0=null`，且非零必须 `4B aligned`（`Value % 4 == 0`）
 
 这会直接驱动你下一步在 SizedPtr 上必须做一个 Rule/Shape 决策：SizedPtr 是否要承载 “0=null” 语义，还是保持纯净并在上层保留语义封装（wrapper）。
@@ -402,7 +402,7 @@ User: 都是很有价值的发现：
 
 关于“Gap 2：缺少“跨文档/跨层 SSOT 冲突”的显式处理路径”
   我的初步思路是按“拟合”来理解，各个Wish是拟合目标数据点，`atelia/docs/Rbf/rbf-interface.md`这样的Shape-Layer文档则是“模型参数”，我们通过“调整参数”来逼近各个Wish的要求。这点和你日常使用的SSOT推理思维不太一样...真实世界里没有物理或数学中那么理想和简答，往往是多目标冲突的，既要又要还要，需要搞中庸之道也就是MinMax优化问题。咱们可以先用更简单的模型，搞个分级，把wish定位更重要的级别，毕竟设计可以为了满足需求而调整，但不能为了一个草稿设计而调整需求本身，“削足适履”。能识别到矛盾点，就是识别到了待处理问题，是重要进展呢。然后问题就转化为了如何处理矛盾，更容易解决了。
-  以上是方法轮层面的东西，再来看具体案例，“rbf-interface.md 明确 Address64.Null = 0”的scope是RBF库本身，是RBF希望如何定义Address64的值域的问题。在其他库中使用SizedPtr时完全可以另外定义0xFF之类的值表示某种空值。SizedPtr类型本身并不定义值被如何使用。就像用int标识文本行时，可以时1-based行号，也可以是0-based行index，还可以是某种伪随机数的id，甚至内容hash，这不是int类型需要管的问题。
+  以上是方法轮层面的东西，再来看具体案例，“rbf-interface.md 明确 <deleted-place-holder>.Null = 0”的scope是RBF库本身，是RBF希望如何定义<deleted-place-holder>的值域的问题。在其他库中使用SizedPtr时完全可以另外定义0xFF之类的值表示某种空值。SizedPtr类型本身并不定义值被如何使用。就像用int标识文本行时，可以时1-based行号，也可以是0-based行index，还可以是某种伪随机数的id，甚至内容hash，这不是int类型需要管的问题。
 
 关于“Gap 3：状态寄存器（project-status）落点/命名约定不明确”
   这是个好发现。我倾向于在特定目录中，为每个Wish专门建立目录，配套标准化的文档模板。
@@ -462,7 +462,7 @@ Checked [](file:///repos/focus/agent-team/beacon/team-leader-mental-model-v0.1.m
 新增了一个段落 **“监护人反馈（方法论与本例取向）”**，包含三点：
 
 1) **方法论**：冲突是拟合/优化问题（Wish=数据点，规范文档=模型参数；多目标冲突要 tradeoff / minmax）
-2) **本例取向**：SizedPtr 是产品，RBF 只是目标用户之一；`Address64.Null=0` 属于 RBF 自己的接口设计 scope，不应强加给 SizedPtr 类型本身
+2) **本例取向**：SizedPtr 是产品，RBF 只是目标用户之一；`<deleted-place-holder>.Null=0` 属于 RBF 自己的接口设计 scope，不应强加给 SizedPtr 类型本身
 3) **未来工作台方向**：每个 Wish 一个根目录，状态寄存器与分析/实验/讨论文档都放在 Wish 实例目录，由 DocGraph 汇总校验
 
 这样后续模拟继续推进时，每轮决策的“价值观/优先级”就有了明示锚点，不会被我自动带回到“SSOT 唯一真理”的推理习惯里。
@@ -899,7 +899,7 @@ Checked [](file:///repos/focus/atelia/src/Data/SizedPtr.cs), [](file:///repos/fo
 
 ## 当前状态：我们离 M1 怎么看？
 
-如果 M1 严格定义为“推进到无可行动”，那 **还没到**（因为接下来仍然可以做：接入 RBF、替换 Address64、补充更多集成测试/文档分层等）。
+如果 M1 严格定义为“推进到无可行动”，那 **还没到**（因为接下来仍然可以做：接入 RBF、替换 <deleted-place-holder>、补充更多集成测试/文档分层等）。
 
 但我们已经达成了一个非常关键的内部里程碑：  
 **从“文档收敛（Iteration 2）”推进到了“可运行代码 + 可验证测试（Iteration 3）”。**  
@@ -980,7 +980,7 @@ Read [](file:///repos/focus/agent-team/members/Curator/inbox.md)
 我在 2026-01-04-wish-0004-sizedptr-simulation.md 里新增了 **Feedback 1**，明确记录：
 
 - Wish-0004 scope 到 Atelia.Data 为止  
-- 后续“接入 RBF / 替换 Address64”应拆成新的 Wish/Issue
+- 后续“接入 RBF / 替换 <deleted-place-holder>”应拆成新的 Wish/Issue
 
 并且从成果上看：实现与测试都已经在 Atelia.Data 完成且通过测试，所以 **完成 Check 是成立的**。
 
@@ -1024,7 +1024,7 @@ Read [](file:///repos/focus/agent-team/members/Curator/inbox.md)
 - 主要理由：  
   1) “几何中性”符合你希望的“产品通用性”  
   2) `Bytes` 后缀显式单位，降低误用  
-  3) 避免与 RBF 的 `Address64` 术语撞车  
+  3) 避免与 RBF 的 <deleted-place-holder> 术语撞车  
   4) 改名收益 < 迁移成本（文档/测试/下游）  
 - 如果未来真要改名，建议在“Wish 级重构窗口”成批迁移，而不是碎片化改动
 
@@ -1111,7 +1111,7 @@ Checked [](file:///repos/focus/wishes/active/wish-0005-wish-directory-docgraph-r
 我按你强调的“RBF 是目标用户之一、设计稿可调整”的原则来写，并刻意把 scope 控制在“文档修订”：
 
 - 目标：在 rbf-interface.md 与 rbf-format.md 中明确区分：
-  - `Address64/Ptr64`：frame 起点的 file offset（既有语义）
+  - `<deleted-place-holder>/Ptr64`：frame 起点的 file offset（既有语义）
   - `SizedPtr`：span（offset+length）的紧凑表示
 - 产物以 Decision Log + 文档条款修订为主
 - 非目标：不做 RBF 代码实现迁移（当前 active code 里也没有完整 RBF 实现）

@@ -322,7 +322,7 @@ public ref struct RbfFrameBuilder {
     /// 提交帧。回填 header/CRC，返回帧起始地址。
     /// </summary>
     /// <exception cref="InvalidOperationException">重复调用 Commit。</exception>
-    public Address64 Commit();
+    public <deleted-place-holder> Commit();
 
     /// <summary>
     /// 释放构建器。若未 Commit，自动执行 Auto-Abort。
@@ -398,7 +398,7 @@ public ref struct RbfFrameBuilder {
     /// </summary>
     public IReservableBufferWriter Payload { get; }
     
-    public Address64 Commit();
+    public <deleted-place-holder> Commit();
     public void Dispose();
 }
 ```

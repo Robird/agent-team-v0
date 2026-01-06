@@ -54,7 +54,7 @@
 |:-------|:---------|:---------|
 | **双文件模式** | Data（对象版本）+ Meta（Commit 日志） | 每个文件独立 `IRbfFile` |
 | **打开时读取** | Meta 逆向扫描找 HEAD（含撕裂检测 `[R-META-AHEAD-BACKTRACK]`） | `ScanReverse()` |
-| **运行时读取** | 通过 Address64 随机读取（Lazy Load 触发）| `TryReadAt(Address64)` |
+| **运行时读取** | 通过 <deleted-place-holder> 随机读取（Lazy Load 触发）| `TryReadAt(<deleted-place-holder>)` |
 | **Commit 流程** | 2 次 DurableFlush（Data → Meta 顺序） | `DurableFlush()` |
 | **恢复流程** | 按 DataTail 截断 Data 文件 | `Truncate(newLength)` + `LengthBytes` |
 | **生命周期** | 长期持有文件句柄（进程级） | `Dispose()` |
@@ -102,10 +102,10 @@ public static class RbfFile {
 
 | # | 契约 | 可判定性要求 |
 |:--|:-----|:-------------|
-| 1 | `TryReadAt(Address64)` 在文件增长期间的行为 | 以"调用时刻"文件内容为准；EOF 外返回 `false` |
+| 1 | `TryReadAt(<deleted-place-holder>)` 在文件增长期间的行为 | 以"调用时刻"文件内容为准；EOF 外返回 `false` |
 | 2 | `ScanReverse()` 扫描窗口 | 当前：并发修改未定义；可考虑：固定为调用时 EOF |
 | 3 | `DurableFlush()` 边界 | 只保证本文件；不影响其他文件实例 |
-| 4 | `Truncate(newLength)` 后 Address64 失效语义 | 被截断区间的地址后续 `TryReadAt` 必须返回 `false` |
+| 4 | `Truncate(newLength)` 后 <deleted-place-holder> 失效语义 | 被截断区间的地址后续 `TryReadAt` 必须返回 `false` |
 | 5 | `CreateFramer()` 第二次调用 | 抛 `InvalidOperationException` |
 | 6 | `LengthBytes` 语义 | OS 视角的当前文件长度（byte） |
 
@@ -126,7 +126,7 @@ public static class RbfFile {
 |:-----|:-----|
 | **分层** | A层（格式组件，可测试）+ B层（句柄管理，极少单元测试） |
 | **Façade** | 常规路径简化 + 灾难恢复独立 ToolKit |
-| **FramePtr** | 升级 Address64，含偏移量+长度，打包为 ulong |
+| **FramePtr** | 升级 <deleted-place-holder>，含偏移量+长度，打包为 ulong |
 | **底层 API** | RandomAccess vs Stream？缓存策略？可测试性？ |
 
 ### 参谋共识（第二轮）
@@ -144,7 +144,7 @@ public static class RbfFile {
 
 | # | 问题 | 影响 |
 |:--|:-----|:-----|
-| **R1** | Address64 → FramePtr 是完全替换还是并存？ | Breaking change 范围 |
+| **R1** | <deleted-place-holder> → FramePtr 是完全替换还是并存？ | Breaking change 范围 |
 | **R2** | 超过 4MB 的帧如何处理？ | 构造期拒绝 vs 运行时截断 |
 | **R3** | 向后兼容策略：软兼容（透明转换）vs 硬迁移（显式版本）？ | 迁移路径 |
 
@@ -313,7 +313,7 @@ if (head != null && head.DataTail < data.LengthBytes) {
 
 ```csharp
 // 关键：不缓存文件长度，每次读取时检查当前 EOF
-public bool TryReadAt(Address64 address, out RbfFrame frame) {
+public bool TryReadAt(<deleted-place-holder> address, out RbfFrame frame) {
     // 获取当前文件长度（OS 视角）
     var currentLength = _fileStream.Length;
     
@@ -397,7 +397,7 @@ if (head != null && head.DataTail < dataFile.LengthBytes) {
 
 ---
 
-**场景 B：运行时 Lazy Load（Address64 随机读取）**
+**场景 B：运行时 Lazy Load（<deleted-place-holder> 随机读取）**
 
 ```csharp
 // StateJournal.LoadObject<T>() 内部流程
@@ -420,7 +420,7 @@ public T LoadObject<T>(ObjectId id) {
 **体验评估**：
 - ✅ **直观性**：`TryReadAt` 遵循 .NET 的 `TryXxx` 模式（返回 `bool`）
 - ✅ **增长可见性**：开发者自然期待"当前时刻能读到什么就读什么"（而非快照）
-- ⚠️ **Address64 失效边界**：如果文件被截断（场景 A），旧地址会失效，但 API 如何传递这个信息？（见 §2 反模式）
+- ⚠️ **<deleted-place-holder> 失效边界**：如果文件被截断（场景 A），旧地址会失效，但 API 如何传递这个信息？（见 §2 反模式）
 - ⚠️ **Scanner 生命周期**：`CreateScanner()` 多次调用是创建新实例还是返回同一个？（见 §3）
 
 ---
@@ -480,10 +480,10 @@ foreach (var frame in metaScanner.ScanReverse()) {
 
 ---
 
-**反模式 2：忘记 Address64 失效后的容错**
+**反模式 2：忘记 <deleted-place-holder> 失效后的容错**
 
 ```csharp
-// ❌ 错误：假设 Address64 永远有效
+// ❌ 错误：假设 <deleted-place-holder> 永远有效
 var addr = versionIndex.Lookup(id);
 // 后来文件被 Truncate（恢复流程）
 if (!dataScanner.TryReadAt(addr, out var frame)) {
@@ -496,7 +496,7 @@ RebuildVersionIndex();  // 清除被截断区域的地址
 ```
 
 **根因**：`Truncate` 使地址失效，但 VersionIndex 不会自动同步
-**改进建议**：`Truncate` 的文档应明确"调用后，所有 ≥ newLength 的 Address64 失效"
+**改进建议**：`Truncate` 的文档应明确"调用后，所有 ≥ newLength 的 <deleted-place-holder> 失效"
 
 ---
 
@@ -595,10 +595,10 @@ public StateJournal(RbfFile dataFile) {
 撕裂检测：D 和 E 是"未来碎片"（DataTail < 当前长度）
 Truncate(3)：[A, B, C]      (文件长度 = 3)
 
-后果：所有指向 D/E 的 Address64 失效
+后果：所有指向 D/E 的 <deleted-place-holder> 失效
 ```
 
-**关键洞见**：`Truncate` 不仅是物理操作（缩短文件），更是逻辑操作（抹除历史）。所有依赖被截断区域的指针（Address64）都应重建。
+**关键洞见**：`Truncate` 不仅是物理操作（缩短文件），更是逻辑操作（抹除历史）。所有依赖被截断区域的指针（<deleted-place-holder>）都应重建。
 
 ---
 
@@ -624,7 +624,7 @@ void DurableFlush();
 
 **优化 2：Truncate 的副作用提示**
 
-**问题**：开发者不知道 `Truncate` 会使 Address64 失效
+**问题**：开发者不知道 `Truncate` 会使 <deleted-place-holder> 失效
 **建议**：在 `Truncate` 的文档中明确：
 
 ```csharp
@@ -633,7 +633,7 @@ void DurableFlush();
 /// </summary>
 /// <param name="newLengthBytes">新长度（byte），MUST ≤ 当前长度且 4B 对齐</param>
 /// <remarks>
-/// <para><b>Address64 失效</b>：截断后，所有 Address64 ≥ newLengthBytes 的地址失效。
+/// <para><b><deleted-place-holder> 失效</b>：截断后，所有 <deleted-place-holder> ≥ newLengthBytes 的地址失效。
 /// 后续 TryReadAt(失效地址) 将返回 false。</para>
 /// <para><b>上层责任</b>：调用方应重建依赖这些地址的索引（如 VersionIndex）。</para>
 /// </remarks>
@@ -686,7 +686,7 @@ RbfReverseSequence ScanReverse();
 | 场景 | 核心痛点 | 改进方向 |
 |:-----|:---------|:---------|
 | **启动恢复** | `LengthBytes` 与 `DataTail` 对比不确定 | 明确 `LengthBytes` 语义（OS 视角） |
-| **Lazy Load** | Address64 失效边界模糊 | `Truncate` 文档明确"地址失效"副作用 |
+| **Lazy Load** | <deleted-place-holder> 失效边界模糊 | `Truncate` 文档明确"地址失效"副作用 |
 | **Commit 流程** | `Flush` 与 `DurableFlush` 时机混淆 | 三层次隐喻（打包→快递站→发车） |
 | **反复 Commit** | 多次 `CreateFramer()` 异常难理解 | 异常信息提示"reuse existing instance" |
 
@@ -729,8 +729,8 @@ RbfReverseSequence ScanReverse();
 - 明确与增长相关的最低承诺：同一进程同一 file 句柄持续 append 后，后续 `LengthBytes` 允许增长；不得缓存为打开瞬间快照。
 
 6) **`Truncate(newLengthBytes)` 的前置条件/后置条件**
-- 前置条件必须裁决：是否允许扩容（通常不允许）；是否要求 `newLengthBytes <= LengthBytes`；是否要求 4 字节对齐（建议 MUST：与 `Address64` 对齐一致）。
-- 后置条件必须裁决：截断后，被截断区间内的 `Address64`/指针后续 `TryReadAt` 必须失败（返回 false 或抛异常需二选一）。
+- 前置条件必须裁决：是否允许扩容（通常不允许）；是否要求 `newLengthBytes <= LengthBytes`；是否要求 4 字节对齐（建议 MUST：与 <deleted-place-holder> 对齐一致）。
+- 后置条件必须裁决：截断后，被截断区间内的 <deleted-place-holder>/指针后续 `TryReadAt` 必须失败（返回 false 或抛异常需二选一）。
 
 补位：**缺口（可判定性）**
 - 现有 `rbf-interface.md` 的 `[S-RBF-SCANREVERSE-CONCURRENT-MUTATION]` 将“枚举期间修改”定义为未定义行为。MVP 若要允许“Scanner 长期随机读并在文件增长后可读到新帧”，至少需要为 `TryReadAt` 与 `LengthBytes` 明确“增长语义”；对 `ScanReverse` 可以继续维持未定义（冷路径），但必须在条款里说清楚。
@@ -776,7 +776,7 @@ RbfReverseSequence ScanReverse();
 4) **`Truncate` 的合法输入域**
 - `newLengthBytes == LengthBytes`：必须定义为 no-op（建议 MUST 成功且不改变语义）。
 - `newLengthBytes > LengthBytes`：必须明确允许与否（MVP 建议：禁止并抛 `ArgumentOutOfRangeException`）。
-- 对齐：建议 MUST 要求 `newLengthBytes % 4 == 0`，否则抛 `ArgumentOutOfRangeException`（避免制造非对齐 Address64 空间）。
+- 对齐：建议 MUST 要求 `newLengthBytes % 4 == 0`，否则抛 `ArgumentOutOfRangeException`（避免制造非对齐 <deleted-place-holder> 空间）。
 
 5) **视图创建与使用顺序**
 - 在同一 `IRbfFile` 上，允许先 `CreateScanner` 再 `CreateFramer`，以及相反顺序吗？
@@ -797,7 +797,7 @@ RbfReverseSequence ScanReverse();
 > `IRbfFile.DurableFlush()` MUST 在成功返回前使得该文件上先前已完成 `IRbfFramer.Flush()` 的字节达到 durability（等价 fsync 语义）。在 Disposed 状态下调用 MUST 抛出 `ObjectDisposedException`。
 
 **`[S-RBF-FILE-LENGTH-AND-TRUNCATE]`**
-> `LengthBytes` MUST 返回调用时刻的文件长度（byte）。`Truncate(newLengthBytes)` MUST 要求 `newLengthBytes <= LengthBytes` 且 `newLengthBytes % 4 == 0`；否则 MUST 抛出 `ArgumentOutOfRangeException`。截断成功后，位于被截断区域的任意 `Address64` 其后续 `TryReadAt` MUST 失败（返回 `false`）。
+> `LengthBytes` MUST 返回调用时刻的文件长度（byte）。`Truncate(newLengthBytes)` MUST 要求 `newLengthBytes <= LengthBytes` 且 `newLengthBytes % 4 == 0`；否则 MUST 抛出 `ArgumentOutOfRangeException`。截断成功后，位于被截断区域的任意 <deleted-place-holder> 其后续 `TryReadAt` MUST 失败（返回 `false`）。
 
 ---
 
@@ -807,7 +807,7 @@ RbfReverseSequence ScanReverse();
 发言完毕，期待二位呈现的调查与分析结果。
 
 对于具体问题上：
-  关于“D1：Scanner 可见性语义”，应以前面对需求的具体调查为准。从我的理解来看，目前的接口设计和需求并不完全匹配。StateJournal的需求有2个：1. 打开文件后找Meta的尾帧。2. 用Address64随机读取特定的目标二进制帧。 StateJournal对RBF文件的用法是以Meta尾部帧为线索，沿着引用关系重建出RootObject，运行时长期持有文件句柄，单读者单写者(因为有内存对象缓存`Identity Map`，Lazy Load，读取操作都是伴随着写入缓存的副作用的)。StateJournao Commit操作比如需要先Date文件落盘再Meta文件落盘，用的全是RBF的Append Frame操作，我们不需要也不支持Inplace Write操作，Append-Only。
+  关于“D1：Scanner 可见性语义”，应以前面对需求的具体调查为准。从我的理解来看，目前的接口设计和需求并不完全匹配。StateJournal的需求有2个：1. 打开文件后找Meta的尾帧。2. 用<deleted-place-holder>随机读取特定的目标二进制帧。 StateJournal对RBF文件的用法是以Meta尾部帧为线索，沿着引用关系重建出RootObject，运行时长期持有文件句柄，单读者单写者(因为有内存对象缓存`Identity Map`，Lazy Load，读取操作都是伴随着写入缓存的副作用的)。StateJournao Commit操作比如需要先Date文件落盘再Meta文件落盘，用的全是RBF的Append Frame操作，我们不需要也不支持Inplace Write操作，Append-Only。
   关于“D2：Create 对已有文件的行为”，我建议选“A. FailIfExists”。
   关于“D3：多 Scanner 实例约束”，我建议选“C. 单例”
 
@@ -831,7 +831,7 @@ RbfReverseSequence ScanReverse();
 
 **关键特征**：
 - 两个文件都是 **Append-Only**
-- Data 文件需要**随机读取**（通过 Ptr64/Address64）
+- Data 文件需要**随机读取**（通过 Ptr64/<deleted-place-holder>）
 - Meta 文件需要**逆向扫描**（找最后一个有效 MetaCommitRecord）
 
 ##### 1.2 打开/关闭时机
@@ -897,11 +897,11 @@ RbfReverseSequence ScanReverse();
 
 **操作模式**：
 ```
-Address64 (from VersionIndex) → TryReadAt → Deserialize → (PrevVersionPtr) → TryReadAt → ...
+<deleted-place-holder> (from VersionIndex) → TryReadAt → Deserialize → (PrevVersionPtr) → TryReadAt → ...
 ```
 
 **需要的接口能力**：
-- ✅ 随机读取（`TryReadAt(Address64)`）— 当前接口已有
+- ✅ 随机读取（`TryReadAt(<deleted-place-holder>)`）— 当前接口已有
 
 ##### 2.3 读取频率分析
 
@@ -1065,7 +1065,7 @@ Address64 (from VersionIndex) → TryReadAt → Deserialize → (PrevVersionPtr)
 
 ```csharp
 // 能力 1：随机读取（运行时热路径）
-bool TryReadFrameAt(Address64 address, out RbfFrame frame);
+bool TryReadFrameAt(<deleted-place-holder> address, out RbfFrame frame);
 
 // 能力 2：逆向扫描（启动时冷路径）
 IEnumerable<RbfFrame> ScanReverse();  // 一次性使用
@@ -1177,7 +1177,7 @@ class RbfFile {
 - 这不是“读最后一帧”，而是“从尾到头找最后一条可验证 HEAD”。
 - **空仓库边界**也必须算进需求：meta 文件为空或找不到有效 MetaCommitRecord 时，StateJournal 将进入“隐式空状态”（EpochSeq=0 等）。
 
-3) **读取需求："随机读取" 与 Lazy Load**：Claude 的“TryReadAt(Address64) + 版本链重放”判断准确。
+3) **读取需求："随机读取" 与 Lazy Load**：Claude 的“TryReadAt(<deleted-place-holder>) + 版本链重放”判断准确。
 - 随机读热路径来自 `LoadObject(ObjectId)`：VersionIndex 给出 ObjectVersionPtr，然后沿 `PrevVersionPtr` 链做 Deserialize+Materialize。
 - Lazy Load（ObjRef 透明加载）会触发 LoadObject，因此确实是“按需随机读”的触发场景。
 
@@ -1231,7 +1231,7 @@ class RbfFile {
 
 以下契约若不显式化，会直接导致实现倒灌/行为不可判定（尤其是 D1 与 durability）：
 
-1) **`TryReadAt(Address64)` 在文件增长期间的行为**（data file 热路径）
+1) **`TryReadAt(<deleted-place-holder>)` 在文件增长期间的行为**（data file 热路径）
 - MUST：以“调用时刻”的文件内容为准。
 - MUST：当 `address` 在调用时刻的 EOF 之后，返回 `false`（不得返回半初始化 frame，亦不应静默抛异常作为常态）。
 - SHOULD：当 `address` 在 EOF 之内但帧损坏/CRC 失败时，返回 `false` 或抛出明确的“格式损坏异常”——需要在接口层裁决一种主路径（否则调用方无法写测试断言）。
@@ -1252,7 +1252,7 @@ class RbfFile {
 
 5) **恢复期截断（truncate）能力**（StateJournal §3.5）
 - MUST：上层能够按 `DataTail` 截断 data 文件尾部垃圾（`[R-DATATAIL-TRUNCATE-GARBAGE]`）。
-- MUST：截断后的 Address64/Ptr64 失效语义要明确（被截断区间内的地址后续 TryReadAt 必须失败）。
+- MUST：截断后的 <deleted-place-holder>/Ptr64 失效语义要明确（被截断区间内的地址后续 TryReadAt 必须失败）。
 
 6) **多进程/多实例语义（最低限度）**
 - MVP 允许维持“未定义/不支持多 writer”，但必须在文件入口层可判定：
@@ -1322,7 +1322,7 @@ public static class RbfFile
   为常规读写提供傻瓜风格的门面类型。把所有复杂性封装起来，提供一个易用的界面，让最终用户能传入路径就能得到一个门面对象，在门面对象上直接提供从后向前迭代合法帧，以及随机读取一帧(含crc验证)的能力。
   为灾难恢复等高级场景提供另外的ToolKit，设计与实现可延后。
 
-3. 升级Address64为FramePtr struct。
+3. 升级<deleted-place-holder>为FramePtr struct。
   内部包含4字节对齐的文件内偏移量和Frame长度，这样读取时一次性就能知道“在哪读，读多少”方便读取路径。为了支持序列化和反序列化，需要能打包成ulong(uint64)和从ulong解包。不支持描述非4B对齐地址，以节约2 bit。我们需要选择bit分配，多少给地址部分，多少给长度部分。我估计单个frame不会需要太长，肯定不需要上GB。
 
 4. 根据读写需求，确定一种常规路径底层API。灾难恢复等高级场景可以有完全独立的工具栈，我们先不管。
@@ -1479,8 +1479,8 @@ public interface IRbfFile : IDisposable {
 | 现有设计 | Façade 设计 | 变化 |
 |:---------|:------------|:-----|
 | 分离的 Framer + Scanner | 合并为单一 IRbfFile | 简化用户心智模型 |
-| `IRbfFramer.AppendFrame()` 返回 `Address64` | `Append()` 返回 `FramePtr` | 升级地址类型 |
-| `IRbfScanner.TryReadAt(Address64)` | `TryReadAt(FramePtr)` | 读取时已知长度 |
+| `IRbfFramer.AppendFrame()` 返回 <deleted-place-holder> | `Append()` 返回 `FramePtr` | 升级地址类型 |
+| `IRbfScanner.TryReadAt(<deleted-place-holder>)` | `TryReadAt(FramePtr)` | 读取时已知长度 |
 | 无 CRC 验证选项 | 默认验证 CRC | Pit of Success |
 
 **2.3 如何避免 God Object？**
@@ -1515,9 +1515,9 @@ internal class RbfFileImpl : IRbfFile {
 
 ##### 3. FramePtr struct 评估
 
-**3.1 升级 Address64 为 FramePtr 的收益**
+**3.1 升级 <deleted-place-holder> 为 FramePtr 的收益**
 
-| 维度 | Address64（现有） | FramePtr（提议） |
+| 维度 | <deleted-place-holder>（现有） | FramePtr（提议） |
 |:-----|:------------------|:-----------------|
 | **内容** | 仅偏移量 | 偏移量 + 长度 |
 | **读取效率** | 需两次：先读头（获长度）→ 再读体 | 一次：直接读 offset..offset+len |
@@ -1587,7 +1587,7 @@ public readonly struct FramePtr {
 
 | 规范位置 | 影响 | 处理建议 |
 |:---------|:-----|:---------|
-| `rbf-interface.md` | `Address64` → `FramePtr` | 新增类型定义章节 |
+| `rbf-interface.md` | <deleted-place-holder> → `FramePtr` | 新增类型定义章节 |
 | `IRbfFramer.AppendFrame()` | 返回类型变化 | 修订签名 |
 | `IRbfScanner.TryReadAt()` | 参数类型变化 | 修订签名 |
 | StateJournal 的 Ptr64 | 需要映射到 FramePtr | 上层决策 |
@@ -1596,12 +1596,12 @@ public readonly struct FramePtr {
 
 ```csharp
 // 兼容层（如果需要）
-public static class Address64Compat {
-    public static FramePtr ToFramePtr(this Address64 addr, uint length)
+public static class <deleted-place-holder>Compat {
+    public static FramePtr ToFramePtr(this <deleted-place-holder> addr, uint length)
         => FramePtr.FromOffsetAndLength(addr.Value, length);
     
-    public static Address64 ToAddress64(this FramePtr ptr)
-        => new Address64(ptr.Offset);
+    public static <deleted-place-holder> To<deleted-place-holder>(this FramePtr ptr)
+        => new <deleted-place-holder>(ptr.Offset);
 }
 ```
 
@@ -1787,27 +1787,27 @@ public void RbfFrameCodec_Decode_ValidFrame_ReturnsPayload() {
 #### 1. 与现有规范的冲突检查
 
 **SSOT 现状**（以 atelia/docs/Rbf/rbf-interface.md v0.17 为准）：
-- 当前规范定义的指针类型是 `Address64(ulong Value)`，其语义为“指向 Frame 起始位置（HeadLen 字段起点）的文件偏移量”。相关条款为 `[F-ADDRESS64-DEFINITION]` / `[F-ADDRESS64-ALIGNMENT]` / `[F-ADDRESS64-NULL]`。
-- `IRbfScanner.TryReadAt(Address64)` 的签名在 `[A-RBF-SCANNER-INTERFACE]` 明确。
-- `IRbfFramer.Append(...)` 与 `RbfFrameBuilder.Commit()` 的返回类型也都是 `Address64`（`[A-RBF-FRAMER-INTERFACE]` / `[A-RBF-FRAME-BUILDER]`）。
+- 当前规范定义的指针类型是 `<deleted-place-holder>(ulong Value)`，其语义为“指向 Frame 起始位置（HeadLen 字段起点）的文件偏移量”。相关条款为 `[F-ADDRESS64-DEFINITION]` / `[F-ADDRESS64-ALIGNMENT]` / `[F-ADDRESS64-NULL]`。
+- `IRbfScanner.TryReadAt(<deleted-place-holder>)` 的签名在 `[A-RBF-SCANNER-INTERFACE]` 明确。
+- `IRbfFramer.Append(...)` 与 `RbfFrameBuilder.Commit()` 的返回类型也都是 <deleted-place-holder>（`[A-RBF-FRAMER-INTERFACE]` / `[A-RBF-FRAME-BUILDER]`）。
 
 **冲突点（必须裁决）**：
 1) **类型替换的 Breaking 面**
-- 若“升级 Address64 为 FramePtr struct”意味着 **完全替换**，则 rbf-interface.md 中上述 3 处 API 签名均为 breaking，且 rbf-test-vectors.md 中“Address64/Ptr64（u64 LE 文件偏移，4B 对齐）”的叙述也需同步更名/重写。
-- 若希望最小化破坏，另一个可行路线是：保留 `Address64`（offset-only）不变，新增 `FramePtr`，并在 `IRbfScanner` 上新增重载 `TryReadAt(FramePtr)` 作为 fast-path；但这与“升级”一词的语义不一致，需要在规范里明确“Address64 退为兼容类型/别名”。
+- 若“升级 <deleted-place-holder> 为 FramePtr struct”意味着 **完全替换**，则 rbf-interface.md 中上述 3 处 API 签名均为 breaking，且 rbf-test-vectors.md 中“<deleted-place-holder>/Ptr64（u64 LE 文件偏移，4B 对齐）”的叙述也需同步更名/重写。
+- 若希望最小化破坏，另一个可行路线是：保留 <deleted-place-holder>（offset-only）不变，新增 `FramePtr`，并在 `IRbfScanner` 上新增重载 `TryReadAt(FramePtr)` 作为 fast-path；但这与“升级”一词的语义不一致，需要在规范里明确“<deleted-place-holder> 退为兼容类型/别名”。
 
 2) **条款 ID 漂移风险**
 - 任务描述提到的 `[A-RBF-ADDRESS64-OFFSET]` 在当前 SSOT 中不存在（现为 `[F-ADDRESS64-*]` 系列）。若该 ID 来自旧草案，必须在 Clause Registry 或文档内做“旧 ID → 新 ID”的显式映射，否则核查与实现无法对齐。
 
 3) **FramePtr.length 的“长度到底指什么”必须钉死**
-- 现行 `Address64` 只定义 offset，因此读路径会先读 HeadLen 再知道 frame 总长度。
+- 现行 <deleted-place-holder> 只定义 offset，因此读路径会先读 HeadLen 再知道 frame 总长度。
 - FramePtr 的目标是“一次知道在哪读，读多少”，因此 `length` 字段必须明确是：
     - A) `HeadLen/TailLen`（整个 FrameBytes 的总长度，不含 Fence）——最契合“一次读完整帧”；或
     - B) 仅 payload 长度——会导致仍需额外读取 header/status/tail/crc（与目标冲突）。
     建议：选 A，并在规范中把 length 命名为 `FrameBytesLength`（或等价名）以减少歧义。
 
 4) **对齐约束的一致性**
-- 现行规范已要求 Address64 4B 对齐（`[F-ADDRESS64-ALIGNMENT]`）。FramePtr 提议“不支持非 4B 对齐地址”与之不冲突，属于“把既有约束内化到类型编码”。
+- 现行规范已要求 <deleted-place-holder> 4B 对齐（`[F-ADDRESS64-ALIGNMENT]`）。FramePtr 提议“不支持非 4B 对齐地址”与之不冲突，属于“把既有约束内化到类型编码”。
 - 但 FramePtr 的 `length` 是否也要求 4B 对齐，需要裁决；若 `length` 定义为 FrameBytes 总长度，则按 RBF wire format 计算，FrameBytes 总长度天然 4B 对齐（见 rbf-test-vectors.md 对 StatusLen 的对齐公式），因此可将其作为 MUST（可判定）。
 
 #### 2. 必须规范化的契约
@@ -1828,7 +1828,7 @@ FramePtr 引入的“新契约面”至少包括：
 
 3) **长度字段的有效范围（最小/最大）**
 - 需要明确 `FramePtr.MaxFrameBytesLength`（由 bit 分配决定）与 `FramePtr.MinFrameBytesLength`（由 wire format 决定）。
-- 需要明确 `length == 0` 的语义：建议保留为 Null（与 Address64.Null 一致），并规定非 Null 时 length MUST > 0。
+- 需要明确 `length == 0` 的语义：建议保留为 Null（与 <deleted-place-holder>.Null 一致），并规定非 Null 时 length MUST > 0。
 
 4) **超出范围的错误处理（构造期 vs 读写期）**
 - 构造期（pack/unpack）：越界/不合法 MUST fail-fast（异常类型或 TryXxx 语义固定）。
@@ -1858,21 +1858,21 @@ FramePtr 引入的“新契约面”至少包括：
 **是否需要预留扩展位（扩展性核查）**：
 - 44:20 用满 64 bit，本身没有“显式版本位”。
 - 若要支持向后兼容与未来扩展，建议考虑预留 1 个“编码版本/种类 bit”（例如 MSB）：
-    - `0` = legacy Address64-only packed（length 隐含未知，读时需要二次读取 header），
+    - `0` = legacy <deleted-place-holder>-only packed（length 隐含未知，读时需要二次读取 header），
     - `1` = FramePtr v1 packed（offset+length）。
     这会减少可用 offset bit（例如 43:20 或 43:19 等），但可换来“无需外部版本字段也能判别”的可判定性。
 
 补位：可判定性缺口
-- “是否需要预留扩展位”不是偏好问题，而是“未来兼容是否可机械判别”的问题：若没有版本位，则必须依赖外部版本字段（见 §4），否则单凭一个 `ulong` 无法判别它是 Address64 还是 FramePtr。
+- “是否需要预留扩展位”不是偏好问题，而是“未来兼容是否可机械判别”的问题：若没有版本位，则必须依赖外部版本字段（见 §4），否则单凭一个 `ulong` 无法判别它是 <deleted-place-holder> 还是 FramePtr。
 
 #### 4. 向后兼容性
 
 **先明确边界**：
-- Address64/FramePtr 是接口层类型；“已序列化的 Address64 数据”通常位于 Layer 1（StateJournal 的 VersionIndex/Meta 记录等 payload 中）。因此向后兼容责任原则上在 StateJournal 的 wire format/记录版本上，而不是 RBF Layer 0。
+- <deleted-place-holder>/FramePtr 是接口层类型；“已序列化的 <deleted-place-holder> 数据”通常位于 Layer 1（StateJournal 的 VersionIndex/Meta 记录等 payload 中）。因此向后兼容责任原则上在 StateJournal 的 wire format/记录版本上，而不是 RBF Layer 0。
 
 **必须补齐的兼容契约问题**：
 1) **旧数据的 `ulong` 到底表示什么？**
-- 若旧记录存的是 `Address64.Value`（offset-only），新实现要么：
+- 若旧记录存的是 `<deleted-place-holder>.Value`（offset-only），新实现要么：
     - A) 在读取时允许“length 未知”并做二次读取（先读 header 得 headlen），从而兼容旧数据；或
     - B) 直接拒绝打开旧格式（breaking），要求离线迁移。
     这必须二选一。
@@ -1884,9 +1884,9 @@ FramePtr 引入的“新契约面”至少包括：
     - 不建议依赖“经验式判别”（例如根据 length 是否为 0 推断），除非该判别规则被写成 MUST 并覆盖全部历史值域。
 
 3) **迁移路径（可执行）**
-- 路线 A（软兼容）：新版本仍能读取旧 Address64；当遇到旧指针时按 offset 去读 header 获取 length，然后在内存中升级为 FramePtr（但写回仍是旧格式或在下一次 compact/rewriter 时升级）。
+- 路线 A（软兼容）：新版本仍能读取旧 <deleted-place-holder>；当遇到旧指针时按 offset 去读 header 获取 length，然后在内存中升级为 FramePtr（但写回仍是旧格式或在下一次 compact/rewriter 时升级）。
 - 路线 B（硬迁移）：引入 StateJournal 文件格式版本 V2，要求首次打开时离线迁移（重写 VersionIndex/Meta 指针字段为 FramePtr packed），旧版本仅通过迁移工具支持。
-- 路线 C（双写一段时间）：新写入使用 FramePtr，旧字段仍保留 Address64（冗余）以支持旧 reader；该路线复杂且容易产生漂移，除非有明确的跨版本共存需求，否则不建议。
+- 路线 C（双写一段时间）：新写入使用 FramePtr，旧字段仍保留 <deleted-place-holder>（冗余）以支持旧 reader；该路线复杂且容易产生漂移，除非有明确的跨版本共存需求，否则不建议。
 
 #### 5. 关键条款草案（3-5 个）
 
@@ -1935,22 +1935,22 @@ FramePtr 引入的“新契约面”至少包括：
 #### 1. 与现有规范的冲突检查
 
 **SSOT 现状（`atelia/docs/Rbf/rbf-interface.md` v0.17）**：
-- 指针类型是 `Address64(ulong Value)`，条款为：`[F-ADDRESS64-DEFINITION]` / `[F-ADDRESS64-ALIGNMENT]` / `[F-ADDRESS64-NULL]`。
-- `IRbfScanner.TryReadAt(Address64 address, out RbfFrame frame)` 在 `[A-RBF-SCANNER-INTERFACE]` 中固化。
-- 写入侧 `IRbfFramer.Append(...)` / `RbfFrameBuilder.Commit()` 的返回类型都是 `Address64`（`[A-RBF-FRAMER-INTERFACE]` / `[A-RBF-FRAME-BUILDER]`）。
+- 指针类型是 `<deleted-place-holder>(ulong Value)`，条款为：`[F-ADDRESS64-DEFINITION]` / `[F-ADDRESS64-ALIGNMENT]` / `[F-ADDRESS64-NULL]`。
+- `IRbfScanner.TryReadAt(<deleted-place-holder> address, out RbfFrame frame)` 在 `[A-RBF-SCANNER-INTERFACE]` 中固化。
+- 写入侧 `IRbfFramer.Append(...)` / `RbfFrameBuilder.Commit()` 的返回类型都是 <deleted-place-holder>（`[A-RBF-FRAMER-INTERFACE]` / `[A-RBF-FRAME-BUILDER]`）。
 
 **冲突/改动面（必须裁决“升级”的含义）**：
-1) **若 FramePtr = 完全替换 Address64（Breaking）**：
+1) **若 FramePtr = 完全替换 <deleted-place-holder>（Breaking）**：
      - 需要同步修改：`IRbfScanner.TryReadAt(...)`、`IRbfFramer.Append(...)`、`RbfFrameBuilder.Commit()`、`RbfFrame.Address` 类型。
      - 需要处理条款迁移：`[F-ADDRESS64-*]` 是否废弃？是否保留为兼容术语？（否则 Clause Registry 会出现“同一概念多权威定义”的风险）
-2) **若 FramePtr = 新增（与 Address64 并存）**：
-     - `rbf-interface.md` 的“指针概念”会分裂为 offset-only 与 offset+length 两种，需要明确：何时必须用 FramePtr，何时允许 Address64。
-     - `TryReadAt` 是否要提供双签名（`TryReadAt(Address64)` + `TryReadAt(FramePtr)`）？若不提供，FramePtr 的价值会被限制在上层私有索引结构，而不是接口契约。
+2) **若 FramePtr = 新增（与 <deleted-place-holder> 并存）**：
+     - `rbf-interface.md` 的“指针概念”会分裂为 offset-only 与 offset+length 两种，需要明确：何时必须用 FramePtr，何时允许 <deleted-place-holder>。
+     - `TryReadAt` 是否要提供双签名（`TryReadAt(<deleted-place-holder>)` + `TryReadAt(FramePtr)`）？若不提供，FramePtr 的价值会被限制在上层私有索引结构，而不是接口契约。
 
-**签名是否必须改**（针对你问的 `IRbfScanner.TryReadAt(Address64)`）：
-- 如果目标是“读路径一次知道在哪读、读多少（减少一次 header 读取）”，那么**仅靠 Address64 无法达成**，因此需要：
+**签名是否必须改**（针对你问的 `IRbfScanner.TryReadAt(<deleted-place-holder>)`）：
+- 如果目标是“读路径一次知道在哪读、读多少（减少一次 header 读取）”，那么**仅靠 <deleted-place-holder> 无法达成**，因此需要：
     - A) 直接把签名改成 `TryReadAt(FramePtr ptr, ...)`（Breaking），或
-    - B) 增加一个 `TryReadAt(FramePtr ptr, ...)` fast-path，同时保留 Address64 兼容（更平滑，但规范更复杂）。
+    - B) 增加一个 `TryReadAt(FramePtr ptr, ...)` fast-path，同时保留 <deleted-place-holder> 兼容（更平滑，但规范更复杂）。
 
 **现有条款影响**：
 - `[F-ADDRESS64-ALIGNMENT]` 的“4B 对齐”与 FramePtr 的“offset 不支持非 4B 对齐”不冲突；但 FramePtr 还引入“length 的对齐/范围”这一组新增约束。
@@ -1999,7 +1999,7 @@ FramePtr 会把“原本可在实现细节里偷懒的行为”推到接口边�
     - `TryReadAt` 收到非法 FramePtr 时的行为也必须固定（参数异常 vs 返回 false，二选一）。
 
 **是否需要预留扩展位（版本位）**：
-- 44:20 用满 64 bit，单凭一个 `ulong` 将无法区分“它是旧 Address64 packed 还是新 FramePtr packed”，除非依赖外部版本字段。
+- 44:20 用满 64 bit，单凭一个 `ulong` 将无法区分“它是旧 <deleted-place-holder> packed 还是新 FramePtr packed”，除非依赖外部版本字段。
 - 若系统存在“历史数据里存了 u64 指针值”的场景（StateJournal 的索引/记录），建议至少满足一个判别条件：
     - A) 在 Layer 1（StateJournal 记录格式）引入显式版本号/字段标记（推荐）；或
     - B) 在 packed 值里预留 1 bit 作为 encoding version/kind（会牺牲寻址上限但换来自描述可判定性）。
@@ -2007,11 +2007,11 @@ FramePtr 会把“原本可在实现细节里偷懒的行为”推到接口边�
 #### 4. 向后兼容性
 
 **先定责任边界**：
-- RBF Layer 0 的 `FramePtr/Address64` 是“接口层类型”；“已序列化的 Address64 数据”通常位于 Layer 1（StateJournal 的 VersionIndex / CommitRecord payload 等）。因此兼容策略必须在 StateJournal 的 wire format 侧可判定，RBF 侧只需要提供足够的读取能力。
+- RBF Layer 0 的 `FramePtr/<deleted-place-holder>` 是“接口层类型”；“已序列化的 <deleted-place-holder> 数据”通常位于 Layer 1（StateJournal 的 VersionIndex / CommitRecord payload 等）。因此兼容策略必须在 StateJournal 的 wire format 侧可判定，RBF 侧只需要提供足够的读取能力。
 
 **必须裁决的两条路线（不要隐式）**：
 1) **软兼容（推荐默认）**：
-     - StateJournal 旧数据里的 `ulong` 仍按 Address64 offset-only 解读；读取时需要“先读 header 获取 headlen，再读完整帧”的慢路径。
+     - StateJournal 旧数据里的 `ulong` 仍按 <deleted-place-holder> offset-only 解读；读取时需要“先读 header 获取 headlen，再读完整帧”的慢路径。
      - 新数据写入可使用 FramePtr；当加载旧指针时，可在内存中升级为 FramePtr（但写回是否升级由 StateJournal 的版本策略决定）。
 2) **硬迁移（可接受但必须提供工具）**：
      - 引入 StateJournal 文件格式新版本（例如 V2），旧格式不再支持直接打开；提供迁移工具把旧 offset-only 指针重写为 FramePtr packed。

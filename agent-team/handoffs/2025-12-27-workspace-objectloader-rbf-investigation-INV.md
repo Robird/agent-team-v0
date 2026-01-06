@@ -123,7 +123,7 @@ StateJournal 通过以下接口与 RBF 交互：
 ```csharp
 public interface IRbfFramer
 {
-    Address64 Append(FrameTag tag, ReadOnlySpan<byte> payload);
+    <deleted-place-holder> Append(FrameTag tag, ReadOnlySpan<byte> payload);
     RbfFrameBuilder BeginFrame(FrameTag tag);
     void Flush();  // 不含 fsync
 }
@@ -133,7 +133,7 @@ public interface IRbfFramer
 ```csharp
 public interface IRbfScanner
 {
-    bool TryReadAt(Address64 address, out RbfFrame frame);
+    bool TryReadAt(<deleted-place-holder> address, out RbfFrame frame);
     RbfReverseEnumerable ScanReverse();
 }
 ```
@@ -144,7 +144,7 @@ public interface IRbfScanner
 |------|-------------------|----------|
 | **写入 ObjectVersionRecord** | 构建 DiffPayload，设置 FrameTag | 封装为 Frame，追加写入 |
 | **写入 MetaCommitRecord** | 构建 meta payload | 封装为 Frame，追加写入 |
-| **读取对象版本** | 提供 Address64（ObjectVersionPtr） | 返回 RbfFrame，包含 Payload |
+| **读取对象版本** | 提供 <deleted-place-holder>（ObjectVersionPtr） | 返回 RbfFrame，包含 Payload |
 | **逆向扫描 Meta** | 请求 ScanReverse() | 返回帧枚举（从尾到头） |
 
 ### 3.4 FrameTag 映射（StateJournal 定义）
@@ -218,7 +218,7 @@ RBF 不解释 FrameTag 语义。StateJournal 定义如下取值：
 | `[S-RBF-TOMBSTONE-VISIBLE]` | Scanner MUST 产出所有帧包括 Tombstone |
 | `[S-STATEJOURNAL-TOMBSTONE-SKIP]` | StateJournal MUST 忽略 Tombstone 帧 |
 | `[F-FRAMETAG-DEFINITION]` | FrameTag 是 4 字节帧类型标识 |
-| `[F-ADDRESS64-DEFINITION]` | Address64 是 8 字节文件偏移量 |
+| `[F-ADDRESS64-DEFINITION]` | <deleted-place-holder> 是 8 字节文件偏移量 |
 
 ### 5.4 对象生命周期条款
 

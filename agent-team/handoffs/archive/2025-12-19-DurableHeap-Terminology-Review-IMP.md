@@ -17,7 +17,7 @@
 | `EpochMap` | `VersionIndex` | 全文 15+ 处 |
 | `EpochMapVersionPtr` | `VersionIndexPtr` | meta payload 字段 |
 | `snapshot`（版本链语境） | `Checkpoint Version` | 版本链相关 |
-| `Ptr64`（概念层） | `Address64` | 标识与指针 |
+| `Ptr64`（概念层） | <deleted-place-holder> | 标识与指针 |
 | `Resolve`（外部 API） | `LoadObject` | 读路径 API |
 | `On-Disk Diff` | `DiffPayload` | 差分相关 |
 | `state diff` | `DiffPayload` | 二进制编码 |
@@ -35,7 +35,7 @@
 
 1. **状态与差分**：Working State, Committed State, ChangeSet, DiffPayload
 2. **版本链**：Version Chain, Checkpoint Version, VersionIndex
-3. **标识与指针**：ObjectId, Address64, ObjectVersionPtr
+3. **标识与指针**：ObjectId, <deleted-place-holder>, ObjectVersionPtr
 4. **提交与 HEAD**：Commit, HEAD, Commit Record
 5. **载入与缓存**：Identity Map, Dirty Set, LoadObject
 6. **对象级 API**：FlushToWriter

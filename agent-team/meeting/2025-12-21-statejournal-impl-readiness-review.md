@@ -76,7 +76,7 @@ StateJournal MVP v2 设计文档 (`atelia/docs/StateJournal/mvp-design-v2.md`) �
 graph LR
     subgraph "标识体系"
         ObjectId[ObjectId]
-        Ptr64[Ptr64/Address64]
+        Ptr64[Ptr64/<deleted-place-holder>]
         EpochSeq[EpochSeq]
     end
     

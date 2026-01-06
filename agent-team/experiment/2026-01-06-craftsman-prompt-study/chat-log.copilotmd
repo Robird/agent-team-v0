@@ -664,7 +664,7 @@ Wrap more complex blocks of math equations in $$.
 - 设计并实现DocUI中的[Micro-Wizard](DocUI/docs/key-notes/micro-wizard.md)
   - 实现[StateJournal](atelia/docs/StateJournal/mvp-design-v2.md)
     - 实现[RBF(Reversible-Binary-Framing)](atelia/docs/Rbf/rbf-interface.md)
-      - 用[SizedPtr](atelia/docs/Data/Draft/SizedPtr.md)替代RBF接口文档中的`Address64`类型
+      - 用[SizedPtr](atelia/docs/Data/Draft/SizedPtr.md)替代RBF接口文档中的<deleted-place-holder>类型
         - 确定`Offset`和`Length`的bit分配方案
         - 在[Atelia.Data](atelia/src/Data)中实现`SizedPtr`
     - 分解巨大的设计文件`atelia/docs/StateJournal/mvp-design-v2.md`为一组更小的可以组合使用的文档，因为单体文件太大导致`Claude Opus 4.5`已不能正确按照设计文档编写代码
@@ -1247,7 +1247,7 @@ This is the state of the context at this point in the conversation. The view of 
 2. Method model application → snapshot.md created with structured demand
 3. Resolve-Tier execution → Investigator brief → Seeker produce → Curator review → 4 issues identified
 4. Guardian input → All 4 issues clarified/resolved with design decisions
-5. Address64 investigation → Confirmed can be completely removed
+5. <deleted-place-holder> investigation → Confirmed can be completely removed
 6. Shape/Rule-Tier parallel execution → Both documents produced → Curator LGTM
 7. System ready to proceed to Plan-Tier
 
@@ -1272,9 +1272,9 @@ This is the state of the context at this point in the conversation. The view of 
 - `/repos/focus/wish/W-0006-rbf-sizedptr/project-status/snapshot.md`: Execution register updated 3 times (Resolve start → Resolve complete → Shape/Rule preparation)
 - `/repos/focus/wish/W-0006-rbf-sizedptr/artifacts/Resolve.md`: Frontmatter with 4 issues (all resolved), §6-7 added with guardian decisions
 - `/repos/focus/agent-team/handoffs/w0006-resolve-brief.md`: Investigation brief with RBF current state analysis
-- `/repos/focus/agent-team/handoffs/w0006-address64-value-check.md`: Address64 usage analysis, confirmed removable
+- `/repos/focus/agent-team/handoffs/w0006-address64-value-check.md`: <deleted-place-holder> usage analysis, confirmed removable
 - `/repos/focus/wish/W-0006-rbf-sizedptr/artifacts/Shape.md`: Glossary Alignment, Interface Contract, StateJournal constraints
-- `/repos/focus/wish/W-0006-rbf-sizedptr/artifacts/Rule.md`: NullPtr convention [R-RBF-NULLPTR], Address64 deprecation [R-RBF-ADDRESS64-DEPRECATED]
+- `/repos/focus/wish/W-0006-rbf-sizedptr/artifacts/Rule.md`: NullPtr convention [R-RBF-NULLPTR], <deleted-place-holder> deprecation [R-RBF-ADDRESS64-DEPRECATED]
 - `/repos/focus/wish/W-0006-rbf-sizedptr/wish.md`: Layer progress updated (Resolve complete, Shape/Rule not started → updated after completion)
 - `/repos/focus/agent-team/members/TeamLeader/inbox.md`: 3 memos added (meeting outcome, Resolve completion, methodology validation)
 
@@ -1282,9 +1282,9 @@ This is the state of the context at this point in the conversation. The view of 
 - ✅ W-0006 Meeting: Scope/approach consensus reached
 - ✅ Resolve-Tier: Complete (LGTM), 4 issues identified then resolved
 - ✅ Guardian clarification: All 4 issues resolved with design decisions
-- ✅ Address64 investigation: Confirmed removable (9 usages all replaceable)
+- ✅ <deleted-place-holder> investigation: Confirmed removable (9 usages all replaceable)
 - ✅ Shape-Tier: Complete (LGTM), Glossary + Interface Contract
-- ✅ Rule-Tier: Complete (LGTM), NullPtr definition + Address64 deprecation
+- ✅ Rule-Tier: Complete (LGTM), NullPtr definition + <deleted-place-holder> deprecation
 - 🟡 Plan-Tier: Ready to start (simplified to "global replacement strategy")
 - ⚪ Craft-Tier: N/A (Phase 1 design only)
 
@@ -1292,9 +1292,9 @@ This is the state of the context at this point in the conversation. The view of 
 All Tiers properly documented, methodology successfully applied, guardian decisions captured, ready for Plan-Tier.
 
 **Recent Commands Analysis** (Last 5-6 operations):
-1. `runSubagent(Investigator, "Address64 存在价值快速调查")` → Produced w0006-address64-value-check.md, confirmed Address64 can be completely removed, 9 usages all replaceable by SizedPtr
-2. `runSubagent(Seeker, "产出 Shape.md 和 Rule.md")` → Produced both artifacts with Glossary Alignment, Interface Contract, NullPtr convention, Address64 deprecation strategy
-3. `runSubagent(Curator, "审阅 Shape.md 和 Rule.md")` → LGTM with key strengths: 30s readability, 3-doc consistency, complete NullPtr definition, executable Address64 removal strategy
+1. `runSubagent(Investigator, "<deleted-place-holder> 存在价值快速调查")` → Produced w0006-address64-value-check.md, confirmed <deleted-place-holder> can be completely removed, 9 usages all replaceable by SizedPtr
+2. `runSubagent(Seeker, "产出 Shape.md 和 Rule.md")` → Produced both artifacts with Glossary Alignment, Interface Contract, NullPtr convention, <deleted-place-holder> deprecation strategy
+3. `runSubagent(Curator, "审阅 Shape.md 和 Rule.md")` → LGTM with key strengths: 30s readability, 3-doc consistency, complete NullPtr definition, executable <deleted-place-holder> removal strategy
 4. Multiple `replace_string_in_file` operations to update Resolve.md frontmatter (mark issues resolved), append §6-7 Decision Clarification, update snapshot.md with new focus
 5. DocGraph was run earlier: `cd atelia/src/DocGraph && dotnet run -- ../../../` → Refreshed all aggregation panels (goals.gen.md, issues.gen.md)
 
@@ -1333,40 +1333,40 @@ All Tiers properly documented, methodology successfully applied, guardian decisi
   - Purpose: Execution register for W-0006
   - Current State: Updated 3 times (Resolve启动 → Resolve完成 → Shape/Rule准备 → Shape/Rule完成准备)
   - Key Segments: Current Focus, Next Demand (YAML schema), Assignee, Blockers, Progress Log, Issues Discovered, 方法论应用
-  - Latest: Tier=Shape-Tier(准备启动), Focus shifted to "Address64存在价值调查 + Shape/Rule产出"
+  - Latest: Tier=Shape-Tier(准备启动), Focus shifted to "<deleted-place-holder>存在价值调查 + Shape/Rule产出"
 
 - `/repos/focus/wish/W-0006-rbf-sizedptr/artifacts/Resolve.md`:
   - Purpose: Resolve-Tier output defining motivation and scope
   - Current State: Complete with guardian decisions appended
   - Key Segments: §1 动机 (痛点/机会/目标), §2 现状问题 (P1-P4), §3 边界与约束 (In/Out-of-Scope), §4 后续探索方向, §5 决策依据, §6-7 决策澄清 (guardian input)
   - Issues: 4 issues in frontmatter, all marked status="resolved"
-  - Guardian Decisions: D1 (256MB足够), D2 (SizedPtr核心用途), D3 (Null语义处理), D4 (SizedPtr完全替代Address64)
+  - Guardian Decisions: D1 (256MB足够), D2 (SizedPtr核心用途), D3 (Null语义处理), D4 (SizedPtr完全替代<deleted-place-holder>)
 
 - `/repos/focus/agent-team/handoffs/w0006-resolve-brief.md`:
   - Purpose: Investigation brief for Resolve-Tier
   - Current State: Complete with RBF current state facts
-  - Key Segments: RBF文档成熟度 (v0.17 Reviewed), Address64定义 (纯指针/Null语义), SizedPtr能力边界 (38:26/4B对齐), StateJournal依赖
+  - Key Segments: RBF文档成熟度 (v0.17 Reviewed), <deleted-place-holder>定义 (纯指针/Null语义), SizedPtr能力边界 (38:26/4B对齐), StateJournal依赖
   - Issues: P1 (语义冲突), P2 (缺区间类型), P3 (256MB上限), P4 (术语漂移)
 
 - `/repos/focus/agent-team/handoffs/w0006-address64-value-check.md`:
-  - Purpose: Address64 usage analysis
+  - Purpose: <deleted-place-holder> usage analysis
   - Current State: Complete investigation
   - Key Findings: 9 usages in rbf-interface.md (type definition + 4 interface signatures + 2 examples + terminology), all replaceable by SizedPtr
-  - Conclusion: Address64 can be completely removed, no irreplaceable value
+  - Conclusion: <deleted-place-holder> can be completely removed, no irreplaceable value
   - Migration Strategy: Phase 1 document revision / Phase 2 code implementation
 
 - `/repos/focus/wish/W-0006-rbf-sizedptr/artifacts/Shape.md`:
   - Purpose: Shape-Tier defining concept boundaries
   - Current State: Complete (Curator LGTM)
-  - Key Segments: §1 概念边界 (SizedPtr替代Address64), §2 Glossary Alignment (术语对照表), §3 Interface Contract (写路径/读路径/持久化), §4 StateJournal约束
-  - Glossary: 5-term mapping (SizedPtr↔Address64, OffsetBytes↔Value, LengthBytes新增, NullPtr↔Null)
+  - Key Segments: §1 概念边界 (SizedPtr替代<deleted-place-holder>), §2 Glossary Alignment (术语对照表), §3 Interface Contract (写路径/读路径/持久化), §4 StateJournal约束
+  - Glossary: 5-term mapping (SizedPtr↔<deleted-place-holder>, OffsetBytes↔Value, LengthBytes新增, NullPtr↔Null)
 
 - `/repos/focus/wish/W-0006-rbf-sizedptr/artifacts/Rule.md`:
   - Purpose: Rule-Tier defining conventions and constraints
   - Current State: Complete (Curator LGTM)
-  - Key Segments: §1 [R-RBF-NULLPTR] (NullPtr约定定义 with code), §2 [R-RBF-ADDRESS64-DEPRECATED] (Address64完全移除), §3 条款变更清单 (删3/增2/更新1)
+  - Key Segments: §1 [R-RBF-NULLPTR] (NullPtr约定定义 with code), §2 [R-RBF-ADDRESS64-DEPRECATED] (<deleted-place-holder>完全移除), §3 条款变更清单 (删3/增2/更新1)
   - NullPtr Definition: `public static readonly SizedPtr NullPtr = default;` with semantics and equality rules
-  - Clause Changes: Detailed mapping from old Address64 clauses to new SizedPtr conventions
+  - Clause Changes: Detailed mapping from old <deleted-place-holder> clauses to new SizedPtr conventions
 
 - `/repos/focus/wish/W-0006-rbf-sizedptr/wish.md`:
   - Purpose: Wish definition and progress tracking
@@ -1387,11 +1387,11 @@ All Tiers properly documented, methodology successfully applied, guardian decisi
   - Solution: Applied team-leader-mental-model-v0.1.md with demand schema, snapshot execution register, issue tracking in frontmatter
   
 - Issue: 4 unresolved questions from Resolve-Tier (I-SEMANTIC-CONFLICT, I-NO-EXPLICIT-RANGE, I-256MB-LIMIT, I-TERM-DRIFT-RISK)
-  - Solution: Guardian provided direct design decisions for all 4, revealing SizedPtr completely replaces Address64
+  - Solution: Guardian provided direct design decisions for all 4, revealing SizedPtr completely replaces <deleted-place-holder>
   
-- Issue: Whether Address64 has remaining value
+- Issue: Whether <deleted-place-holder> has remaining value
   - Investigation: Investigator analyzed all 9 usages, confirmed all replaceable by SizedPtr
-  - Solution: Address64 can be completely removed, documented in handoffs/w0006-address64-value-check.md
+  - Solution: <deleted-place-holder> can be completely removed, documented in handoffs/w0006-address64-value-check.md
   
 - Lessons Learned:
   - "识别问题即产出" principle validated: 4 issues identified in Resolve became valuable anchors for guardian input
@@ -1403,16 +1403,16 @@ All Tiers properly documented, methodology successfully applied, guardian decisi
 - ✅ Completed:
   - W-0006 畅谈会: 4 topics, 3 advisors, consensus reached
   - Resolve-Tier: Brief (Investigator) → Resolve.md (Seeker) → Review (Curator LGTM) → Guardian decisions appended
-  - Address64 investigation: Confirmed removable with complete usage analysis
+  - <deleted-place-holder> investigation: Confirmed removable with complete usage analysis
   - Shape-Tier: Glossary Alignment + Interface Contract (Curator LGTM)
-  - Rule-Tier: NullPtr convention + Address64 deprecation + Clause changes (Curator LGTM)
+  - Rule-Tier: NullPtr convention + <deleted-place-holder> deprecation + Clause changes (Curator LGTM)
   - Methodology validation: demand schema, snapshot register, issue tracking all proven effective
   
 - ✅ Validated Outcomes:
   - DocGraph aggregation: `cd atelia/src/DocGraph && dotnet run -- ../../../` successfully refreshed all panels
   - All 4 Resolve issues marked resolved with guardian input
   - Curator LGTM on Resolve.md, Shape.md, Rule.md (all passed 30秒可判性)
-  - Address64 removal feasibility confirmed (9/9 usages replaceable)
+  - <deleted-place-holder> removal feasibility confirmed (9/9 usages replaceable)
   
 - 🟡 Partially Complete:
   - W-0006 Phase 1: Resolve/Shape/Rule complete, Plan-Tier pending
@@ -1420,26 +1420,26 @@ All Tiers properly documented, methodology successfully applied, guardian decisi
 
 6. Active Work State:
 - Current Focus: Shape-Tier and Rule-Tier just completed, ready for Plan-Tier
-- Recent Context: After guardian clarified all 4 issues, dispatched Investigator to verify Address64 removability (confirmed), then Seeker produced Shape.md and Rule.md in parallel, Curator reviewed both (LGTM)
+- Recent Context: After guardian clarified all 4 issues, dispatched Investigator to verify <deleted-place-holder> removability (confirmed), then Seeker produced Shape.md and Rule.md in parallel, Curator reviewed both (LGTM)
 - Working Code: No code changes yet (Phase 1 design only)
 - Immediate Context: System completed Shape/Rule-Tier faster than expected due to guardian's direct decisions eliminating complex "coexistence strategy" analysis
 
 7. Recent Operations:
 - Last Agent Commands:
-  1. `runSubagent(Investigator, "Address64 存在价值快速调查")` → Analyzed all Address64 usages
+  1. `runSubagent(Investigator, "<deleted-place-holder> 存在价值快速调查")` → Analyzed all <deleted-place-holder> usages
   2. `runSubagent(Seeker, "产出 Shape.md 和 Rule.md")` → Produced both Tier documents
   3. `runSubagent(Curator, "审阅 Shape.md 和 Rule.md")` → Validated readability and consistency
   4. Multiple `replace_string_in_file` → Updated Resolve.md issues to resolved, appended §6-7
   5. `run_in_terminal(cat >> Resolve.md)` → Appended guardian decision clarification section
 
 - Tool Results Summary:
-  - **Investigator (Address64 check)**: Found 9 usages in rbf-interface.md (type def + 4 interface sigs + 2 examples + term explanation), 3 in rbf-format.md (range/Wire Format/DataTail). ALL replaceable by SizedPtr. Null migration no obstacles. Output: complete usage inventory, replaceability analysis, migration strategy. Conclusion: **Address64 完全可移除**.
+  - **Investigator (<deleted-place-holder> check)**: Found 9 usages in rbf-interface.md (type def + 4 interface sigs + 2 examples + term explanation), 3 in rbf-format.md (range/Wire Format/DataTail). ALL replaceable by SizedPtr. Null migration no obstacles. Output: complete usage inventory, replaceability analysis, migration strategy. Conclusion: **<deleted-place-holder> 完全可移除**.
   
   - **Seeker (Shape/Rule production)**: 
-    - Shape.md: Concept boundaries (SizedPtr replaces Address64), 5-term Glossary Alignment table, Interface Contract (write/read/persist paths based on guardian quote), StateJournal constraints (256MB confirmed sufficient)
+    - Shape.md: Concept boundaries (SizedPtr replaces <deleted-place-holder>), 5-term Glossary Alignment table, Interface Contract (write/read/persist paths based on guardian quote), StateJournal constraints (256MB confirmed sufficient)
     - Rule.md: [R-RBF-NULLPTR] convention with code example (`= default;`), [R-RBF-ADDRESS64-DEPRECATED] with migration mapping table, Clause changes (delete 3/add 2/update 1), boundary rules
   
-  - **Curator (Review)**: **LGTM** with 5 strengths: (1) 30秒可判性出色 (both docs lead with one-line summary), (2) 三文档自洽性强 (Resolve→Shape→Rule terminology chain intact), (3) NullPtr定义清晰 (complete code + semantics + equality), (4) Address64移除策略完整 (executable migration table), (5) 监护人原话引用 (traceability). Minor style suggestion (default vs default(SizedPtr) consistency) but non-blocking. **Conclusion: 可进入Plan-Tier**.
+  - **Curator (Review)**: **LGTM** with 5 strengths: (1) 30秒可判性出色 (both docs lead with one-line summary), (2) 三文档自洽性强 (Resolve→Shape→Rule terminology chain intact), (3) NullPtr定义清晰 (complete code + semantics + equality), (4) <deleted-place-holder>移除策略完整 (executable migration table), (5) 监护人原话引用 (traceability). Minor style suggestion (default vs default(SizedPtr) consistency) but non-blocking. **Conclusion: 可进入Plan-Tier**.
   
   - **DocGraph run**: Earlier executed `dotnet run -- ../../../`, refreshed wish-panels/goals.gen.md and issues.gen.md, enabling guardian to see aggregated issues and provide clarifications
   
@@ -1447,17 +1447,17 @@ All Tiers properly documented, methodology successfully applied, guardian decisi
 
 - Pre-Summary State: Just completed Curator review of Shape/Rule-Tier, received LGTM, system was ready to proceed to Plan-Tier but conversation reached token budget limit triggering summarization
 
-- Operation Context: Guardian's direct design input (eliminating 4 issues by providing decisions) dramatically simplified work. What was expected to require complex "coexistence strategy" analysis became simple "complete replacement" execution. Investigator confirmed Address64 removable, Seeker produced simplified Shape/Rule docs, Curator validated. Next step is Plan-Tier (simplified to "global replacement strategy" per Resolve.md §7).
+- Operation Context: Guardian's direct design input (eliminating 4 issues by providing decisions) dramatically simplified work. What was expected to require complex "coexistence strategy" analysis became simple "complete replacement" execution. Investigator confirmed <deleted-place-holder> removable, Seeker produced simplified Shape/Rule docs, Curator validated. Next step is Plan-Tier (simplified to "global replacement strategy" per Resolve.md §7).
 
 8. Continuation Plan:
 - Pending Task: Plan-Tier execution
-  - Details: Produce artifacts/Plan.md with migration strategy (global Address64→SizedPtr replacement)
-  - Next steps: (1) Review Address64 usage inventory from handoffs/w0006-address64-value-check.md, (2) Create Migration Notes for each modification point, (3) Define document revision sequence, (4) Identify any edge cases
+  - Details: Produce artifacts/Plan.md with migration strategy (global <deleted-place-holder>→SizedPtr replacement)
+  - Next steps: (1) Review <deleted-place-holder> usage inventory from handoffs/w0006-address64-value-check.md, (2) Create Migration Notes for each modification point, (3) Define document revision sequence, (4) Identify any edge cases
   - Priority: Can proceed immediately, no blockers
   
 - Pending Task: Document revision execution
   - Details: Apply Plan-Tier strategy to atelia/docs/Rbf/rbf-interface.md and rbf-format.md
-  - Requirements: Add navigation anchors pointing to artifacts/, replace all Address64 references with SizedPtr, update clauses per Rule.md §3, add Glossary references
+  - Requirements: Add navigation anchors pointing to artifacts/, replace all <deleted-place-holder> references with SizedPtr, update clauses per Rule.md §3, add Glossary references
   - Next steps: Execute modifications, run DocGraph validation, Curator review
   
 - Pending Task: Craft-Tier decision
@@ -1471,7 +1471,7 @@ All Tiers properly documented, methodology successfully applied, guardian decisi
   - **P2**: Craft-Tier decision (deferred to after Phase 1 completion)
   
 - Next Action (verbatim from recent context):
-  - "Plan-Tier 修订策略清晰：全局替换 Address64 → SizedPtr" (from Resolve.md §7)
+  - "Plan-Tier 修订策略清晰：全局替换 <deleted-place-holder> → SizedPtr" (from Resolve.md §7)
   - "可以合并推进" Shape + Rule已完成，可直接进入Plan
   - "可能直接跳到执行修订（文档层工作量小）" per snapshot.md latest assessment
 
@@ -1494,11 +1494,11 @@ All Tiers properly documented, methodology successfully applied, guardian decisi
 
 **产出**：
 - Shape.md — 术语对齐、Interface Contract（LGTM）
-- Rule.md — NullPtr 定义、Address64 废弃策略（LGTM）
-- Address64 价值调查 — 确认可完全移除
+- Rule.md — NullPtr 定义、<deleted-place-holder> 废弃策略（LGTM）
+- <deleted-place-holder> 价值调查 — 确认可完全移除
 
 **核心发现**：
-- Address64 的 9 处使用全部可被 SizedPtr 替代
+- <deleted-place-holder> 的 9 处使用全部可被 SizedPtr 替代
 - 没有\"仅需位置、不需长度\"的真实场景
 - Null 语义迁移无障碍（RBF 层定义约定）
 
@@ -1528,11 +1528,11 @@ EOF",
 > 
 > **产出**：
 > - Shape.md — 术语对齐、Interface Contract（LGTM）
-> - Rule.md — NullPtr 定义、Address64 废弃策略（LGTM）
-> - Address64 价值调查 — 确认可完全移除
+> - Rule.md — NullPtr 定义、<deleted-place-holder> 废弃策略（LGTM）
+> - <deleted-place-holder> 价值调查 — 确认可完全移除
 > 
 > **核心发现**：
-> - Address64 的 9 处使用全部可被 SizedPtr 替代
+> - <deleted-place-holder> 的 9 处使用全部可被 SizedPtr 替代
 > - 没有"仅需位置、不需长度"的真实场景
 > - Null 语义迁移无障碍（RBF 层定义约定）
 > 
@@ -1560,7 +1560,7 @@ EOF",
 ## 输入
 
 - **Resolve/Shape/Rule**: `/repos/focus/wish/W-0006-rbf-sizedptr/artifacts/`
-- **Address64 调查**: `/repos/focus/agent-team/handoffs/w0006-address64-value-check.md`
+- **<deleted-place-holder> 调查**: `/repos/focus/agent-team/handoffs/w0006-address64-value-check.md`
 - **目标文档**:
   - `/repos/focus/atelia/docs/Rbf/rbf-interface.md`
   - `/repos/focus/atelia/docs/Rbf/rbf-format.md`
@@ -1589,11 +1589,11 @@ produce_by:
 
 #### 2. 修订清单（rbf-interface.md）
 
-基于 Address64 调查报告 §6，列出：
+基于 <deleted-place-holder> 调查报告 §6，列出：
 | 位置 | 原内容 | 修改为 | 类型 |
 |:-----|:-------|:-------|:-----|
-| L111-122 | `Address64` 类型定义 | 删除 | 删除 |
-| L34 | `Write(... Address64)` | `Write(... SizedPtr)` | 替换 |
+| L111-122 | <deleted-place-holder> 类型定义 | 删除 | 删除 |
+| L34 | `Write(... <deleted-place-holder>)` | `Write(... SizedPtr)` | 替换 |
 | ... | ... | ... | ... |
 
 #### 3. 修订清单（rbf-format.md）
@@ -1603,12 +1603,12 @@ produce_by:
 #### 4. Migration Notes
 
 记录每个修改点的**语义变化**（不只是类型变化）：
-- 为什么这里用 SizedPtr 替代 Address64？
+- 为什么这里用 SizedPtr 替代 <deleted-place-holder>？
 - 语义上有什么增强？
 
 #### 5. 验收标准
 
-- 所有 Address64 引用已移除
+- 所有 <deleted-place-holder> 引用已移除
 - 所有新增的 SizedPtr 引用正确
 - 条款编号已更新
 - 文档头部增加导航锚点指向 artifacts/
@@ -1622,7 +1622,7 @@ produce_by:
 
 - 修订清单要**可执行**（明确的行号/段落 + 原内容 + 新内容）
 - Migration Notes 要记录**隐性知识**（不只是\"改个类型名\"）
-- 基于 Address64 调查报告的完整清单"
+- 基于 <deleted-place-holder> 调查报告的完整清单"
 }
 ~~~
 
@@ -1642,7 +1642,7 @@ produce_by:
 - **Phase 2**（未来 Wish）：代码实现
 
 ### §2  修订清单
-- **删除**：Address64 定义（L82-97）及 3 条相关条款
+- **删除**：<deleted-place-holder> 定义（L82-97）及 3 条相关条款
 - **新增**：SizedPtr + NullPtr 定义（`[F-SIZEDPTR-DEFINITION]`、`[F-RBF-NULLPTR]`）
 - **替换**：8 处接口签名和示例代码
 
@@ -1659,7 +1659,7 @@ produce_by:
   - K4: 属性重命名理由
 
 ### §5 验收标准
-- grep 验证 Address64 清除
+- grep 验证 <deleted-place-holder> 清除
 - 条款引用完整性
 - frontmatter 导航锚点
 
@@ -1703,16 +1703,16 @@ produce_by:
    > **设计演进**：本文档的设计决策记录在 [W-0006 artifacts](../../wish/W-0006-rbf-sizedptr/artifacts/)
    ```
 
-2. 删除 Address64 定义（L82-97）及相关条款
+2. 删除 <deleted-place-holder> 定义（L82-97）及相关条款
 3. 新增 SizedPtr 定义和 NullPtr 定义（参考 Rule.md §1 代码示例）
-4. 替换所有接口签名中的 Address64 → SizedPtr
+4. 替换所有接口签名中的 <deleted-place-holder> → SizedPtr
 5. 更新相关示例代码
 
 ### 2. rbf-format.md
 
 按 Plan.md §3 的修订清单：
 1. 在文档头部增加导航锚点
-2. 替换所有 Address64 术语 → SizedPtr
+2. 替换所有 <deleted-place-holder> 术语 → SizedPtr
 3. 更新条款 ID
 4. 重写 §7 Wire Format（如果需要）
 
@@ -1720,8 +1720,8 @@ produce_by:
 
 完成后执行：
 ```bash
-# 检查 Address64 是否清除干净
-grep -n \"Address64\" /repos/focus/atelia/docs/Rbf/*.md
+# 检查 <deleted-place-holder> 是否清除干净
+grep -n \"<deleted-place-holder>\" /repos/focus/atelia/docs/Rbf/*.md
 # 应该无结果或仅在\"历史/迁移说明\"中出现
 ```
 
@@ -1744,23 +1744,23 @@ grep -n \"Address64\" /repos/focus/atelia/docs/Rbf/*.md
 **文件变更列表**：
 - ：版本 0.17 → 0.18
   - 添加设计演进导航锚点
-  - 删除 §2.3 Address64 定义，新增 SizedPtr + NullPtr 定义
+  - 删除 §2.3 <deleted-place-holder> 定义，新增 SizedPtr + NullPtr 定义
   - 更新接口签名（Append、Commit、TryReadAt）
   - 更新 RbfFrame.Address → RbfFrame.Ptr 属性
   - 更新示例代码
-  - 更新条款索引（删除 3 条 Address64 相关，新增 2 条 SizedPtr 相关）
+  - 更新条款索引（删除 3 条 <deleted-place-holder> 相关，新增 2 条 SizedPtr 相关）
   - 更新变更日志
   
 - ：版本 0.16 → 0.17
   - 添加设计演进导航锚点
-  - 更新 §1 术语引用（Address64 → SizedPtr）
+  - 更新 §1 术语引用（<deleted-place-holder> → SizedPtr）
   - 重写 §7 为 SizedPtr Wire Format（含 §7.2 DataTail 表达）
   - 更新 §8 DataTail 定义
   - 更新条款索引（[F-PTR64-WIRE-FORMAT] → [F-SIZEDPTR-WIRE-FORMAT]）
   - 更新变更日志
 
 **验收检查结果**：
-- `grep -n "Address64" /repos/focus/atelia/docs/Rbf/*.md` 返回：
+- `grep -n "<deleted-place-holder>" /repos/focus/atelia/docs/Rbf/*.md` 返回：
   -  L447：变更日志中的历史记录（预期）
   -  L11, L18：待后续更新（非规范性描述）
 
@@ -1776,7 +1776,7 @@ grep -n \"Address64\" /repos/focus/atelia/docs/Rbf/*.md
 - ✅ 已追加便签到 
 
 **需要 QA 关注的点**：
--  中仍有 Address64/Ptr64 描述，这是非规范性文本，可后续更新
+-  中仍有 <deleted-place-holder>/Ptr64 描述，这是非规范性文本，可后续更新
 - `RbfFrame.Address` 重命名为 `RbfFrame.Ptr`，编译器会强制更新所有调用点（Phase 2 实现时）
 ~~~
 
@@ -1833,7 +1833,7 @@ grep -n \"Address64\" /repos/focus/atelia/docs/Rbf/*.md
 |:--------------|:-----|:---------|:-----|
 | Resolve-Tier | 🟢 完成 | [artifacts/Resolve.md](artifacts/Resolve.md) | 动机、现状问题、Scope + 监护人决策澄清 |
 | Shape-Tier | 🟢 完成 | [artifacts/Shape.md](artifacts/Shape.md) | 术语对齐、Interface Contract |
-| Rule-Tier | 🟢 完成 | [artifacts/Rule.md](artifacts/Rule.md) | NullPtr 定义、Address64 废弃 |
+| Rule-Tier | 🟢 完成 | [artifacts/Rule.md](artifacts/Rule.md) | NullPtr 定义、<deleted-place-holder> 废弃 |
 | Plan-Tier | 🟢 完成 | [artifacts/Plan.md](artifacts/Plan.md) | 修订计划 + Migration Notes |
 | Craft-Tier | 🟢 完成 | [修订后的文档](../../atelia/docs/Rbf/) | Phase 1 文档修订已完成 |
 
@@ -1844,7 +1844,7 @@ grep -n \"Address64\" /repos/focus/atelia/docs/Rbf/*.md
 **Phase 1 文档修订**：✅ 已完成（2026-01-05）
 
 **核心成果**：
-- SizedPtr 完全替代 Address64 作为 RBF Interface 层核心类型
+- SizedPtr 完全替代 <deleted-place-holder> 作为 RBF Interface 层核心类型
 - NullPtr 约定定义（RBF 层业务语义）
 - 修订 2 个 RBF 文档（rbf-interface v0.18, rbf-format v0.17）
 - 产出 4 个 Artifact-Tiers 文档 + 3 个调查报告
@@ -1879,10 +1879,10 @@ grep -n \"Address64\" /repos/focus/atelia/docs/Rbf/*.md
 见：[artifacts/Resolve.md](artifacts/Resolve.md) frontmatter
 
 **Resolve-Tier 识别的问题**：
-- I-SEMANTIC-CONFLICT：Address64 的 Null 语义与 SizedPtr 的几何语义冲突
+- I-SEMANTIC-CONFLICT：<deleted-place-holder> 的 Null 语义与 SizedPtr 的几何语义冲突
 - I-NO-EXPLICIT-RANGE：RBF 缺乏显式的区间类型
 - I-256MB-LIMIT：SizedPtr 的 256MB Length 上限对大 Blob 场景的适用性
-- I-TERM-DRIFT-RISK：Address64.Value 与 SizedPtr.OffsetBytes 术语混淆风险"
+- I-TERM-DRIFT-RISK：<deleted-place-holder>.Value 与 SizedPtr.OffsetBytes 术语混淆风险"
 }
 ~~~
 
@@ -1937,14 +1937,14 @@ produce:
 **目标 (Goals)**:
 - [ ] 审阅并修订 RBF 相关设计文档，使其能引用 `Atelia.Data.SizedPtr` 表达"4B 对齐的 byte range"
 - [ ] 明确区分两类语义：
-  - **Address64 / Ptr64**：指向某个 Frame 起始位置的 file offset（RBF 层既有语义）
+  - **<deleted-place-holder> / Ptr64**：指向某个 Frame 起始位置的 file offset（RBF 层既有语义）
   - **SizedPtr**：表达一个 span/range（offset+length）的紧凑表示（通用产品）
-- [ ] 在 `rbf-interface.md` 与 `rbf-format.md` 中明确哪些字段/接口应继续使用 Address64，哪些应改用 SizedPtr
+- [ ] 在 `rbf-interface.md` 与 `rbf-format.md` 中明确哪些字段/接口应继续使用 <deleted-place-holder>，哪些应改用 SizedPtr
 - [ ] 为后续实际实现迁移提供清晰的 Decision Log
 
 **非目标 (Non-Goals)**:
 - 不在本 Wish 中实现 RBF 的代码（当前 active code 里尚无完整 RBF 实现）
-- 不在本 Wish 中强制把 Address64 完全删除或替换为 SizedPtr
+- 不在本 Wish 中强制把 <deleted-place-holder> 完全删除或替换为 SizedPtr
 - 不强制为 SizedPtr 引入 Null/Empty 等语义
 
 ## 验收标准 (Acceptance Criteria)
@@ -1970,10 +1970,10 @@ produce:
 见：[artifacts/Resolve.md](artifacts/Resolve.md) frontmatter
 
 **Resolve-Tier 识别的问题**：
-- I-SEMANTIC-CONFLICT：Address64 的 Null 语义与 SizedPtr 的几何语义冲突
+- I-SEMANTIC-CONFLICT：<deleted-place-holder> 的 Null 语义与 SizedPtr 的几何语义冲突
 - I-NO-EXPLICIT-RANGE：RBF 缺乏显式的区间类型
 - I-256MB-LIMIT：SizedPtr 的 256MB Length 上限对大 Blob 场景的适用性
-- I-TERM-DRIFT-RISK：Address64.Value 与 SizedPtr.OffsetBytes 术语混淆风险
+- I-TERM-DRIFT-RISK：<deleted-place-holder>.Value 与 SizedPtr.OffsetBytes 术语混淆风险
 
 ## 背景
 
@@ -1997,7 +1997,7 @@ produce:
 |:--------------|:-----|:---------|:-----|
 | Resolve-Tier | 🟢 完成 | [artifacts/Resolve.md](artifacts/Resolve.md) | 动机、现状问题、Scope + 监护人决策澄清 |
 | Shape-Tier | 🟢 完成 | [artifacts/Shape.md](artifacts/Shape.md) | 术语对齐、Interface Contract |
-| Rule-Tier | 🟢 完成 | [artifacts/Rule.md](artifacts/Rule.md) | NullPtr 定义、Address64 废弃 |
+| Rule-Tier | 🟢 完成 | [artifacts/Rule.md](artifacts/Rule.md) | NullPtr 定义、<deleted-place-holder> 废弃 |
 | Plan-Tier | 🟢 完成 | [artifacts/Plan.md](artifacts/Plan.md) | 修订计划 + Migration Notes |
 | Craft-Tier | 🟢 完成 | [修订后的文档](../../atelia/docs/Rbf/) | Phase 1 文档修订已完成 |
 
@@ -2031,10 +2031,10 @@ produce:
 见：[artifacts/Resolve.md](artifacts/Resolve.md) frontmatter
 
 **Resolve-Tier 识别的问题**：
-- I-SEMANTIC-CONFLICT：Address64 的 Null 语义与 SizedPtr 的几何语义冲突
+- I-SEMANTIC-CONFLICT：<deleted-place-holder> 的 Null 语义与 SizedPtr 的几何语义冲突
 - I-NO-EXPLICIT-RANGE：RBF 缺乏显式的区间类型
 - I-256MB-LIMIT：SizedPtr 的 256MB Length 上限对大 Blob 场景的适用性
-- I-TERM-DRIFT-RISK：Address64.Value 与 SizedPtr.OffsetBytes 术语混淆风险"
+- I-TERM-DRIFT-RISK：<deleted-place-holder>.Value 与 SizedPtr.OffsetBytes 术语混淆风险"
 }
 ~~~
 
@@ -2076,7 +2076,7 @@ String replacement failed: Could not find matching text to replace. Try making y
 > **状态符号**: ⚪ 未开始 | 🟡 进行中 | 🟢 完成 | 🔴 阻塞 | ➖ N/A",
       "newString": "| Resolve-Tier | 🟢 完成 | [artifacts/Resolve.md](artifacts/Resolve.md) | 动机、现状问题、Scope + 监护人决策澄清 |
 | Shape-Tier | 🟢 完成 | [artifacts/Shape.md](artifacts/Shape.md) | 术语对齐、Interface Contract |
-| Rule-Tier | 🟢 完成 | [artifacts/Rule.md](artifacts/Rule.md) | NullPtr 定义、Address64 废弃 |
+| Rule-Tier | 🟢 完成 | [artifacts/Rule.md](artifacts/Rule.md) | NullPtr 定义、<deleted-place-holder> 废弃 |
 | Plan-Tier | 🟢 完成 | [artifacts/Plan.md](artifacts/Plan.md) | 修订计划 + Migration Notes |
 | Craft-Tier | 🟢 完成 | [修订后的文档](../../atelia/docs/Rbf/) | Phase 1 文档修订已完成 |
 
@@ -2092,10 +2092,10 @@ String replacement failed: Could not find matching text to replace. Try making y
 见：[artifacts/Resolve.md](artifacts/Resolve.md) frontmatter
 
 **Resolve-Tier 识别的问题**：
-- I-SEMANTIC-CONFLICT：Address64 的 Null 语义与 SizedPtr 的几何语义冲突
+- I-SEMANTIC-CONFLICT：<deleted-place-holder> 的 Null 语义与 SizedPtr 的几何语义冲突
 - I-NO-EXPLICIT-RANGE：RBF 缺乏显式的区间类型
 - I-256MB-LIMIT：SizedPtr 的 256MB Length 上限对大 Blob 场景的适用性
-- I-TERM-DRIFT-RISK：Address64.Value 与 SizedPtr.OffsetBytes 术语混淆风险",
+- I-TERM-DRIFT-RISK：<deleted-place-holder>.Value 与 SizedPtr.OffsetBytes 术语混淆风险",
       "newString": "## 关联 Issue
 
 见：[artifacts/Resolve.md](artifacts/Resolve.md) frontmatter（已全部 resolved）
@@ -2149,8 +2149,8 @@ The following files were successfully edited:
 
 ### 核心成果
 
-1. **SizedPtr 完全替代 Address64**
-   - Address64 类型及其 3 条相关条款完全移除
+1. **SizedPtr 完全替代 <deleted-place-holder>**
+   - <deleted-place-holder> 类型及其 3 条相关条款完全移除
    - SizedPtr 成为 RBF Interface 层的核心 Frame 句柄类型
 
 2. **NullPtr 约定定义**
@@ -2164,7 +2164,7 @@ The following files were successfully edited:
 
 4. **产出物清单**
    - 4 个 Artifact-Tiers 文档（Resolve/Shape/Rule/Plan）
-   - 3 个调查报告（Resolve Brief、Address64 价值检查、执行记录）
+   - 3 个调查报告（Resolve Brief、<deleted-place-holder> 价值检查、执行记录）
    - 2 个修订后的 RBF 文档
 
 ### 方法论验证
@@ -2185,7 +2185,7 @@ The following files were successfully edited:
 
 - ✅ **推进功能实现**：5 个 Tier 全部完成
 - ✅ **发现并记录问题**：4 个 issues 识别并 resolved
-- ✅ **问题解决**：Address64 存在价值调查完成
+- ✅ **问题解决**：<deleted-place-holder> 存在价值调查完成
 
 ### Phase 2 计划
 
@@ -2203,7 +2203,7 @@ The following files were successfully edited:
 | 18:00 | 前置 | 畅谈会（Scope 与实施路径） | meeting/2026-01-05-scope-and-approach.md | 1h |
 | 21:00 | Resolve | Investigator 调研 + Seeker 产出 | Resolve.md（LGTM） | 1h |
 | 22:00 | Resolve | 监护人决策澄清 | Resolve.md §6-7 | 0.5h |
-| 22:30 | Shape+Rule | Address64 调查 + 产出 | Shape.md + Rule.md（LGTM） | 1h |
+| 22:30 | Shape+Rule | <deleted-place-holder> 调查 + 产出 | Shape.md + Rule.md（LGTM） | 1h |
 | 23:30 | Plan | Seeker 产出修订计划 | Plan.md | 0.5h |
 | 00:00 | Craft | Implementer 执行修订 | 2 个 RBF 文档 v0.18/v0.17 | 0.5h |
 
@@ -2216,9 +2216,9 @@ The following files were successfully edited:
 ### K1: 监护人输入的指数级价值
 
 4 条决策澄清节省了至少数天的探索时间：
-- 避免了\"Address64 vs SizedPtr 共存策略\"的过度设计
+- 避免了\"<deleted-place-holder> vs SizedPtr 共存策略\"的过度设计
 - 直接确认了 SizedPtr 在 RBF 中的核心地位
-- 明确了 Address64 已无存在价值（可完全移除）
+- 明确了 <deleted-place-holder> 已无存在价值（可完全移除）
 
 ### K2: \"识别问题即产出\"的威力
 
@@ -2254,12 +2254,12 @@ Resolve-Tier 识别的 4 个\"问题\"实际是\"已有决策需要文档化\"�
 **重大简化**：监护人澄清了核心设计决策，Resolve-Tier 的 4 个 issues 全部 resolved。
 
 **核心发现**：
-- SizedPtr **完全替代** Address64（不是共存）
-- Address64 可能已无存在价值（需调查确认）
+- SizedPtr **完全替代** <deleted-place-holder>（不是共存）
+- <deleted-place-holder> 可能已无存在价值（需调查确认）
 - Null 语义由 RBF 层定义约定（不是冲突）
 
 **焦点对象**：
-- 快速验证：Address64 在 RBF 文档中是否还有不可替代的用途
+- 快速验证：<deleted-place-holder> 在 RBF 文档中是否还有不可替代的用途
 - 产出 Shape.md（已大幅简化）
 
 ---
@@ -2277,11 +2277,11 @@ scope:
   constraints:
     - 快速验证，不深入实现细节
 deliverable:
-  - 调查报告：Address64 是否还有存在价值
+  - 调查报告：<deleted-place-holder> 是否还有存在价值
   - \"wish/W-0006-rbf-sizedptr/artifacts/Shape.md\"（简化版）
   - \"wish/W-0006-rbf-sizedptr/artifacts/Rule.md\"（Null 语义定义）
 definition_of_done:
-  - Address64 存在价值已确认（保留或移除）
+  - <deleted-place-holder> 存在价值已确认（保留或移除）
   - Shape.md 完成（Glossary + 替代策略）
   - Rule.md 完成（NullPtr 定义）
 stop_condition:
@@ -2292,7 +2292,7 @@ stop_condition:
 
 ## 分派对象 (Assignee)
 
-**Primary**: Investigator（Address64 存在价值调查） + Seeker（Shape/Rule 产出）  
+**Primary**: Investigator（<deleted-place-holder> 存在价值调查） + Seeker（Shape/Rule 产出）  
 **Review**: Curator（可理解性）
 
 ---
@@ -2321,16 +2321,16 @@ stop_condition:
 
 | ID | 问题 | 状态 | 决策 |
 |:---|:-----|:-----|:-----|
-| **I-SEMANTIC-CONFLICT** | Address64 的 Null 语义与 SizedPtr 冲突 | ✅ Resolved | RBF 层定义 NullPtr 约定 |
+| **I-SEMANTIC-CONFLICT** | <deleted-place-holder> 的 Null 语义与 SizedPtr 冲突 | ✅ Resolved | RBF 层定义 NullPtr 约定 |
 | **I-NO-EXPLICIT-RANGE** | RBF 缺乏显式区间类型 | ✅ Resolved | SizedPtr 就是为此设计的 |
 | **I-256MB-LIMIT** | 256MB Length 上限适用性 | ✅ Resolved | 足够用 |
-| **I-TERM-DRIFT-RISK** | Address64.Value 与 SizedPtr.OffsetBytes 混淆 | ✅ Resolved | SizedPtr 直接替代 Address64 |
+| **I-TERM-DRIFT-RISK** | <deleted-place-holder>.Value 与 SizedPtr.OffsetBytes 混淆 | ✅ Resolved | SizedPtr 直接替代 <deleted-place-holder> |
 
 **新识别问题**：
 
 | ID | 问题 | Tier | Next Probe |
 |:---|:-----|:-----|:-----------|
-| **I-ADDRESS64-VALUE** | Address64 是否还有存在价值？ | Shape | 检查 RBF 文档中 Address64 的使用点 |
+| **I-ADDRESS64-VALUE** | <deleted-place-holder> 是否还有存在价值？ | Shape | 检查 RBF 文档中 <deleted-place-holder> 的使用点 |
 
 ---
 
@@ -2375,8 +2375,8 @@ The following files were successfully edited:
 - ✅ 3 个调查报告产出
 
 **关键发现**：
-- SizedPtr 完全替代 Address64（不是共存）
-- Address64 已无存在价值（全部 9 处使用可替代）
+- SizedPtr 完全替代 <deleted-place-holder>（不是共存）
+- <deleted-place-holder> 已无存在价值（全部 9 处使用可替代）
 - 监护人的 4 条澄清节省了数天探索时间
 
 **方法论首次完整验证**：
@@ -2420,8 +2420,8 @@ EOF",
 > - ✅ 3 个调查报告产出
 > 
 > **关键发现**：
-> - SizedPtr 完全替代 Address64（不是共存）
-> - Address64 已无存在价值（全部 9 处使用可替代）
+> - SizedPtr 完全替代 <deleted-place-holder>（不是共存）
+> - <deleted-place-holder> 已无存在价值（全部 9 处使用可替代）
 > - 监护人的 4 条澄清节省了数天探索时间
 > 
 > **方法论首次完整验证**：
@@ -2539,12 +2539,12 @@ EOF",
 #### Artifact-Tiers 文档（全部 LGTM）
 - [Resolve.md](../wish/W-0006-rbf-sizedptr/artifacts/Resolve.md) — 动机、现状问题、监护人决策澄清
 - [Shape.md](../wish/W-0006-rbf-sizedptr/artifacts/Shape.md) — Glossary Alignment、Interface Contract
-- [Rule.md](../wish/W-0006-rbf-sizedptr/artifacts/Rule.md) — NullPtr 定义、Address64 废弃策略
+- [Rule.md](../wish/W-0006-rbf-sizedptr/artifacts/Rule.md) — NullPtr 定义、<deleted-place-holder> 废弃策略
 - [Plan.md](../wish/W-0006-rbf-sizedptr/artifacts/Plan.md) — 修订计划 + Migration Notes
 
 #### RBF 文档修订
 - [rbf-interface.md](../atelia/docs/Rbf/rbf-interface.md) v0.17 → v0.18
-  - Address64 定义删除
+  - <deleted-place-holder> 定义删除
   - SizedPtr + NullPtr 定义新增
   - 接口签名全部更新
   
@@ -2554,8 +2554,8 @@ EOF",
 
 ### 关键发现
 
-1. **SizedPtr 完全替代 Address64**（不是共存）
-2. **Address64 已无存在价值**（全部 9 处使用可替代）
+1. **SizedPtr 完全替代 <deleted-place-holder>**（不是共存）
+2. **<deleted-place-holder> 已无存在价值**（全部 9 处使用可替代）
 3. **监护人的 4 条澄清节省了数天探索时间**
 
 ### 方法论验证（首次完整应用）
@@ -2584,7 +2584,7 @@ EOF",
 1. ✅ **I-256MB-LIMIT**：足够用
 2. ✅ **I-NO-EXPLICIT-RANGE**：SizedPtr 就是为此设计的（写路径/读路径核心用途）
 3. ✅ **I-SEMANTIC-CONFLICT**：RBF 层定义 NullPtr 约定
-4. ✅ **I-TERM-DRIFT-RISK**：SizedPtr 直接替代 Address64
+4. ✅ **I-TERM-DRIFT-RISK**：SizedPtr 直接替代 <deleted-place-holder>
 
 这些输入的价值是**指数级**的——节省了大量"猜测设计意图 → 过度设计 → 推倒重来"的探索成本。
 
@@ -2731,7 +2731,7 @@ Do NOT create a new markdown file to document each change or summarize your work
 
 ### 4. 术语一致性
 
-- Address64、SizedPtr、NullPtr 等术语使用是否一致？
+- <deleted-place-holder>、SizedPtr、NullPtr 等术语使用是否一致？
 - 是否有术语混用或模糊？
 
 ## 输出格式
@@ -2827,7 +2827,7 @@ Error Code: rate_limited
 
 ### 4. 术语一致性
 
-- Address64、SizedPtr、NullPtr 等术语使用是否一致？
+- <deleted-place-holder>、SizedPtr、NullPtr 等术语使用是否一致？
 - 是否有术语混用或模糊？
 
 ## 输出格式
@@ -2924,7 +2924,7 @@ Error Code: rate_limited
 ### 3. 术语准确性
 
 - Glossary 中的术语定义是否准确？
-- SizedPtr.OffsetBytes vs Address64.Value 的对应关系是否正确？
+- SizedPtr.OffsetBytes vs <deleted-place-holder>.Value 的对应关系是否正确？
 - RbfInterface.NullPtr 的定义是否与 Rule.md 一致？
 
 ### 4. 完整性
@@ -2998,7 +2998,7 @@ Error Code: rate_limited
 
 - 是否与 Resolve.md §6（D3 Null 语义处理）一致？
 - 是否与 Shape.md §2 Glossary 一致？
-- §3 条款变更清单是否与 Address64 调查报告一致？
+- §3 条款变更清单是否与 <deleted-place-holder> 调查报告一致？
 
 ### 4. 可执行性
 
@@ -3232,7 +3232,7 @@ Reason: stackTrace.format
 
 ### 2. 术语一致性
 
-- 4 个文档中 Address64、SizedPtr、NullPtr 的定义/用法是否一致？
+- 4 个文档中 <deleted-place-holder>、SizedPtr、NullPtr 的定义/用法是否一致？
 - 是否有术语在某个 Tier 中突然变化？
 
 ### 3. 条款 ID 一致性
@@ -3314,7 +3314,7 @@ Reason: stackTrace.format
 
 报告结论要点：
 - **总体评价：需改进**（主要是跨 Tier 的**条款 ID 漂移**与 **Plan→实际文档集闭合**存在断点）
-- **Sev1 共 2 条**：`[F-RBF-NULLPTR]` vs `[R-RBF-NULLPTR]` 的 ID 不一致； 仍残留 Address64/Ptr64，导致 Plan 的验收标准与现状矛盾
+- **Sev1 共 2 条**：`[F-RBF-NULLPTR]` vs `[R-RBF-NULLPTR]` 的 ID 不一致； 仍残留 <deleted-place-holder>/Ptr64，导致 Plan 的验收标准与现状矛盾
 - **Sev2/Sev3**：术语合同未条款化、NullPtr 语义收束建议、Rule/Plan 重复清单导致维护漂移风险
 ~~~
 
@@ -3345,8 +3345,8 @@ Reason: stackTrace.format
    - 但上游 Resolve/Shape 和下游 Plan/实际文档使用 `[F-RBF-NULLPTR]`
    - 需要统一
 
-2. **实际文档残留 Address64/Ptr64**（跨层审阅）
-   - Plan.md 的验收标准假设"grep Address64 无结果"
+2. **实际文档残留 <deleted-place-holder>/Ptr64**（跨层审阅）
+   - Plan.md 的验收标准假设"grep <deleted-place-holder> 无结果"
    - 但 rbf-test-vectors.md 仍有残留
    - 导致验收标准与现状矛盾
 
@@ -3467,7 +3467,7 @@ Last Command: cd atelia/src/DocGraph && dotnet run -- ../../../
 Cwd: /repos/focus
 Exit Code: 0
 Terminal: bash
-Last Command: rg -n "Address64|\[F-ADDRESS64|\[F-PTR64-WIRE-FORMAT\]|Ptr64" /repos/focus/atelia/docs/Rbf || true
+Last Command: rg -n "<deleted-place-holder>|\[F-ADDRESS64|\[F-PTR64-WIRE-FORMAT\]|Ptr64" /repos/focus/atelia/docs/Rbf || true
 Cwd: /repos/focus
 Exit Code: 0
 
@@ -3487,7 +3487,7 @@ Craftsman指出的许多问题，我认为都是文档和措辞层面的，而�
   - P1: 引用的 meeting 链接路径错误，导致证据不可追溯。“`meeting/` 改为 `../meeting/`” 
 
 语言措辞：
-  - P2: §1 的“Address64=位置 / SizedPtr=区间”目标陈述与 §6 D4“SizedPtr 直接替代 Address64”矛盾
+  - P2: §1 的“<deleted-place-holder>=位置 / SizedPtr=区间”目标陈述与 §6 D4“SizedPtr 直接替代 <deleted-place-holder>”矛盾
     一开始不确定是否能彻底替代，后来咱们调查得知可以完全替代了嘛，这是个百分比的程度问题。
 
 请调度Curator，阅读四篇`agent-team/handoffs/w0006-review-*.md`报告，把这类其实是文档写法/语言措辞类的issue，提取并移动到单独的一个新文件中。让元review仅剩下那种真正涉及软件涉及与工程实现的真问题。
@@ -3537,7 +3537,7 @@ Craftsman指出的许多问题，我认为都是文档和措辞层面的，而�
 
 ✅ **文档/措辞类**：
 - P1: 引用的 meeting 链接路径错误 → `meeting/` 改为 `../meeting/`
-- P2: §1 的\"Address64=位置 / SizedPtr=区间\"与 §6\"SizedPtr 直接替代\"矛盾 → 这是程度问题（一开始不确定→后来调查得知可以完全替代）
+- P2: §1 的\"<deleted-place-holder>=位置 / SizedPtr=区间\"与 §6\"SizedPtr 直接替代\"矛盾 → 这是程度问题（一开始不确定→后来调查得知可以完全替代）
 
 ## 输出
 
@@ -3610,7 +3610,7 @@ Craftsman指出的许多问题，我认为都是文档和措辞层面的，而�
 **关键判断点**：
 - P2（"共存分工"vs"直接替代"）：归为**文档/措辞类**，因为这是设计**认知演进**的记录问题。§1 代表初始视角，§6/§7 代表澄清后的结论，不是逻辑矛盾
 - P4（旧版链接）：归为**设计/工程类**，因为这是**证据保存策略**问题，影响 Resolve-Tier 的可复核性
-- P7（Value vs Offset）：归为**文档/措辞类**，经调查确认 Address64 字段名是 `Value`，正文用 `Offset` 是概念名，两者都正确但表达不一致
+- P7（Value vs Offset）：归为**文档/措辞类**，经调查确认 <deleted-place-holder> 字段名是 `Value`，正文用 `Offset` 是概念名，两者都正确但表达不一致
 ~~~
 
 ### Assistant
@@ -3868,7 +3868,7 @@ Craftsman指出的许多问题，我认为都是文档和措辞层面的，而�
 | **Sev2-1**: 行号漂移 | **文档/措辞类 (D12)** | 位置可通过章节/符号定位，只是降低便利性 |
 | **Sev2-2**: 验收标准表达错位 | **文档/措辞类 (D13)** | 目标改动清晰，验收方法需细化 |
 | **Sev2-3**:  未纳入 | **设计/工程类** | Phase 1 范围定义和文档集闭合的设计决策 |
-| **Sev3-1**: Address64.cs 已不存在 | **文档/措辞类 (D14)** | 计划条目准确性，不阻塞 Phase 1 |
+| **Sev3-1**: <deleted-place-holder>.cs 已不存在 | **文档/措辞类 (D14)** | 计划条目准确性，不阻塞 Phase 1 |
 | **Sev3-2**: 条款索引模板未明确 | **文档/措辞类 (D15)** | 清单细节补充，有参照模板 |
 
 ### 更新结果
@@ -3957,7 +3957,7 @@ Craftsman指出的许多问题，我认为都是文档和措辞层面的，而�
 | 原问题 | 分类 | 去向 |
 |:-------|:-----|:-----|
 | Sev1-1: 条款 ID 跨 Tier 不一致 | **设计/工程类** | 保留在原报告 |
-| Sev1-2: Address64 未在文档集清零 | **设计/工程类** | 保留在原报告 |
+| Sev1-2: <deleted-place-holder> 未在文档集清零 | **设计/工程类** | 保留在原报告 |
 | Sev2-3: 术语合同未条款化/验收化 | 文档/措辞类 | → D16 |
 | Sev2-4: NullPtr 几何语义 vs 业务约定张力 | 文档/措辞类 | → D17 |
 | Sev3-5: Rule/Plan 重复但不同构 | 文档/措辞类 | → D18 |
@@ -4042,7 +4042,7 @@ Craftsman指出的许多问题，我认为都是文档和措辞层面的，而�
 |:---|:-----|:-------|:-----|
 | **E8** | 条款 ID `[R-RBF-NULLPTR]` vs `[F-RBF-NULLPTR]` 不一致 | Sev1 | 引用断裂 |
 | **E17** | 条款 ID 跨 Tier 不一致（同 E8） | Sev1 | 逻辑链条断点 |
-| **E18** | Address64 未在文档集清零 | Sev1 | 验收标准矛盾 |
+| **E18** | <deleted-place-holder> 未在文档集清零 | Sev1 | 验收标准矛盾 |
 | **E9** | 迁移映射包含不存在的 API | Sev1 | 误导实现 |
 | **E10** | 异常类型不一致 | Sev2 | 契约准确性 |
 | **E11** | 失败语义未对齐（NullPtr vs 异常） | Sev2 | 核心设计决策 |
@@ -4193,7 +4193,7 @@ Do NOT create a new markdown file to document each change or summarize your work
 从 `/repos/focus/agent-team/handoffs/w0006-review-doc-issues.md` 中提取 D1-D5：
 
 **D1 (Sev1)**: 链接路径错误 — `meeting/` 改为 `../meeting/`
-**D2 (Sev1)**: 表述演进未对齐 — §1 的\"Address64=位置 / SizedPtr=区间\"与 §6\"直接替代\"的程度差异
+**D2 (Sev1)**: 表述演进未对齐 — §1 的\"<deleted-place-holder>=位置 / SizedPtr=区间\"与 §6\"直接替代\"的程度差异
 **D3 (Sev2)**: 叙事未同步 — Scope 与 §7 结论不一致
 **D4 (Sev2)**: 措辞一致性 — Value vs Offset 术语表达
 **D5 (Sev2)**: 措辞精炼 — \"值得引入\"vs\"核心类型\"语气
@@ -4207,13 +4207,13 @@ Do NOT create a new markdown file to document each change or summarize your work
 ### 2. D2-D3：精简 §1 和 §3，避免过早结论
 
 **删除策略**：
-- §1 中删除\"Address64=位置、SizedPtr=区间\"的对比（这是初步判断，后来发现可以完全替代）
+- §1 中删除\"<deleted-place-holder>=位置、SizedPtr=区间\"的对比（这是初步判断，后来发现可以完全替代）
 - 改为简单陈述：\"RBF 缺乏显式区间类型，SizedPtr 已实现\"
 - §3 Scope 精简，删除冗余解释
 
 ### 3. D4：统一为 Offset（概念术语）
 
-全局检查 Address64 相关表述，统一使用 `Offset`（概念）而非 `Value`（字段名）。
+全局检查 <deleted-place-holder> 相关表述，统一使用 `Offset`（概念）而非 `Value`（字段名）。
 
 ### 4. D5：删除冗余的语气强调
 
@@ -4249,7 +4249,7 @@ Do NOT create a new markdown file to document each change or summarize your work
 | **D1** | 链接路径 `meeting/` → `../meeting/`（2 处） | ✅ |
 | **D2** | §1 目标精简为一句话，删除"共存分工"表述 | ✅ |
 | **D3** | §3 In-Scope 删除"语义边界定义"行，更新"引入"→"替代" | ✅ |
-| **D4** | frontmatter 术语统一：`Address64.Value` → `Address64 文件偏移` | ✅ |
+| **D4** | frontmatter 术语统一：`<deleted-place-holder>.Value` → `<deleted-place-holder> 文件偏移` | ✅ |
 | **D5** | 一句话判定改为直接结论式 | ✅ |
 
 **附加精简**：§7 表格从 4 行 × 长表头压缩为 3 行 × 短表头。
@@ -4473,8 +4473,8 @@ using Atelia.Data;
 - §5 验收标准\"grep 无结果\"过于绝对
 - 建议：改为\"核心区域无残留\"
 
-**D14 (Sev3)**: Address64.cs 已不存在
-- Migration Notes 提到删除 Address64.cs，但 Phase 1 无代码
+**D14 (Sev3)**: <deleted-place-holder>.cs 已不存在
+- Migration Notes 提到删除 <deleted-place-holder>.cs，但 Phase 1 无代码
 - 建议：删除此条
 
 **D15 (Sev3)**: 条款索引模板未明确
@@ -4493,13 +4493,13 @@ using Atelia.Data;
 ### 2. D13：精简验收标准
 
 **精简策略**：
-- §5 删除\"grep 验证 Address64 清除\"（因为有合理残留）
-- 改为\"核心文档（rbf-interface.md/rbf-format.md）Address64 已替换为 SizedPtr\"
+- §5 删除\"grep 验证 <deleted-place-holder> 清除\"（因为有合理残留）
+- 改为\"核心文档（rbf-interface.md/rbf-format.md）<deleted-place-holder> 已替换为 SizedPtr\"
 
 ### 3. D14：删除代码相关的 Migration Note
 
 **精简策略**：
-- 检查 §4 Migration Notes，删除提到 Address64.cs 的条目
+- 检查 §4 Migration Notes，删除提到 <deleted-place-holder>.cs 的条目
 - 保留文档层的语义变化说明
 
 ### 4. D15：删除模糊的\"更新条款索引\"
@@ -4532,7 +4532,7 @@ using Atelia.Data;
 |:-----|:-----|:-----|
 | **D12** | 删除 §2-3 所有行号（`L82-97` 等），改为章节/符号定位 | ✓ |
 | **D13** | 删除 `grep -r ... 返回空` 验收，改为"人工复核核心章节" | ✓ |
-| **D14** | 删除 Phase 2 的 `删除 Address64.cs` 条目 | ✓ |
+| **D14** | 删除 Phase 2 的 `删除 <deleted-place-holder>.cs` 条目 | ✓ |
 | **D15** | 删除 §2.2 模糊的"§6 条款索引 新条款条目"行；删除 §1.1 的步骤 1.3 | ✓ |
 
 **文档长度**：原 296 行 → 276 行（减少 20 行，约 **6.8%**）。未达 10% 目标，但已删除所有不可执行的指令，剩余内容均为实质性修订说明。
@@ -4569,7 +4569,7 @@ using Atelia.Data;
    - Migration Notes 删除代码相关内容
 
 3. **统一术语表述**（5/15 应用）
-   - `Address64.Value` → `Address64 文件偏移`
+   - `<deleted-place-holder>.Value` → `<deleted-place-holder> 文件偏移`
    - `DEPRECATED` → `REMOVED`
    - `SizedPtr Ptr` → `RbfFrame.Ptr`
 
@@ -4586,10 +4586,10 @@ using Atelia.Data;
 ```markdown
 | 新术语 | 旧术语 | 定义 | 备注 |
 |:-------|:-------|:-----|:-----|
-| SizedPtr | Address64 | ... | ... |
-| SizedPtr.OffsetBytes | Address64.Value | ... | ... |
+| SizedPtr | <deleted-place-holder> | ... | ... |
+| SizedPtr.OffsetBytes | <deleted-place-holder>.Value | ... | ... |
 | SizedPtr.LengthBytes | (无) | ... | ... |
-| RbfInterface.NullPtr | Address64 为 0 | ... | ... |
+| RbfInterface.NullPtr | <deleted-place-holder> 为 0 | ... | ... |
 | (新) | Ptr64 | ... | ... |
 ```
 
@@ -4597,7 +4597,7 @@ using Atelia.Data;
 ```markdown
 | 新术语 | 旧术语 | 定义与约定 |
 |:-------|:-------|:----------|
-| SizedPtr | Address64, Ptr64 | 表达 [offset, length) 区间... |
+| SizedPtr | <deleted-place-holder>, Ptr64 | 表达 [offset, length) 区间... |
 | RbfInterface.NullPtr | (无明确定义) | 表示"无效 Frame 引用"... |
 ```
 
@@ -4605,13 +4605,13 @@ using Atelia.Data;
 
 **修订前**：
 ```bash
-grep -r "Address64" /repos/focus/atelia/docs/Rbf/*.md
+grep -r "<deleted-place-holder>" /repos/focus/atelia/docs/Rbf/*.md
 # 应该返回空结果
 ```
 
 **修订后**：
 ```
-人工复核核心章节（§2 类型定义、§5-6 接口）确认无 Address64 残留
+人工复核核心章节（§2 类型定义、§5-6 接口）确认无 <deleted-place-holder> 残留
 ```
 
 ---
@@ -4694,7 +4694,7 @@ Excerpt from w0006-review-resolve.md, lines 13 to 37:
 - **类型**：证据完整性
 - **严重性**：Sev2
 - **位置**：§2 P1 / L63-L65；§2 P2 / L76-L78
-- **问题描述**：P1 证据声称 `rbf-interface.md#L120` 定义了 `[F-ADDRESS64-NULL]`，P2 证据声称 `rbf-interface.md#L125-L135` 的 Frame 定义"只有 Address64"。但当前 `atelia/docs/Rbf/rbf-interface.md`（在仓库现状中）已经以 `SizedPtr` 作为核心接口类型，并出现 RBF 层 `NullPtr = default` 的示例；未见 Address64 相关段落。这使得 P1/P2 的证据在"事后审阅"语境下不可复核。
+- **问题描述**：P1 证据声称 `rbf-interface.md#L120` 定义了 `[F-ADDRESS64-NULL]`，P2 证据声称 `rbf-interface.md#L125-L135` 的 Frame 定义"只有 <deleted-place-holder>"。但当前 `atelia/docs/Rbf/rbf-interface.md`（在仓库现状中）已经以 `SizedPtr` 作为核心接口类型，并出现 RBF 层 `NullPtr = default` 的示例；未见 <deleted-place-holder> 相关段落。这使得 P1/P2 的证据在"事后审阅"语境下不可复核。
 - **证据**：Resolve 的证据链接文本与 `rbf-interface.md` 当前内容趋势相悖（现文档中有 `SizedPtr Append(...)` 等表述）。
 - **工程问题本质**：Resolve-Tier 是设计决策的**输入产物**，其引用的证据应指向决策形成时的文档状态。当被引用的源文档根据决策结果被修订后，Resolve 中的证据就失去了复核价值。这是**证据保存策略**问题。
 - **建议修复**：
@@ -4735,7 +4735,7 @@ User's active file for additional context:
 - **类型**：证据完整性
 - **严重性**：Sev2
 - **位置**：§2 P1 / L63-L65；§2 P2 / L76-L78
-- **问题描述**：P1 证据声称 `rbf-interface.md#L120` 定义了 `[F-ADDRESS64-NULL]`，P2 证据声称 `rbf-interface.md#L125-L135` 的 Frame 定义"只有 Address64"。但当前 `atelia/docs/Rbf/rbf-interface.md`（在仓库现状中）已经以 `SizedPtr` 作为核心接口类型，并出现 RBF 层 `NullPtr = default` 的示例；未见 Address64 相关段落。这使得 P1/P2 的证据在"事后审阅"语境下不可复核。
+- **问题描述**：P1 证据声称 `rbf-interface.md#L120` 定义了 `[F-ADDRESS64-NULL]`，P2 证据声称 `rbf-interface.md#L125-L135` 的 Frame 定义"只有 <deleted-place-holder>"。但当前 `atelia/docs/Rbf/rbf-interface.md`（在仓库现状中）已经以 `SizedPtr` 作为核心接口类型，并出现 RBF 层 `NullPtr = default` 的示例；未见 <deleted-place-holder> 相关段落。这使得 P1/P2 的证据在"事后审阅"语境下不可复核。
 - **证据**：Resolve 的证据链接文本与 `rbf-interface.md` 当前内容趋势相悖（现文档中有 `SizedPtr Append(...)` 等表述）。
 - **工程问题本质**：Resolve-Tier 是设计决策的**输入产物**，其引用的证据应指向决策形成时的文档状态。当被引用的源文档根据决策结果被修订后，Resolve 中的证据就失去了复核价值。这是**证据保存策略**问题。
 - **建议修复**：
@@ -4763,10 +4763,10 @@ User's active file for additional context:
 - **类型**：设计决策逻辑
 - **严重性**：Sev2
 - **位置**：§6 D3 / L183-L191；§6 D4 / L199-L205
-- **问题描述**：D3 以"改造 Address64 的 Null 成员"为实施抓手，但 D4 又提出 Address64 可能整体可移除。两者并非必然冲突，但 Resolve 未说明优先级/顺序：是先迁移 Null 语义再删除 Address64，还是直接定义 RBF.NullPtr 并删除 Address64（无需"改造成员函数"）。
-- **证据**：D3 明确提到"Address64 的 Null 相关成员函数"（L185），D4 认为 Address64 可能不再需要（L199-L205）。
+- **问题描述**：D3 以"改造 <deleted-place-holder> 的 Null 成员"为实施抓手，但 D4 又提出 <deleted-place-holder> 可能整体可移除。两者并非必然冲突，但 Resolve 未说明优先级/顺序：是先迁移 Null 语义再删除 <deleted-place-holder>，还是直接定义 RBF.NullPtr 并删除 <deleted-place-holder>（无需"改造成员函数"）。
+- **证据**：D3 明确提到"<deleted-place-holder> 的 Null 相关成员函数"（L185），D4 认为 <deleted-place-holder> 可能不再需要（L199-L205）。
 - **工程问题本质**：两个相关决策之间存在**隐式依赖**，但未显式说明执行路径。这会导致后续 Plan-Tier 产出时需要"猜测"Resolve 的意图。
-- **建议修复**：在 D3 追加一句"若最终移除 Address64，则该步骤等价为：把 Null 语义从 Address64 迁移到 RBF 层后删除 Address64"。
+- **建议修复**：在 D3 追加一句"若最终移除 <deleted-place-holder>，则该步骤等价为：把 Null 语义从 <deleted-place-holder> 迁移到 RBF 层后删除 <deleted-place-holder>"。
 
 ---
 
@@ -4836,7 +4836,7 @@ Do NOT create a new markdown file to document each change or summarize your work
 
 </reminderInstructions>
 <userRequest>
-给你看看选区里这内容。我们是交付软件呀，目标就是把旧类型替换为新类型，“历史可复核，证据可复核”，什么“证明历史上确实有个旧版文档写了Address64这么个设想中的类型”，这根本就不是我们的目标。净添乱。我认为咱们的这种搞法失败了，伪问题的增长速度远远超过问题，过渡关注文本字眼而忽略了设计内容本身。满篇的搞什么“证据...原话...链接”，这他妈的就是抬杠。
+给你看看选区里这内容。我们是交付软件呀，目标就是把旧类型替换为新类型，“历史可复核，证据可复核”，什么“证明历史上确实有个旧版文档写了<deleted-place-holder>这么个设想中的类型”，这根本就不是我们的目标。净添乱。我认为咱们的这种搞法失败了，伪问题的增长速度远远超过问题，过渡关注文本字眼而忽略了设计内容本身。满篇的搞什么“证据...原话...链接”，这他妈的就是抬杠。
 </userRequest>
 
 ~~~
@@ -4848,9 +4848,9 @@ Do NOT create a new markdown file to document each change or summarize your work
 ## 问题根源分析
 
 看看 E1 的荒谬之处：
-- **Resolve.md 说**："当前 rbf-interface.md 有 Address64，我们要改成 SizedPtr"
-- **我们改了**：rbf-interface.md v0.17 → v0.18，Address64 → SizedPtr ✅
-- **Craftsman 说**："现在 rbf-interface.md 是 SizedPtr 了，你 Resolve 引用的 Address64 证据不可复核，请保存快照"
+- **Resolve.md 说**："当前 rbf-interface.md 有 <deleted-place-holder>，我们要改成 SizedPtr"
+- **我们改了**：rbf-interface.md v0.17 → v0.18，<deleted-place-holder> → SizedPtr ✅
+- **Craftsman 说**："现在 rbf-interface.md 是 SizedPtr 了，你 Resolve 引用的 <deleted-place-holder> 证据不可复核，请保存快照"
 
 这就是**倒果为因**。Resolve 引用的文档被修订了，**这正是 Wish 成功的证据**！却被当成"证据缺失"的问题。
 
@@ -4985,14 +4985,14 @@ Do NOT create a new markdown file to document each change or summarize your work
 {
   \"explanation\": \"更新层级进度并添加放弃说明\",
   \"filePath\": \"/repos/focus/wish/W-0006-rbf-sizedptr/wish.md\",
-  \"oldString\": \"| Resolve-Tier | 🟢 完成 | [artifacts/Resolve.md](artifacts/Resolve.md) | 动机、现状问题、Scope + 监护人决策澄清 |\\n| Shape-Tier | 🟢 完成 | [artifacts/Shape.md](artifacts/Shape.md) | 术语对齐、Interface Contract |\\n| Rule-Tier | 🟢 完成 | [artifacts/Rule.md](artifacts/Rule.md) | NullPtr 定义、Address64 废弃 |\\n| Plan-Tier | 🟢 完成 | [artifacts/Plan.md](artifacts/Plan.md) | 修订计划 + Migration Notes |\\n| Craft-Tier | 🟢 完成 | [修订后的文档](../../atelia/docs/Rbf/) | Phase 1 文档修订已完成 |\\n\\n> **状态符号**: ⚪ 未开始 | 🟡 进行中 | 🟢 完成 | 🔴 阻塞 | ➖ N/A  \\n> **Phase 1 完成**：✅ 2026-01-05（文档修订）  \\n> **Phase 2 计划**：代码实现（留给未来 Wish，当前无 active code）\",
-  \"newString\": \"| Resolve-Tier | 🟢 完成 | [artifacts/Resolve.md](artifacts/Resolve.md) | 动机、现状问题、Scope + 监护人决策澄清 |\\n| Shape-Tier | 🟢 完成 | [artifacts/Shape.md](artifacts/Shape.md) | 术语对齐、Interface Contract |\\n| Rule-Tier | 🟢 完成 | [artifacts/Rule.md](artifacts/Rule.md) | NullPtr 定义、Address64 废弃 |\\n| Plan-Tier | 🟢 完成 | [artifacts/Plan.md](artifacts/Plan.md) | 修订计划 + Migration Notes |\\n| Craft-Tier | 🟢 完成 | [修订后的文档](../../atelia/docs/Rbf/) | Phase 1 文档修订已完成 |\\n| Review-Tier | 🔴 失败 | [审阅报告](../../agent-team/handoffs/w0006-review-*.md) | **审阅方法论失败，产生大量伪问题** |\\n\\n> **状态符号**: ⚪ 未开始 | 🟡 进行中 | 🟢 完成 | 🔴 阻塞/失败 | ➖ N/A  \\n> **技术交付**：✅ 2026-01-05（文档修订完成）  \\n> **质量审阅**：❌ 2026-01-06（方法论失败，Wish 放弃）  \\n> **Phase 2 计划**：代码实现（留给未来 Wish，当前无 active code）\"
+  \"oldString\": \"| Resolve-Tier | 🟢 完成 | [artifacts/Resolve.md](artifacts/Resolve.md) | 动机、现状问题、Scope + 监护人决策澄清 |\\n| Shape-Tier | 🟢 完成 | [artifacts/Shape.md](artifacts/Shape.md) | 术语对齐、Interface Contract |\\n| Rule-Tier | 🟢 完成 | [artifacts/Rule.md](artifacts/Rule.md) | NullPtr 定义、<deleted-place-holder> 废弃 |\\n| Plan-Tier | 🟢 完成 | [artifacts/Plan.md](artifacts/Plan.md) | 修订计划 + Migration Notes |\\n| Craft-Tier | 🟢 完成 | [修订后的文档](../../atelia/docs/Rbf/) | Phase 1 文档修订已完成 |\\n\\n> **状态符号**: ⚪ 未开始 | 🟡 进行中 | 🟢 完成 | 🔴 阻塞 | ➖ N/A  \\n> **Phase 1 完成**：✅ 2026-01-05（文档修订）  \\n> **Phase 2 计划**：代码实现（留给未来 Wish，当前无 active code）\",
+  \"newString\": \"| Resolve-Tier | 🟢 完成 | [artifacts/Resolve.md](artifacts/Resolve.md) | 动机、现状问题、Scope + 监护人决策澄清 |\\n| Shape-Tier | 🟢 完成 | [artifacts/Shape.md](artifacts/Shape.md) | 术语对齐、Interface Contract |\\n| Rule-Tier | 🟢 完成 | [artifacts/Rule.md](artifacts/Rule.md) | NullPtr 定义、<deleted-place-holder> 废弃 |\\n| Plan-Tier | 🟢 完成 | [artifacts/Plan.md](artifacts/Plan.md) | 修订计划 + Migration Notes |\\n| Craft-Tier | 🟢 完成 | [修订后的文档](../../atelia/docs/Rbf/) | Phase 1 文档修订已完成 |\\n| Review-Tier | 🔴 失败 | [审阅报告](../../agent-team/handoffs/w0006-review-*.md) | **审阅方法论失败，产生大量伪问题** |\\n\\n> **状态符号**: ⚪ 未开始 | 🟡 进行中 | 🟢 完成 | 🔴 阻塞/失败 | ➖ N/A  \\n> **技术交付**：✅ 2026-01-05（文档修订完成）  \\n> **质量审阅**：❌ 2026-01-06（方法论失败，Wish 放弃）  \\n> **Phase 2 计划**：代码实现（留给未来 Wish，当前无 active code）\"
 },
 {
   \"explanation\": \"添加放弃总结\",
   \"filePath\": \"/repos/focus/wish/W-0006-rbf-sizedptr/wish.md\",
   \"oldString\": \"## 关联 Issue\\n\\n见：[artifacts/Resolve.md](artifacts/Resolve.md) frontmatter（已全部 resolved）\\n\\n**完成总结**：监护人提供的核心决策直接解答了 Resolve-Tier 识别的 4 个问题，使后续 Tier 大幅简化。\",
-  \"newString\": \"## 关联 Issue\\n\\n见：[artifacts/Resolve.md](artifacts/Resolve.md) frontmatter（已全部 resolved）\\n\\n## 放弃原因 (Abandonment Reason)\\n\\n**技术交付已完成**（2026-01-05）：\\n- ✅ 文档修订：rbf-interface.md v0.17→v0.18, rbf-format.md v0.16→v0.17\\n- ✅ 5 个 Tier 文档产出：Resolve/Shape/Rule/Plan/Craft\\n- ✅ SizedPtr 完全替代 Address64\\n\\n**审阅方法论失败**（2026-01-06）：\\n- Craftsman 审阅产生 36 个问题（18 文档/措辞 + 18 设计/工程）\\n- **核心问题**：陷入\"学术论文审阅模式\"，过度关注形式（证据链、可追溯性、历史可复核），偏离工程目标（代码/文档正确性）\\n- **典型伪问题示例**：\\n  - E1：\"Resolve 引用的 rbf-interface.md 已被修订为 SizedPtr，证据不可复核\" → **倒果为因**：文档被修订正是 Wish 成功的证据\\n  - E2：\"256MB 足够需要追溯之前在哪里分析过\" → **过度要求**：监护人决策即为依据\\n  - 大量\"链接路径\"\"措辞一致性\"\"表述演进\"等抠字眼问题\\n- **结论**：伪问题增长速度远超真问题，审阅成本 >> 价值\\n\\n**监护人决策**：放弃本 Wish，RBF 文档修订成果保留（技术上正确），另寻更有效的质量保证方法。\"
+  \"newString\": \"## 关联 Issue\\n\\n见：[artifacts/Resolve.md](artifacts/Resolve.md) frontmatter（已全部 resolved）\\n\\n## 放弃原因 (Abandonment Reason)\\n\\n**技术交付已完成**（2026-01-05）：\\n- ✅ 文档修订：rbf-interface.md v0.17→v0.18, rbf-format.md v0.16→v0.17\\n- ✅ 5 个 Tier 文档产出：Resolve/Shape/Rule/Plan/Craft\\n- ✅ SizedPtr 完全替代 <deleted-place-holder>\\n\\n**审阅方法论失败**（2026-01-06）：\\n- Craftsman 审阅产生 36 个问题（18 文档/措辞 + 18 设计/工程）\\n- **核心问题**：陷入\"学术论文审阅模式\"，过度关注形式（证据链、可追溯性、历史可复核），偏离工程目标（代码/文档正确性）\\n- **典型伪问题示例**：\\n  - E1：\"Resolve 引用的 rbf-interface.md 已被修订为 SizedPtr，证据不可复核\" → **倒果为因**：文档被修订正是 Wish 成功的证据\\n  - E2：\"256MB 足够需要追溯之前在哪里分析过\" → **过度要求**：监护人决策即为依据\\n  - 大量\"链接路径\"\"措辞一致性\"\"表述演进\"等抠字眼问题\\n- **结论**：伪问题增长速度远超真问题，审阅成本 >> 价值\\n\\n**监护人决策**：放弃本 Wish，RBF 文档修订成果保留（技术上正确），另寻更有效的质量保证方法。\"
 }
 ]"
 }
@@ -5043,7 +5043,7 @@ The following files were successfully edited:
   "filePath": "/repos/focus/wish/W-0006-rbf-sizedptr/wish.md",
   "oldString": "| Resolve-Tier | 🟢 完成 | [artifacts/Resolve.md](artifacts/Resolve.md) | 动机、现状问题、Scope + 监护人决策澄清 |
 | Shape-Tier | 🟢 完成 | [artifacts/Shape.md](artifacts/Shape.md) | 术语对齐、Interface Contract |
-| Rule-Tier | 🟢 完成 | [artifacts/Rule.md](artifacts/Rule.md) | NullPtr 定义、Address64 废弃 |
+| Rule-Tier | 🟢 完成 | [artifacts/Rule.md](artifacts/Rule.md) | NullPtr 定义、<deleted-place-holder> 废弃 |
 | Plan-Tier | 🟢 完成 | [artifacts/Plan.md](artifacts/Plan.md) | 修订计划 + Migration Notes |
 | Craft-Tier | 🟢 完成 | [修订后的文档](../../atelia/docs/Rbf/) | Phase 1 文档修订已完成 |
 
@@ -5052,7 +5052,7 @@ The following files were successfully edited:
 > **Phase 2 计划**：代码实现（留给未来 Wish，当前无 active code）",
   "newString": "| Resolve-Tier | 🟢 完成 | [artifacts/Resolve.md](artifacts/Resolve.md) | 动机、现状问题、Scope + 监护人决策澄清 |
 | Shape-Tier | 🟢 完成 | [artifacts/Shape.md](artifacts/Shape.md) | 术语对齐、Interface Contract |
-| Rule-Tier | 🟢 完成 | [artifacts/Rule.md](artifacts/Rule.md) | NullPtr 定义、Address64 废弃 |
+| Rule-Tier | 🟢 完成 | [artifacts/Rule.md](artifacts/Rule.md) | NullPtr 定义、<deleted-place-holder> 废弃 |
 | Plan-Tier | 🟢 完成 | [artifacts/Plan.md](artifacts/Plan.md) | 修订计划 + Migration Notes |
 | Craft-Tier | 🟢 完成 | [修订后的文档](../../atelia/docs/Rbf/) | Phase 1 文档修订已完成 |
 | Review-Tier | 🔴 失败 | [审阅报告](../../agent-team/handoffs/w0006-review-*.md) | **审阅方法论失败，产生大量伪问题** |
@@ -5086,7 +5086,7 @@ The following files were successfully edited:
 **技术交付已完成**（2026-01-05）：
 - ✅ 文档修订：rbf-interface.md v0.17→v0.18, rbf-format.md v0.16→v0.17
 - ✅ 5 个 Tier 文档产出：Resolve/Shape/Rule/Plan/Craft
-- ✅ SizedPtr 完全替代 Address64
+- ✅ SizedPtr 完全替代 <deleted-place-holder>
 
 **审阅方法论失败**（2026-01-06）：
 - Craftsman 审阅产生 36 个问题（18 文档/措辞 + 18 设计/工程）
@@ -5134,12 +5134,12 @@ The following files were successfully edited:
 **文档修订**：
 - `rbf-interface.md` v0.17 → v0.18
 - `rbf-format.md` v0.16 → v0.17
-- SizedPtr 完全替代 Address64
+- SizedPtr 完全替代 <deleted-place-holder>
 - 2 个文档修订耗时 0.5 小时
 
 **产物清单**：
 - 4 个 Artifact-Tiers 文档（Resolve/Shape/Rule/Plan）
-- 3 个调查报告（Resolve Brief、Address64 价值检查、执行记录）
+- 3 个调查报告（Resolve Brief、<deleted-place-holder> 价值检查、执行记录）
 - 2 个修订后的 RBF 文档
 
 **时间线**：
@@ -5174,7 +5174,7 @@ The following files were successfully edited:
 
 **E1（Sev1）**：\"Resolve 引用的 rbf-interface.md 已被修订为 SizedPtr，证据不可复核\"
 - **荒谬之处**：文档被修订**正是 Wish 成功的证据**，却被当成\"证据缺失\"
-- **倒果为因**：Resolve 说\"要改 Address64→SizedPtr\"，我们改了，Craftsman 说\"现在看不到 Address64 了，证据缺失\"
+- **倒果为因**：Resolve 说\"要改 <deleted-place-holder>→SizedPtr\"，我们改了，Craftsman 说\"现在看不到 <deleted-place-holder> 了，证据缺失\"
 
 **E2（Sev2）**：\"256MB 足够需要追溯之前在哪里分析过\"
 - **过度要求**：监护人说了就是了，还要考古找\"分析过程\"的出处？
@@ -5262,7 +5262,7 @@ The following files were successfully edited:
 ### 技术上成功了
 
 - 4.5 小时完成 5 个 Tier + 文档修订
-- SizedPtr 完全替代 Address64
+- SizedPtr 完全替代 <deleted-place-holder>
 - rbf-interface.md v0.18, rbf-format.md v0.17
 - 方法论首次完整应用（demand schema、snapshot、issue tracking）
 
@@ -5296,7 +5296,7 @@ Craftsman 审阅产生 36 个问题（3 小时），其中至少 12 个是**伪�
 
 ### 监护人的清醒判断
 
-> \"我们是交付软件呀，目标就是把旧类型替换为新类型，'历史可复核，证据可复核'，什么'证明历史上确实有个旧版文档写了Address64这么个设想中的类型'，这根本就不是我们的目标。净添乱。\"
+> \"我们是交付软件呀，目标就是把旧类型替换为新类型，'历史可复核，证据可复核'，什么'证明历史上确实有个旧版文档写了<deleted-place-holder>这么个设想中的类型'，这根本就不是我们的目标。净添乱。\"
 
 这句话点醒了我：**我们陷入了形式主义陷阱**。
 
@@ -5344,7 +5344,7 @@ cat >> /repos/focus/agent-team/members/TeamLeader/inbox.md << 'EOF'
 ### 技术上成功了
 
 - 4.5 小时完成 5 个 Tier + 文档修订
-- SizedPtr 完全替代 Address64
+- SizedPtr 完全替代 <deleted-place-holder>
 - rbf-interface.md v0.18, rbf-format.md v0.17
 - 方法论首次完整应用（demand schema、snapshot、issue tracking）
 
@@ -5378,7 +5378,7 @@ Craftsman 审阅产生 36 个问题（3 小时），其中至少 12 个是**伪�
 
 ### 监护人的清醒判断
 
-> "我们是交付软件呀，目标就是把旧类型替换为新类型，'历史可复核，证据可复核'，什么'证明历史上确实有个旧版文档写了Address64这么个设想中的类型'，这根
+> "我们是交付软件呀，目标就是把旧类型替换为新类型，'历史可复核，证据可复核'，什么'证明历史上确实有个旧版文档写了<deleted-place-holder>这么个设想中的类型'，这根
 本就不是我们的目标。净添乱。"
 
 这句话点醒了我：**我们陷入了形式主义陷阱**。
@@ -5419,7 +5419,7 @@ EOF
 > ### 技术上成功了
 > 
 > - 4.5 小时完成 5 个 Tier + 文档修订
-> - SizedPtr 完全替代 Address64
+> - SizedPtr 完全替代 <deleted-place-holder>
 > - rbf-interface.md v0.18, rbf-format.md v0.17
 > - 方法论首次完整应用（demand schema、snapshot、issue tracking）
 > 
@@ -5453,7 +5453,7 @@ EOF
 > 
 > ### 监护人的清醒判断
 > 
-> > "我们是交付软件呀，目标就是把旧类型替换为新类型，'历史可复核，证据可复核'，什么'证明历史上确实有个旧版文档写了Address64这么个设想中的类型'，这
+> > "我们是交付软件呀，目标就是把旧类型替换为新类型，'历史可复核，证据可复核'，什么'证明历史上确实有个旧版文档写了<deleted-place-holder>这么个设想中的类型'，这
 根本就不是我们的目标。净添乱。"
 > 
 > 这句话点醒了我：**我们陷入了形式主义陷阱**。
@@ -5540,7 +5540,7 @@ EOF
 **技术交付**：✅ 成功（4.5 小时）
 - rbf-interface.md v0.18
 - rbf-format.md v0.17
-- SizedPtr 完全替代 Address64
+- SizedPtr 完全替代 <deleted-place-holder>
 
 **审阅方法论**：❌ 失败（3 小时）
 - 36 个问题，12+ 个伪问题
@@ -5748,7 +5748,7 @@ acceptance:
 - 不追问"为什么这个标准是正确的"——标准本身是公理
 
 **实践**：
-- "Address64 已替换为 SizedPtr"的验收 = `grep -c Address64 *.md == 0`
+- "<deleted-place-holder> 已替换为 SizedPtr"的验收 = `grep -c <deleted-place-holder> *.md == 0`
 - "监护人认可"的验收 = 监护人点头（外部观测）
 - 不做"grep 命令是否正确"的元审阅
 
@@ -5968,7 +5968,7 @@ Do NOT create a new markdown file to document each change or summarize your work
 ### 1.2 核心矛盾
 
 **技术交付**（4.5 小时）：
-- SizedPtr 完全替代 Address64 ✅
+- SizedPtr 完全替代 <deleted-place-holder> ✅
 - rbf-interface.md v0.18 ✅
 - rbf-format.md v0.17 ✅
 

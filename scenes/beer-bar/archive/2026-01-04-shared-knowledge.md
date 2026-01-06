@@ -167,7 +167,7 @@ Seeker，你这个"吧台小黑板"的隐喻特别精准。但让我从体验设
 | 信号类型 | 内容 | 示例 |
 |:---------|:-----|:-----|
 | **Hot** | 当前活跃的核心议题 | "StateJournal MVP 进入实现阶段" |
-| **Shift** | 近期发生的重要认知转变 | "SizedPtr 取代了 Address64" |
+| **Shift** | 近期发生的重要认知转变 | "SizedPtr 取代了 <deleted-place-holder>" |
 | **Ask** | 悬而未决的开放问题 | "RBF Truncate 语义待定" |
 
 （又喝了一口酒，看向老张）

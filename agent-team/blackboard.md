@@ -56,7 +56,7 @@ Task<T> 构造器内部派生类检查，外部派生会在 await 时崩溃
 即使是 Jam Session 也应该有可判定的产出边界
 — *Craftsman* | [证据](agent-team/members/Craftsman/index.md#I-046) | 2026-01-06
 
-### ✓ Address64 完全可被 SizedPtr 替代
+### ✓ <deleted-place-holder> 完全可被 SizedPtr 替代
 所有 9 处使用都是"定位 Frame"用途，SizedPtr 提供完整替代能力
 — *Investigator* | [证据](agent-team/members/investigator/index.md#2026-01-05-sizedptr) | 2026-01-06
 

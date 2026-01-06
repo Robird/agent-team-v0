@@ -483,7 +483,7 @@ if (!FramePtr.TryCreate(userOffset, userLength, out var ptr)) {
 - **版本兼容性风险**：文档同时陈述"36:28"和"40:24"两种方案，但 `Packed` 一旦落盘，bit 分配就是 wire-format。除非额外存储版本/方案标记，否则以后无法区分旧数据使用哪种布局。建议在格式层锁定一个方案，或在 Packed 中预留 scheme/version bits。
 
 #### 5. API 一致性（与 .NET 生态 / 与 Atelia 既有约定）
-- **Null 处理一致性**：Atelia 的 RBF 接口已采用 `Address64` 并定义了 `Null=0` + 4B 对齐。而 FramePtr 目前声明"无业务语义、不定义 Null/Empty"。这在工程上容易造成"两个指针类型的 Null 处理不一致"。建议尽早决定：要么 FramePtr 也提供 `Null/IsNull`，要么明确要求上层用 `FramePtr?`/外层 sentinel 表达空值。
+- **Null 处理一致性**：Atelia 的 RBF 接口已采用 <deleted-place-holder> 并定义了 `Null=0` + 4B 对齐。而 FramePtr 目前声明"无业务语义、不定义 Null/Empty"。这在工程上容易造成"两个指针类型的 Null 处理不一致"。建议尽早决定：要么 FramePtr 也提供 `Null/IsNull`，要么明确要求上层用 `FramePtr?`/外层 sentinel 表达空值。
 - **`Create/TryCreate` 符合惯例**：但 `FromPacked` 若保留，应在命名与 XML doc 上把"无校验"作为第一信息，否则会与 .NET 常见的 `Parse/TryParse` 心智模型冲突。
 - **强化"磁盘版 Span"隐喻**：可考虑添加 `IsEmpty`、`Overlaps`、`Slice` 这类纯数学方法，但要确保每个方法的溢出策略（checked/unchecked/try）一致且可预测。
 

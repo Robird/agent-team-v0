@@ -76,7 +76,7 @@ public interface IDurableObject
 | 任务 | 状态 |
 |------|------|
 | T-P2-00 错误类型定义 | ✅ |
-| T-P2-01 Address64/Ptr64 | ✅ |
+| T-P2-01 <deleted-place-holder>/Ptr64 | ✅ |
 | T-P2-02 VarInt 编解码 | ✅ |
 | T-P2-03 FrameTag 位段编码 | ✅ |
 | T-P2-04 DurableObjectState 枚举 | ✅ |

@@ -86,7 +86,7 @@
 **术语膨胀 vs 精确性权衡**：
 - 最小侵入性：DataTail 是唯一的边界 case
 - 术语膨胀代价 > 精确性收益（只影响 1 个字段）
-- 概念层已有 Address64 分离，注释足以消除歧义
+- 概念层已有 <deleted-place-holder> 分离，注释足以消除歧义
 
 **推荐方案**：C（保持现状 + 加注释）
 **理由**：
@@ -172,7 +172,7 @@
 
 **条款一致性**：
 - 扩展定义会影响 [F-05] 及周边描述
-- 需要把"必须指向 record 起点"的约束收敛到 `Address64` / `ObjectVersionPtr` 上
+- 需要把"必须指向 record 起点"的约束收敛到 <deleted-place-holder> / `ObjectVersionPtr` 上
 
 **测试向量映射**：
 - 方案 A 允许把向量按"Ptr64-as-RecordPtr"与"Ptr64-as-EOF"分组
@@ -180,7 +180,7 @@
 - 方案 C 最不利（注释无法被测试框架引用）
 
 **推荐方案**：A（扩展 Ptr64 定义）
-**理由**：把 `Ptr64` 明确为"4B 对齐的 file offset 编码"，把"必须指向 record 起点"收敛到 `Address64` / `ObjectVersionPtr`。这样既修复 DataTail 一致性问题，也无需引入新术语。
+**理由**：把 `Ptr64` 明确为"4B 对齐的 file offset 编码"，把"必须指向 record 起点"收敛到 <deleted-place-holder> / `ObjectVersionPtr`。这样既修复 DataTail 一致性问题，也无需引入新术语。
 
 ---
 
@@ -409,7 +409,7 @@
 **处方决议**：
 
 1. **扩展 Ptr64 定义**：在术语表中将 Ptr64 定义为"4B 对齐的 file offset 编码（`u64 LE`，`0=null`）"
-2. **收敛 Address64 语义**：明确 Address64/ObjectVersionPtr 是"指向 Record 起始位置"的子集语义
+2. **收敛 <deleted-place-holder> 语义**：明确 <deleted-place-holder>/ObjectVersionPtr 是"指向 Record 起始位置"的子集语义
 3. **DataTail 注释**：在 DataTail 字段处添加注释说明其 EOF 语义
 
 **具体修改草案**：
@@ -417,7 +417,7 @@
 ```markdown
 <!-- 术语表修改 -->
 | **Ptr64** | 64 位文件偏移量的编码形式，`u64 LE`，要求 4B 对齐（低 2 bit 为 0）。`Ptr64=0` 表示 null | — | `ulong` |
-| **Address64** | 指向 Record 起始位置的 Ptr64 子类型 | — | `ulong` |
+| **<deleted-place-holder>** | 指向 Record 起始位置的 Ptr64 子类型 | — | `ulong` |
 
 <!-- DataTail 字段注释 -->
 - `DataTail`：Ptr64（data 文件 EOF 位置，包含尾部 Magic 分隔符。**注**：此处 Ptr64 不指向 Record 起点，而是表示文件末尾偏移量）
@@ -444,7 +444,7 @@
 
 **Q2 修订**（方案 A）：
 1. 修改术语表 Ptr64 定义
-2. 添加 Address64 术语条目
+2. 添加 <deleted-place-holder> 术语条目
 3. 在 DataTail 字段处添加注释
 
 ---
@@ -479,8 +479,8 @@
 | # | 修改位置 | 修改内容 | 状态 |
 |---|----------|----------|------|
 | 1 | 术语表 Ptr64 行 | 扩展定义为"64 位文件偏移量编码"，明确不限于指向 Record 起点 | ✅ |
-| 2 | 术语表 | 新增 Address64 条目，定义为"指向 Record 起点的 Ptr64 子类型" | ✅ |
-| 3 | 命名约定 #4 | 更新为"Ptr64 是通用 file offset 编码；Address64 是子类型" | ✅ |
+| 2 | 术语表 | 新增 <deleted-place-holder> 条目，定义为"指向 Record 起点的 Ptr64 子类型" | ✅ |
+| 3 | 命名约定 #4 | 更新为"Ptr64 是通用 file offset 编码；<deleted-place-holder> 是子类型" | ✅ |
 | 4 | §3.1.0.1 DiscardChanges 行为 | 更新 Transient Dirty 行为为"Detach + 后续访问抛异常" | ✅ |
 | 5 | §3.1.0.1 | 新增 [S-20] 条款 | ✅ |
 | 6 | §3.2.2 MetaCommitRecord | DataTail 字段添加注释说明 EOF 语义 | ✅ |

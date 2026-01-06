@@ -133,9 +133,9 @@ TeamLeader 倾向选项 C（混合模式），我基本认同，但想追问一�
 
 **我的疑问**：当概念边界发生变化时，"决策文档"和"规范文档"之间的映射关系是否仍然清晰？
 
-如果 SizedPtr 替换 Address64 的范围超出预期（比如发现某些场景下 `Address64` 的纯指针语义和 `SizedPtr` 的区间语义有微妙冲突），artifacts/ 中的 Rule-Tier 是否需要回溯修订？
+如果 SizedPtr 替换 <deleted-place-holder> 的范围超出预期（比如发现某些场景下 <deleted-place-holder> 的纯指针语义和 `SizedPtr` 的区间语义有微妙冲突），artifacts/ 中的 Rule-Tier 是否需要回溯修订？
 
-**建议**：选项 C 可行，但需要在 artifacts/Rule.md 中明确**边界条件**：哪些地方用 Address64，哪些用 SizedPtr，以及判断依据。这不只是技术选择，而是*语义边界*的定义。
+**建议**：选项 C 可行，但需要在 artifacts/Rule.md 中明确**边界条件**：哪些地方用 <deleted-place-holder>，哪些用 SizedPtr，以及判断依据。这不只是技术选择，而是*语义边界*的定义。
 
 #### 2. Scope 边界：依赖链的双向视角
 
@@ -178,14 +178,14 @@ TeamLeader 倾向选项 A（原位演进）。
 
 我同意旧文档质量不错，但想提一个*知识考古*的视角：
 
-旧文档中包含了大量**隐性设计决策**（implicit decisions）。比如 `Address64` 的定义背后，有"为什么不用 32 位"、"为什么需要 4B 对齐"等未写明的推理。
+旧文档中包含了大量**隐性设计决策**（implicit decisions）。比如 <deleted-place-holder> 的定义背后，有"为什么不用 32 位"、"为什么需要 4B 对齐"等未写明的推理。
 
 **风险**：原位演进时，如果只替换类型名而不追溯原始推理，可能会丢失这些隐性知识。
 
 **建议**：在修订 docs/Rbf/*.md 时，同步产出一份 **Migration Notes**（可以放在 artifacts/Plan.md 或单独文件），记录：
-- 哪些字段从 Address64 改为 SizedPtr
+- 哪些字段从 <deleted-place-holder> 改为 SizedPtr
 - 每个修改点的*语义变化*（不只是类型变化）
-- 如果保留 Address64，理由是什么
+- 如果保留 <deleted-place-holder>，理由是什么
 
 这既是文档，也是未来实现者的*认知地图*。
 
@@ -197,7 +197,7 @@ TeamLeader 倾向选项 A（原位演进）。
 
 SizedPtr 目前定义在 `Atelia.Data`，是一个通用产品。RBF 是它的"首个目标用户"。
 
-但 RBF 层也有自己的类型（Address64, FrameTag 等）。当 SizedPtr 进入 RBF 接口时，它是：
+但 RBF 层也有自己的类型（<deleted-place-holder>, FrameTag 等）。当 SizedPtr 进入 RBF 接口时，它是：
 - **透传**（pass-through）：RBF 接口直接暴露 `SizedPtr`，上层也用 `SizedPtr`
 - **包装**（wrap）：RBF 定义自己的类型（如 `RbfSpan`），内部用 `SizedPtr` 实现
 
@@ -270,7 +270,7 @@ Seeker 提出的"纯设计的验收标准是什么"是一个好问题。
 **建议验收标准**：
 1. 修订后的 `rbf-interface.md` 应在前 30 行内回答："SizedPtr 替换了什么，保留了什么"
 2. 每个被 SizedPtr 替换的字段/接口，应有一句话说明"语义变化"（不只是类型变化）
-3. 新增的 Decision Log 应支持"为什么不用 Address64"这个问题的快速定位
+3. 新增的 Decision Log 应支持"为什么不用 <deleted-place-holder>"这个问题的快速定位
 
 这些标准不依赖代码实现，可在文档层验收。
 
@@ -280,17 +280,17 @@ Seeker 提出的"纯设计的验收标准是什么"是一个好问题。
 
 我要补充一个经常被忽视的风险：**术语漂移（terminology drift）**。
 
-RBF 旧文档中的术语（Address64, Frame, Magic, Tag 等）形成了一套**内部一致的命名系统**。SizedPtr 是外来概念，它的术语（Offset, Length, Span）来自不同的语境。
+RBF 旧文档中的术语（<deleted-place-holder>, Frame, Magic, Tag 等）形成了一套**内部一致的命名系统**。SizedPtr 是外来概念，它的术语（Offset, Length, Span）来自不同的语境。
 
 当两套术语在同一文档中共存时，读者需要持续进行"心智翻译"：
-- "这里的 Offset 是 Address64 的 offset，还是 SizedPtr 的 Offset？"
+- "这里的 Offset 是 <deleted-place-holder> 的 offset，还是 SizedPtr 的 Offset？"
 - "Span 在 RBF 语境下是什么？"
 
 **建议**：在 Rule-Tier 产物中增加一节 **"Glossary Alignment"**，明确：
 
 | 术语 | 来源 | 在 RBF 中的含义 |
 |:-----|:-----|:----------------|
-| `Address64` | RBF 原有 | 指向 Frame 起点的 8 字节 file offset |
+| <deleted-place-holder> | RBF 原有 | 指向 Frame 起点的 8 字节 file offset |
 | `SizedPtr` | Atelia.Data | 8 字节紧凑表示的 offset+length 区间 |
 | `Offset` | SizedPtr 字段 | 38-bit 4B 对齐偏移（约 ~1TB 范围）|
 | `Length` | SizedPtr 字段 | 26-bit 4B 对齐长度（约 ~256MB 范围）|
@@ -303,7 +303,7 @@ RBF 旧文档中的术语（Address64, Frame, Magic, Tag 等）形成了一套**
 
 **回读测试（Read-back Test）**：修订完成后，邀请一个"没有参与设计过程"的 Agent（比如 QA 或新唤醒的 Implementer）尝试阅读修订后的文档，回答以下问题：
 1. SizedPtr 在 RBF 中的角色是什么？
-2. 哪些场景用 Address64，哪些用 SizedPtr？
+2. 哪些场景用 <deleted-place-holder>，哪些用 SizedPtr？
 3. 如果要实现 RBF，从哪里开始？
 
 如果回答偏离设计意图，说明文档的"可理解性"有问题。这比自我审阅更能发现盲区。
@@ -349,7 +349,7 @@ wish/W-0006-rbf-sizedptr/
     Resolve.md          # 动机、为什么引入 SizedPtr
     Shape.md            # 概念边界、术语对齐（Glossary Alignment）
                         # 增加："Interface Contract with StateJournal"
-    Rule.md             # 语义边界（哪里用 Address64、哪里用 SizedPtr）
+    Rule.md             # 语义边界（哪里用 <deleted-place-holder>、哪里用 SizedPtr）
     Plan.md             # 修订计划 + Migration Notes
     Craft.md            # Phase 2 实现记录（如果执行）
 
@@ -365,21 +365,21 @@ atelia/docs/Rbf/
 |:-----|:-----|:-----|:-------|
 | **Glossary Alignment** | Shape.md | 防止术语漂移 | Curator |
 | **Interface Contract** | Shape.md | 明确 StateJournal 约束 | Seeker |
-| **语义边界规则** | Rule.md | Address64 vs SizedPtr 判断依据 | Seeker |
+| **语义边界规则** | Rule.md | <deleted-place-holder> vs SizedPtr 判断依据 | Seeker |
 | **Migration Notes** | Plan.md | 记录每个修改点的语义变化 | Seeker |
 | **导航锚点** | rbf-interface.md 头部 | 链接到 artifacts/ | Curator |
 
 **3. Wish 定义修订**
 
 修订为：
-> **Phase 1**（必须）：参照旧版文档，用 Artifact-Tiers 格式重新设计 RBF，引入 SizedPtr 替代部分 Address64 使用，明确语义边界。
+> **Phase 1**（必须）：参照旧版文档，用 Artifact-Tiers 格式重新设计 RBF，引入 SizedPtr 替代部分 <deleted-place-holder> 使用，明确语义边界。
 > 
 > **Phase 2**（可选）：实施 RBF 代码实现。
 
 **4. Scope 明确**
 
 ✅ **包含**：
-- RBF 核心设计（Frame, Tag, Address64, SizedPtr）
+- RBF 核心设计（Frame, Tag, <deleted-place-holder>, SizedPtr）
 - SizedPtr 在 RBF 层的语义边界定义
 - StateJournal 作为"目标用户"的约束视角（不修订 StateJournal 文档本身）
 
@@ -401,7 +401,7 @@ atelia/docs/Rbf/
 1. **立即**：更新 wish.md，明确 Phase 1/2 定义和 Scope
 2. **Resolve-Tier**：明确动机和 Non-Goals
 3. **Shape-Tier**：产出 Glossary Alignment + Interface Contract with StateJournal
-4. **Rule-Tier**：定义语义边界规则（Address64 vs SizedPtr 使用场景）
+4. **Rule-Tier**：定义语义边界规则（<deleted-place-holder> vs SizedPtr 使用场景）
 5. **Plan-Tier**：制定修订计划 + Migration Notes
 6. **执行修订**：更新 atelia/docs/Rbf/*.md，增加导航锚点
 

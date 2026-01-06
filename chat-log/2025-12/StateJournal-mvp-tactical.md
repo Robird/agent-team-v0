@@ -1547,7 +1547,7 @@ Searched for text `IBufferWriter` (`**/*.cs`), no results
 
 Created [](file:///repos/focus/atelia/src/Rbf/FrameTag.cs)
 
-Created [](file:///repos/focus/atelia/src/Rbf/Address64.cs)
+Created [](file:///repos/focus/atelia/src/Rbf/<deleted-place-holder>.cs)
 
 Created [](file:///repos/focus/atelia/src/Rbf/IRbfFramer.cs)
 
@@ -1641,7 +1641,7 @@ Read [](file:///repos/focus/atelia/src/Rbf/RbfConstants.cs)
 
 Read [](file:///repos/focus/atelia/src/Rbf/FrameStatus.cs)
 
-Read [](file:///repos/focus/atelia/src/Rbf/Address64.cs)
+Read [](file:///repos/focus/atelia/src/Rbf/<deleted-place-holder>.cs)
 
 Read [](file:///repos/focus/atelia/src/Rbf/FrameTag.cs)
 
@@ -1904,7 +1904,7 @@ Ran terminal command: cd /repos/focus/atelia && wc -l src/Rbf/*.cs tests/Rbf.Tes
 | `RbfConstants.cs` | Fence 魔数定义 |
 | `FrameStatus.cs` | Valid/Tombstone 枚举 |
 | `FrameTag.cs` | 帧类型标识符 |
-| `Address64.cs` | 文件偏移地址 |
+| `<deleted-place-holder>.cs` | 文件偏移地址 |
 | `RbfLayout.cs` | 布局计算工具 |
 | RbfCrc.cs | CRC32C (Castagnoli) 实现 |
 | `RbfFrame.cs` | 帧元数据结构 |
@@ -1942,7 +1942,7 @@ Ran terminal command: cd /repos/focus/atelia && wc -l src/Rbf/*.cs tests/Rbf.Tes
 
 Phase 1 完成后，可以开始 **Phase 2: 核心类型与编码**：
 - T-P2-00 错误类型定义
-- T-P2-01 Address64/Ptr64
+- T-P2-01 <deleted-place-holder>/Ptr64
 - T-P2-02 VarInt 编解码
 - T-P2-03 FrameTag 位段编码
 - T-P2-04 DurableObjectState 枚举
@@ -2455,7 +2455,7 @@ Phase 1 大获成功（157 tests，预估 9-12h 实际 ~3h）！
 | 任务 | 预估 | 说明 |
 |------|------|------|
 | T-P2-00 | 0.5h | 错误类型定义 |
-| T-P2-01 | 1h | Address64/Ptr64 |
+| T-P2-01 | 1h | <deleted-place-holder>/Ptr64 |
 | T-P2-02 | 2h | VarInt 编解码 |
 | T-P2-03 | 2h | FrameTag 位段编码 |
 | T-P2-04 | 1h | DurableObjectState 枚举 |
@@ -2516,7 +2516,7 @@ Read [](file:///repos/focus/atelia/src/Primitives/AteliaError.cs)
 ### 任务依赖图
 
 ```
-T-P2-00 (错误类型) ←─┬─ T-P2-01 (Address64)
+T-P2-00 (错误类型) ←─┬─ T-P2-01 (<deleted-place-holder>)
                     ├─ T-P2-02 (VarInt)
                     ├─ T-P2-04 (枚举)
                     │
@@ -2584,17 +2584,17 @@ Ran terminal command: cd /repos/focus/atelia && dotnet test tests/StateJournal.T
 
 T-P2-00 和 T-P2-04 完成。现在委派 Implementer 实现剩余任务。
 
-让我先查看 rbf-interface.md 中的 Address64 定义： 
+让我先查看 rbf-interface.md 中的 <deleted-place-holder> 定义： 
 
 Read [](file:///repos/focus/atelia/docs/StateJournal/rbf-interface.md#1-1), lines 1 to 101
 
-现在委派 Implementer 完成 T-P2-01 (Address64/Ptr64)： 
+现在委派 Implementer 完成 T-P2-01 (<deleted-place-holder>/Ptr64)： 
 
-T-P2-01 Address64/Ptr64
+T-P2-01 <deleted-place-holder>/Ptr64
 
 Read [](file:///repos/focus/agent-team/members/implementer/index.md)
 
-Read [](file:///repos/focus/atelia/src/Rbf/Address64.cs)
+Read [](file:///repos/focus/atelia/src/Rbf/<deleted-place-holder>.cs)
 
 Read [](file:///repos/focus/atelia/src/StateJournal/Core/StateJournalError.cs)
 
@@ -2618,7 +2618,7 @@ Read [](file:///repos/focus/atelia/docs/StateJournal/rbf-interface.md)
 
 Read [](file:///repos/focus/atelia/src/Primitives/AteliaResult.cs)
 
-Created [](file:///repos/focus/atelia/src/StateJournal/Core/Address64Extensions.cs)
+Created [](file:///repos/focus/atelia/src/StateJournal/Core/<deleted-place-holder>Extensions.cs)
 
 Created [](file:///repos/focus/atelia/src/StateJournal/Core/Ptr64.cs)
 
@@ -2630,19 +2630,9 @@ Read [](file:///repos/focus/atelia/tests/StateJournal.Tests/StateJournal.Tests.c
 
 Read [](file:///repos/focus/atelia/tests/StateJournal.Tests/Core/DurableObjectStateTests.cs)
 
-Created [](file:///repos/focus/atelia/tests/StateJournal.Tests/Core/Address64Tests.cs)
+Created [](file:///repos/focus/atelia/tests/StateJournal.Tests/Core/<deleted-place-holder>Tests.cs)
 
-Ran terminal command: cd /repos/focus/atelia && dotnet test tests/StateJournal.Tests/StateJournal.Tests.csproj --filter "FullyQualifiedName~Address64" --verbosity normal 2>&1
-
-Using "Replace String in File"
-
-```
-
-```
-
-
-
-Ran terminal command: cd /repos/focus/atelia && dotnet test tests/StateJournal.Tests/StateJournal.Tests.csproj --filter "FullyQualifiedName~Address64" --verbosity normal 2>&1
+Ran terminal command: cd /repos/focus/atelia && dotnet test tests/StateJournal.Tests/StateJournal.Tests.csproj --filter "FullyQualifiedName~<deleted-place-holder>" --verbosity normal 2>&1
 
 Using "Replace String in File"
 
@@ -2652,7 +2642,17 @@ Using "Replace String in File"
 
 
 
-Ran terminal command: cd /repos/focus/atelia && dotnet test tests/StateJournal.Tests/StateJournal.Tests.csproj --filter "FullyQualifiedName~Address64" --verbosity normal 2>&1
+Ran terminal command: cd /repos/focus/atelia && dotnet test tests/StateJournal.Tests/StateJournal.Tests.csproj --filter "FullyQualifiedName~<deleted-place-holder>" --verbosity normal 2>&1
+
+Using "Replace String in File"
+
+```
+
+```
+
+
+
+Ran terminal command: cd /repos/focus/atelia && dotnet test tests/StateJournal.Tests/StateJournal.Tests.csproj --filter "FullyQualifiedName~<deleted-place-holder>" --verbosity normal 2>&1
 
 Ran terminal command: cd /repos/focus/atelia && dotnet test tests/StateJournal.Tests/StateJournal.Tests.csproj --verbosity minimal 2>&1 | tail -10
 
@@ -2686,9 +2686,9 @@ Read [](file:///repos/focus/atelia/src/StateJournal/Core/Ptr64.cs)
 
 Read [](file:///repos/focus/atelia/tests/StateJournal.Tests/Core)
 
-Read [](file:///repos/focus/atelia/tests/StateJournal.Tests/Core/Address64Tests.cs)
+Read [](file:///repos/focus/atelia/tests/StateJournal.Tests/Core/<deleted-place-holder>Tests.cs)
 
-Read [](file:///repos/focus/atelia/src/StateJournal/Core/Address64Extensions.cs)
+Read [](file:///repos/focus/atelia/src/StateJournal/Core/<deleted-place-holder>Extensions.cs)
 
 Read [](file:///repos/focus/atelia/src/StateJournal)
 
@@ -2696,7 +2696,7 @@ Searched for files matching `**/AteliaResult.cs`, no matches
 
 Searched for text `public readonly struct AteliaResult`, 3 results
 
-Searched for text `AteliaResult<Address64>.Success`, 2 results
+Searched for text `AteliaResult<<deleted-place-holder>>.Success`, 2 results
 
 Read [](file:///repos/focus/atelia/src/StateJournal/StateJournal.csproj)
 
@@ -2865,7 +2865,7 @@ Ran terminal command: cd /repos/focus/atelia && dotnet test --verbosity minimal 
 | 任务 ID | 名称 | 状态 | 测试数 | 执行者 |
 |---------|------|------|--------|--------|
 | T-P2-00 | 错误类型定义 | ✅ | 14 | Team Leader |
-| T-P2-01 | Address64/Ptr64 | ✅ | 12 | Implementer |
+| T-P2-01 | <deleted-place-holder>/Ptr64 | ✅ | 12 | Implementer |
 | T-P2-02 | VarInt 编解码 | ✅ | 87 | Implementer |
 | T-P2-03 | FrameTag 位段编码 | ✅ | 47 | Implementer |
 | T-P2-04 | DurableObjectState 枚举 | ✅ | 11 | Team Leader |
@@ -2880,7 +2880,7 @@ Ran terminal command: cd /repos/focus/atelia && dotnet test --verbosity minimal 
 |------|------|
 | StateJournalError.cs | 12 个错误类型 |
 | DurableObjectState.cs | 4 值枚举 |
-| Address64Extensions.cs | TryFromOffset 扩展 |
+| <deleted-place-holder>Extensions.cs | TryFromOffset 扩展 |
 | Ptr64.cs | 类型别名 |
 | VarInt.cs | Base-128 + ZigZag |
 | StateJournalFrameTag.cs | 位段解释器 |
@@ -2925,7 +2925,7 @@ atelia/src/StateJournal/
 └── Core/
     ├── StateJournalError.cs
     ├── DurableObjectState.cs
-    ├── Address64Extensions.cs
+    ├── <deleted-place-holder>Extensions.cs
     ├── Ptr64.cs
     ├── VarInt.cs
     ├── StateJournalFrameTag.cs

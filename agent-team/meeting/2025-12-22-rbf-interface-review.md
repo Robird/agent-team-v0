@@ -242,17 +242,17 @@ After Abort:
 
 **✅ 通过项**：
 
-1. **术语隔离**：Layer 0 定义了自己的术语（FrameTag、Address64、Frame），未泄漏 Layer 1 的 RecordKind/ObjectKind
-2. **Address64 对齐**：`[E-ADDRESS64-ALIGNMENT]` 与 mvp-design-v2.md 的 `[F-PTR64-NULL-AND-ALIGNMENT]` 一致
+1. **术语隔离**：Layer 0 定义了自己的术语（FrameTag、<deleted-place-holder>、Frame），未泄漏 Layer 1 的 RecordKind/ObjectKind
+2. **<deleted-place-holder> 对齐**：`[E-ADDRESS64-ALIGNMENT]` 与 mvp-design-v2.md 的 `[F-PTR64-NULL-AND-ALIGNMENT]` 一致
 3. **Padding 跳过**：`[E-FRAMETAG-PADDING-SKIP]` 清晰定义了 Reader 行为
 
 **⚠️ 需澄清项**：
 
 | 问题 | 当前状态 | 建议 |
 |------|----------|------|
-| Address64 vs Ptr64 | 术语表只定义 Address64 | 增加说明：Address64 是 Layer 0 术语，Ptr64 是 Layer 1 术语，编码相同 |
+| <deleted-place-holder> vs Ptr64 | 术语表只定义 <deleted-place-holder> | 增加说明：<deleted-place-holder> 是 Layer 0 术语，Ptr64 是 Layer 1 术语，编码相同 |
 | FrameTag 0x00 保留 | 已定义为 Padding | ✅ 与 Auto-Abort 机制一致 |
-| DataTail 的 Address64 语义 | 未明确 | 需说明 DataTail 是文件末尾偏移，不指向 Record 起点 |
+| DataTail 的 <deleted-place-holder> 语义 | 未明确 | 需说明 DataTail 是文件末尾偏移，不指向 Record 起点 |
 
 **⚠️ 遗漏问题**：
 
@@ -270,7 +270,7 @@ After Abort:
 |--------|------|------|----------|
 | **P0** | Auto-Abort 条款不符合 Reservation 行为 | `[S-RBF-BUILDER-AUTO-ABORT]` | 重写为双路径语义（见上文） |
 | **P1** | Flush 不保证 fsync 未明确 | `[A-RBF-FRAMER-INTERFACE]` | 增加 `[S-RBF-FRAMER-NO-FSYNC]` 条款 |
-| **P1** | Address64 与 Ptr64 关系未说明 | §2.2 | 增加术语关联说明 |
+| **P1** | <deleted-place-holder> 与 Ptr64 关系未说明 | §2.2 | 增加术语关联说明 |
 | **P2** | TryReadAt 错误原因不透明 | `[A-RBF-SCANNER-INTERFACE]` | 返回 `RbfReadResult` 或增加 error out 参数 |
 | **P2** | 逆向扫描终止条件未定义 | §4.1 | 增加 `[S-RBF-SCAN-REVERSE-TERMINATION]` |
 | **P3** | DataTail 特殊语义未明确 | §5.1 或 §2.2 | 增加注释说明 |
@@ -444,7 +444,7 @@ RBF 的接口设计非常稳健。特别是将  的能力通过  暴露出来，
 ##### 1.3 建议补齐的“可测试条款模板”（提议新增）
 
 - **地址返回值**：
-    - `Append()`/`Commit()` 返回的 `Address64` MUST 满足：非 null、4 字节对齐、且 `TryReadAt(address)` 能读到同一 tag（在文件未被截断/损坏的前提下）。
+    - `Append()`/`Commit()` 返回的 <deleted-place-holder> MUST 满足：非 null、4 字节对齐、且 `TryReadAt(address)` 能读到同一 tag（在文件未被截断/损坏的前提下）。
 - **Abort 不变量**：
     - Dispose without Commit 后：
         - writer/scanner MUST 处于可继续使用状态（后续 `Append/BeginFrame` 成功）。

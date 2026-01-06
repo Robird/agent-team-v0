@@ -148,8 +148,8 @@ public sealed class DataRecordWriter {
     public DataRecordWriter(IRbfFramer framer);
     
     // 写入 DurableDict 版本记录
-    public Address64 AppendDictVersion(ulong prevVersionPtr, ReadOnlySpan<byte> diffPayload);
-    public Address64 AppendDictVersion(ulong prevVersionPtr, ReadOnlyMemory<byte> diffPayload);
+    public <deleted-place-holder> AppendDictVersion(ulong prevVersionPtr, ReadOnlySpan<byte> diffPayload);
+    public <deleted-place-holder> AppendDictVersion(ulong prevVersionPtr, ReadOnlyMemory<byte> diffPayload);
     
     public void Flush();
 }
@@ -158,7 +158,7 @@ public sealed class DataRecordWriter {
 **设计要点**：
 - 封装 RBF 层 framing 细节（FrameTag、Frame layout）
 - 使用 `BeginFrame` 流式写入 + `ObjectVersionRecord.WriteTo` 写入 payload
-- 返回 `Address64` 作为版本指针
+- 返回 <deleted-place-holder> 作为版本指针
 
 #### 4. 测试覆盖
 
@@ -220,10 +220,10 @@ public sealed class MetaRecordWriter {
     public MetaRecordWriter(IRbfFramer framer);
     
     // 写入 MetaCommitRecord（结构体重载）
-    public Address64 AppendCommit(in MetaCommitRecord record);
+    public <deleted-place-holder> AppendCommit(in MetaCommitRecord record);
     
     // 写入 MetaCommitRecord（独立参数重载）
-    public Address64 AppendCommit(
+    public <deleted-place-holder> AppendCommit(
         ulong epochSeq,
         ulong rootObjectId,
         ulong versionIndexPtr,
@@ -237,7 +237,7 @@ public sealed class MetaRecordWriter {
 **设计要点**：
 - 封装 RBF 层 framing 细节（FrameTag、Frame layout）
 - 使用 `BeginFrame(FrameTags.MetaCommit)` + `MetaCommitRecordSerializer.Write` 写入 payload
-- 返回 `Address64` 作为 commit 记录地址
+- 返回 <deleted-place-holder> 作为 commit 记录地址
 - 提供两种重载：结构体（便于传递）和独立参数（便于构造）
 
 #### 4. Payload 布局（复用 MetaCommitRecord）

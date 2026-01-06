@@ -92,7 +92,7 @@
 | **T1** | `FileStream.Flush(true)` 或 `FlushToDisk` | .NET 需要 `FileStream.Flush(flushToDisk: true)` 实现 fsync 语义。需确认跨平台行为（Windows/Linux） | 🟡 中 |
 | **T2** | `RandomAccess.Read()` 文件随机读取 | .NET 6+ API，需验证与 FileStream 混用兼容性（建议统一用 `SafeFileHandle`） | 🟡 中 |
 | **T3** | `FileStream.SetLength()` 截断 | Recovery 需要截断 data file 到 DataTail；需验证对已打开句柄的行为 | 🟡 中 |
-| **T4** | 文件 Position 与 Address64 映射 | `Address64` = 文件偏移；需确保 Genesis Fence 不计入 Address（当前实现已正确） | 🟢 低 |
+| **T4** | 文件 Position 与 <deleted-place-holder> 映射 | <deleted-place-holder> = 文件偏移；需确保 Genesis Fence 不计入 Address（当前实现已正确） | 🟢 低 |
 | **T5** | IBufferWriter 适配 FileStream | 需要中间缓冲层（ChunkedReservableWriter 可复用？）或直接写 FileStream | 🟡 中 |
 | **T6** | 大文件性能 | 逆向扫描 `ScanReverse()` 当前是全量读入内存（见 RbfScanner 构造函数），需要分块读取 | 🟠 高 |
 
@@ -129,7 +129,7 @@ public sealed class RbfScanner : IRbfScanner {
 | **R7** | `Workspace` 未持有 RBF 文件句柄 | 🟢 低（设计已明确） | `Workspace.cs` | M5 需要添加 `_dataFramer`, `_metaFramer` 字段 |
 | **R8** | RecoveryInfo 缺少 RootObjectId | 🟢 低 | `RecoveryInfo.cs` | 当前只有 `VersionIndexPtr`，M3 需要从 MetaCommitRecord 读取 RootObjectId |
 | **R9** | 测试覆盖依赖内存 mock | 🟢 低 | `WorkspaceCommitTests.cs` | M7 需要新增真实文件 I/O 测试 |
-| **R10** | `Address64.IsNull` 歧义 | 🟢 低 | `Address64.cs` | `0` 同时表示 null 和 Genesis Fence 位置；当前设计 Genesis Fence 不计入有效帧地址，OK |
+| **R10** | `<deleted-place-holder>.IsNull` 歧义 | 🟢 低 | `<deleted-place-holder>.cs` | `0` 同时表示 null 和 Genesis Fence 位置；当前设计 Genesis Fence 不计入有效帧地址，OK |
 
 ---
 
@@ -343,7 +343,7 @@ public sealed class RbfFileFramer : IRbfFramer, IDisposable {
     public IRbfFileBackend Backend { get; }
     
     // IRbfFramer 实现（委托给内部 RbfFramer）
-    public Address64 Append(FrameTag tag, ReadOnlySpan<byte> payload);
+    public <deleted-place-holder> Append(FrameTag tag, ReadOnlySpan<byte> payload);
     public RbfFrameBuilder BeginFrame(FrameTag tag);
     public void Flush();
 }
@@ -382,7 +382,7 @@ public sealed class RbfFileScanner : IRbfScanner, IDisposable {
     public RbfFileScanner(IRbfFileBackend backend);
     
     // IRbfScanner 实现
-    public bool TryReadAt(Address64 address, out RbfFrame frame);
+    public bool TryReadAt(<deleted-place-holder> address, out RbfFrame frame);
     public IEnumerable<RbfFrame> ScanReverse();
     public byte[] ReadPayload(in RbfFrame frame);
 }
@@ -639,7 +639,7 @@ RbfFileScanner (便捷层)
 
 - [ ] 能在磁盘上创建一个 .rbf 文件
 - [ ] Append 若干帧后，ScanReverse 能读回相同数量的 Valid 帧
-- [ ] `TryReadAt(Address64)` 对有效地址可稳定读取并通过 CRC 校验
+- [ ] `TryReadAt(<deleted-place-holder>)` 对有效地址可稳定读取并通过 CRC 校验
 - [ ] 文件关闭后重新打开，数据仍可完整读取
 - [ ] Truncate 后只能看到截断边界前的帧
 - [ ] 所有测试在 CI 环境下通过（temp folder 清理正常）
@@ -754,7 +754,7 @@ RbfFileScanner (便捷层)
 
 **M1 DoD 回顾**：
 > 1. 能在磁盘上创建一个 .rbf 文件，Append 若干帧后，ScanReverse 能读回相同数量的 Valid 帧。
-> 2. `TryReadAt(Address64)` 对有效地址可稳定读取并通过 CRC 校验。
+> 2. `TryReadAt(<deleted-place-holder>)` 对有效地址可稳定读取并通过 CRC 校验。
 
 #### 4.1 测试用例设计
 

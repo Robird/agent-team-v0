@@ -17,20 +17,20 @@
 
 ### 1.2 RBF 核心类型定义
 
-#### Address64（当前定义）
+#### <deleted-place-holder>（当前定义）
 
 **位置**: [rbf-interface.md#L111-L122](atelia/docs/Rbf/rbf-interface.md#L111-L122)
 
 ```csharp
-public readonly record struct Address64(ulong Value) {
-    public static readonly Address64 Null = new(0);
+public readonly record struct <deleted-place-holder>(ulong Value) {
+    public static readonly <deleted-place-holder> Null = new(0);
     public bool IsNull => Value == 0;
 }
 ```
 
 **条款**:
 - `[F-ADDRESS64-DEFINITION]` — 8 字节 LE 文件偏移量，指向 Frame 的 HeadLen 字段起点
-- `[F-ADDRESS64-ALIGNMENT]` — 有效 Address64 MUST 4B 对齐（`Value % 4 == 0`）
+- `[F-ADDRESS64-ALIGNMENT]` — 有效 <deleted-place-holder> MUST 4B 对齐（`Value % 4 == 0`）
 - `[F-ADDRESS64-NULL]` — `Value == 0` 表示 null
 
 **语义**：纯指针（point-to 语义），**不含长度信息**。
@@ -55,7 +55,7 @@ public readonly record struct Address64(ulong Value) {
 
 | 概念 | 位置 | 当前表达方式 | 评估 |
 |:-----|:-----|:-------------|:-----|
-| **Frame 位置** | Address64 | 纯指针，无长度 | ❌ 无区间语义 |
+| **Frame 位置** | <deleted-place-holder> | 纯指针，无长度 | ❌ 无区间语义 |
 | **Payload** | RbfFrame.Payload | `ReadOnlySpan<byte>`（运行时长度） | ⚠️ 隐式长度 |
 | **DataTail** | rbf-format.md#L243 | Ptr64（文件末尾偏移） | ❌ 纯位置，无长度 |
 | **ScanReverse 范围** | IRbfScanner | 隐式（文件起点到当前位置） | ❌ 无显式区间表达 |
@@ -98,27 +98,27 @@ public readonly record struct Address64(ulong Value) {
 
 **未实现**（SizedPtr.md 设计文档未要求）:
 - 无 `IsNull` / `IsEmpty` 属性
-- 无与 `Address64` 的转换方法
+- 无与 <deleted-place-holder> 的转换方法
 
 ### 1.5 代码实现状态
 
 | 组件 | 状态 | 位置 |
 |:-----|:-----|:-----|
 | **SizedPtr** | ✅ 已实现 | `atelia/src/Data/SizedPtr.cs` |
-| **Address64** | ❌ 无实现 | 仅文档定义 |
+| **<deleted-place-holder>** | ❌ 无实现 | 仅文档定义 |
 | **RBF 层** | ⚠️ 已归档 | `atelia/archive/2025-12-29-rbf-statejournal-v1/Rbf/` |
 | **StateJournal** | ⚠️ 已归档 | `atelia/archive/2025-12-29-rbf-statejournal-v1/StateJournal/` |
 
-**关键发现**：`atelia/src/` 下无 RBF/Address64 实现，历史代码已归档。SizedPtr 需要从零集成。
+**关键发现**：`atelia/src/` 下无 RBF/<deleted-place-holder> 实现，历史代码已归档。SizedPtr 需要从零集成。
 
 ---
 
 ## 2. 已识别的问题
 
-### P1: Address64 与 SizedPtr 的语义冲突
+### P1: <deleted-place-holder> 与 SizedPtr 的语义冲突
 
 **Symptom**: 
-- Address64 是**纯指针**（point-to），`Value=0` 表示 Null
+- <deleted-place-holder> 是**纯指针**（point-to），`Value=0` 表示 Null
 - SizedPtr 是**区间**（range），`Packed=0` 数学上表示 `(0, 0)` 不是 Null
 
 **Tier**: Rule-Tier
@@ -129,22 +129,22 @@ public readonly record struct Address64(ulong Value) {
 
 **初步观察**:
 - 两者不能直接替换——语义模型不同
-- 需要明确哪些场景用 Address64（纯位置），哪些用 SizedPtr（区间）
+- 需要明确哪些场景用 <deleted-place-holder>（纯位置），哪些用 SizedPtr（区间）
 
-**next_probe**: 列举 RBF 文档中所有 Address64 使用点，分类为"仅需位置"vs"需要长度"
+**next_probe**: 列举 RBF 文档中所有 <deleted-place-holder> 使用点，分类为"仅需位置"vs"需要长度"
 
 ---
 
 ### P2: RBF 文档中缺乏区间类型
 
 **Symptom**: 
-- Frame 的"范围"通过 Address64 + 隐式 HeadLen 表达
+- Frame 的"范围"通过 <deleted-place-holder> + 隐式 HeadLen 表达
 - Payload 的"范围"只在运行时 Span 中体现，无持久化表达
 
 **Tier**: Shape-Tier
 
 **证据来源**:
-- [rbf-interface.md#L125-L135](atelia/docs/Rbf/rbf-interface.md#L125-L135) — Frame 定义只有 Address64
+- [rbf-interface.md#L125-L135](atelia/docs/Rbf/rbf-interface.md#L125-L135) — Frame 定义只有 <deleted-place-holder>
 - [rbf-format.md#L64](atelia/docs/Rbf/rbf-format.md#L64) — `[F-FRAME-LAYOUT]` 布局表无区间字段
 
 **初步观察**:
@@ -178,7 +178,7 @@ public readonly record struct Address64(ulong Value) {
 ### P4: 术语一致性风险
 
 **Symptom**:
-- RBF 使用 `Offset`（如 Address64 的文件偏移）
+- RBF 使用 `Offset`（如 <deleted-place-holder> 的文件偏移）
 - SizedPtr 使用 `OffsetBytes`、`LengthBytes`
 - 可能产生混淆："这里的 Offset 是哪个？"
 
@@ -200,7 +200,7 @@ public readonly record struct Address64(ulong Value) {
 
 ### Q1: SizedPtr 是否应该成为 RBF 接口层类型？
 
-**描述**: SizedPtr 目前定义为 Atelia.Data 的通用类型，RBF 接口使用 Address64。是否需要在 RBF 层引入 SizedPtr？
+**描述**: SizedPtr 目前定义为 Atelia.Data 的通用类型，RBF 接口使用 <deleted-place-holder>。是否需要在 RBF 层引入 SizedPtr？
 
 **证据来源**: 
 - [rbf-interface.md 依赖关系](atelia/docs/Rbf/rbf-interface.md#L6-L8)
@@ -210,14 +210,14 @@ public readonly record struct Address64(ulong Value) {
 
 ---
 
-### Q2: Address64 是否应该被 SizedPtr 完全替换？
+### Q2: <deleted-place-holder> 是否应该被 SizedPtr 完全替换？
 
-**描述**: 文档提到"用 SizedPtr 替代部分 Address64 使用"，但边界不清晰。
+**描述**: 文档提到"用 SizedPtr 替代部分 <deleted-place-holder> 使用"，但边界不清晰。
 
 **证据来源**:
 - [W-0006 畅谈会决议](wish/W-0006-rbf-sizedptr/meeting/2026-01-05-scope-and-approach.md#L375)
 
-**next_probe**: 列举 Address64 使用场景，判断哪些可替换、哪些需保留
+**next_probe**: 列举 <deleted-place-holder> 使用场景，判断哪些可替换、哪些需保留
 
 ---
 
@@ -253,7 +253,7 @@ public readonly record struct Address64(ulong Value) {
 
 ### 4.2 风险点
 
-1. **语义冲突**：Address64 (Null=0) vs SizedPtr (无 Null) 需要明确分层策略
+1. **语义冲突**：<deleted-place-holder> (Null=0) vs SizedPtr (无 Null) 需要明确分层策略
 2. **文档演进成本**：三份 RBF 文档需要协调更新
 3. **向后兼容**：若 RBF 实现已存在使用者，接口变更可能破坏
 
@@ -261,7 +261,7 @@ public readonly record struct Address64(ulong Value) {
 
 | 优先级 | 动作 | 预期产出 |
 |:-------|:-----|:---------|
-| P0 | 确认 Address64 使用点分类 | 替换边界清单 |
+| P0 | 确认 <deleted-place-holder> 使用点分类 | 替换边界清单 |
 | P0 | 确认文档演进策略（监护人） | 决策记录 |
 | P1 | 评估 StateJournal 依赖 | 适配范围估算 |
 | P2 | 检查术语冲突点 | Glossary Alignment 草案 |
@@ -278,4 +278,4 @@ public readonly record struct Address64(ulong Value) {
 - `atelia/src/Data/SizedPtr.cs`
 - `atelia/docs/StateJournal/mvp-design-v2.md` (v3.9, 浏览)
 
-代码搜索确认：`atelia/src/` 下无 Address64/RBF 实现。
+代码搜索确认：`atelia/src/` 下无 <deleted-place-holder>/RBF 实现。

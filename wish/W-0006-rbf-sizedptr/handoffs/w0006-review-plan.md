@@ -11,7 +11,7 @@ source:
 
 > **文档/措辞类问题已提取**
 >
-> 本报告中的文档/措辞类问题（Sev2-1 行号漂移、Sev2-2 验收标准表达、Sev3-1 Address64.cs 引用、Sev3-2 条款索引模板）已移至 [w0006-review-doc-issues.md](w0006-review-doc-issues.md) 编号 D12-D15。
+> 本报告中的文档/措辞类问题（Sev2-1 行号漂移、Sev2-2 验收标准表达、Sev3-1 <deleted-place-holder>.cs 引用、Sev3-2 条款索引模板）已移至 [w0006-review-doc-issues.md](w0006-review-doc-issues.md) 编号 D12-D15。
 >
 > 本报告仅保留 **设计/工程类问题**（3 项）。
 
@@ -55,12 +55,12 @@ source:
 
 ### Sev2（重要，建议修）
 
-1. **Plan.md 未把 `rbf-test-vectors.md` 的 Ptr64/Address64 迁移纳入 Phase 1，但它是 rbf-format.md 显式引用的关联文档**
+1. **Plan.md 未把 `rbf-test-vectors.md` 的 Ptr64/<deleted-place-holder> 迁移纳入 Phase 1，但它是 rbf-format.md 显式引用的关联文档**
    - 证据：
      - `rbf-format.md` 头部链接了测试向量：`[rbf-test-vectors.md](rbf-test-vectors.md)`。
-     - 当前 `rbf-test-vectors.md` 仍大量使用 "Address64/Ptr64 / `[F-PTR64-WIRE-FORMAT]`"。
+     - 当前 `rbf-test-vectors.md` 仍大量使用 "<deleted-place-holder>/Ptr64 / `[F-PTR64-WIRE-FORMAT]`"。
    - 影响：
-     - 上游规范（format）已进入 SizedPtr 口径，但测试向量仍停留在 Ptr64/Address64 口径，读者会遇到"规范说 SizedPtr，但测试向量说 Ptr64"的断裂。
+     - 上游规范（format）已进入 SizedPtr 口径，但测试向量仍停留在 Ptr64/<deleted-place-holder> 口径，读者会遇到"规范说 SizedPtr，但测试向量说 Ptr64"的断裂。
    - 建议：
      - 若本 Wish 的 Phase 1 目标是"文档层修订闭环"，应将 `rbf-test-vectors.md` 纳入修订清单（至少：术语、条款 ID、章节标题/用例名）。
      - 若坚持 out-of-scope，建议在 `rbf-format.md` 或 Plan.md 中明确"测试向量将在后续 Wish 更新"，避免当前版本形成不一致。
@@ -72,7 +72,7 @@ source:
 1. **Phase 分层清晰，范围边界明确**：把"文档层修订"和"代码实现"分成两个阶段，有利于控制本 Wish 的交付面。
 2. **Migration Notes 不止改类型名，能捕捉语义增益**：§4.1 的"一次 IO / 预分配 / 自包含"等描述，与监护人对 SizedPtr 价值的阐述一致，属于高质量迁移说明。
 3. **隐性知识（K1-K4）记录到位**：尤其 K2（Null 语义是业务约定）能避免未来把 Null 语义塞回 `Atelia.Data.SizedPtr` 的回归风险。
-4. **验收包含自动化检查倾向**：如"grep 清除 Address64"这种验证方法具备可操作性（尽管需要修正 editor exclude/范围问题）。
+4. **验收包含自动化检查倾向**：如"grep 清除 <deleted-place-holder>"这种验证方法具备可操作性（尽管需要修正 editor exclude/范围问题）。
 
 ---
 

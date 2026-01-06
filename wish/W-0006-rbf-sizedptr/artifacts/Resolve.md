@@ -5,7 +5,7 @@ produce_by:
   - "wish/W-0006-rbf-sizedptr/wish.md"
 issues:
   - id: "I-SEMANTIC-CONFLICT"
-    description: "Address64 的 Null 语义与 SizedPtr 的几何语义冲突"
+    description: "<deleted-place-holder> 的 Null 语义与 SizedPtr 的几何语义冲突"
     status: "resolved"
   - id: "I-NO-EXPLICIT-RANGE"
     description: "RBF 缺乏显式的区间类型"
@@ -14,13 +14,13 @@ issues:
     description: "SizedPtr 的 256MB Length 上限对大 Blob 场景的适用性"
     status: "resolved"
   - id: "I-TERM-DRIFT-RISK"
-    description: "Address64 文件偏移与 SizedPtr.OffsetBytes 术语混淆风险"
+    description: "<deleted-place-holder> 文件偏移与 SizedPtr.OffsetBytes 术语混淆风险"
     status: "resolved"
 ---
 
 # W-0006 Resolve-Tier
 
-> **一句话判定**：SizedPtr 替代 Address64 作为 RBF Interface 层的 Frame 句柄类型。
+> **一句话判定**：SizedPtr 替代 <deleted-place-holder> 作为 RBF Interface 层的 Frame 句柄类型。
 
 ---
 
@@ -29,7 +29,7 @@ issues:
 ### 当前痛点
 
 RBF 文档没有显式的区间类型。所有"范围"语义通过隐式表达：
-- Frame 位置 → `Address64`（纯指针，无长度）
+- Frame 位置 → <deleted-place-holder>（纯指针，无长度）
 - Payload 范围 → 运行时 `ReadOnlySpan<byte>`（无持久化表达）
 - ScanReverse 范围 → 隐式（文件起点到当前位置）
 
@@ -46,22 +46,22 @@ RBF 是 SizedPtr 的首个目标用户，引入是自然的扩展。
 
 ### 目标
 
-用 SizedPtr 替代 Address64，统一"区间"表达，减少重复设计。
+用 SizedPtr 替代 <deleted-place-holder>，统一"区间"表达，减少重复设计。
 
 ---
 
 ## 2. 现状问题（What's Wrong）
 
-### P1: Address64 与 SizedPtr 的语义冲突
+### P1: <deleted-place-holder> 与 SizedPtr 的语义冲突
 
 | 维度 | 症状 |
 |:-----|:-----|
-| **症状** | Address64 是纯指针（`Value=0` 表示 Null），SizedPtr 是区间（`Packed=0` 数学上表示 `(0, 0)` 不是 Null） |
+| **症状** | <deleted-place-holder> 是纯指针（`Value=0` 表示 Null），SizedPtr 是区间（`Packed=0` 数学上表示 `(0, 0)` 不是 Null） |
 | **证据** | [rbf-interface.md#L120](../../atelia/docs/Rbf/rbf-interface.md#L120) 定义 `[F-ADDRESS64-NULL]`；[SizedPtr.md#L32-L33](../../atelia/docs/Data/Draft/SizedPtr.md#L32-L33) 明确不定义 Null |
 | **后果** | 两者不能直接替换——需要明确语义边界，否则 Null 判断逻辑会产生歧义 |
 
 **tier**: Rule-Tier  
-**next_probe**: 列举 RBF 文档中所有 Address64 使用点，分类为"仅需位置"vs"需要长度"
+**next_probe**: 列举 RBF 文档中所有 <deleted-place-holder> 使用点，分类为"仅需位置"vs"需要长度"
 
 ---
 
@@ -69,8 +69,8 @@ RBF 是 SizedPtr 的首个目标用户，引入是自然的扩展。
 
 | 维度 | 症状 |
 |:-----|:-----|
-| **症状** | Frame 的"范围"通过 Address64 + 隐式 HeadLen 表达；Payload 的"范围"只在运行时 Span 中体现，无持久化表达 |
-| **证据** | [rbf-interface.md#L125-L135](../../atelia/docs/Rbf/rbf-interface.md#L125-L135) Frame 定义只有 Address64；[rbf-format.md#L64](../../atelia/docs/Rbf/rbf-format.md#L64) `[F-FRAME-LAYOUT]` 布局表无区间字段 |
+| **症状** | Frame 的"范围"通过 <deleted-place-holder> + 隐式 HeadLen 表达；Payload 的"范围"只在运行时 Span 中体现，无持久化表达 |
+| **证据** | [rbf-interface.md#L125-L135](../../atelia/docs/Rbf/rbf-interface.md#L125-L135) Frame 定义只有 <deleted-place-holder>；[rbf-format.md#L64](../../atelia/docs/Rbf/rbf-format.md#L64) `[F-FRAME-LAYOUT]` 布局表无区间字段 |
 | **后果** | 无法在接口层显式表达"Frame 区间"，上层（如 StateJournal）需自行计算 |
 
 **tier**: Shape-Tier  
@@ -95,7 +95,7 @@ RBF 是 SizedPtr 的首个目标用户，引入是自然的扩展。
 
 | 维度 | 症状 |
 |:-----|:-----|
-| **症状** | RBF 使用 `Offset`（Address64 的文件偏移）；SizedPtr 使用 `OffsetBytes`/`LengthBytes`；术语混用导致"这里的 Offset 是哪个？" |
+| **症状** | RBF 使用 `Offset`（<deleted-place-holder> 的文件偏移）；SizedPtr 使用 `OffsetBytes`/`LengthBytes`；术语混用导致"这里的 Offset 是哪个？" |
 | **证据** | [畅谈会讨论](../meeting/2026-01-05-scope-and-approach.md#L286) 已识别此风险 |
 | **后果** | 跨文档阅读时需持续"心智翻译"，增加理解成本和误用风险 |
 
@@ -110,7 +110,7 @@ RBF 是 SizedPtr 的首个目标用户，引入是自然的扩展。
 
 | 范围 | 说明 |
 |:-----|:-----|
-| **RBF 设计文档修订** | 修订 `rbf-interface.md`、`rbf-format.md`，用 SizedPtr 替代 Address64 |
+| **RBF 设计文档修订** | 修订 `rbf-interface.md`、`rbf-format.md`，用 SizedPtr 替代 <deleted-place-holder> |
 | **StateJournal 约束视角** | 作为"目标用户"参与设计约束，**不修订 StateJournal 文档本身** |
 
 ### Out-of-Scope
@@ -127,7 +127,7 @@ RBF 是 SizedPtr 的首个目标用户，引入是自然的扩展。
 | Tier | 核心问题 | 预期产出 |
 |:-----|:---------|:---------|
 | **Shape** | 术语如何对齐？RBF 对 StateJournal 的接口承诺是什么？ | Glossary Alignment + Interface Contract with StateJournal |
-| **Rule** | Address64 vs SizedPtr 的判断依据是什么？ | 语义边界规则（使用场景清单 + 判断条件） |
+| **Rule** | <deleted-place-holder> vs SizedPtr 的判断依据是什么？ | 语义边界规则（使用场景清单 + 判断条件） |
 | **Plan** | 修订哪些文档？顺序如何？如何记录语义变化？ | 修订计划 + Migration Notes |
 
 ---
@@ -159,7 +159,7 @@ RBF 是 SizedPtr 的首个目标用户，引入是自然的扩展。
 
 **核心用途**（监护人原话）：
 
-> **写数据路径**：一次性告诉外界地址+长度。RBF append 数据返回的 Address64 只包含偏移，导致后续随机读取时需要：
+> **写数据路径**：一次性告诉外界地址+长度。RBF append 数据返回的 <deleted-place-holder> 只包含偏移，导致后续随机读取时需要：
 > 1. 先读开头，拿到长度
 > 2. 再次读取全长
 > 3. 验证
@@ -176,7 +176,7 @@ RBF 是 SizedPtr 的首个目标用户，引入是自然的扩展。
 
 ### D3: Null 语义处理 (I-SEMANTIC-CONFLICT)
 
-**决策**：✅ 把 Address64 的 Null 相关成员函数改为 RBF 层的静态函数/常量。
+**决策**：✅ 把 <deleted-place-holder> 的 Null 相关成员函数改为 RBF 层的静态函数/常量。
 
 **实施方案**（监护人建议）：
 - 在 RBF 层定义：`public static SizedPtr NullPtr => default;` 或类似常量
@@ -186,16 +186,16 @@ RBF 是 SizedPtr 的首个目标用户，引入是自然的扩展。
 
 ---
 
-### D4: Address64 vs SizedPtr 关系 (I-TERM-DRIFT-RISK)
+### D4: <deleted-place-holder> vs SizedPtr 关系 (I-TERM-DRIFT-RISK)
 
-**决策**：✅ SizedPtr **直接替代** Address64，不是"共存"或"部分替代"。
+**决策**：✅ SizedPtr **直接替代** <deleted-place-holder>，不是"共存"或"部分替代"。
 
 **监护人分析**（原话）：
-> 没啥混用的，接口层对外就是用 SizedPtr 替代 Address64。是直接增强替代关系。我建议研究在 RBF 层本身，是否依然有必要保留 Address64 类型。我估计 Address64 类型已无继续存在的价值。
+> 没啥混用的，接口层对外就是用 SizedPtr 替代 <deleted-place-holder>。是直接增强替代关系。我建议研究在 RBF 层本身，是否依然有必要保留 <deleted-place-holder> 类型。我估计 <deleted-place-holder> 类型已无继续存在的价值。
 
 **结论**：
-- Interface 层对外：SizedPtr 完全替代 Address64
-- 需要调查：RBF 层内部是否还需要 Address64（可能已无存在价值）
+- Interface 层对外：SizedPtr 完全替代 <deleted-place-holder>
+- 需要调查：RBF 层内部是否还需要 <deleted-place-holder>（可能已无存在价值）
 
 ---
 
@@ -213,6 +213,6 @@ RBF 是 SizedPtr 的首个目标用户，引入是自然的扩展。
 - Shape-Tier 大幅简化（不需要复杂的"共存策略"）
 - Rule-Tier 聚焦两点：
   1. RBF 层如何定义 NullPtr
-  2. 确认 Address64 是否可以完全移除
-- Plan-Tier 修订策略清晰：全局替换 Address64 → SizedPtr
+  2. 确认 <deleted-place-holder> 是否可以完全移除
+- Plan-Tier 修订策略清晰：全局替换 <deleted-place-holder> → SizedPtr
 

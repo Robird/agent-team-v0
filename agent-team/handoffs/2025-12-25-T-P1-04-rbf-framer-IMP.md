@@ -2,14 +2,14 @@
 
 ## 实现摘要
 
-完成了 RBF Layer 0 帧写入器的实现，包括 `FrameTag`、`Address64` 类型定义、`IRbfFramer` 接口及 `RbfFramer` 实现类。实现符合 `[A-RBF-FRAMER-INTERFACE]`、`[A-RBF-FRAME-BUILDER]` 和 `[S-RBF-BUILDER-AUTO-ABORT]` 规范。
+完成了 RBF Layer 0 帧写入器的实现，包括 `FrameTag`、<deleted-place-holder> 类型定义、`IRbfFramer` 接口及 `RbfFramer` 实现类。实现符合 `[A-RBF-FRAMER-INTERFACE]`、`[A-RBF-FRAME-BUILDER]` 和 `[S-RBF-BUILDER-AUTO-ABORT]` 规范。
 
 ## 文件变更
 
 | 文件 | 操作 | 描述 |
 |------|------|------|
 | `src/Rbf/FrameTag.cs` | 新建 | FrameTag 类型定义（`readonly record struct`），支持 fourCC 风格创建 |
-| `src/Rbf/Address64.cs` | 新建 | Address64 类型定义，含 `Null`/`IsNull`/`IsValid`/`FromOffset` |
+| `src/Rbf/<deleted-place-holder>.cs` | 新建 | <deleted-place-holder> 类型定义，含 `Null`/`IsNull`/`IsValid`/`FromOffset` |
 | `src/Rbf/IRbfFramer.cs` | 新建 | 接口定义 + `RbfFrameBuilder` ref struct + `IReservableBufferWriter` 接口 |
 | `src/Rbf/RbfFramer.cs` | 新建 | 基于 `IBufferWriter<byte>` 的帧写入器实现 |
 | `tests/Rbf.Tests/RbfFramerTests.cs` | 新建 | 16 个测试用例，覆盖帧写入、CRC、Auto-Abort 等 |
@@ -19,7 +19,7 @@
 | 规范条款 | 实现位置 | 备注 |
 |---------|---------|------|
 | `[F-FRAMETAG-DEFINITION]` | `FrameTag.cs` | readonly record struct FrameTag(uint Value) |
-| `[F-ADDRESS64-DEFINITION]` | `Address64.cs` | 含 Null 静态成员和 IsNull/IsValid 属性 |
+| `[F-ADDRESS64-DEFINITION]` | `<deleted-place-holder>.cs` | 含 Null 静态成员和 IsNull/IsValid 属性 |
 | `[A-RBF-FRAMER-INTERFACE]` | `IRbfFramer.cs` | Append/BeginFrame/Flush 三方法 |
 | `[A-RBF-FRAME-BUILDER]` | `IRbfFramer.cs` | ref struct 实现，Payload/ReservablePayload/Commit/Dispose |
 | `[S-RBF-BUILDER-AUTO-ABORT]` | `RbfFrameBuilder.Dispose()` | 未 Commit 时写入 Tombstone 帧 |
@@ -50,7 +50,7 @@ Full: dotnet test tests/Rbf.Tests/Rbf.Tests.csproj
 | `BeginFrame_WhileBuilderOpen_ThrowsInvalidOperationException` | [S-RBF-BUILDER-SINGLE-OPEN] |
 | `Append_WhileBuilderOpen_ThrowsInvalidOperationException` | [S-RBF-BUILDER-SINGLE-OPEN] |
 | `Commit_Twice_ThrowsInvalidOperationException` | Builder 状态管理 |
-| `Append_MultipleFrames_CorrectAddresses` | Address64 正确性 |
+| `Append_MultipleFrames_CorrectAddresses` | <deleted-place-holder> 正确性 |
 | `Append_Returns4ByteAlignedAddress` | [F-ADDRESS64-ALIGNMENT] |
 | `BeginFrame_ReservablePayload_ReturnsNull` | MVP 简化（无 Reservation） |
 | `Framer_WithoutGenesis_StartsAtPosition0` | 追加写入支持 |

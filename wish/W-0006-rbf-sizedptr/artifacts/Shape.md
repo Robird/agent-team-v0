@@ -7,7 +7,7 @@ produce_by:
 
 # W-0006 Shape-Tier
 
-> **一句话**：SizedPtr 完全替代 Address64，成为 RBF Interface 层的核心 Frame 句柄类型。
+> **一句话**：SizedPtr 完全替代 <deleted-place-holder>，成为 RBF Interface 层的核心 Frame 句柄类型。
 
 ---
 
@@ -22,12 +22,12 @@ produce_by:
 
 **来源**：`Atelia.Data.SizedPtr`（已在 W-0004 实现并通过测试）
 
-### Address64（已废弃）
+### <deleted-place-holder>（已废弃）
 
 **状态**：完全由 SizedPtr 替代，不再存在。
 
 **迁移依据**（监护人原话）：
-> 没啥混用的，接口层对外就是用 SizedPtr 替代 Address64。是直接增强替代关系。
+> 没啥混用的，接口层对外就是用 SizedPtr 替代 <deleted-place-holder>。是直接增强替代关系。
 
 ---
 
@@ -35,10 +35,10 @@ produce_by:
 
 | 术语（新） | 术语（旧） | 定义 |
 |:----------|:----------|:-----|
-| `SizedPtr` | `Address64` | 8 字节紧凑 offset+length 区间，完全替代 Address64 |
-| `RbfInterface.NullPtr` | `Address64.Null` | `= default(SizedPtr)`，表示无效引用 |
+| `SizedPtr` | <deleted-place-holder> | 8 字节紧凑 offset+length 区间，完全替代 <deleted-place-holder> |
+| `RbfInterface.NullPtr` | `<deleted-place-holder>.Null` | `= default(SizedPtr)`，表示无效引用 |
 
-**术语合同**：不再出现 `Address64` 术语
+**术语合同**：不再出现 <deleted-place-holder> 术语
 
 ---
 
@@ -50,7 +50,7 @@ SizedPtr 在 RBF 中有三个关键用途：
 
 **改进**：写入方法返回 `SizedPtr`，一次性告诉调用方地址+长度。
 
-原 Address64 只包含偏移，导致后续随机读取需要至少 2 次独立 IO（先读长度，再读全文）。
+原 <deleted-place-holder> 只包含偏移，导致后续随机读取需要至少 2 次独立 IO（先读长度，再读全文）。
 
 ### 3.2 读数据路径
 
@@ -99,10 +99,10 @@ StateJournal 作为 RBF 的首个目标用户：
 
 | 接口 | 原签名 | 新签名 |
 |:-----|:------|:------|
-| `IRbfFramer.Append()` | `Address64` 返回值 | `SizedPtr` 返回值 |
-| `RbfFrameBuilder.Commit()` | `Address64` 返回值 | `SizedPtr` 返回值 |
-| `IRbfScanner.TryReadAt()` | `Address64` 参数 | `SizedPtr` 参数 |
-| `RbfFrame.Address` | `Address64` 属性 | `SizedPtr Ptr` 属性 |
+| `IRbfFramer.Append()` | <deleted-place-holder> 返回值 | `SizedPtr` 返回值 |
+| `RbfFrameBuilder.Commit()` | <deleted-place-holder> 返回值 | `SizedPtr` 返回值 |
+| `IRbfScanner.TryReadAt()` | <deleted-place-holder> 参数 | `SizedPtr` 参数 |
+| `RbfFrame.Address` | <deleted-place-holder> 属性 | `SizedPtr Ptr` 属性 |
 
 ---
 
@@ -110,5 +110,5 @@ StateJournal 作为 RBF 的首个目标用户：
 
 - **决策动机**：[Resolve.md](Resolve.md) §6-7
 - **规则条款**：[Rule.md](Rule.md)
-- **Address64 调查报告**：[w0006-address64-value-check.md](../../../agent-team/handoffs/w0006-address64-value-check.md)
+- **<deleted-place-holder> 调查报告**：[w0006-address64-value-check.md](../../../agent-team/handoffs/w0006-address64-value-check.md)
 

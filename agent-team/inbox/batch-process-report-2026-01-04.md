@@ -40,10 +40,10 @@
 #### 知识分布与协作
 
 **本次处理主题聚类**：
-- **SizedPtr/RBF/Address64**：多名成员产出相关便签
+- **SizedPtr/RBF/<deleted-place-holder>**：多名成员产出相关便签
   - Craftsman：文档示例 vs 实现漂移风险
   - Implementer：38:26 bit Fat Pointer 实现要点
-  - Investigator：Address64 权威定义位置、Null 语义冲突
+  - Investigator：<deleted-place-holder> 权威定义位置、Null 语义冲突
   
   **观察**：该主题知识已在 Investigator、Implementer、Craftsman 间形成三角验证，但尚未沉淀到共享知识库（如 `agent-team/wiki/`）
 

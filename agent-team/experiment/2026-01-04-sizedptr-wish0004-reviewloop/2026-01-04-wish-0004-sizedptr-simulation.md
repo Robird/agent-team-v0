@@ -26,7 +26,7 @@ links:
 - Wish 正文存在重复段落（同一段话出现两次），提示“输入源”尚未去噪。
 - `atelia/docs/Data/Draft/SizedPtr.md` 写明首个目标用户为 `atelia/docs/Rbf/rbf-interface.md`。
   - ✅ 该路径实际存在：`atelia/docs/Rbf/rbf-interface.md`
-  - ⚠️ 但 active code 里目前未发现 RBF/Address64 的实现（推测仍停留在文档/归档代码阶段）。
+  - ⚠️ 但 active code 里目前未发现 RBF/<deleted-place-holder> 的实现（推测仍停留在文档/归档代码阶段）。
 - Wish 的 Layer Progress 表尚未开始；尚未建立与具体产物/测试的对应关系。
 
 ## 迭代日志（按 Leader Loop）
@@ -39,12 +39,12 @@ links:
 - Pressure: 开放
 
 #### Focus（候选）
-- F1: 澄清 “首个目标用户/替换对象” 的真实落点（rbf-interface/Address64 的权威位置与语义）
+- F1: 澄清 “首个目标用户/替换对象” 的真实落点（rbf-interface/<deleted-place-holder> 的权威位置与语义）
 - F2: 校验 Wish 输入本身是否可被系统消费（wishId、重复内容、链接正确性）
 
 #### Demand（候选）
 - action: Investigate（调查/定位）
-- scope: 找到 Address64 的权威定义与现行代码位置；确认是否需要 null 语义；确认 `rbf-interface.md` 的实际路径
+- scope: 找到 <deleted-place-holder> 的权威定义与现行代码位置；确认是否需要 null 语义；确认 `rbf-interface.md` 的实际路径
 - deliverable: 事实清单 + 链接修复建议 + 初步问题列表
 - definition_of_done: 能明确“替换谁/在哪里替换/必须保持哪些语义不变”
 - stop_condition: 找到权威文档位置并提取关键约束条款（不再继续扩展到实现）
@@ -54,7 +54,7 @@ links:
 ### Iteration 1（已执行：调查/定位）— 结果沉淀
 
 #### Facts（可引用证据）
-- `Address64` 的权威语义定义在：`atelia/docs/Rbf/rbf-interface.md` §2.3
+- <deleted-place-holder> 的权威语义定义在：`atelia/docs/Rbf/rbf-interface.md` §2.3
   - `[F-ADDRESS64-DEFINITION]`：8B LE 文件偏移，指向 Frame 起始位置
   - `[F-ADDRESS64-ALIGNMENT]`：非零地址 MUST 4B 对齐（`Value % 4 == 0`）
   - `[F-ADDRESS64-NULL]`：`Value == 0` 表示 null（无效地址）
@@ -63,10 +63,10 @@ links:
 - `SizedPtr` 草案提供了默认实现设想（38:26 + 4B 对齐压缩），见：`atelia/docs/Data/Draft/SizedPtr.md`
 
 #### 当前冲突/张力（需要 Rule/Shape 决策）
-- Wish 的 Non-Goals 写明“不定义特殊值（Null/Empty 是使用者用法问题）”，但 `rbf-interface.md` 明确规定 `Address64.Null = 0`。
-  - 这意味着“替换 Address64”时，要么：
+- Wish 的 Non-Goals 写明“不定义特殊值（Null/Empty 是使用者用法问题）”，但 `rbf-interface.md` 明确规定 `<deleted-place-holder>.Null = 0`。
+  - 这意味着“替换 <deleted-place-holder>”时，要么：
     - (A) 允许 `SizedPtr` 也承载 `0=null` 的约定；要么
-    - (B) 保持 `SizedPtr` 纯净，但在 RBF/StateJournal 层引入 wrapper/约定（例如 `Address64` 继续存在为语义封装，只是内部用 `SizedPtr` 表示 `Offset/Length`）。
+    - (B) 保持 `SizedPtr` 纯净，但在 RBF/StateJournal 层引入 wrapper/约定（例如 <deleted-place-holder> 继续存在为语义封装，只是内部用 `SizedPtr` 表示 `Offset/Length`）。
 - `SizedPtr` 的“Length”是否等价于 RBF 的“FrameLength/RecordLength/SpanLength”？（尚未被文档绑定）
   - 目前草案只说 Length=长度（4B 对齐），但没指定“长度指向的对象是什么”。
 
@@ -175,7 +175,7 @@ links:
 
 ### 本例：SizedPtr 是产品，RBF 是目标用户之一
 - Wish-0004 以 SizedPtr 为准；RBF 当前设计稿是草稿，可在后续接入时调整。
-- `Address64.Null = 0` 的语义 scope 属于 RBF 自己的接口设计；SizedPtr 类型本身不必承担“如何使用某个值域”的业务约定。
+- `<deleted-place-holder>.Null = 0` 的语义 scope 属于 RBF 自己的接口设计；SizedPtr 类型本身不必承担“如何使用某个值域”的业务约定。
 - 类比：`int` 不规定它是 0-based/1-based；约定属于使用者/协议。
 
 ### 工作台（未来演化方向）
@@ -247,7 +247,7 @@ links:
 - Plan-Tier：QA 测试矩阵已写入 `atelia/docs/Data/Draft/SizedPtr.md` 的“测试计划（Plan-Tier 草案）”
 
 #### 是否达成 M1（本 Wish 的阶段性终止）
-- 当前对 Wish-0004 而言：核心实现与单测已具备，已可以继续推进“接入 RBF/替换 Address64”的更大范围工作。
+- 当前对 Wish-0004 而言：核心实现与单测已具备，已可以继续推进“接入 RBF/替换 <deleted-place-holder>”的更大范围工作。
 - 若按“推进到无可行动”标准：尚未达成（仍有可行动的后续工作），但已完成一个清晰的内部里程碑：**从文档收敛到可运行代码 + 可验证测试**。
 
 ---
@@ -256,7 +256,7 @@ links:
 
 ### Feedback 1：Wish 目标边界
 - Wish-0004 的目标是“在 Atelia.Data 实现 SizedPtr”。
-- “接入 RBF / 替换 Address64”只是目标用户与优化方向之一，不属于本 Wish 的交付范围。
+- “接入 RBF / 替换 <deleted-place-holder>”只是目标用户与优化方向之一，不属于本 Wish 的交付范围。
 
 结论：可将 Wish-0004 判定为“已完成（Completed）”，后续接入/迁移应拆分为新的 Wish/Issue。
 

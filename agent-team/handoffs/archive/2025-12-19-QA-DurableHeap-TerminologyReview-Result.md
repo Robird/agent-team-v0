@@ -24,7 +24,7 @@
 | Baseline（单独使用）| Committed State | ✅ PASS | 术语表第26行明确标注 Deprecated |
 | EpochMap | VersionIndex | ✅ PASS | 术语表第36行明确标注 Deprecated |
 | snapshot（版本链语境）| Checkpoint Version | ✅ PASS | 术语表第35行明确标注 Deprecated |
-| Ptr64（概念层）| Address64 | ✅ PASS | 术语表第43行声明概念层用 Address64，编码层保留 Ptr64 |
+| Ptr64（概念层）| <deleted-place-holder> | ✅ PASS | 术语表第43行声明概念层用 <deleted-place-holder>，编码层保留 Ptr64 |
 | Resolve（外部 API）| LoadObject | ✅ PASS | 术语表第60行明确标注 Deprecated，允许内部使用 |
 | On-Disk Diff | DiffPayload | ⚠️ PARTIAL | 术语表已标注，但正文4.4.1仍有3处使用 |
 | EpochRecord（MVP）| Commit Record | ✅ PASS | 术语表第52行明确标注 Deprecated |

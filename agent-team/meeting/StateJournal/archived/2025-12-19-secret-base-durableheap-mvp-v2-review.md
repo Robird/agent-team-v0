@@ -36,7 +36,7 @@
 | 4 | **Major** | 术语表缺失 `RecordKind` / `ObjectKind` | 4.2.1 节引入 `RecordKind`（framing 层），4.2.5 节引入 `ObjectKind`（payload 层），两者有明确分工（"RecordKind 区分 record 顶层类型；ObjectKind 区分对象类型并选择 diff 解码器"），但术语表未收录。 | 在术语表增加"编码层"分组，收录 `RecordKind`、`ObjectKind`，并引用正文注释。 |
 | 5 | **Major** | Q11 推荐标记与最终选择矛盾 | Q11 选项 A 标注"（推荐）"，但决策表选择了 B。选项描述未同步更新，导致读者困惑"为何不选推荐项"。 | 方案一：移除 A 的"（推荐）"标记，或改为 B 标"（推荐）"；方案二：在 Q11 备注中追加理由摘要。 |
 | 6 | **Minor** | 概念术语大小写不一致：`HEAD` vs `head` | 术语表规定"禁止 head/Head 混用"，正文基本遵守，但 4.3.2 步骤 2 描述使用了小写 "HEAD commit"（可接受）与某些代码块中可能的 `head`（需检查）。 | 全文 grep `\bhead\b`（区分大小写），确保非代码上下文使用 `HEAD`。 |
-| 7 | **Minor** | `Address64` vs `Ptr64` 分层未完全贯彻 | 术语表定义 `Address64` 为概念层术语，`Ptr64` 为编码名。但正文某些语义描述仍直接使用 `Ptr64`（如 4.1.1 "ObjectVersionPtr (Address64)"后括号内又写 Ptr64）。 | 统一口径：概念描述用 `Address64`（或 `ObjectVersionPtr` 等具体化术语）；编码细节用 `Ptr64`。在 4.1.1 明确一次映射后，后续概念描述不再混用。 |
+| 7 | **Minor** | <deleted-place-holder> vs `Ptr64` 分层未完全贯彻 | 术语表定义 <deleted-place-holder> 为概念层术语，`Ptr64` 为编码名。但正文某些语义描述仍直接使用 `Ptr64`（如 4.1.1 "ObjectVersionPtr (<deleted-place-holder>)"后括号内又写 Ptr64）。 | 统一口径：概念描述用 <deleted-place-holder>（或 `ObjectVersionPtr` 等具体化术语）；编码细节用 `Ptr64`。在 4.1.1 明确一次映射后，后续概念描述不再混用。 |
 | 8 | **Minor** | `LoadObject` vs `Resolve` 术语边界 | 术语表弃用 `Resolve` 作为外部 API 总称，但 4.1.0 备注中仍提及"内部仍可使用 `Resolve` 描述'解析版本指针'的子步骤"。这个"内部 vs 外部"边界可进一步明确。 | 在术语表 `LoadObject` 条目的"别名/弃用"列补充"内部子步骤可称 Resolve（非 API 名称）"。 |
 
 #### 详细说明
@@ -76,7 +76,7 @@ grep -n "EpochMap" mvp-design-v2.md
 |------|--------|------|
 | 状态与差分 | ✅ Working State, Committed State, ChangeSet, DiffPayload | — |
 | 版本链 | ✅ Version Chain, Checkpoint Version, VersionIndex | — |
-| 标识与指针 | ✅ ObjectId, Address64, ObjectVersionPtr | ❌ **EpochSeq** |
+| 标识与指针 | ✅ ObjectId, <deleted-place-holder>, ObjectVersionPtr | ❌ **EpochSeq** |
 | 提交与 HEAD | ✅ Commit, HEAD, Commit Record | — |
 | 载入与缓存 | ✅ Identity Map, Dirty Set, LoadObject | — |
 | **编码层**（缺失分组） | — | ❌ **RecordKind**, **ObjectKind**, ValueType |
@@ -228,7 +228,7 @@ Scheme C 的 `_committed` vs `_current` 结构为调试提供了极佳的 **"Dif
 | 编号 | 来源 | 问题摘要 |
 |------|------|----------|
 | m-1 | Claude #6 | `HEAD` 大小写不一致 |
-| m-2 | Claude #7 | `Address64` vs `Ptr64` 分层未完全贯彻 |
+| m-2 | Claude #7 | <deleted-place-holder> vs `Ptr64` 分层未完全贯彻 |
 | m-3 | Claude #8 | `LoadObject` vs `Resolve` 术语边界 |
 | m-4 | Gemini #3 | 缺乏 `Equals` 默认行为 Runtime Warning |
 | m-5 | Gemini #4 | 缺乏 `IsLoaded` 状态指示 |
@@ -371,7 +371,7 @@ grep -n "EpochRecord\|EpochMap\|epoch record\|epoch map" mvp-design-v2.md
 | 术语 | 定义 | 备注 |
 |------|------|------|
 | `EpochSeq` | Commit 的单调递增序号，用于判定 HEAD 新旧 | 核心标识之一 |
-| `CommitRecordPtr` | 指向 Commit Record 的 Address64 | 替代旧术语 `EpochRecordPtr` |
+| `CommitRecordPtr` | 指向 Commit Record 的 <deleted-place-holder> | 替代旧术语 `EpochRecordPtr` |
 
 **3. 潜在遗漏（需确认）**
 
@@ -661,7 +661,7 @@ MVP v2 文档应当是 **Single Source of Truth**。
 | # | 任务 | 责任 |
 |---|------|------|
 | C-1 | 全文 grep `HEAD`/`head` 大小写一致性 | DocOps |
-| C-2 | `Address64`/`Ptr64` 分层贯彻 | DocOps |
+| C-2 | <deleted-place-holder>/`Ptr64` 分层贯彻 | DocOps |
 | C-3 | 统一 `CRC32C(u32 LE)` 表述 | DocOps |
 
 ---

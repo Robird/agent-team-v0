@@ -24,7 +24,7 @@ Read [](file:///repos/focus/atelia/docs/StateJournal/rbf-interface.md)
 ┌─────────────────▼───────────────────┐
 │  rbf-interface.md (本文档)           │
 │  - Layer 0/1 的对接契约              │
-│  - 定义 FrameTag, Address64 等       │
+│  - 定义 FrameTag, <deleted-place-holder> 等       │
 └─────────────────┬───────────────────┘
                   │ 待拆分后
 ┌─────────────────▼───────────────────┐
@@ -2717,7 +2717,7 @@ Ran terminal command: cat > /repos/focus/agent-team/handoffs/session-state.md <<
 | 任务 ID | 名称 | 预估 | 状态 |
 |---------|------|------|------|
 | T-P2-00 | 错误类型定义 | 0.5h | 待开始 |
-| T-P2-01 | Address64/Ptr64 | 1h | 待开始 |
+| T-P2-01 | <deleted-place-holder>/Ptr64 | 1h | 待开始 |
 | T-P2-02 | VarInt 编解码 | 2h | 待开始 |
 | T-P2-03 | FrameTag 位段编码 | 2h | 待开始 |
 | T-P2-04 | DurableObjectState 枚举 | 1h | 待开始 |
@@ -2804,7 +2804,7 @@ Ran terminal command: cat > /repos/focus/agent-team/handoffs/session-state.md <<
 | 任务 ID | 名称 | 预估 | 状态 |
 |---------|------|------|------|
 | T-P2-00 | 错误类型定义 | 0.5h | ⏳ |
-| T-P2-01 | Address64/Ptr64 | 1h | ⏳ |
+| T-P2-01 | <deleted-place-holder>/Ptr64 | 1h | ⏳ |
 | T-P2-02 | VarInt 编解码 | 2h | ⏳ |
 | T-P2-03 | FrameTag 位段编码 | 2h | ⏳ |
 | T-P2-04 | DurableObjectState 枚举 | 1h | ⏳ |
@@ -2856,7 +2856,7 @@ Phase 1 大获成功（157 tests，预估 9-12h 实际 ~3h）！
 | 任务 | 预估 | 说明 |
 |------|------|------|
 | T-P2-00 | 0.5h | 错误类型定义 |
-| T-P2-01 | 1h | Address64/Ptr64 |
+| T-P2-01 | 1h | <deleted-place-holder>/Ptr64 |
 | T-P2-02 | 2h | VarInt 编解码 |
 | T-P2-03 | 2h | FrameTag 位段编码 |
 | T-P2-04 | 1h | DurableObjectState 枚举 |
@@ -2930,7 +2930,7 @@ Ran terminal command: cat > /repos/focus/agent-team/handoffs/session-state.md <<
 
 来自 Phase 2 便签：
 - VarInt: 第 10 字节特殊处理（只能有 1 bit）
-- Address64: 复用 Rbf 层实现 + 扩展方法
+- <deleted-place-holder>: 复用 Rbf 层实现 + 扩展方法
 - FrameTag: 解释器模式而非替换类型
 - IDurableObject: HasChanges 在 Detached 返回 false
 EOF

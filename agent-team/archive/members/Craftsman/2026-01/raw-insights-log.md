@@ -62,7 +62,7 @@
 | 模式 | 信号 | 风险 |
 |:-----|:-----|:-----|
 | **纯 API 摩擦** | wrapper 定义条款仅等价于"这是某原始类型"，且规范声明"不解释语义、无保留值域" | 类型安全收益不可判定（典型：`FrameTag(uint)`） |
-| **约束双写漂移** | wrapper 存在硬约束（如对齐/null），但约束 SSOT 分散在 wire 文档与接口文档，类型本身不提供 `IsAligned` / `TryCreate` / `CreateChecked` 等机制 | 约束双写 + 漂移风险（典型：`Address64(ulong)`） |
+| **约束双写漂移** | wrapper 存在硬约束（如对齐/null），但约束 SSOT 分散在 wire 文档与接口文档，类型本身不提供 `IsAligned` / `TryCreate` / `CreateChecked` 等机制 | 约束双写 + 漂移风险（典型：`<deleted-place-holder>(ulong)`） |
 | **注释型别名** | wrapper 的收益主要来自"防混淆"，但提供隐式转换回原始类型 | 实质退化为别名，强类型形同虚设 |
 | **SSOT 分叉** | 术语表将概念映射为原始类型，但实现已引入 wrapper（如 `ObjectId(ulong)`） | 实现者/审阅者无法仅凭规范判断"强类型是否存在/应被依赖" |
 
@@ -122,7 +122,7 @@
 
 **Truncate 约束**：
 - `Truncate(newLengthBytes)` 建议强制 `newLengthBytes <= LengthBytes` 且 `newLengthBytes % 4 == 0`
-- 与 `Address64` 对齐一致，否则恢复期会制造不可判定的半帧/非对齐空间
+- 与 <deleted-place-holder> 对齐一致，否则恢复期会制造不可判定的半帧/非对齐空间
 
 **异常分类最小集合**：
 - 必须固定：Argument/IO/Corruption/Disposed/InvalidOperation
@@ -140,7 +140,7 @@
 
 **D1（Scanner 可见性/跟随视图）不能简单删除**：
 - meta 的 `ScanReverse()` 确实是启动期一次性尾扫
-- 但 data 的 `TryReadAt(Address64)` 必须在"同进程同句柄持续 append"下定义增长语义
+- 但 data 的 `TryReadAt(<deleted-place-holder>)` 必须在"同进程同句柄持续 append"下定义增长语义
 - 语义：以调用时刻 EOF 为准，EOF 外返回 false，增长后可变为 true
 
 **恢复流程必需能力**：
@@ -161,7 +161,7 @@
 
 3. **向后兼容性**
    - 若历史保存了裸 u64 指针，必须有外部版本字段或内部版本位
-   - 否则无法机械判别 Address64 vs FramePtr
+   - 否则无法机械判别 <deleted-place-holder> vs FramePtr
 
 #### 参谋组提示词统一骨架 (2025-12-29)
 > 为三位顾问统一 `.agent.md` 的架构洞见。

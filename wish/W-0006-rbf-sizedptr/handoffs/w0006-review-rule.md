@@ -32,7 +32,7 @@
 - **类型**：迁移指南准确性
 - **严重性**：Sev1
 - **位置**：§2 "迁移映射"表格最后一行
-- **问题描述**：Rule.md 写作 `new Address64(value)` → `SizedPtr.FromOffsetAndLength()`，但 `Atelia.Data.SizedPtr` 当前提供的创建 API 为：
+- **问题描述**：Rule.md 写作 `new <deleted-place-holder>(value)` → `SizedPtr.FromOffsetAndLength()`，但 `Atelia.Data.SizedPtr` 当前提供的创建 API 为：
   - `SizedPtr.Create(ulong offsetBytes, uint lengthBytes)`（做完整校验）
   - `SizedPtr.TryCreate(...)`
   - `SizedPtr.FromPacked(ulong packed)`（不校验）
@@ -111,7 +111,7 @@
 
 - **Null 语义边界表达正确**：Rule 明确指出 SizedPtr 作为几何类型不自带 Null 语义，而 NullPtr 是 RBF 层业务约定（与 Resolve §6 D3、`SizedPtr.cs` 的 remarks 一致）。
 - **判等建议贴近 .NET 惯用法**：推荐 `ptr == default`，并给出等价的 `Packed == 0` 检查，方向正确。
-- **迁移主张与上游结论一致**：整体叙事是"SizedPtr 完全替代 Address64"，与 Resolve §6 D4、Shape §1-2、调查报告结论一致。
+- **迁移主张与上游结论一致**：整体叙事是"SizedPtr 完全替代 <deleted-place-holder>"，与 Resolve §6 D4、Shape §1-2、调查报告结论一致。
 
 ---
 

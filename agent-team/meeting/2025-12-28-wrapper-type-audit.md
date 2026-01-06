@@ -74,7 +74,7 @@
 
 **审阅焦点**：
 - `FrameTag`（监护人点名质疑）
-- `Address64`
+- <deleted-place-holder>
 - 其他可能的套壳类型
 
 请各位独立审阅，产出怀疑列表。不需要讨论解决方案，只需识别和记录。
@@ -107,28 +107,28 @@
 
 ---
 
-#### Address64
+#### <deleted-place-holder>
 
 - **定义位置**：[rbf-interface.md §2.3](../atelia/docs/StateJournal/rbf-interface.md#23-address64)，条款 `[F-ADDRESS64-DEFINITION]`
 - **当前形态**：
   ```csharp
-  public readonly record struct Address64(ulong Value) {
-      public static readonly Address64 Null = new(0);
+  public readonly record struct <deleted-place-holder>(ulong Value) {
+      public static readonly <deleted-place-holder> Null = new(0);
       public bool IsNull => Value == 0;
   }
   ```
 - **怀疑理由**：
   1. **验证逻辑极少**：仅有 `IsNull` 一个派生属性
-  2. **对齐约束未内化**：`[F-ADDRESS64-ALIGNMENT]` 规定"有效 Address64 MUST 4 字节对齐"，但类型本身**不验证**这个约束——构造 `new Address64(5)` 不会报错
-  3. **Null 值语义模糊**：`Value == 0` 既是"null"又是"Genesis Fence 位置"——概念上 Genesis Fence 在偏移 0，但不能用 Address64 指向它？
+  2. **对齐约束未内化**：`[F-ADDRESS64-ALIGNMENT]` 规定"有效 <deleted-place-holder> MUST 4 字节对齐"，但类型本身**不验证**这个约束——构造 `new <deleted-place-holder>(5)` 不会报错
+  3. **Null 值语义模糊**：`Value == 0` 既是"null"又是"Genesis Fence 位置"——概念上 Genesis Fence 在偏移 0，但不能用 <deleted-place-holder> 指向它？
 - **潜在价值**：
   - **类型区分**：区分"文件偏移量"和其他 `ulong`（如文件长度、时间戳）
   - **语义载体**：`IsNull` 属性提供了一点点便利
-  - **扩展空间**：§9 "待实现时确认"提到"高位保留"可能性——若实现，Address64 是自然载体
+  - **扩展空间**：§9 "待实现时确认"提到"高位保留"可能性——若实现，<deleted-place-holder> 是自然载体
   - **未来验证**：可添加 `IsAligned` 属性或构造时验证
 - **怀疑等级**：**中** ⚡
 
-> **系统类比**：Unix 系统中 `off_t` 是 `long long`，指针算术用原始整数，几十年来运行良好。但也有反例——Windows 的 `HANDLE` 包装防止了指针/整数混淆。关键问题是：这个代码库中是否真的存在"把 Address64 和其他 ulong 搞混"的风险场景？
+> **系统类比**：Unix 系统中 `off_t` 是 `long long`，指针算术用原始整数，几十年来运行良好。但也有反例——Windows 的 `HANDLE` 包装防止了指针/整数混淆。关键问题是：这个代码库中是否真的存在"把 <deleted-place-holder> 和其他 ulong 搞混"的风险场景？
 
 ---
 
@@ -149,7 +149,7 @@
 | 类型 | 怀疑等级 | 核心问题 |
 |:-----|:---------|:---------|
 | `FrameTag` | **高** | 纯透传无增值行为，API 摩擦明显 |
-| `Address64` | **中** | 有少量便利属性，但约束验证缺失 |
+| <deleted-place-holder> | **中** | 有少量便利属性，但约束验证缺失 |
 
 **概念层思考**：
 
@@ -160,7 +160,7 @@
 > 2. **行为封装**：提供有意义的方法（如 `FrameTag.FromChars("META")`）
 > 3. **语义歧义场景**：同一原始类型在 API 中有多种不可互换的含义（如同时传 `offset` 和 `length`）
 
-FrameTag 当前三条都不满足，Address64 勉强满足第三条（与 `fileLength` 区分）。
+FrameTag 当前三条都不满足，<deleted-place-holder> 勉强满足第三条（与 `fileLength` 区分）。
 
 ---
 
@@ -185,23 +185,23 @@ FrameTag 当前三条都不满足，Address64 勉强满足第三条（与 `fileL
   - **上层值域治理的锚点**：若未来引入 FrameTag registry（保留区、冲突检测、诊断呈现），该类型是自然承载点。
 - **怀疑等级**：高
 
-### Address64
+### <deleted-place-holder>
 
-- **定义位置**：`atelia/docs/StateJournal/rbf-interface.md` §2.3 `Address64`，条款 `[F-ADDRESS64-DEFINITION]` / `[F-ADDRESS64-ALIGNMENT]` / `[F-ADDRESS64-NULL]`（另：`rbf-format.md` §7.1 `[F-PTR64-WIRE-FORMAT]` 描述 wire 表示与 null/对齐规则）
+- **定义位置**：`atelia/docs/StateJournal/rbf-interface.md` §2.3 <deleted-place-holder>，条款 `[F-ADDRESS64-DEFINITION]` / `[F-ADDRESS64-ALIGNMENT]` / `[F-ADDRESS64-NULL]`（另：`rbf-format.md` §7.1 `[F-PTR64-WIRE-FORMAT]` 描述 wire 表示与 null/对齐规则）
 - **当前形态**：
   ```csharp
-  public readonly record struct Address64(ulong Value) {
-      public static readonly Address64 Null = new(0);
+  public readonly record struct <deleted-place-holder>(ulong Value) {
+      public static readonly <deleted-place-holder> Null = new(0);
       public bool IsNull => Value == 0;
   }
   ```
 - **怀疑理由**：
   - **“约束在文档、未进入类型”**：规范存在对齐硬约束 `[F-ADDRESS64-ALIGNMENT]`，但类型本身不验证/不暴露 `IsAligned`，也没有 `CreateChecked` / `TryCreate` 之类把约束内化为构造协议；因此 wrapper 在“防误用”上的增益有限。
   - **定义条款的有效信息可被注释替代**：用 `ulong address` + 文档注释（“file offset to HeadLen; 0 means null; non-zero 4B aligned”）即可表达同等约束。
-  - **语义面与编码面重叠**：`rbf-format.md` 把“Address/Ptr64”作为编码层概念描述，`rbf-interface.md` 又定义 `Address64` 类型；若二者不严格保持“一个是 wire 规则，一个是 API 规则”的 SSOT 边界，未来容易出现双写漂移（例如 null/对齐/高位保留策略）。
+  - **语义面与编码面重叠**：`rbf-format.md` 把“Address/Ptr64”作为编码层概念描述，`rbf-interface.md` 又定义 <deleted-place-holder> 类型；若二者不严格保持“一个是 wire 规则，一个是 API 规则”的 SSOT 边界，未来容易出现双写漂移（例如 null/对齐/高位保留策略）。
 - **潜在价值**：
   - **与其他 `ulong` 的语义隔离**：在同一 API 中同时出现 `offset`、`length`、`versionPtr` 等时，强类型确实能减少“把长度当地址”的错误（这类错误常静默且难诊断）。
-  - **承载更强不变量**：若后续把“必须指向 frameStart（>= GenesisLen）”、“必须 4B 对齐”、“高位保留位必须为 0/或用于多文件编码”等约束转为可判定的构造/校验 API，则 `Address64` 会变成有实际约束的领域类型。
+  - **承载更强不变量**：若后续把“必须指向 frameStart（>= GenesisLen）”、“必须 4B 对齐”、“高位保留位必须为 0/或用于多文件编码”等约束转为可判定的构造/校验 API，则 <deleted-place-holder> 会变成有实际约束的领域类型。
   - **诊断/显示友好**：可通过 `ToString()` 输出十六进制/对齐状态，降低调试成本（这是 wrapper 的常见“软价值”，但需明确落到行为）。
 - **怀疑等级**：中
 
@@ -214,11 +214,11 @@ FrameTag 当前三条都不满足，Address64 勉强满足第三条（与 `fileL
 | 类型 | Claude | DeepSeek | GPT | 共识 |
 |:-----|:-------|:-------|:----|:-----|
 | `FrameTag` | 高 | 高 | 高 | **高** ⚠️ |
-| `Address64` | 中 | 中 | 中 | **中** ⚡ |
+| <deleted-place-holder> | 中 | 中 | 中 | **中** ⚡ |
 
 **共同发现**：
 1. `FrameTag` 三人均标为"高嫌疑"——纯透传、零验证、零行为
-2. `Address64` 三人均标为"中嫌疑"——有 `IsNull` 便利，但对齐约束未内化
+2. <deleted-place-holder> 三人均标为"中嫌疑"——有 `IsNull` 便利，但对齐约束未内化
 3. 两类型都存在"规范声明约束，但类型不验证"的问题
 
 现在开始**第二轮审阅**，关注 Layer 1 设计。
@@ -272,7 +272,7 @@ FrameTag 当前三条都不满足，Address64 勉强满足第三条（与 `fileL
 |:----------|:---------|:-----|:---------|
 | **ObjectId** | 术语表 | `uint64` / `varuint` | **不是套壳** — 直接使用原始类型，无 wrapper struct |
 | **EpochSeq** | 术语表 | `varuint` | **不是套壳** — 直接使用原始类型 |
-| **Ptr64 / ObjectVersionPtr** | 术语表 | 引用 `Address64` | **复用 Layer 0 类型**（第一轮已审阅） |
+| **Ptr64 / ObjectVersionPtr** | 术语表 | 引用 <deleted-place-holder> | **复用 Layer 0 类型**（第一轮已审阅） |
 | **RootObjectId** | MetaCommitRecord | `varuint` | **不是套壳** — 直接使用原始类型 |
 | **NextObjectId** | MetaCommitRecord | `varuint` | **不是套壳** — 直接使用原始类型 |
 | **DataTail** | MetaCommitRecord | `Ptr64` | **复用 Layer 0 类型** |
@@ -314,7 +314,7 @@ Layer 1（mvp-design-v2.md）采用了一种**审慎的类型策略**：
 
 1. **避免过度包装**：`ObjectId`、`EpochSeq` 等概念直接使用原始类型（`uint64`/`varuint`），通过参数命名和文档约束语义，而非引入 wrapper struct
 
-2. **复用 Layer 0 类型**：需要类型区分的场景（如 `Address64`）复用 RBF 层定义，避免重复套壳
+2. **复用 Layer 0 类型**：需要类型区分的场景（如 <deleted-place-holder>）复用 RBF 层定义，避免重复套壳
 
 3. **枚举有明确语义**：`RecordType`、`ObjectKind`、`ValueType` 都有路由/解码职责，不是纯粹的"命名别名"
 
@@ -329,7 +329,7 @@ Layer 1（mvp-design-v2.md）采用了一种**审慎的类型策略**：
 | 类型 | 第一轮结论 | Layer 1 视角补充 |
 |:-----|:-----------|:-----------------|
 | **FrameTag** | 高嫌疑 | Layer 1 赋予了位段语义（RecordType/ObjectKind），但当前 API 未暴露提取方法。建议：要么添加便利方法（变为有行为类型），要么直接用 `uint` |
-| **Address64** | 中嫌疑 | Layer 1 大量使用（VersionIndexPtr、DataTail、ObjectVersionPtr），类型区分价值确认。建议：内化对齐验证 |
+| **<deleted-place-holder>** | 中嫌疑 | Layer 1 大量使用（VersionIndexPtr、DataTail、ObjectVersionPtr），类型区分价值确认。建议：内化对齐验证 |
 
 ---
 
@@ -338,7 +338,7 @@ Layer 1（mvp-design-v2.md）采用了一种**审慎的类型策略**：
 | 层级 | 新发现套壳类型 | 已有类型复核 |
 |:-----|:--------------|:-------------|
 | Layer 1 | **无** | FrameTag（建议添加便利方法或降级） |
-| Layer 0/1 边界 | N/A | Address64（建议内化对齐验证） |
+| Layer 0/1 边界 | N/A | <deleted-place-holder>（建议内化对齐验证） |
 
 Layer 1 的类型设计总体上是**健康的**——避免了过度包装，需要语义区分时使用枚举而非 wrapper struct。唯一的遗留问题是 `FrameTag` 的定位模糊（Layer 0 声称透传，Layer 1 实际解释语义）。
 
@@ -363,7 +363,7 @@ Layer 1 的类型设计总体上是**健康的**——避免了过度包装，�
   2.  **无行为**：除了 `ToString` 和类型转换外，目前没有其他领域逻辑（如生成算法、校验）。
   3.  **Primitive Obsession 泄漏**：Layer 1 试图建立强类型对象图，但底层容器 (`DurableDict`) 却强制回退到 `ulong`，这种抽象泄漏削弱了 Wrapper 的价值。
 - **潜在价值**：
-  1.  **类型区分**：在 `LoadObject(ObjectId)` 等 API 中，防止与 `Address64`、`EpochSeq` 或其他 `ulong` 参数混淆（尤其是在参数较多的方法中）。
+  1.  **类型区分**：在 `LoadObject(ObjectId)` 等 API 中，防止与 <deleted-place-holder>、`EpochSeq` 或其他 `ulong` 参数混淆（尤其是在参数较多的方法中）。
   2.  **未来扩展**：若未来 ID 升级（例如 128-bit UUID），Wrapper 提供了隔离层——但前提是底层 `DurableDict` 也要升级支持泛型 Key 或新 Key 类型，否则 Wrapper 只是徒增转换成本。
 - **怀疑等级**：**高** ⚠️
 
@@ -383,7 +383,7 @@ Layer 1 的类型设计总体上是**健康的**——避免了过度包装，�
 
 本轮我按任务要求复查了：
 
-- `atelia/docs/StateJournal/rbf-interface.md`：§2 术语表中的类型（FrameTag/Address64 已在第一轮结论中）
+- `atelia/docs/StateJournal/rbf-interface.md`：§2 术语表中的类型（FrameTag/<deleted-place-holder> 已在第一轮结论中）
 - `atelia/docs/StateJournal/mvp-design-v2.md`：术语表（尤其“标识与指针”）、枚举值速查表、以及文中出现的结构体/枚举建议（如 `DurableObjectState`）
 
 在“Layer 1 特有”的视角下，**新增可疑 wrapper type** 主要集中在 `ObjectId`（该类型在文档中以概念出现，但在实现中确实是 `record struct`），其余如 `Ptr64` 在实现中采取了 `global using` 别名策略，并非独立 wrapper。
@@ -408,7 +408,7 @@ Layer 1 的类型设计总体上是**健康的**——避免了过度包装，�
   3. **类型安全收益被隐式转换稀释**：`ObjectId -> ulong` 是隐式的，使得一旦 API 以 `ulong` 作为 key（如 `DurableDict` key），调用方可以无感地把 `ObjectId` 当 `ulong` 传递；这在工程上是便利，但也削弱了“防混淆”的强类型收益——从而更接近“注释型别名”。
   4. **与 Layer 1 容器策略的摩擦**：`mvp-design-v2.md` 明确 `DurableDict` key 固定为 `ulong`（MVP 简化决策），因此 `ObjectId` 在关键路径（VersionIndex / Dict key）里频繁退回到 `ulong` 表示；这会让 wrapper 的存在更像“半吊子隔离层”（需要构造/解构，但生态不闭合）。
 - **潜在价值**：
-  1. **语义隔离**：在签名层面对调用方表达“这是对象身份而非普通 `ulong`”，尤其是与 `Ptr64/Address64`、计数、key 等同为 64-bit 值时，能减少参数混淆。
+  1. **语义隔离**：在签名层面对调用方表达“这是对象身份而非普通 `ulong`”，尤其是与 `Ptr64/<deleted-place-holder>`、计数、key 等同为 64-bit 值时，能减少参数混淆。
   2. **未来演进的隔离层**：若未来 `ObjectId` 需要升级编码/位段（例如引入 epoch bits、类型域、或 128-bit），wrapper 是自然扩展点。
   3. **可诊断性**：`ToString()` 等展示让日志更可读（软价值）。
 - **怀疑等级**：高
@@ -449,7 +449,7 @@ Layer 1 的类型设计总体上是**健康的**——避免了过度包装，�
 
 | 类型 | 层级 | 核心问题 | 潜在价值 |
 |:-----|:-----|:---------|:---------|
-| **Address64** | Layer 0 | 对齐约束未内化；`IsNull` 是唯一便利 | 与 ulong 区分、承载更强不变量、诊断友好 |
+| **<deleted-place-holder>** | Layer 0 | 对齐约束未内化；`IsNull` 是唯一便利 | 与 ulong 区分、承载更强不变量、诊断友好 |
 
 ### 无嫌疑（确认为健康设计）
 

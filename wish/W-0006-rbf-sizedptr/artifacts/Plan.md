@@ -7,7 +7,7 @@ produce_by:
 
 # W-0006 Plan-Tier
 
-> **一句话**：分两阶段完成 Address64 → SizedPtr 迁移，本 Wish 完成文档层修订。
+> **一句话**：分两阶段完成 <deleted-place-holder> → SizedPtr 迁移，本 Wish 完成文档层修订。
 
 ---
 
@@ -17,7 +17,7 @@ produce_by:
 
 | 步骤 | 内容 | 验收标准 |
 |:-----|:-----|:---------|
-| 1.1 | 修订 rbf-interface.md | 移除 Address64，引入 SizedPtr + NullPtr |
+| 1.1 | 修订 rbf-interface.md | 移除 <deleted-place-holder>，引入 SizedPtr + NullPtr |
 | 1.2 | 修订 rbf-format.md | 更新 Wire Format 章节 |
 | 1.3 | 添加 artifacts 导航锚点 | 文档头部增加设计演进链接 |
 
@@ -25,20 +25,20 @@ produce_by:
 
 | 步骤 | 内容 | 说明 |
 |:-----|:-----|:-----|
-| 2.1 | 更新 RBF 实现 | 使用 SizedPtr 替代 Address64 |
+| 2.1 | 更新 RBF 实现 | 使用 SizedPtr 替代 <deleted-place-holder> |
 | 2.2 | 更新 StateJournal | 另一个 Wish 负责 |
 
 ---
 
 ## 2. 修订清单（rbf-interface.md）
 
-基于 [Address64 调查报告](../../../agent-team/handoffs/w0006-address64-value-check.md) §6 和源文件行号：
+基于 [<deleted-place-holder> 调查报告](../../../agent-team/handoffs/w0006-address64-value-check.md) §6 和源文件行号：
 
 ### 2.1 删除操作
 
 | 目标 | 操作 | 说明 |
 |:-----|:-----|:-----|
-| §2.3 Address64 整节 | 删除 | 被新 §2.3 SizedPtr 替代 |
+| §2.3 <deleted-place-holder> 整节 | 删除 | 被新 §2.3 SizedPtr 替代 |
 | 条款索引 `[F-ADDRESS64-DEFINITION]` | 删除 | 条款已移除 |
 | 条款索引 `[F-ADDRESS64-ALIGNMENT]` | 删除 | 约束已由 SizedPtr 定义 |
 | 条款索引 `[F-ADDRESS64-NULL]` | 删除 | 被 NullPtr 约定替代 |
@@ -47,22 +47,22 @@ produce_by:
 
 | 目标 | 新增内容 | 条款 ID |
 |:-----|:---------|:--------|
-| §2.3（原 Address64 位置） | SizedPtr 定义 + NullPtr 约定 | `[F-SIZEDPTR-DEFINITION]`, `[F-RBF-NULLPTR]` |
+| §2.3（原 <deleted-place-holder> 位置） | SizedPtr 定义 + NullPtr 约定 | `[F-SIZEDPTR-DEFINITION]`, `[F-RBF-NULLPTR]` |
 
 ### 2.3 替换操作
 
 | 原内容 | 修改为 | 类型 |
 |:-------|:-------|:-----|
-| §3 "写入返回 Address64，读取通过 Address64 定位" | "写入返回 SizedPtr，读取通过 SizedPtr 定位" | 术语替换 |
-| `IRbfFramer.Append` 返回类型 `Address64` | `SizedPtr` | 签名替换 |
-| `RbfFrameBuilder.Commit` 返回类型 `Address64` | `SizedPtr` | 签名替换 |
-| `IRbfScanner.TryReadAt(Address64 address, ...)` | `TryReadAt(SizedPtr ptr, ...)` | 签名替换 |
+| §3 "写入返回 <deleted-place-holder>，读取通过 <deleted-place-holder> 定位" | "写入返回 SizedPtr，读取通过 SizedPtr 定位" | 术语替换 |
+| `IRbfFramer.Append` 返回类型 <deleted-place-holder> | `SizedPtr` | 签名替换 |
+| `RbfFrameBuilder.Commit` 返回类型 <deleted-place-holder> | `SizedPtr` | 签名替换 |
+| `IRbfScanner.TryReadAt(<deleted-place-holder> address, ...)` | `TryReadAt(SizedPtr ptr, ...)` | 签名替换 |
 | `RbfFrame.Address` 属性 | `RbfFrame.Ptr`（类型 `SizedPtr`） | 属性替换 |
-| 示例代码中所有 `Address64` | `SizedPtr` | 示例更新 |
+| 示例代码中所有 <deleted-place-holder> | `SizedPtr` | 示例更新 |
 
 ### 2.4 详细修订内容
 
-#### 新 §2.3 内容（替换原 Address64 定义）
+#### 新 §2.3 内容（替换原 <deleted-place-holder> 定义）
 
 ```markdown
 ### 2.3 SizedPtr
@@ -108,18 +108,18 @@ if (ptr == default) { /* 无效引用 */ }
 
 | 原内容 | 修改为 | 类型 |
 |:-------|:-------|:-----|
-| §1 "Address64 等接口类型" | "SizedPtr 等接口类型" | 术语替换 |
-| §7 标题 "Address64 / Ptr64（编码层）" | "SizedPtr（Wire Format）" | 标题替换 |
-| §7 "本规范所称"地址（Address64/Ptr64）"" | "SizedPtr（8 字节紧凑区间）" | 术语替换 |
+| §1 "<deleted-place-holder> 等接口类型" | "SizedPtr 等接口类型" | 术语替换 |
+| §7 标题 "<deleted-place-holder> / Ptr64（编码层）" | "SizedPtr（Wire Format）" | 标题替换 |
+| §7 "本规范所称"地址（<deleted-place-holder>/Ptr64）"" | "SizedPtr（8 字节紧凑区间）" | 术语替换 |
 | 条款 `[F-PTR64-WIRE-FORMAT]` | `[F-SIZEDPTR-WIRE-FORMAT]` | 条款 ID 替换 |
 | §7 Wire Format 描述 | 改为 offset+length 语义 | 内容替换 |
-| §7 "接口层的类型化封装见...Address64" | "接口层定义见...SizedPtr" | 引用替换 |
+| §7 "接口层的类型化封装见...<deleted-place-holder>" | "接口层定义见...SizedPtr" | 引用替换 |
 | DataTail "地址（见 §7）" | "SizedPtr.OffsetBytes（见 §7）" | 术语替换 |
 | 条款索引 `[F-PTR64-WIRE-FORMAT]` | `[F-SIZEDPTR-WIRE-FORMAT]` | 条款 ID 替换 |
 
 ### 3.2 详细修订内容
 
-#### 新 §7 内容（替换原 Address64 / Ptr64 章节）
+#### 新 §7 内容（替换原 <deleted-place-holder> / Ptr64 章节）
 
 ```markdown
 ## 7. SizedPtr（Wire Format）
@@ -147,13 +147,13 @@ if (ptr == default) { /* 无效引用 */ }
 
 ### 4.1 语义增强清单
 
-| 修改点 | 原语义（Address64） | 新语义（SizedPtr） | 增强说明 |
+| 修改点 | 原语义（<deleted-place-holder>） | 新语义（SizedPtr） | 增强说明 |
 |:-------|:-------------------|:------------------|:---------|
 | `Append()` 返回值 | 仅返回 offset | 返回 offset+length | **一次 IO**：调用方无需先读 HeadLen 再读全帧 |
 | `Commit()` 返回值 | 仅返回 offset | 返回 offset+length | 同上 |
 | `TryReadAt()` 参数 | 传入 offset，需运行时读 HeadLen | 传入 offset+length，可直接校验 | **预分配**：可提前分配精确大小的缓冲区 |
 | `RbfFrame.Address` → `Ptr` | 仅 offset | offset+length | **自包含**：Frame 视图携带完整范围信息 |
-| `Address64.Null` → `NullPtr` | `Value == 0` | `Packed == 0` | **语义等价**：Null 约定从类型移至 RBF 层常量 |
+| `<deleted-place-holder>.Null` → `NullPtr` | `Value == 0` | `Packed == 0` | **语义等价**：Null 约定从类型移至 RBF 层常量 |
 | `address.IsNull` → `ptr == default` | 成员方法 | 标准值类型判等 | **惯用法**：符合 .NET struct 惯例 |
 
 ### 4.2 隐性知识记录
@@ -177,7 +177,7 @@ Null 语义是 **RBF 层的业务约定**：
 
 `DataTail` 表示文件截断点（纯位置），使用 `SizedPtr.OffsetBytes` 表达：
 - `LengthBytes = 0`（或任意值，忽略）
-- 语义上等价于原 Address64 的 `Value`
+- 语义上等价于原 <deleted-place-holder> 的 `Value`
 
 这不是"滥用"SizedPtr，而是明确其 `OffsetBytes` 分量的独立可用性。
 
@@ -195,7 +195,7 @@ Null 语义是 **RBF 层的业务约定**：
 
 | 标准 | 验证方法 |
 |:-----|:---------|
-| rbf-interface.md / rbf-format.md 中 `Address64` 已替换为 `SizedPtr` | 人工复核核心章节 |
+| rbf-interface.md / rbf-format.md 中 <deleted-place-holder> 已替换为 `SizedPtr` | 人工复核核心章节 |
 | 新增 `SizedPtr` 定义完整 | 复核 §2.3 含 `[F-SIZEDPTR-DEFINITION]`、`[F-RBF-NULLPTR]` |
 | 条款索引已同步 | 索引无悬挂引用 |
 | frontmatter 含 `produce_by` | 指向本 wish |
@@ -204,7 +204,7 @@ Null 语义是 **RBF 层的业务约定**：
 
 rbf-interface.md 新增条目：
 ```
-| 0.18 | 2026-01-06 | **SizedPtr 替代 Address64**（W-0006）：移除 Address64 类型，引入 SizedPtr 作为核心 Frame 句柄；新增 `[F-SIZEDPTR-DEFINITION]`、`[F-RBF-NULLPTR]`；移除 `[F-ADDRESS64-*]` 条款；`RbfFrame.Address` 改为 `RbfFrame.Ptr` |
+| 0.18 | 2026-01-06 | **SizedPtr 替代 <deleted-place-holder>**（W-0006）：移除 <deleted-place-holder> 类型，引入 SizedPtr 作为核心 Frame 句柄；新增 `[F-SIZEDPTR-DEFINITION]`、`[F-RBF-NULLPTR]`；移除 `[F-ADDRESS64-*]` 条款；`RbfFrame.Address` 改为 `RbfFrame.Ptr` |
 ```
 
 rbf-format.md 新增条目：
@@ -220,24 +220,24 @@ rbf-format.md 新增条目：
 
 | 风险 | 等级 | 缓解措施 |
 |:-----|:-----|:---------|
-| 遗漏 Address64 使用点 | 低 | 调查报告已穷举 RBF 文档所有出现（9 处） |
+| 遗漏 <deleted-place-holder> 使用点 | 低 | 调查报告已穷举 RBF 文档所有出现（9 处） |
 | 条款引用悬挂 | 低 | 执行后用 grep 验证 |
-| StateJournal 文档引用 Address64 | 中 | 本 Wish 不修订 StateJournal，另一个 Wish 负责 |
+| StateJournal 文档引用 <deleted-place-holder> | 中 | 本 Wish 不修订 StateJournal，另一个 Wish 负责 |
 
 ### 6.2 破坏性变更
 
 | 变更 | 影响 | 说明 |
 |:-----|:-----|:-----|
 | `RbfFrame.Address` → `Ptr` | 代码层面的 breaking change | Phase 2 实现时，编译器会报错所有旧调用点 |
-| `Address64` 类型完全移除 | 代码层面的 breaking change | 同上 |
+| <deleted-place-holder> 类型完全移除 | 代码层面的 breaking change | 同上 |
 | 条款 ID 变更 | 跨文档引用可能失效 | 检查 StateJournal 等上层文档是否引用 `[F-ADDRESS64-*]` |
 
 ### 6.3 待确认项
 
 | 项 | 说明 | 建议 |
 |:---|:-----|:-----|
-| StateJournal 对 Address64 的引用 | 可能在 mvp-design-v2.md 中存在 | Phase 2 或另一个 Wish 处理 |
-| 测试向量更新 | rbf-test-vectors.md 可能需要更新 | 检查是否引用 Address64 |
+| StateJournal 对 <deleted-place-holder> 的引用 | 可能在 mvp-design-v2.md 中存在 | Phase 2 或另一个 Wish 处理 |
+| 测试向量更新 | rbf-test-vectors.md 可能需要更新 | 检查是否引用 <deleted-place-holder> |
 
 ---
 
@@ -245,7 +245,7 @@ rbf-format.md 新增条目：
 
 ```
 1. rbf-interface.md
-   1.1 删除 §2.3 Address64 定义
+   1.1 删除 §2.3 <deleted-place-holder> 定义
    1.2 新增 §2.3 SizedPtr + NullPtr 定义
    1.3 替换接口签名（Append/Commit/TryReadAt/RbfFrame）
    1.4 更新示例代码
@@ -260,7 +260,7 @@ rbf-format.md 新增条目：
    2.5 添加变更日志条目
 
 3. 验收
-   3.1 grep 验证 Address64 清除
+   3.1 grep 验证 <deleted-place-holder> 清除
    3.2 条款引用完整性检查
    3.3 frontmatter 导航锚点确认
 ```
@@ -272,5 +272,5 @@ rbf-format.md 新增条目：
 - **动机与问题**：[Resolve.md](Resolve.md)
 - **概念边界**：[Shape.md](Shape.md)
 - **规则条款**：[Rule.md](Rule.md)
-- **Address64 调查报告**：[w0006-address64-value-check.md](../../../agent-team/handoffs/w0006-address64-value-check.md)
+- **<deleted-place-holder> 调查报告**：[w0006-address64-value-check.md](../../../agent-team/handoffs/w0006-address64-value-check.md)
 

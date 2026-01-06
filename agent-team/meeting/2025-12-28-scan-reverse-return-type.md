@@ -371,7 +371,7 @@ public ref struct RbfFrame
 
 **可能遗漏的“绕路”场景（需要在规范里显式排除/说明）：**
 
-- 可以返回 `IEnumerable<Address64>` 或 `IEnumerable<RbfFrameDto>`（或其他可堆存的 DTO），然后由调用方再 `TryReadAt`/拷贝 payload。这在类型上可行，但会改变语义（零拷贝热路径不再直接暴露帧视图）与性能特征；应当作为“物化/导出 API”的备选，而非 `ScanReverse()` 的主语义。
+- 可以返回 `IEnumerable<<deleted-place-holder>>` 或 `IEnumerable<RbfFrameDto>`（或其他可堆存的 DTO），然后由调用方再 `TryReadAt`/拷贝 payload。这在类型上可行，但会改变语义（零拷贝热路径不再直接暴露帧视图）与性能特征；应当作为“物化/导出 API”的备选，而非 `ScanReverse()` 的主语义。
 
 #### 2) 边界情况核查（必须写进契约，否则实现会分叉）
 

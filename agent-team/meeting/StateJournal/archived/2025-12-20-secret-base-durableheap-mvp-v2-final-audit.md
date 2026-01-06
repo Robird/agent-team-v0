@@ -198,16 +198,16 @@ Base Version（上位词） → Genesis Base / Checkpoint Base
 当前术语表按"状态与差分"、"版本链"、"标识与指针"等分组。但有些概念跨层级：
 
 - `Ptr64` 是编码层概念
-- `Address64` 是语义层概念（Ptr64 的子类型）
-- `ObjectVersionPtr` 是 Address64 的特化
+- <deleted-place-holder> 是语义层概念（Ptr64 的子类型）
+- `ObjectVersionPtr` 是 <deleted-place-holder> 的特化
 
 这三者的层级关系可以用一个简单的标记：
 
 | 术语 | 层级 | 定义 |
 |------|------|------|
 | Ptr64 | Encoding | 64 位文件偏移编码 |
-| Address64 | Semantic | Ptr64 指向 Record 起点的语义子类型 |
-| ObjectVersionPtr | Domain | Address64 指向对象版本的特化 |
+| <deleted-place-holder> | Semantic | Ptr64 指向 Record 起点的语义子类型 |
+| ObjectVersionPtr | Domain | <deleted-place-holder> 指向对象版本的特化 |
 
 这样读者可以快速识别"我看到的这个概念属于哪一层"。
 

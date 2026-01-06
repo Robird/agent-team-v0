@@ -20,7 +20,7 @@
 ### 1.2 核心矛盾
 
 **技术交付**（4.5 小时）：
-- SizedPtr 完全替代 Address64 ✅
+- SizedPtr 完全替代 <deleted-place-holder> ✅
 - rbf-interface.md v0.18 ✅
 - rbf-format.md v0.17 ✅
 
