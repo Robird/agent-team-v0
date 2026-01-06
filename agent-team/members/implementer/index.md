@@ -32,7 +32,7 @@
 | DocGraph | v0.2 进行中 🔄 | 2026-01-07 | v0.2: Wish 布局迁移 + IssueAggregator Phase 2 |
 | StateJournal | M2 完成 ✅ | 2025-12-28 | 659 测试通过，待 M3 |
 | DocUI | 待启动 | 2025-12-15 | MVP-0 规划完成 |
-| Atelia.Primitives | 完成 ✅ | 2025-12-21 | AteliaResult/Error 体系 |
+| Atelia.Primitives | 完成 ✅ | 2026-01-06 | 双类型架构（AteliaResult + AteliaAsyncResult） |
 | PipeMux | 完成 ✅ | 2025-12-09 | SDK 模式迁移完成 |
 
 ---
@@ -231,6 +231,7 @@
 
 | 时间 | 项目 | 主要交付 |
 |------|------|----------|
+| 2026-01 | Atelia.Primitives | 双类型架构重构（AteliaResult ref struct + AteliaAsyncResult），39 测试 |
 | 2026-01 | DocGraph v0.1 | 93 测试通过，validate/fix/generate 命令 |
 | 2025-12 | StateJournal M2 | 659 测试通过，完整二阶段提交 + Recovery |
 | 2025-12 | Atelia.Primitives | AteliaResult/Error 体系，27 测试 |
@@ -289,6 +290,16 @@
 | `GetOwningWishPath()` | 推导条目所属 Wish（ProducedBy 优先） |
 | `GenerateGlobalOutput()` | 全局输出（按源文件分组子弹列表） |
 | `GenerateWishOutput()` | Wish 级别输出 |
+
+**扩展点：过滤 Abandoned Wish**（2026-01-06）
+
+| 位置 | 修改内容 |
+|:-----|:---------|
+| `DocumentGraphBuilder.cs` Build 方法 (~L99) | 检查 `node.Status?.Equals("abandoned", ...)` 后跳过 |
+| `DocumentGraphBuilderTests.cs` | 新增 `Build_ShouldFilterOutAbandonedWishes` 测试 |
+
+- **Build 阶段过滤**：因为 RootNodes 从 allNodes 过滤得出，必须在 Build 阶段排除
+- **闭包影响**：Abandoned Wish 的 produce 路径不入 pendingPaths 队列
 
 **设计决策：输出格式重构**（2026-01-07）
 - 表格 → 按源文件分组的子弹列表
@@ -409,9 +420,16 @@
 // 错误基类（abstract record，支持派生扩展）
 public abstract record AteliaError(string Message, AteliaError? Cause = null);
 
-// 结果类型（readonly struct，避免装箱）
-public readonly struct AteliaResult<T> {
-    public bool IsSuccess { get; }
+// 同步层结果类型（ref struct，支持 ref struct 值）
+public ref struct AteliaResult<T> where T : allows ref struct {
+    public bool IsSuccess => _error is null;  // 从 _error 推导
+    public T? Value { get; }
+    public AteliaError? Error { get; }
+}
+
+// 异步层结果类型（readonly struct，可用于 Task/ValueTask）
+public readonly struct AteliaAsyncResult<T> {
+    public bool IsSuccess => _error is null;  // 从 _error 推导
     public T? Value { get; }
     public AteliaError? Error { get; }
 }
@@ -421,9 +439,12 @@ public class AteliaException : Exception, IAteliaHasError;
 ```
 
 **设计要点**：
-- `AteliaResult<T>` 是值类型，避免堆分配
-- `AteliaError.Cause` 支持链式错误（带深度检查）
-- 27 个测试用例覆盖
+- 双类型架构：`AteliaResult<T>`（同步，支持 ref struct）+ `AteliaAsyncResult<T>`（异步）
+- `IsSuccess` 从 `_error is null` 推导，不存储 bool
+- 允许 `Success(null)`：区分"空结果"与"失败"
+- `ToAsync()` 作为扩展方法，当 T 为 ref struct 时编译失败（期望行为）
+- 删除 `Map`/`FlatMap`/`Match`：ref struct 不能用于委托
+- 39 个测试用例覆盖
 
 ---
 
@@ -448,6 +469,7 @@ agent-team/archive/members/implementer/
 
 > 维护日志已压缩。详细历史见 `archive/members/implementer/`
 
+- **2026-01-06**: Atelia.Primitives 双类型架构重构——`AteliaResult<T>` 改为 ref struct + 新增 `AteliaAsyncResult<T>`
 - **2026-01-06**: W-0006 RBF/SizedPtr 文档修订——Address64→SizedPtr 术语迁移、条款重命名、接口签名更新
 - **2026-01-07**: DocGraph v0.2 实施——Wish 布局迁移 + IssueAggregator Phase 2 + TwoTierAggregatorBase 基类抽取
 - **2026-01-03**: 记忆维护——去重、压缩历史、简化索引（575→330 行）
