@@ -1,6 +1,7 @@
 # Investigator 认知索引
 
 > 最后更新: 2026-01-06
+> - 2026-01-06: Memory Palace — 处理了 6 条便签（C# ref struct 限制、AteliaResult 双类型、Task 派生限制）
 > - 2026-01-06: Memory Palace — 处理了 4 条便签（Address64 替代性分析续、W-0006/W-0007 锚点汇总）
 > - 2026-01-05: DocGraph 代码调查（Visitor 扩展机制、produce 验证路径、7 条便签）
 > - 2026-01-04: Memory Palace — 处理了 3 条便签（SizedPtr/RBF/Address64 调查锚点）
@@ -23,7 +24,46 @@
 - [ ] atelia-copilot-chat
 
 ## Session Log
+### 2026-01-06: C# ref struct / Task 派生限制调查
+**任务**: AteliaResult 实现过程中发现的 C# 语言边界
+**关键发现**:
 
+#### 1. `allows ref struct` 限制（Gotcha）
+| 问题 | 后果 | 规避 |
+|:-----|:-----|:-----|
+| 即使泛型参数声明 `allows ref struct`，也无法在 `Func<T, TResult>` 中使用 ref struct | `AteliaResult<T>.Map()` 无法支持 ref struct | 使用 `out` 参数模式或创建专用 `ref struct` 结果类型 |
+| `readonly struct` 不能声明 `allows ref struct` | `AteliaAsyncResult<T>` 无法包含 ref struct 值 | 异步场景下 ref struct 必须"物化"为普通类型后传递 |
+
+**何时使用 `allows ref struct`**：
+- 在泛型约束中添加 `where T : allows ref struct`
+- 参数声明为 `scoped T` 确保安全
+- **不能使用** `Func<T>` / `Action<T>` 等委托
+- 示例: .NET 9 的 `Dictionary.GetAlternateLookup<TAlternateKey>()` 支持 `ReadOnlySpan<char>`
+
+**置信度**: ✅ 验证过
+
+#### 2. AteliaResult 同步/异步双类型设计
+| 类型 | 路径 | 形态 |
+|:-----|:-----|:-----|
+| 同步 | `atelia/src/Primitives/AteliaResult.cs` | `ref struct` |
+| 异步 | 待实现 `atelia/src/Primitives/AteliaAsyncResult.cs` | `readonly struct` |
+
+- **设计文档**: `agent-team/handoffs/atelia-async-result-design.md`
+- **原因**: ref struct 不能跨 await 边界，故需两种类型
+- **转换**: `ToAsync()` 方法提供显式转换
+
+#### 3. 从 Task<T> 派生的根本限制（Gotcha）
+| 问题 | 后果 | 规避 |
+|:-----|:-----|:-----|
+| 想通过 `AteliaTask<T> : Task<T>` 避免双重包装 | 无法工作——`TrySetResult`/`TrySetException`/promise 构造函数全是 `internal` | 使用 `Task<AteliaAsyncResult<T>>` 或 `ValueTask<AteliaAsyncResult<T>>` |
+
+**Task 内部派生类锚点**（仅限 BCL 内部可用）：
+- `WhenAllPromise` — 用于 `Task.WhenAll`
+- `DelayPromise` — 用于 `Task.Delay`
+- `TwoTaskWhenAnyPromise<T>` — 用于双 Task 的 `WhenAny`
+- `UnwrapPromise<T>` — 用于 `Task.Run`/`Unwrap`
+
+**置信度**: ✅ 从 dotnet/runtime 源码验证
 ### 2026-01-05: DocGraph 代码调查
 **任务**: Wish-0007 相关的 DocGraph 源码调查，定位 Visitor 扩展点和 produce 验证机制
 **关键发现**:
