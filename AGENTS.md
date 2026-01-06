@@ -99,13 +99,7 @@
 需要命名？ → `agent-team/how-to/name-things-well.md`
 整理记忆？ → `agent-team/how-to/maintain-memory.md`
 记录洞见？ → `agent-team/how-to/accumulate-memory.md`
-主持畅谈会？ → `agent-team/how-to/run-jam-session.md`
-实施实时协作模式？ → `agent-team/how-to/collaborate-realtime.md`
-战略战术双会话？ → `agent-team/how-to/dual-session-pattern.md`
-基于规范代码审阅？ → `agent-team/how-to/review-code-with-spec.md`
-拆分测试文件？ → `agent-team/how-to/split-test-files.md`
-编写操作指南？ → `agent-team/how-to/write-recipe.md`
-生成Beacon文件？ → `agent-team/how-to/generate-beacon.md`
 维护外部记忆？ → `agent-team/how-to/maintain-external-memory.md`
 批量处理inbox便签？ → `agent-team/how-to/batch-process-inbox.md`
-组织深度记忆维护？ → `agent-team/how-to/organize-deep-maintenance.md`
+维护团队小黑板？ → `agent-team/how-to/maintain-blackboard.md`
+写代码返回错误原因？ → `atelia/docs/Primitives/AteliaResult/guide.md`
