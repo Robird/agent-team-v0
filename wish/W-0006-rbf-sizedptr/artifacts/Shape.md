@@ -110,5 +110,5 @@ StateJournal 作为 RBF 的首个目标用户：
 
 - **决策动机**：[Resolve.md](Resolve.md) §6-7
 - **规则条款**：[Rule.md](Rule.md)
-- **<deleted-place-holder> 调查报告**：[w0006-address64-value-check.md](../../../agent-team/handoffs/w0006-address64-value-check.md)
+- **<deleted-place-holder> 调查报告**：[w0006-<deleted-place-holder>-value-check.md](../../../agent-team/handoffs/w0006-<deleted-place-holder>-value-check.md)
 

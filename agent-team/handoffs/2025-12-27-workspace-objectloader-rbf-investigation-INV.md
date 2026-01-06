@@ -218,7 +218,7 @@ RBF 不解释 FrameTag 语义。StateJournal 定义如下取值：
 | `[S-RBF-TOMBSTONE-VISIBLE]` | Scanner MUST 产出所有帧包括 Tombstone |
 | `[S-STATEJOURNAL-TOMBSTONE-SKIP]` | StateJournal MUST 忽略 Tombstone 帧 |
 | `[F-FRAMETAG-DEFINITION]` | FrameTag 是 4 字节帧类型标识 |
-| `[F-ADDRESS64-DEFINITION]` | <deleted-place-holder> 是 8 字节文件偏移量 |
+| `[F-<deleted-place-holder>-DEFINITION]` | <deleted-place-holder> 是 8 字节文件偏移量 |
 
 ### 5.4 对象生命周期条款
 

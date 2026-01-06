@@ -182,14 +182,14 @@
 
 ---
 
-### D11: §2 条款 ID `[R-RBF-ADDRESS64-DEPRECATED]` 与"完全移除"措辞不一致
+### D11: §2 条款 ID `[R-RBF-<deleted-place-holder>-DEPRECATED]` 与"完全移除"措辞不一致
 
 - **原报告位置**：w0006-review-rule.md / P9
 - **原严重性**：Sev3
 - **问题类型**：术语一致性
 - **问题描述**：小节与正文规则要求"完全移除"，但条款 ID 使用 `DEPRECATED`（暗示"仍存在但不推荐使用"）。这会降低读者对迁移强制性的理解。
 - **分类依据**：术语选择问题，但条款正文已明确是"完全移除"，不会导致实施偏差。
-- **建议修复**：将条款 ID 改为 `[R-RBF-ADDRESS64-REMOVED]` 或 `[R-RBF-NO-ADDRESS64]`
+- **建议修复**：将条款 ID 改为 `[R-RBF-<deleted-place-holder>-REMOVED]` 或 `[R-RBF-NO-<deleted-place-holder>]`
 
 ---
 

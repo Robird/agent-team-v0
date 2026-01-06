@@ -694,7 +694,7 @@ RbfFileScanner (便捷层)
 | | ✅ CRC32C 覆盖范围 | `[F-CRC32C-COVERAGE]` |
 | | ✅ `BeginFrame` + `Commit` | `[A-RBF-FRAME-BUILDER]` |
 | | ✅ Auto-Abort → Tombstone | `[S-RBF-BUILDER-AUTO-ABORT]` |
-| | ✅ 多帧连续写入地址对齐 | `[F-ADDRESS64-ALIGNMENT]` |
+| | ✅ 多帧连续写入地址对齐 | `[F-<deleted-place-holder>-ALIGNMENT]` |
 | | ✅ 无 Genesis Fence 模式 | — |
 
 **覆盖评估**：Framer 内存路径覆盖率 **>90%**，主要缺口是文件后端集成。

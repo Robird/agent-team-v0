@@ -69,7 +69,7 @@ if (ptr.Packed == 0) { /* 无效引用 */ }
 
 ## 2. <deleted-place-holder> 完全移除
 
-### 条款 [R-RBF-ADDRESS64-REMOVED]
+### 条款 [R-RBF-<deleted-place-holder>-REMOVED]
 
 **规则**：<deleted-place-holder> 类型及其所有成员完全移除，不再出现在 RBF 设计文档和代码中。
 
@@ -85,7 +85,7 @@ if (ptr.Packed == 0) { /* 无效引用 */ }
 
 ### 设计依据
 
-**Investigator 调查结论**（[w0006-address64-value-check.md](../../../agent-team/handoffs/w0006-address64-value-check.md)）：
+**Investigator 调查结论**（[w0006-<deleted-place-holder>-value-check.md](../../../agent-team/handoffs/w0006-<deleted-place-holder>-value-check.md)）：
 
 > <deleted-place-holder> 可以完全移除。没有发现不可替代的存在价值。
 
@@ -102,9 +102,9 @@ if (ptr.Packed == 0) { /* 无效引用 */ }
 
 | 条款 ID | 原位置 | 说明 |
 |:--------|:-------|:-----|
-| `[F-ADDRESS64-DEFINITION]` | rbf-interface.md §2.3 | 被 SizedPtr 定义替代 |
-| `[F-ADDRESS64-ALIGNMENT]` | rbf-interface.md §2.3 | SizedPtr 已有 4B 对齐约束 |
-| `[F-ADDRESS64-NULL]` | rbf-interface.md §2.3 | 被 `[R-RBF-NULLPTR]` 替代 |
+| `[F-<deleted-place-holder>-DEFINITION]` | rbf-interface.md §2.3 | 被 SizedPtr 定义替代 |
+| `[F-<deleted-place-holder>-ALIGNMENT]` | rbf-interface.md §2.3 | SizedPtr 已有 4B 对齐约束 |
+| `[F-<deleted-place-holder>-NULL]` | rbf-interface.md §2.3 | 被 `[R-RBF-NULLPTR]` 替代 |
 
 ### 3.2 要新增的条款
 
@@ -154,5 +154,5 @@ if (ptr.Packed == 0) { /* 无效引用 */ }
 
 - **概念边界**：[Shape.md](Shape.md)
 - **决策动机**：[Resolve.md](Resolve.md) §6-7
-- **<deleted-place-holder> 调查报告**：[w0006-address64-value-check.md](../../../agent-team/handoffs/w0006-address64-value-check.md)
+- **<deleted-place-holder> 调查报告**：[w0006-<deleted-place-holder>-value-check.md](../../../agent-team/handoffs/w0006-<deleted-place-holder>-value-check.md)
 

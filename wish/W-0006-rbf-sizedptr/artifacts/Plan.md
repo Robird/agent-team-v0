@@ -32,16 +32,16 @@ produce_by:
 
 ## 2. 修订清单（rbf-interface.md）
 
-基于 [<deleted-place-holder> 调查报告](../../../agent-team/handoffs/w0006-address64-value-check.md) §6 和源文件行号：
+基于 [<deleted-place-holder> 调查报告](../../../agent-team/handoffs/w0006-<deleted-place-holder>-value-check.md) §6 和源文件行号：
 
 ### 2.1 删除操作
 
 | 目标 | 操作 | 说明 |
 |:-----|:-----|:-----|
 | §2.3 <deleted-place-holder> 整节 | 删除 | 被新 §2.3 SizedPtr 替代 |
-| 条款索引 `[F-ADDRESS64-DEFINITION]` | 删除 | 条款已移除 |
-| 条款索引 `[F-ADDRESS64-ALIGNMENT]` | 删除 | 约束已由 SizedPtr 定义 |
-| 条款索引 `[F-ADDRESS64-NULL]` | 删除 | 被 NullPtr 约定替代 |
+| 条款索引 `[F-<deleted-place-holder>-DEFINITION]` | 删除 | 条款已移除 |
+| 条款索引 `[F-<deleted-place-holder>-ALIGNMENT]` | 删除 | 约束已由 SizedPtr 定义 |
+| 条款索引 `[F-<deleted-place-holder>-NULL]` | 删除 | 被 NullPtr 约定替代 |
 
 ### 2.2 新增操作
 
@@ -204,7 +204,7 @@ Null 语义是 **RBF 层的业务约定**：
 
 rbf-interface.md 新增条目：
 ```
-| 0.18 | 2026-01-06 | **SizedPtr 替代 <deleted-place-holder>**（W-0006）：移除 <deleted-place-holder> 类型，引入 SizedPtr 作为核心 Frame 句柄；新增 `[F-SIZEDPTR-DEFINITION]`、`[F-RBF-NULLPTR]`；移除 `[F-ADDRESS64-*]` 条款；`RbfFrame.Address` 改为 `RbfFrame.Ptr` |
+| 0.18 | 2026-01-06 | **SizedPtr 替代 <deleted-place-holder>**（W-0006）：移除 <deleted-place-holder> 类型，引入 SizedPtr 作为核心 Frame 句柄；新增 `[F-SIZEDPTR-DEFINITION]`、`[F-RBF-NULLPTR]`；移除 `[F-<deleted-place-holder>-*]` 条款；`RbfFrame.Address` 改为 `RbfFrame.Ptr` |
 ```
 
 rbf-format.md 新增条目：
@@ -230,7 +230,7 @@ rbf-format.md 新增条目：
 |:-----|:-----|:-----|
 | `RbfFrame.Address` → `Ptr` | 代码层面的 breaking change | Phase 2 实现时，编译器会报错所有旧调用点 |
 | <deleted-place-holder> 类型完全移除 | 代码层面的 breaking change | 同上 |
-| 条款 ID 变更 | 跨文档引用可能失效 | 检查 StateJournal 等上层文档是否引用 `[F-ADDRESS64-*]` |
+| 条款 ID 变更 | 跨文档引用可能失效 | 检查 StateJournal 等上层文档是否引用 `[F-<deleted-place-holder>-*]` |
 
 ### 6.3 待确认项
 
@@ -272,5 +272,5 @@ rbf-format.md 新增条目：
 - **动机与问题**：[Resolve.md](Resolve.md)
 - **概念边界**：[Shape.md](Shape.md)
 - **规则条款**：[Rule.md](Rule.md)
-- **<deleted-place-holder> 调查报告**：[w0006-address64-value-check.md](../../../agent-team/handoffs/w0006-address64-value-check.md)
+- **<deleted-place-holder> 调查报告**：[w0006-<deleted-place-holder>-value-check.md](../../../agent-team/handoffs/w0006-<deleted-place-holder>-value-check.md)
 

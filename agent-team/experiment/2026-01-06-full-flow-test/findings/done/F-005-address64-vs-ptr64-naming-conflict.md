@@ -1,7 +1,7 @@
 # F-005: <deleted-place-holder> 与 Ptr64 命名不一致
 
 **位置**: 
-- rbf-interface.md#§2.3 `[F-ADDRESS64-DEFINITION]`
+- rbf-interface.md#§2.3 `[F-<deleted-place-holder>-DEFINITION]`
 - rbf-format.md#§7 `[F-PTR64-WIRE-FORMAT]`
 
 **描述**: 
@@ -27,5 +27,5 @@
 
 **建议**: 
 统一命名。建议：
-1. 将 `[F-PTR64-WIRE-FORMAT]` 改为 `[F-ADDRESS64-WIRE-FORMAT]`
+1. 将 `[F-PTR64-WIRE-FORMAT]` 改为 `[F-<deleted-place-holder>-WIRE-FORMAT]`
 2. 或在 rbf-format.md §7 开头明确声明："本文档中 Ptr64 与 rbf-interface.md 中的 <deleted-place-holder> 是同一概念的不同层级名称"

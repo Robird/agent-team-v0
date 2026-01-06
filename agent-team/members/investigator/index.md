@@ -2,9 +2,9 @@
 
 > 最后更新: 2026-01-06
 > - 2026-01-06: Memory Palace — 处理了 6 条便签（C# ref struct 限制、AteliaResult 双类型、Task 派生限制）
-> - 2026-01-06: Memory Palace — 处理了 4 条便签（Address64 替代性分析续、W-0006/W-0007 锚点汇总）
+> - 2026-01-06: Memory Palace — 处理了 4 条便签（<deleted-place-holder> 替代性分析续、W-0006/W-0007 锚点汇总）
 > - 2026-01-05: DocGraph 代码调查（Visitor 扩展机制、produce 验证路径、7 条便签）
-> - 2026-01-04: Memory Palace — 处理了 3 条便签（SizedPtr/RBF/Address64 调查锚点）
+> - 2026-01-04: Memory Palace — 处理了 3 条便签（SizedPtr/RBF/<deleted-place-holder> 调查锚点）
 > - 2026-01-01: workspace_info 机制调查（Copilot Chat Agent Prompt System）
 > - 2025-12-27: ObjectLoaderDelegate 重构影响分析
 > - 2025-12-27: Workspace/ObjectLoader/RBF 设计意图调查
@@ -96,10 +96,10 @@
 **置信度**: ✅ 全部验证过
 
 #### 5. 关键锚点汇总
-**W-0006 Address64/SizedPtr 锚点**：
-- Address64 权威定义: [rbf-interface.md#L111-L122](atelia/docs/Rbf/rbf-interface.md#L111-L122)
+**W-0006 <deleted-place-holder>/SizedPtr 锚点**：
+- <deleted-place-holder> 权威定义: [rbf-interface.md#L111-L122](atelia/docs/Rbf/rbf-interface.md#L111-L122)
 - SizedPtr 权威定义: [atelia/src/Data/SizedPtr.cs](atelia/src/Data/SizedPtr.cs)
-- 关键冲突: Address64 有 Null 语义，SizedPtr 无——需分层策略
+- 关键冲突: <deleted-place-holder> 有 Null 语义，SizedPtr 无——需分层策略
 - 代码状态: RBF 历史代码已归档到 `atelia/archive/2025-12-29-rbf-statejournal-v1/`
 
 **W-0007 Issue 状态锚点**：
@@ -107,10 +107,10 @@
 - Visitor 架构: `GlossaryVisitor`, `GoalAggregator`, `IssueAggregator`, `ReachableDocumentsVisitor`, `TwoTierAggregatorBase`
 - C-MORE-VISITORS / C-MORE-TESTS 是长期演进目标，非阻塞性
 
-### 2026-01-05: SizedPtr/Address64 替代性分析（续）
-**任务**: W-0006 相关的 Address64 使用点分析，验证 SizedPtr 完全替代可行性
+### 2026-01-05: SizedPtr/<deleted-place-holder> 替代性分析（续）
+**任务**: W-0006 相关的 <deleted-place-holder> 使用点分析，验证 SizedPtr 完全替代可行性
 **关键发现**:
-1. **Address64 使用点定位**：
+1. **<deleted-place-holder> 使用点定位**：
    - 类型定义: `rbf-interface.md#L82-L97`（§2.3）
    - 接口签名: 9 处（grep 验证）
    - Wire format: `rbf-format.md#L292-L302`（§7）
@@ -118,24 +118,24 @@
 2. **核心结论**：所有 9 处使用都是"定位 Frame"用途，SizedPtr 可完全替代
 3. **Gotcha: DataTail 的"纯位置"假象**：
    - **现象**: DataTail 定义为"地址"，似乎只需位置不需长度
-   - **后果**: 如果据此保留 Address64，会造成 Address64/SizedPtr 共存的复杂性
+   - **后果**: 如果据此保留 <deleted-place-holder>，会造成 <deleted-place-holder>/SizedPtr 共存的复杂性
    - **规避**: DataTail 实际语义是"文件 EOF 位置"，`SizedPtr.OffsetBytes` 完全等价
 
 **置信度**: ✅ 验证过
 
-### 2026-01-04: SizedPtr/RBF/Address64 现状调查
+### 2026-01-04: SizedPtr/RBF/<deleted-place-holder> 现状调查
 **任务**: Wish-0004 SizedPtr 设计调查，定位权威定义和代码现状
 **关键发现**:
-1. **Address64 权威定义位置**：
+1. **<deleted-place-holder> 权威定义位置**：
    - 位置: `atelia/docs/Rbf/rbf-interface.md#2.3`
-   - 条款: `[F-ADDRESS64-DEFINITION]`, `[F-ADDRESS64-ALIGNMENT]`, `[F-ADDRESS64-NULL]`
-   - 源码实现已归档: `atelia/archive/2025-12-29-rbf-statejournal-v1/Rbf/Address64.cs`
+   - 条款: `[F-<deleted-place-holder>-DEFINITION]`, `[F-<deleted-place-holder>-ALIGNMENT]`, `[F-<deleted-place-holder>-NULL]`
+   - 源码实现已归档: `atelia/archive/2025-12-29-rbf-statejournal-v1/Rbf/<deleted-place-holder>.cs`
 2. **RBF 层代码状态**：
-   - 搜索 `atelia/src/**` 无任何 Address64/Rbf/SizedPtr 匹配
+   - 搜索 `atelia/src/**` 无任何 <deleted-place-holder>/Rbf/SizedPtr 匹配
    - RBF 层实现已整体归档到 `atelia/archive/2025-12-29-rbf-statejournal-v1/`
    - **结论**: SizedPtr 需从零开始在 `atelia/src/Data/` 实现
 3. **Null 语义冲突（Gotcha）**：
-   - Wish-0004 非目标写"不定义特殊值"，但 Address64 定义了 `Null=0`
+   - Wish-0004 非目标写"不定义特殊值"，但 <deleted-place-holder> 定义了 `Null=0`
    - **风险**: 若不澄清，上层 RBF 接口迁移时会卡住
    - **建议**: 在 Shape-Tier 明确立场——SizedPtr 保持纯净，Null 由 RBF 层自行包装
 

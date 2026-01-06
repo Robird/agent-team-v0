@@ -2481,7 +2481,7 @@ Read [](file:///repos/focus/atelia/docs/StateJournal/implementation-plan.md)
 
 让我先查看 mvp-design-v2.md 中的具体规范： 
 
-Searched for regex `ADDRESS64|VARINT|FRAMETAG|DurableObjectState` (`**/atelia/docs/StateJournal/mvp-design-v2.md`), no results
+Searched for regex `<deleted-place-holder>|VARINT|FRAMETAG|DurableObjectState` (`**/atelia/docs/StateJournal/mvp-design-v2.md`), no results
 
 Read [](file:///repos/focus/atelia/docs/StateJournal/mvp-design-v2.md#1-1), lines 1 to 151
 
@@ -2660,7 +2660,7 @@ Ran terminal command: cd /repos/focus/atelia && dotnet test tests/StateJournal.T
 
 Ran terminal command: cd /repos/focus/atelia && dotnet test tests/StateJournal.Tests/StateJournal.Tests.csproj 2>&1 | grep -E "(Test|Passed|Failed|succeeded)"
 
-Created [](file:///repos/focus/agent-team/handoffs/2025-12-25-t-p2-01-address64-IMP.md)
+Created [](file:///repos/focus/agent-team/handoffs/2025-12-25-t-p2-01-<deleted-place-holder>-IMP.md)
 
 Read [](file:///repos/focus/agent-team/members/implementer/inbox.md)
 
@@ -2905,8 +2905,8 @@ Ran terminal command: cd /repos/focus/atelia && dotnet test --verbosity minimal 
 
 | 条款 ID | 任务 | 状态 |
 |---------|------|------|
-| `[F-ADDRESS64-ALIGNMENT]` | T-P2-01 | ✅ |
-| `[F-ADDRESS64-NULL]` | T-P2-01 | ✅ |
+| `[F-<deleted-place-holder>-ALIGNMENT]` | T-P2-01 | ✅ |
+| `[F-<deleted-place-holder>-NULL]` | T-P2-01 | ✅ |
 | `[F-VARINT-CANONICAL-ENCODING]` | T-P2-02 | ✅ |
 | `[F-DECODE-ERROR-FAILFAST]` | T-P2-02 | ✅ |
 | `[F-FRAMETAG-STATEJOURNAL-BITLAYOUT]` | T-P2-03 | ✅ |

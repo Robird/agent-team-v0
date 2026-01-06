@@ -14,7 +14,7 @@
 - **类型**：证据完整性
 - **严重性**：Sev2
 - **位置**：§2 P1 / L63-L65；§2 P2 / L76-L78
-- **问题描述**：P1 证据声称 `rbf-interface.md#L120` 定义了 `[F-ADDRESS64-NULL]`，P2 证据声称 `rbf-interface.md#L125-L135` 的 Frame 定义"只有 <deleted-place-holder>"。但当前 `atelia/docs/Rbf/rbf-interface.md`（在仓库现状中）已经以 `SizedPtr` 作为核心接口类型，并出现 RBF 层 `NullPtr = default` 的示例；未见 <deleted-place-holder> 相关段落。这使得 P1/P2 的证据在"事后审阅"语境下不可复核。
+- **问题描述**：P1 证据声称 `rbf-interface.md#L120` 定义了 `[F-<deleted-place-holder>-NULL]`，P2 证据声称 `rbf-interface.md#L125-L135` 的 Frame 定义"只有 <deleted-place-holder>"。但当前 `atelia/docs/Rbf/rbf-interface.md`（在仓库现状中）已经以 `SizedPtr` 作为核心接口类型，并出现 RBF 层 `NullPtr = default` 的示例；未见 <deleted-place-holder> 相关段落。这使得 P1/P2 的证据在"事后审阅"语境下不可复核。
 - **证据**：Resolve 的证据链接文本与 `rbf-interface.md` 当前内容趋势相悖（现文档中有 `SizedPtr Append(...)` 等表述）。
 - **工程问题本质**：Resolve-Tier 是设计决策的**输入产物**，其引用的证据应指向决策形成时的文档状态。当被引用的源文档根据决策结果被修订后，Resolve 中的证据就失去了复核价值。这是**证据保存策略**问题。
 - **建议修复**：

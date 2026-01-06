@@ -1467,7 +1467,7 @@ using Atelia.Data;
 ### 3. D11：统一为 REMOVED
 
 全局替换：
-- 标题：`[R-RBF-ADDRESS64-DEPRECATED]` → `[R-RBF-ADDRESS64-REMOVED]`
+- 标题：`[R-RBF-<deleted-place-holder>-DEPRECATED]` → `[R-RBF-<deleted-place-holder>-REMOVED]`
 - 确保正文措辞与标题一致
 
 ## 执行要求
@@ -1749,7 +1749,7 @@ Excerpt from w0006-review-resolve.md, lines 13 to 37:
 - **类型**：证据完整性
 - **严重性**：Sev2
 - **位置**：§2 P1 / L63-L65；§2 P2 / L76-L78
-- **问题描述**：P1 证据声称 `rbf-interface.md#L120` 定义了 `[F-ADDRESS64-NULL]`，P2 证据声称 `rbf-interface.md#L125-L135` 的 Frame 定义"只有 <deleted-place-holder>"。但当前 `atelia/docs/Rbf/rbf-interface.md`（在仓库现状中）已经以 `SizedPtr` 作为核心接口类型，并出现 RBF 层 `NullPtr = default` 的示例；未见 <deleted-place-holder> 相关段落。这使得 P1/P2 的证据在"事后审阅"语境下不可复核。
+- **问题描述**：P1 证据声称 `rbf-interface.md#L120` 定义了 `[F-<deleted-place-holder>-NULL]`，P2 证据声称 `rbf-interface.md#L125-L135` 的 Frame 定义"只有 <deleted-place-holder>"。但当前 `atelia/docs/Rbf/rbf-interface.md`（在仓库现状中）已经以 `SizedPtr` 作为核心接口类型，并出现 RBF 层 `NullPtr = default` 的示例；未见 <deleted-place-holder> 相关段落。这使得 P1/P2 的证据在"事后审阅"语境下不可复核。
 - **证据**：Resolve 的证据链接文本与 `rbf-interface.md` 当前内容趋势相悖（现文档中有 `SizedPtr Append(...)` 等表述）。
 - **工程问题本质**：Resolve-Tier 是设计决策的**输入产物**，其引用的证据应指向决策形成时的文档状态。当被引用的源文档根据决策结果被修订后，Resolve 中的证据就失去了复核价值。这是**证据保存策略**问题。
 - **建议修复**：
@@ -1790,7 +1790,7 @@ User's active file for additional context:
 - **类型**：证据完整性
 - **严重性**：Sev2
 - **位置**：§2 P1 / L63-L65；§2 P2 / L76-L78
-- **问题描述**：P1 证据声称 `rbf-interface.md#L120` 定义了 `[F-ADDRESS64-NULL]`，P2 证据声称 `rbf-interface.md#L125-L135` 的 Frame 定义"只有 <deleted-place-holder>"。但当前 `atelia/docs/Rbf/rbf-interface.md`（在仓库现状中）已经以 `SizedPtr` 作为核心接口类型，并出现 RBF 层 `NullPtr = default` 的示例；未见 <deleted-place-holder> 相关段落。这使得 P1/P2 的证据在"事后审阅"语境下不可复核。
+- **问题描述**：P1 证据声称 `rbf-interface.md#L120` 定义了 `[F-<deleted-place-holder>-NULL]`，P2 证据声称 `rbf-interface.md#L125-L135` 的 Frame 定义"只有 <deleted-place-holder>"。但当前 `atelia/docs/Rbf/rbf-interface.md`（在仓库现状中）已经以 `SizedPtr` 作为核心接口类型，并出现 RBF 层 `NullPtr = default` 的示例；未见 <deleted-place-holder> 相关段落。这使得 P1/P2 的证据在"事后审阅"语境下不可复核。
 - **证据**：Resolve 的证据链接文本与 `rbf-interface.md` 当前内容趋势相悖（现文档中有 `SizedPtr Append(...)` 等表述）。
 - **工程问题本质**：Resolve-Tier 是设计决策的**输入产物**，其引用的证据应指向决策形成时的文档状态。当被引用的源文档根据决策结果被修订后，Resolve 中的证据就失去了复核价值。这是**证据保存策略**问题。
 - **建议修复**：
@@ -2689,7 +2689,7 @@ Exit Code: 0
 
 </context>
 <editorContext>
-The user's current file is /repos/focus/wish/W-0006-rbf-sizedptr/handoffs/w0006-address64-value-check.md. 
+The user's current file is /repos/focus/wish/W-0006-rbf-sizedptr/handoffs/w0006-<deleted-place-holder>-value-check.md. 
 </editorContext>
 <reminderInstructions>
 When using the replace_string_in_file tool, include 3-5 lines of unchanged code before and after the string you want to replace, to make it unambiguous which part of the file should be edited.
@@ -2982,7 +2982,7 @@ Exit Code: 0
 
 </context>
 <editorContext>
-The user's current file is /repos/focus/wish/W-0006-rbf-sizedptr/handoffs/w0006-address64-value-check.md. 
+The user's current file is /repos/focus/wish/W-0006-rbf-sizedptr/handoffs/w0006-<deleted-place-holder>-value-check.md. 
 </editorContext>
 <reminderInstructions>
 When using the replace_string_in_file tool, include 3-5 lines of unchanged code before and after the string you want to replace, to make it unambiguous which part of the file should be edited.

@@ -1787,7 +1787,7 @@ public void RbfFrameCodec_Decode_ValidFrame_ReturnsPayload() {
 #### 1. 与现有规范的冲突检查
 
 **SSOT 现状**（以 atelia/docs/Rbf/rbf-interface.md v0.17 为准）：
-- 当前规范定义的指针类型是 `<deleted-place-holder>(ulong Value)`，其语义为“指向 Frame 起始位置（HeadLen 字段起点）的文件偏移量”。相关条款为 `[F-ADDRESS64-DEFINITION]` / `[F-ADDRESS64-ALIGNMENT]` / `[F-ADDRESS64-NULL]`。
+- 当前规范定义的指针类型是 `<deleted-place-holder>(ulong Value)`，其语义为“指向 Frame 起始位置（HeadLen 字段起点）的文件偏移量”。相关条款为 `[F-<deleted-place-holder>-DEFINITION]` / `[F-<deleted-place-holder>-ALIGNMENT]` / `[F-<deleted-place-holder>-NULL]`。
 - `IRbfScanner.TryReadAt(<deleted-place-holder>)` 的签名在 `[A-RBF-SCANNER-INTERFACE]` 明确。
 - `IRbfFramer.Append(...)` 与 `RbfFrameBuilder.Commit()` 的返回类型也都是 <deleted-place-holder>（`[A-RBF-FRAMER-INTERFACE]` / `[A-RBF-FRAME-BUILDER]`）。
 
@@ -1797,7 +1797,7 @@ public void RbfFrameCodec_Decode_ValidFrame_ReturnsPayload() {
 - 若希望最小化破坏，另一个可行路线是：保留 <deleted-place-holder>（offset-only）不变，新增 `FramePtr`，并在 `IRbfScanner` 上新增重载 `TryReadAt(FramePtr)` 作为 fast-path；但这与“升级”一词的语义不一致，需要在规范里明确“<deleted-place-holder> 退为兼容类型/别名”。
 
 2) **条款 ID 漂移风险**
-- 任务描述提到的 `[A-RBF-ADDRESS64-OFFSET]` 在当前 SSOT 中不存在（现为 `[F-ADDRESS64-*]` 系列）。若该 ID 来自旧草案，必须在 Clause Registry 或文档内做“旧 ID → 新 ID”的显式映射，否则核查与实现无法对齐。
+- 任务描述提到的 `[A-RBF-<deleted-place-holder>-OFFSET]` 在当前 SSOT 中不存在（现为 `[F-<deleted-place-holder>-*]` 系列）。若该 ID 来自旧草案，必须在 Clause Registry 或文档内做“旧 ID → 新 ID”的显式映射，否则核查与实现无法对齐。
 
 3) **FramePtr.length 的“长度到底指什么”必须钉死**
 - 现行 <deleted-place-holder> 只定义 offset，因此读路径会先读 HeadLen 再知道 frame 总长度。
@@ -1807,7 +1807,7 @@ public void RbfFrameCodec_Decode_ValidFrame_ReturnsPayload() {
     建议：选 A，并在规范中把 length 命名为 `FrameBytesLength`（或等价名）以减少歧义。
 
 4) **对齐约束的一致性**
-- 现行规范已要求 <deleted-place-holder> 4B 对齐（`[F-ADDRESS64-ALIGNMENT]`）。FramePtr 提议“不支持非 4B 对齐地址”与之不冲突，属于“把既有约束内化到类型编码”。
+- 现行规范已要求 <deleted-place-holder> 4B 对齐（`[F-<deleted-place-holder>-ALIGNMENT]`）。FramePtr 提议“不支持非 4B 对齐地址”与之不冲突，属于“把既有约束内化到类型编码”。
 - 但 FramePtr 的 `length` 是否也要求 4B 对齐，需要裁决；若 `length` 定义为 FrameBytes 总长度，则按 RBF wire format 计算，FrameBytes 总长度天然 4B 对齐（见 rbf-test-vectors.md 对 StatusLen 的对齐公式），因此可将其作为 MUST（可判定）。
 
 #### 2. 必须规范化的契约
@@ -1935,14 +1935,14 @@ FramePtr 引入的“新契约面”至少包括：
 #### 1. 与现有规范的冲突检查
 
 **SSOT 现状（`atelia/docs/Rbf/rbf-interface.md` v0.17）**：
-- 指针类型是 `<deleted-place-holder>(ulong Value)`，条款为：`[F-ADDRESS64-DEFINITION]` / `[F-ADDRESS64-ALIGNMENT]` / `[F-ADDRESS64-NULL]`。
+- 指针类型是 `<deleted-place-holder>(ulong Value)`，条款为：`[F-<deleted-place-holder>-DEFINITION]` / `[F-<deleted-place-holder>-ALIGNMENT]` / `[F-<deleted-place-holder>-NULL]`。
 - `IRbfScanner.TryReadAt(<deleted-place-holder> address, out RbfFrame frame)` 在 `[A-RBF-SCANNER-INTERFACE]` 中固化。
 - 写入侧 `IRbfFramer.Append(...)` / `RbfFrameBuilder.Commit()` 的返回类型都是 <deleted-place-holder>（`[A-RBF-FRAMER-INTERFACE]` / `[A-RBF-FRAME-BUILDER]`）。
 
 **冲突/改动面（必须裁决“升级”的含义）**：
 1) **若 FramePtr = 完全替换 <deleted-place-holder>（Breaking）**：
      - 需要同步修改：`IRbfScanner.TryReadAt(...)`、`IRbfFramer.Append(...)`、`RbfFrameBuilder.Commit()`、`RbfFrame.Address` 类型。
-     - 需要处理条款迁移：`[F-ADDRESS64-*]` 是否废弃？是否保留为兼容术语？（否则 Clause Registry 会出现“同一概念多权威定义”的风险）
+     - 需要处理条款迁移：`[F-<deleted-place-holder>-*]` 是否废弃？是否保留为兼容术语？（否则 Clause Registry 会出现“同一概念多权威定义”的风险）
 2) **若 FramePtr = 新增（与 <deleted-place-holder> 并存）**：
      - `rbf-interface.md` 的“指针概念”会分裂为 offset-only 与 offset+length 两种，需要明确：何时必须用 FramePtr，何时允许 <deleted-place-holder>。
      - `TryReadAt` 是否要提供双签名（`TryReadAt(<deleted-place-holder>)` + `TryReadAt(FramePtr)`）？若不提供，FramePtr 的价值会被限制在上层私有索引结构，而不是接口契约。
@@ -1953,8 +1953,8 @@ FramePtr 引入的“新契约面”至少包括：
     - B) 增加一个 `TryReadAt(FramePtr ptr, ...)` fast-path，同时保留 <deleted-place-holder> 兼容（更平滑，但规范更复杂）。
 
 **现有条款影响**：
-- `[F-ADDRESS64-ALIGNMENT]` 的“4B 对齐”与 FramePtr 的“offset 不支持非 4B 对齐”不冲突；但 FramePtr 还引入“length 的对齐/范围”这一组新增约束。
-- 任务描述里的 `[A-RBF-ADDRESS64-OFFSET]` 在 v0.17 SSOT 中不存在：这属于**条款 ID 漂移/引用失效**风险，必须在规范侧补一个“旧 ID → 新 ID”的映射或更正引用来源。
+- `[F-<deleted-place-holder>-ALIGNMENT]` 的“4B 对齐”与 FramePtr 的“offset 不支持非 4B 对齐”不冲突；但 FramePtr 还引入“length 的对齐/范围”这一组新增约束。
+- 任务描述里的 `[A-RBF-<deleted-place-holder>-OFFSET]` 在 v0.17 SSOT 中不存在：这属于**条款 ID 漂移/引用失效**风险，必须在规范侧补一个“旧 ID → 新 ID”的映射或更正引用来源。
 
 #### 2. 必须规范化的契约
 

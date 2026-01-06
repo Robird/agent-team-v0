@@ -308,8 +308,8 @@ while not goal_achieved:
 | snapshot 执行寄存器 | ✅ 实时更新焦点/下一步/阻塞状态 |
 
 **关键发现**：
-- SizedPtr 完全替代 Address64（不是共存）
-- Address64 已无存在价值（全部 9 处使用可替代）
+- SizedPtr 完全替代 <deleted-place-holder>（不是共存）
+- <deleted-place-holder> 已无存在价值（全部 9 处使用可替代）
 - 监护人的 4 条澄清节省了数天探索时间
 
 **速度对比**：
@@ -531,7 +531,7 @@ Discovery → Triage → Routing → Verify
 
 | 旧 API | 新 API |
 |:-------|:-------|
-| `bool TryReadAt(Address64, out RbfFrame)` | `AteliaResult<RbfFrame> ReadAt(Address64)` |
+| `bool TryReadAt(<deleted-place-holder>, out RbfFrame)` | `AteliaResult<RbfFrame> ReadAt(<deleted-place-holder>)` |
 
 **F-011 解决**：引入 `RbfReadError` + `RbfReadErrorKind` 枚举。
 

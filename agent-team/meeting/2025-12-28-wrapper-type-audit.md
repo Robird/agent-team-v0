@@ -109,7 +109,7 @@
 
 #### <deleted-place-holder>
 
-- **定义位置**：[rbf-interface.md §2.3](../atelia/docs/StateJournal/rbf-interface.md#23-address64)，条款 `[F-ADDRESS64-DEFINITION]`
+- **定义位置**：[rbf-interface.md §2.3](../atelia/docs/StateJournal/rbf-interface.md#23-<deleted-place-holder>)，条款 `[F-<deleted-place-holder>-DEFINITION]`
 - **当前形态**：
   ```csharp
   public readonly record struct <deleted-place-holder>(ulong Value) {
@@ -119,7 +119,7 @@
   ```
 - **怀疑理由**：
   1. **验证逻辑极少**：仅有 `IsNull` 一个派生属性
-  2. **对齐约束未内化**：`[F-ADDRESS64-ALIGNMENT]` 规定"有效 <deleted-place-holder> MUST 4 字节对齐"，但类型本身**不验证**这个约束——构造 `new <deleted-place-holder>(5)` 不会报错
+  2. **对齐约束未内化**：`[F-<deleted-place-holder>-ALIGNMENT]` 规定"有效 <deleted-place-holder> MUST 4 字节对齐"，但类型本身**不验证**这个约束——构造 `new <deleted-place-holder>(5)` 不会报错
   3. **Null 值语义模糊**：`Value == 0` 既是"null"又是"Genesis Fence 位置"——概念上 Genesis Fence 在偏移 0，但不能用 <deleted-place-holder> 指向它？
 - **潜在价值**：
   - **类型区分**：区分"文件偏移量"和其他 `ulong`（如文件长度、时间戳）
@@ -187,7 +187,7 @@ FrameTag 当前三条都不满足，<deleted-place-holder> 勉强满足第三条
 
 ### <deleted-place-holder>
 
-- **定义位置**：`atelia/docs/StateJournal/rbf-interface.md` §2.3 <deleted-place-holder>，条款 `[F-ADDRESS64-DEFINITION]` / `[F-ADDRESS64-ALIGNMENT]` / `[F-ADDRESS64-NULL]`（另：`rbf-format.md` §7.1 `[F-PTR64-WIRE-FORMAT]` 描述 wire 表示与 null/对齐规则）
+- **定义位置**：`atelia/docs/StateJournal/rbf-interface.md` §2.3 <deleted-place-holder>，条款 `[F-<deleted-place-holder>-DEFINITION]` / `[F-<deleted-place-holder>-ALIGNMENT]` / `[F-<deleted-place-holder>-NULL]`（另：`rbf-format.md` §7.1 `[F-PTR64-WIRE-FORMAT]` 描述 wire 表示与 null/对齐规则）
 - **当前形态**：
   ```csharp
   public readonly record struct <deleted-place-holder>(ulong Value) {
@@ -196,7 +196,7 @@ FrameTag 当前三条都不满足，<deleted-place-holder> 勉强满足第三条
   }
   ```
 - **怀疑理由**：
-  - **“约束在文档、未进入类型”**：规范存在对齐硬约束 `[F-ADDRESS64-ALIGNMENT]`，但类型本身不验证/不暴露 `IsAligned`，也没有 `CreateChecked` / `TryCreate` 之类把约束内化为构造协议；因此 wrapper 在“防误用”上的增益有限。
+  - **“约束在文档、未进入类型”**：规范存在对齐硬约束 `[F-<deleted-place-holder>-ALIGNMENT]`，但类型本身不验证/不暴露 `IsAligned`，也没有 `CreateChecked` / `TryCreate` 之类把约束内化为构造协议；因此 wrapper 在“防误用”上的增益有限。
   - **定义条款的有效信息可被注释替代**：用 `ulong address` + 文档注释（“file offset to HeadLen; 0 means null; non-zero 4B aligned”）即可表达同等约束。
   - **语义面与编码面重叠**：`rbf-format.md` 把“Address/Ptr64”作为编码层概念描述，`rbf-interface.md` 又定义 <deleted-place-holder> 类型；若二者不严格保持“一个是 wire 规则，一个是 API 规则”的 SSOT 边界，未来容易出现双写漂移（例如 null/对齐/高位保留策略）。
 - **潜在价值**：

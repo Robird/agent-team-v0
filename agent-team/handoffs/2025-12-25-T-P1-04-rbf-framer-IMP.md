@@ -19,7 +19,7 @@
 | 规范条款 | 实现位置 | 备注 |
 |---------|---------|------|
 | `[F-FRAMETAG-DEFINITION]` | `FrameTag.cs` | readonly record struct FrameTag(uint Value) |
-| `[F-ADDRESS64-DEFINITION]` | `<deleted-place-holder>.cs` | 含 Null 静态成员和 IsNull/IsValid 属性 |
+| `[F-<deleted-place-holder>-DEFINITION]` | `<deleted-place-holder>.cs` | 含 Null 静态成员和 IsNull/IsValid 属性 |
 | `[A-RBF-FRAMER-INTERFACE]` | `IRbfFramer.cs` | Append/BeginFrame/Flush 三方法 |
 | `[A-RBF-FRAME-BUILDER]` | `IRbfFramer.cs` | ref struct 实现，Payload/ReservablePayload/Commit/Dispose |
 | `[S-RBF-BUILDER-AUTO-ABORT]` | `RbfFrameBuilder.Dispose()` | 未 Commit 时写入 Tombstone 帧 |
@@ -51,7 +51,7 @@ Full: dotnet test tests/Rbf.Tests/Rbf.Tests.csproj
 | `Append_WhileBuilderOpen_ThrowsInvalidOperationException` | [S-RBF-BUILDER-SINGLE-OPEN] |
 | `Commit_Twice_ThrowsInvalidOperationException` | Builder 状态管理 |
 | `Append_MultipleFrames_CorrectAddresses` | <deleted-place-holder> 正确性 |
-| `Append_Returns4ByteAlignedAddress` | [F-ADDRESS64-ALIGNMENT] |
+| `Append_Returns4ByteAlignedAddress` | [F-<deleted-place-holder>-ALIGNMENT] |
 | `BeginFrame_ReservablePayload_ReturnsNull` | MVP 简化（无 Reservation） |
 | `Framer_WithoutGenesis_StartsAtPosition0` | 追加写入支持 |
 

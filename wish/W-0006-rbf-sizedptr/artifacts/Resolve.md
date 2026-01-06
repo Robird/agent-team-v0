@@ -57,7 +57,7 @@ RBF 是 SizedPtr 的首个目标用户，引入是自然的扩展。
 | 维度 | 症状 |
 |:-----|:-----|
 | **症状** | <deleted-place-holder> 是纯指针（`Value=0` 表示 Null），SizedPtr 是区间（`Packed=0` 数学上表示 `(0, 0)` 不是 Null） |
-| **证据** | [rbf-interface.md#L120](../../atelia/docs/Rbf/rbf-interface.md#L120) 定义 `[F-ADDRESS64-NULL]`；[SizedPtr.md#L32-L33](../../atelia/docs/Data/Draft/SizedPtr.md#L32-L33) 明确不定义 Null |
+| **证据** | [rbf-interface.md#L120](../../atelia/docs/Rbf/rbf-interface.md#L120) 定义 `[F-<deleted-place-holder>-NULL]`；[SizedPtr.md#L32-L33](../../atelia/docs/Data/Draft/SizedPtr.md#L32-L33) 明确不定义 Null |
 | **后果** | 两者不能直接替换——需要明确语义边界，否则 Null 判断逻辑会产生歧义 |
 
 **tier**: Rule-Tier  

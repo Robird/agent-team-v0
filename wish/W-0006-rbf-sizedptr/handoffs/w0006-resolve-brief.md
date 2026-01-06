@@ -29,9 +29,9 @@ public readonly record struct <deleted-place-holder>(ulong Value) {
 ```
 
 **条款**:
-- `[F-ADDRESS64-DEFINITION]` — 8 字节 LE 文件偏移量，指向 Frame 的 HeadLen 字段起点
-- `[F-ADDRESS64-ALIGNMENT]` — 有效 <deleted-place-holder> MUST 4B 对齐（`Value % 4 == 0`）
-- `[F-ADDRESS64-NULL]` — `Value == 0` 表示 null
+- `[F-<deleted-place-holder>-DEFINITION]` — 8 字节 LE 文件偏移量，指向 Frame 的 HeadLen 字段起点
+- `[F-<deleted-place-holder>-ALIGNMENT]` — 有效 <deleted-place-holder> MUST 4B 对齐（`Value % 4 == 0`）
+- `[F-<deleted-place-holder>-NULL]` — `Value == 0` 表示 null
 
 **语义**：纯指针（point-to 语义），**不含长度信息**。
 
@@ -124,7 +124,7 @@ public readonly record struct <deleted-place-holder>(ulong Value) {
 **Tier**: Rule-Tier
 
 **证据来源**:
-- [rbf-interface.md#L120](atelia/docs/Rbf/rbf-interface.md#L120) — `[F-ADDRESS64-NULL]`
+- [rbf-interface.md#L120](atelia/docs/Rbf/rbf-interface.md#L120) — `[F-<deleted-place-holder>-NULL]`
 - [SizedPtr.md#L32-L33](atelia/docs/Data/Draft/SizedPtr.md#L32-L33) — 不定义 Null
 
 **初步观察**:

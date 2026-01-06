@@ -35,9 +35,9 @@
 
 | 条款 ID | 定义位置 | 内容 |
 |:--------|:---------|:-----|
-| `[F-ADDRESS64-DEFINITION]` | rbf-interface.md#L84 | 8 字节 LE 文件偏移量定义 |
-| `[F-ADDRESS64-ALIGNMENT]` | rbf-interface.md#L96 | 4B 对齐约束 |
-| `[F-ADDRESS64-NULL]` | rbf-interface.md#L97 | `Value=0` 表示 null |
+| `[F-<deleted-place-holder>-DEFINITION]` | rbf-interface.md#L84 | 8 字节 LE 文件偏移量定义 |
+| `[F-<deleted-place-holder>-ALIGNMENT]` | rbf-interface.md#L96 | 4B 对齐约束 |
+| `[F-<deleted-place-holder>-NULL]` | rbf-interface.md#L97 | `Value=0` 表示 null |
 | `[F-PTR64-WIRE-FORMAT]` | rbf-format.md#L296 | Wire format 编码规范 |
 
 ---
@@ -138,7 +138,7 @@ public readonly record struct <deleted-place-holder>(ulong Value) {
 
 **Phase 1: 文档修订（本 Wish 范围）**
 1. 移除 §2.3 <deleted-place-holder> 定义
-2. 移除条款 `[F-ADDRESS64-DEFINITION]`, `[F-ADDRESS64-ALIGNMENT]`, `[F-ADDRESS64-NULL]`
+2. 移除条款 `[F-<deleted-place-holder>-DEFINITION]`, `[F-<deleted-place-holder>-ALIGNMENT]`, `[F-<deleted-place-holder>-NULL]`
 3. 引入 SizedPtr 定义（引用 Atelia.Data）
 4. 新增 RBF 层 Null 约定条款（如 `[F-RBF-NULLPTR]`）
 5. 更新所有接口签名：<deleted-place-holder> → `SizedPtr`
@@ -164,9 +164,9 @@ public readonly record struct <deleted-place-holder>(ulong Value) {
 
 | 条款 ID | 位置 | 说明 |
 |:--------|:-----|:-----|
-| `[F-ADDRESS64-DEFINITION]` | rbf-interface.md#L84 | 被 SizedPtr 定义替代 |
-| `[F-ADDRESS64-ALIGNMENT]` | rbf-interface.md#L96 | SizedPtr 已有 4B 对齐约束 |
-| `[F-ADDRESS64-NULL]` | rbf-interface.md#L97 | 被 RBF 层 NullPtr 约定替代 |
+| `[F-<deleted-place-holder>-DEFINITION]` | rbf-interface.md#L84 | 被 SizedPtr 定义替代 |
+| `[F-<deleted-place-holder>-ALIGNMENT]` | rbf-interface.md#L96 | SizedPtr 已有 4B 对齐约束 |
+| `[F-<deleted-place-holder>-NULL]` | rbf-interface.md#L97 | 被 RBF 层 NullPtr 约定替代 |
 
 ### 要新增的条款
 

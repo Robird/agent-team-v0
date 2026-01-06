@@ -55,9 +55,9 @@ links:
 
 #### Facts（可引用证据）
 - <deleted-place-holder> 的权威语义定义在：`atelia/docs/Rbf/rbf-interface.md` §2.3
-  - `[F-ADDRESS64-DEFINITION]`：8B LE 文件偏移，指向 Frame 起始位置
-  - `[F-ADDRESS64-ALIGNMENT]`：非零地址 MUST 4B 对齐（`Value % 4 == 0`）
-  - `[F-ADDRESS64-NULL]`：`Value == 0` 表示 null（无效地址）
+  - `[F-<deleted-place-holder>-DEFINITION]`：8B LE 文件偏移，指向 Frame 起始位置
+  - `[F-<deleted-place-holder>-ALIGNMENT]`：非零地址 MUST 4B 对齐（`Value % 4 == 0`）
+  - `[F-<deleted-place-holder>-NULL]`：`Value == 0` 表示 null（无效地址）
 - wire format 对应条款在：`atelia/docs/Rbf/rbf-format.md` §7 (`[F-PTR64-WIRE-FORMAT]`)
   - 同样声明 `0=null` 且 `4B aligned`
 - `SizedPtr` 草案提供了默认实现设想（38:26 + 4B 对齐压缩），见：`atelia/docs/Data/Draft/SizedPtr.md`

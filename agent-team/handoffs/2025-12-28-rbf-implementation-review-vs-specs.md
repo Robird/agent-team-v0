@@ -157,7 +157,7 @@
   - **规范变更（v0.17）**：`[F-FRAMETAG-DEFINITION]` 已移除，FrameTag 在 RBF 层不再定义为独立类型，仅作为线格式的 4 字节 uint（LE）字段
   - **实现现状**：仍存在 `public readonly record struct FrameTag(uint Value)`，**需移除**
   - **迁移计划**：FrameTag 语义解析（packing/unpacking）移至 StateJournal 层
-- <deleted-place-holder>：实现为 `public readonly record struct <deleted-place-holder>(ulong Value)`，并提供 `Null/IsNull/IsValid`，与 `[F-ADDRESS64-DEFINITION]` / `[F-ADDRESS64-ALIGNMENT]` / `[F-ADDRESS64-NULL]` 一致。
+- <deleted-place-holder>：实现为 `public readonly record struct <deleted-place-holder>(ulong Value)`，并提供 `Null/IsNull/IsValid`，与 `[F-<deleted-place-holder>-DEFINITION]` / `[F-<deleted-place-holder>-ALIGNMENT]` / `[F-<deleted-place-holder>-NULL]` 一致。
 
 **结论**：<deleted-place-holder> **符合**；FrameTag **待移除**（v0.17 规范变更）。
 

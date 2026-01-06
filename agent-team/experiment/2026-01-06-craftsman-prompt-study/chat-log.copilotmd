@@ -1272,9 +1272,9 @@ This is the state of the context at this point in the conversation. The view of 
 - `/repos/focus/wish/W-0006-rbf-sizedptr/project-status/snapshot.md`: Execution register updated 3 times (Resolve start → Resolve complete → Shape/Rule preparation)
 - `/repos/focus/wish/W-0006-rbf-sizedptr/artifacts/Resolve.md`: Frontmatter with 4 issues (all resolved), §6-7 added with guardian decisions
 - `/repos/focus/agent-team/handoffs/w0006-resolve-brief.md`: Investigation brief with RBF current state analysis
-- `/repos/focus/agent-team/handoffs/w0006-address64-value-check.md`: <deleted-place-holder> usage analysis, confirmed removable
+- `/repos/focus/agent-team/handoffs/w0006-<deleted-place-holder>-value-check.md`: <deleted-place-holder> usage analysis, confirmed removable
 - `/repos/focus/wish/W-0006-rbf-sizedptr/artifacts/Shape.md`: Glossary Alignment, Interface Contract, StateJournal constraints
-- `/repos/focus/wish/W-0006-rbf-sizedptr/artifacts/Rule.md`: NullPtr convention [R-RBF-NULLPTR], <deleted-place-holder> deprecation [R-RBF-ADDRESS64-DEPRECATED]
+- `/repos/focus/wish/W-0006-rbf-sizedptr/artifacts/Rule.md`: NullPtr convention [R-RBF-NULLPTR], <deleted-place-holder> deprecation [R-RBF-<deleted-place-holder>-DEPRECATED]
 - `/repos/focus/wish/W-0006-rbf-sizedptr/wish.md`: Layer progress updated (Resolve complete, Shape/Rule not started → updated after completion)
 - `/repos/focus/agent-team/members/TeamLeader/inbox.md`: 3 memos added (meeting outcome, Resolve completion, methodology validation)
 
@@ -1292,7 +1292,7 @@ This is the state of the context at this point in the conversation. The view of 
 All Tiers properly documented, methodology successfully applied, guardian decisions captured, ready for Plan-Tier.
 
 **Recent Commands Analysis** (Last 5-6 operations):
-1. `runSubagent(Investigator, "<deleted-place-holder> 存在价值快速调查")` → Produced w0006-address64-value-check.md, confirmed <deleted-place-holder> can be completely removed, 9 usages all replaceable by SizedPtr
+1. `runSubagent(Investigator, "<deleted-place-holder> 存在价值快速调查")` → Produced w0006-<deleted-place-holder>-value-check.md, confirmed <deleted-place-holder> can be completely removed, 9 usages all replaceable by SizedPtr
 2. `runSubagent(Seeker, "产出 Shape.md 和 Rule.md")` → Produced both artifacts with Glossary Alignment, Interface Contract, NullPtr convention, <deleted-place-holder> deprecation strategy
 3. `runSubagent(Curator, "审阅 Shape.md 和 Rule.md")` → LGTM with key strengths: 30s readability, 3-doc consistency, complete NullPtr definition, executable <deleted-place-holder> removal strategy
 4. Multiple `replace_string_in_file` operations to update Resolve.md frontmatter (mark issues resolved), append §6-7 Decision Clarification, update snapshot.md with new focus
@@ -1348,7 +1348,7 @@ All Tiers properly documented, methodology successfully applied, guardian decisi
   - Key Segments: RBF文档成熟度 (v0.17 Reviewed), <deleted-place-holder>定义 (纯指针/Null语义), SizedPtr能力边界 (38:26/4B对齐), StateJournal依赖
   - Issues: P1 (语义冲突), P2 (缺区间类型), P3 (256MB上限), P4 (术语漂移)
 
-- `/repos/focus/agent-team/handoffs/w0006-address64-value-check.md`:
+- `/repos/focus/agent-team/handoffs/w0006-<deleted-place-holder>-value-check.md`:
   - Purpose: <deleted-place-holder> usage analysis
   - Current State: Complete investigation
   - Key Findings: 9 usages in rbf-interface.md (type definition + 4 interface signatures + 2 examples + terminology), all replaceable by SizedPtr
@@ -1364,7 +1364,7 @@ All Tiers properly documented, methodology successfully applied, guardian decisi
 - `/repos/focus/wish/W-0006-rbf-sizedptr/artifacts/Rule.md`:
   - Purpose: Rule-Tier defining conventions and constraints
   - Current State: Complete (Curator LGTM)
-  - Key Segments: §1 [R-RBF-NULLPTR] (NullPtr约定定义 with code), §2 [R-RBF-ADDRESS64-DEPRECATED] (<deleted-place-holder>完全移除), §3 条款变更清单 (删3/增2/更新1)
+  - Key Segments: §1 [R-RBF-NULLPTR] (NullPtr约定定义 with code), §2 [R-RBF-<deleted-place-holder>-DEPRECATED] (<deleted-place-holder>完全移除), §3 条款变更清单 (删3/增2/更新1)
   - NullPtr Definition: `public static readonly SizedPtr NullPtr = default;` with semantics and equality rules
   - Clause Changes: Detailed mapping from old <deleted-place-holder> clauses to new SizedPtr conventions
 
@@ -1391,7 +1391,7 @@ All Tiers properly documented, methodology successfully applied, guardian decisi
   
 - Issue: Whether <deleted-place-holder> has remaining value
   - Investigation: Investigator analyzed all 9 usages, confirmed all replaceable by SizedPtr
-  - Solution: <deleted-place-holder> can be completely removed, documented in handoffs/w0006-address64-value-check.md
+  - Solution: <deleted-place-holder> can be completely removed, documented in handoffs/w0006-<deleted-place-holder>-value-check.md
   
 - Lessons Learned:
   - "识别问题即产出" principle validated: 4 issues identified in Resolve became valuable anchors for guardian input
@@ -1437,7 +1437,7 @@ All Tiers properly documented, methodology successfully applied, guardian decisi
   
   - **Seeker (Shape/Rule production)**: 
     - Shape.md: Concept boundaries (SizedPtr replaces <deleted-place-holder>), 5-term Glossary Alignment table, Interface Contract (write/read/persist paths based on guardian quote), StateJournal constraints (256MB confirmed sufficient)
-    - Rule.md: [R-RBF-NULLPTR] convention with code example (`= default;`), [R-RBF-ADDRESS64-DEPRECATED] with migration mapping table, Clause changes (delete 3/add 2/update 1), boundary rules
+    - Rule.md: [R-RBF-NULLPTR] convention with code example (`= default;`), [R-RBF-<deleted-place-holder>-DEPRECATED] with migration mapping table, Clause changes (delete 3/add 2/update 1), boundary rules
   
   - **Curator (Review)**: **LGTM** with 5 strengths: (1) 30秒可判性出色 (both docs lead with one-line summary), (2) 三文档自洽性强 (Resolve→Shape→Rule terminology chain intact), (3) NullPtr定义清晰 (complete code + semantics + equality), (4) <deleted-place-holder>移除策略完整 (executable migration table), (5) 监护人原话引用 (traceability). Minor style suggestion (default vs default(SizedPtr) consistency) but non-blocking. **Conclusion: 可进入Plan-Tier**.
   
@@ -1452,7 +1452,7 @@ All Tiers properly documented, methodology successfully applied, guardian decisi
 8. Continuation Plan:
 - Pending Task: Plan-Tier execution
   - Details: Produce artifacts/Plan.md with migration strategy (global <deleted-place-holder>→SizedPtr replacement)
-  - Next steps: (1) Review <deleted-place-holder> usage inventory from handoffs/w0006-address64-value-check.md, (2) Create Migration Notes for each modification point, (3) Define document revision sequence, (4) Identify any edge cases
+  - Next steps: (1) Review <deleted-place-holder> usage inventory from handoffs/w0006-<deleted-place-holder>-value-check.md, (2) Create Migration Notes for each modification point, (3) Define document revision sequence, (4) Identify any edge cases
   - Priority: Can proceed immediately, no blockers
   
 - Pending Task: Document revision execution
@@ -1560,7 +1560,7 @@ EOF",
 ## 输入
 
 - **Resolve/Shape/Rule**: `/repos/focus/wish/W-0006-rbf-sizedptr/artifacts/`
-- **<deleted-place-holder> 调查**: `/repos/focus/agent-team/handoffs/w0006-address64-value-check.md`
+- **<deleted-place-holder> 调查**: `/repos/focus/agent-team/handoffs/w0006-<deleted-place-holder>-value-check.md`
 - **目标文档**:
   - `/repos/focus/atelia/docs/Rbf/rbf-interface.md`
   - `/repos/focus/atelia/docs/Rbf/rbf-format.md`
@@ -1767,9 +1767,9 @@ grep -n \"<deleted-place-holder>\" /repos/focus/atelia/docs/Rbf/*.md
 **条款映射**：
 | 旧条款 | 新条款 |
 |:-------|:-------|
-| `[F-ADDRESS64-DEFINITION]` | `[F-SIZEDPTR-DEFINITION]` |
-| `[F-ADDRESS64-ALIGNMENT]` | 内化到 SizedPtr 约束 |
-| `[F-ADDRESS64-NULL]` | `[F-RBF-NULLPTR]` |
+| `[F-<deleted-place-holder>-DEFINITION]` | `[F-SIZEDPTR-DEFINITION]` |
+| `[F-<deleted-place-holder>-ALIGNMENT]` | 内化到 SizedPtr 约束 |
+| `[F-<deleted-place-holder>-NULL]` | `[F-RBF-NULLPTR]` |
 | `[F-PTR64-WIRE-FORMAT]` | `[F-SIZEDPTR-WIRE-FORMAT]` |
 
 **认知文件更新确认**：
@@ -2330,7 +2330,7 @@ stop_condition:
 
 | ID | 问题 | Tier | Next Probe |
 |:---|:-----|:-----|:-----------|
-| **I-ADDRESS64-VALUE** | <deleted-place-holder> 是否还有存在价值？ | Shape | 检查 RBF 文档中 <deleted-place-holder> 的使用点 |
+| **I-<deleted-place-holder>-VALUE** | <deleted-place-holder> 是否还有存在价值？ | Shape | 检查 RBF 文档中 <deleted-place-holder> 的使用点 |
 
 ---
 
@@ -2985,7 +2985,7 @@ Error Code: rate_limited
 ### 1. 条款完整性
 
 - [R-RBF-NULLPTR] 定义是否完整？
-- [R-RBF-ADDRESS64-DEPRECATED] 是否明确？
+- [R-RBF-<deleted-place-holder>-DEPRECATED] 是否明确？
 - §3 条款变更清单是否可执行？
 
 ### 2. 代码示例准确性
@@ -3467,7 +3467,7 @@ Last Command: cd atelia/src/DocGraph && dotnet run -- ../../../
 Cwd: /repos/focus
 Exit Code: 0
 Terminal: bash
-Last Command: rg -n "<deleted-place-holder>|\[F-ADDRESS64|\[F-PTR64-WIRE-FORMAT\]|Ptr64" /repos/focus/atelia/docs/Rbf || true
+Last Command: rg -n "<deleted-place-holder>|\[F-<deleted-place-holder>|\[F-PTR64-WIRE-FORMAT\]|Ptr64" /repos/focus/atelia/docs/Rbf || true
 Cwd: /repos/focus
 Exit Code: 0
 
@@ -4412,7 +4412,7 @@ using Atelia.Data;
 ### 3. D11：统一为 REMOVED
 
 全局替换：
-- 标题：`[R-RBF-ADDRESS64-DEPRECATED]` → `[R-RBF-ADDRESS64-REMOVED]`
+- 标题：`[R-RBF-<deleted-place-holder>-DEPRECATED]` → `[R-RBF-<deleted-place-holder>-REMOVED]`
 - 确保正文措辞与标题一致
 
 ## 执行要求
@@ -4694,7 +4694,7 @@ Excerpt from w0006-review-resolve.md, lines 13 to 37:
 - **类型**：证据完整性
 - **严重性**：Sev2
 - **位置**：§2 P1 / L63-L65；§2 P2 / L76-L78
-- **问题描述**：P1 证据声称 `rbf-interface.md#L120` 定义了 `[F-ADDRESS64-NULL]`，P2 证据声称 `rbf-interface.md#L125-L135` 的 Frame 定义"只有 <deleted-place-holder>"。但当前 `atelia/docs/Rbf/rbf-interface.md`（在仓库现状中）已经以 `SizedPtr` 作为核心接口类型，并出现 RBF 层 `NullPtr = default` 的示例；未见 <deleted-place-holder> 相关段落。这使得 P1/P2 的证据在"事后审阅"语境下不可复核。
+- **问题描述**：P1 证据声称 `rbf-interface.md#L120` 定义了 `[F-<deleted-place-holder>-NULL]`，P2 证据声称 `rbf-interface.md#L125-L135` 的 Frame 定义"只有 <deleted-place-holder>"。但当前 `atelia/docs/Rbf/rbf-interface.md`（在仓库现状中）已经以 `SizedPtr` 作为核心接口类型，并出现 RBF 层 `NullPtr = default` 的示例；未见 <deleted-place-holder> 相关段落。这使得 P1/P2 的证据在"事后审阅"语境下不可复核。
 - **证据**：Resolve 的证据链接文本与 `rbf-interface.md` 当前内容趋势相悖（现文档中有 `SizedPtr Append(...)` 等表述）。
 - **工程问题本质**：Resolve-Tier 是设计决策的**输入产物**，其引用的证据应指向决策形成时的文档状态。当被引用的源文档根据决策结果被修订后，Resolve 中的证据就失去了复核价值。这是**证据保存策略**问题。
 - **建议修复**：
@@ -4735,7 +4735,7 @@ User's active file for additional context:
 - **类型**：证据完整性
 - **严重性**：Sev2
 - **位置**：§2 P1 / L63-L65；§2 P2 / L76-L78
-- **问题描述**：P1 证据声称 `rbf-interface.md#L120` 定义了 `[F-ADDRESS64-NULL]`，P2 证据声称 `rbf-interface.md#L125-L135` 的 Frame 定义"只有 <deleted-place-holder>"。但当前 `atelia/docs/Rbf/rbf-interface.md`（在仓库现状中）已经以 `SizedPtr` 作为核心接口类型，并出现 RBF 层 `NullPtr = default` 的示例；未见 <deleted-place-holder> 相关段落。这使得 P1/P2 的证据在"事后审阅"语境下不可复核。
+- **问题描述**：P1 证据声称 `rbf-interface.md#L120` 定义了 `[F-<deleted-place-holder>-NULL]`，P2 证据声称 `rbf-interface.md#L125-L135` 的 Frame 定义"只有 <deleted-place-holder>"。但当前 `atelia/docs/Rbf/rbf-interface.md`（在仓库现状中）已经以 `SizedPtr` 作为核心接口类型，并出现 RBF 层 `NullPtr = default` 的示例；未见 <deleted-place-holder> 相关段落。这使得 P1/P2 的证据在"事后审阅"语境下不可复核。
 - **证据**：Resolve 的证据链接文本与 `rbf-interface.md` 当前内容趋势相悖（现文档中有 `SizedPtr Append(...)` 等表述）。
 - **工程问题本质**：Resolve-Tier 是设计决策的**输入产物**，其引用的证据应指向决策形成时的文档状态。当被引用的源文档根据决策结果被修订后，Resolve 中的证据就失去了复核价值。这是**证据保存策略**问题。
 - **建议修复**：
@@ -5634,7 +5634,7 @@ Exit Code: 0
 
 </context>
 <editorContext>
-The user's current file is /repos/focus/wish/W-0006-rbf-sizedptr/handoffs/w0006-address64-value-check.md. 
+The user's current file is /repos/focus/wish/W-0006-rbf-sizedptr/handoffs/w0006-<deleted-place-holder>-value-check.md. 
 </editorContext>
 <reminderInstructions>
 When using the replace_string_in_file tool, include 3-5 lines of unchanged code before and after the string you want to replace, to make it unambiguous which part of the file should be edited.
@@ -5927,7 +5927,7 @@ Exit Code: 0
 
 </context>
 <editorContext>
-The user's current file is /repos/focus/wish/W-0006-rbf-sizedptr/handoffs/w0006-address64-value-check.md. 
+The user's current file is /repos/focus/wish/W-0006-rbf-sizedptr/handoffs/w0006-<deleted-place-holder>-value-check.md. 
 </editorContext>
 <reminderInstructions>
 When using the replace_string_in_file tool, include 3-5 lines of unchanged code before and after the string you want to replace, to make it unambiguous which part of the file should be edited.

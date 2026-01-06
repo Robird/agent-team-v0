@@ -273,7 +273,7 @@ DocUI 是一个 **LLM-Native 的用户界面框架**——为 LLM Agent 设计�
 > 
 > **核心发现**：
 > 1. 术语治理意图良好但落地不完整——术语表定义了弃用映射，但决策选项/正文仍有旧术语遗留
-> 2. 概念层/编码层边界模糊——`Address64 vs Ptr64`、`LoadObject vs Resolve` 的分层未贯彻
+> 2. 概念层/编码层边界模糊——`<deleted-place-holder> vs Ptr64`、`LoadObject vs Resolve` 的分层未贯彻
 > 3. 决策选项与最终选择的"推荐"标记矛盾（Q11A 标推荐但选了 B）
 > 
 > **术语双轨问题（Critical）**：
@@ -479,9 +479,9 @@ DocUI 是一个 **LLM-Native 的用户界面框架**——为 LLM Agent 设计�
 > 
 > **核心立场与贡献**：
 > 
-> 1. **完全赞同 DocUIGPT T6（Ptr64 vs Address64）**
+> 1. **完全赞同 DocUIGPT T6（Ptr64 vs <deleted-place-holder>）**
 >    - 这是典型的分层泄漏问题
->    - 规范正文应使用概念层名称（Address64），编码细节才用 Ptr64
+>    - 规范正文应使用概念层名称（<deleted-place-holder>），编码细节才用 Ptr64
 >    - 类比：HTTP 说"Content-Length"而不说"4 字节 big-endian 整数"
 > 
 > 2. **完全赞同 DocUIGPT C7（Base Version 术语重构）**
@@ -500,7 +500,7 @@ DocUI 是一个 **LLM-Native 的用户界面框架**——为 LLM Agent 设计�
 >    - 解决命名混淆 + 层级明确 + 类型精确三个问题
 > 
 > **修订建议优先级排序**：
-> - P0: CommitAll 无参 MUST / Base Version 术语层次 / Address64 vs Ptr64 分层
+> - P0: CommitAll 无参 MUST / Base Version 术语层次 / <deleted-place-holder> vs Ptr64 分层
 > - P1: File Framing vs Record Layout / Dirty Set 层级术语 / 伪代码约束说明
 > - P2: RBF 术语定义 / Genesis Base 术语确认
 > 
@@ -522,7 +522,7 @@ DocUI 是一个 **LLM-Native 的用户界面框架**——为 LLM Agent 设计�
 > - P0-3: `LoadObject` 对象不存在行为定义 — API 契约完整性
 > - P0-4: 新建对象状态转换规则 — 状态机完备性
 > - P0-5: Base Version 术语层次 — 解决 `PrevVersionPtr=0` 双重语义
-> - P0-6: Address64 vs Ptr64 分层 — 概念层/编码层分离
+> - P0-6: <deleted-place-holder> vs Ptr64 分层 — 概念层/编码层分离
 > - P0-7: File Framing vs Record Layout 定义 — 实现边界关键点
 > 
 > **P1 级修订（3 项全部赞同）**：
@@ -547,7 +547,7 @@ DocUI 是一个 **LLM-Native 的用户界面框架**——为 LLM Agent 设计�
 > 
 > **检查结果**：
 > - Base Version / Genesis Base / Checkpoint Base：✅ 术语表定义完整；发现正文遗留 22 处"Checkpoint Version"
-> - Address64 vs Ptr64：✅ 术语表分层清晰；正文多处使用合理（编码/概念混用场景已标注）
+> - <deleted-place-holder> vs Ptr64：✅ 术语表分层清晰；正文多处使用合理（编码/概念混用场景已标注）
 > - Modified Object Set / Dirty Set / Dirty-Key Set：✅ 术语表层级清晰；正文使用一致
 > - DurableObject：✅ 术语表已收录
 > 
@@ -826,7 +826,7 @@ DocUI 是一个 **LLM-Native 的用户界面框架**——为 LLM Agent 设计�
 > **推荐方案 C（保持现状 + 加注释）**，理由：
 > 1. 最小侵入性：DataTail 是唯一的边界 case
 > 2. 术语膨胀代价 > 精确性收益（只影响 1 个字段）
-> 3. 概念层已有 Address64 分离，注释足以消除歧义
+> 3. 概念层已有 <deleted-place-holder> 分离，注释足以消除歧义
 > 4. 建议微调 Ptr64 定义为"4B 对齐的 file offset"（更宽泛但更准确）
 > 
 > **方法论收获**：
@@ -843,9 +843,9 @@ DocUI 是一个 **LLM-Native 的用户界面框架**——为 LLM Agent 设计�
 >    - 在"编号只增不复用"规则下，跳号会让读者困惑
 >    - 建议显式标注 `[S-05] Deprecated — 原语义已合并到 [S-20]`
 > 
-> 2. **赞同 GPT 的 Address64 重复定义**（P0）
->    - 术语表出现两行 Address64，语义接近但表述不同
->    - 建议合并为单条，明确编码层（Ptr64）vs 语义层（Address64）
+> 2. **赞同 GPT 的 <deleted-place-holder> 重复定义**（P0）
+>    - 术语表出现两行 <deleted-place-holder>，语义接近但表述不同
+>    - 建议合并为单条，明确编码层（Ptr64）vs 语义层（<deleted-place-holder>）
 > 
 > 3. **赞同并补充 Gemini 的"概念自举悖论"**（P1）
 >    - VersionIndex 的 Bootstrap 入口在文档叙事上形成"鸡生蛋"循环
@@ -862,7 +862,7 @@ DocUI 是一个 **LLM-Native 的用户界面框架**——为 LLM Agent 设计�
 >    - 建议保持现状 + 加脚注说明
 > 
 > **问题优先级收敛**：
-> - P0: [S-05] 跳号、Address64 重复定义
+> - P0: [S-05] 跳号、<deleted-place-holder> 重复定义
 > - P1: 概念自举悖论、泛型写法不一致
 > - P2: 僵尸对象 UX、状态转换表脚注
 > - P3: Shallow Materialize 术语升格、状态机 Mermaid 图
@@ -879,7 +879,7 @@ DocUI 是一个 **LLM-Native 的用户界面框架**——为 LLM Agent 设计�
 > 
 > **P0 级修订（MUST FIX）**：
 > - `[S-05]` 跳号未标注 Deprecated
-> - Address64 术语表重复定义
+> - <deleted-place-holder> 术语表重复定义
 > - ObjectId 保留区 SSOT 收口（Well-Known ObjectId 统一定义）
 > 
 > **P1 级修订（SHOULD FIX）**：

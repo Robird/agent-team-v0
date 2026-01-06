@@ -243,7 +243,7 @@ After Abort:
 **✅ 通过项**：
 
 1. **术语隔离**：Layer 0 定义了自己的术语（FrameTag、<deleted-place-holder>、Frame），未泄漏 Layer 1 的 RecordKind/ObjectKind
-2. **<deleted-place-holder> 对齐**：`[E-ADDRESS64-ALIGNMENT]` 与 mvp-design-v2.md 的 `[F-PTR64-NULL-AND-ALIGNMENT]` 一致
+2. **<deleted-place-holder> 对齐**：`[E-<deleted-place-holder>-ALIGNMENT]` 与 mvp-design-v2.md 的 `[F-PTR64-NULL-AND-ALIGNMENT]` 一致
 3. **Padding 跳过**：`[E-FRAMETAG-PADDING-SKIP]` 清晰定义了 Reader 行为
 
 **⚠️ 需澄清项**：
@@ -390,7 +390,7 @@ RBF 的接口设计非常稳健。特别是将  的能力通过  暴露出来，
 
 ##### 1.1 已足够精确、可直接测试的条款（✅）
 
-- `[E-ADDRESS64-ALIGNMENT]` / `[E-ADDRESS64-NULL]`
+- `[E-<deleted-place-holder>-ALIGNMENT]` / `[E-<deleted-place-holder>-NULL]`
     - **可测试点**：对齐、0 表示 null。
     - **建议补强（可选）**：把“返回值 MUST 非 null”写成条款（见 §4 FixList）。
 

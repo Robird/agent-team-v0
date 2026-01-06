@@ -2,7 +2,7 @@
 
 **位置**: 
 - rbf-format.md#§2.2 `[F-GENESIS]`
-- rbf-interface.md#§2.3 `[F-ADDRESS64-NULL]`
+- rbf-interface.md#§2.3 `[F-<deleted-place-holder>-NULL]`
 
 **描述**: 
 <deleted-place-holder> 的约束规定：
@@ -27,7 +27,7 @@ Genesis Fence 的约束规定：
 3. 混淆"null 地址"和"第一帧地址"
 
 **建议**: 
-在 `[F-ADDRESS64-NULL]` 中增加说明：
+在 `[F-<deleted-place-holder>-NULL]` 中增加说明：
 ```
 Value == 0 表示 null（无效地址）。
 注：偏移 0 被 Genesis Fence 占用，因此 <deleted-place-holder>(0) 不会指向任何有效 Frame。

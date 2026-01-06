@@ -267,7 +267,7 @@
 
 3. **rbf-interface.md 条款引用**（共 5 条，`[E-*]` → `[F-*]`）：
    - `[F-FRAMETAG-DEFINITION]`、`[F-FRAMETAG-PADDING-VISIBLE]`
-   - `[F-ADDRESS64-DEFINITION]`、`[F-ADDRESS64-ALIGNMENT]`、`[F-ADDRESS64-NULL]`
+   - `[F-<deleted-place-holder>-DEFINITION]`、`[F-<deleted-place-holder>-ALIGNMENT]`、`[F-<deleted-place-holder>-NULL]`
 
 4. **条款索引表格更新**：
    - rbf-format.md §11.1：格式条款标题从 `[E-xxx]` 改为 `[F-xxx]`
@@ -511,28 +511,28 @@
 
 ---
 
-### mvp-design-v2.md 术语表 Ptr64/Address64 简化 (2025-12-22) ✅
+### mvp-design-v2.md 术语表 Ptr64/<deleted-place-holder> 简化 (2025-12-22) ✅
 
-**任务来源**：用户指令 — 简化 mvp-design-v2.md 术语表中的 Ptr64/Address64 定义
+**任务来源**：用户指令 — 简化 mvp-design-v2.md 术语表中的 Ptr64/<deleted-place-holder> 定义
 
 **背景**：
-- Ptr64/Address64 的详细定义已在 rbf-interface.md §2.2 中
+- Ptr64/<deleted-place-holder> 的详细定义已在 rbf-interface.md §2.2 中
 - mvp-design-v2.md 术语表应简化为引用，避免重复维护
 
 **执行内容**：
-1. 合并"标识与指针"表格中的 Ptr64 和 Address64 两行为一行
+1. 合并"标识与指针"表格中的 Ptr64 和 <deleted-place-holder> 两行为一行
 2. 简化定义为引用：`详见 [rbf-interface.md](rbf-interface.md) §2.2`
 3. 更新"命名约定"章节中的第 4 条，改为简短引用
 
 **修改前**：
 ```markdown
 | **Ptr64** | 64 位文件偏移量的编码形式... | — | `ulong`，4B 对齐 |
-| **Address64** | 概念层术语：指向 Record 起始位置... | 编码形式: `Ptr64` | `ulong` |
+| **<deleted-place-holder>** | 概念层术语：指向 Record 起始位置... | 编码形式: `Ptr64` | `ulong` |
 ```
 
 **修改后**：
 ```markdown
-| **Ptr64** / **Address64** | 8 字节文件偏移量。详见 [rbf-interface.md](rbf-interface.md) §2.2 | — | `ulong` |
+| **Ptr64** / **<deleted-place-holder>** | 8 字节文件偏移量。详见 [rbf-interface.md](rbf-interface.md) §2.2 | — | `ulong` |
 ```
 
 **文件变更**：
@@ -676,7 +676,7 @@
 6. 写入流程（8 步写入顺序）
 7. 逆向扫描算法（步骤、地址计算、图示）
 8. Resync 机制（问题背景、策略、图示）
-9. Ptr64 / Address64（编码、对齐与空值）
+9. Ptr64 / <deleted-place-holder>（编码、对齐与空值）
 10. DataTail 与截断（定义、恢复）
 11. 条款索引（格式条款 16 条、恢复条款 3 条）
 12. 测试向量（编码示例、Resync 场景）
@@ -1287,8 +1287,8 @@ HeadLen := u32 LE        (* == TailLen, record total bytes *)
 - **Checkpoint Version** → **Checkpoint Base**：为截断回放成本而写入的全量状态版本
 - 新增 **from-empty diff**：Genesis Base 的 DiffPayload 语义
 
-**P0-6: 概念层 Address64 vs 编码层 Ptr64 分层澄清**（标识与指针分组）
-- **Address64**：概念层术语，规范条款应使用此术语
+**P0-6: 概念层 <deleted-place-holder> vs 编码层 Ptr64 分层澄清**（标识与指针分组）
+- **<deleted-place-holder>**：概念层术语，规范条款应使用此术语
 - 新增 **Ptr64**：编码层/wire format 名称，仅用于描述编码/布局
 - 明确分层使用原则
 
@@ -1646,7 +1646,7 @@ HeadLen := u32 LE        (* == TailLen, record total bytes *)
 1. **添加术语表（Glossary）**：在文档开头（第 1 节之前）添加了规范化术语表 (SSOT)，包含：
    - 状态与差分（Working State / Committed State / ChangeSet / DiffPayload）
    - 版本链（Version Chain / Checkpoint Version / VersionIndex）
-   - 标识与指针（ObjectId / Address64 / ObjectVersionPtr）
+   - 标识与指针（ObjectId / <deleted-place-holder> / ObjectVersionPtr）
    - 提交与 HEAD（Commit / HEAD / Commit Record）
    - 载入与缓存（Identity Map / Dirty Set / LoadObject）
    - 对象级 API（FlushToWriter）
@@ -1664,7 +1664,7 @@ HeadLen := u32 LE        (* == TailLen, record total bytes *)
    - `DictSnapshotEveryNVersions` → `DictCheckpointEveryNVersions`
 
 5. **指针术语**：
-   - `Ptr64`（概念层）→ `Address64`
+   - `Ptr64`（概念层）→ `<deleted-place-holder>`
 
 6. **加载 API**：
    - `Resolve`（外部 API 总称）→ `LoadObject`

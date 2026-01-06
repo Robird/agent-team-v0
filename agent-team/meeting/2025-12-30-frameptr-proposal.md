@@ -422,8 +422,8 @@ Seeker 已指出收益口径需要修正（我同意）。从规范一致性角�
 
 1) **术语表**
 - §2.3 <deleted-place-holder>：
-    - `[F-ADDRESS64-DEFINITION]` → 替换为 `FramePtr` 定义（建议新条款 ID：`[F-FRAMEPTR-DEFINITION]`）
-    - `[F-ADDRESS64-ALIGNMENT]` / `[F-ADDRESS64-NULL]` → 迁移/改写为 FramePtr 的 alignment/null/empty 规则（建议明确 `offset==0` 的合法性与 canonical form）
+    - `[F-<deleted-place-holder>-DEFINITION]` → 替换为 `FramePtr` 定义（建议新条款 ID：`[F-FRAMEPTR-DEFINITION]`）
+    - `[F-<deleted-place-holder>-ALIGNMENT]` / `[F-<deleted-place-holder>-NULL]` → 迁移/改写为 FramePtr 的 alignment/null/empty 规则（建议明确 `offset==0` 的合法性与 canonical form）
 
 2) **写入接口签名**
 - §3.1 `IRbfFramer.Append`：返回类型 <deleted-place-holder> → `FramePtr`
