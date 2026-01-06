@@ -16,6 +16,8 @@ produce_by:
 ### 条款 [R-RBF-NULLPTR]
 
 ```csharp
+using Atelia.Data;
+
 namespace Atelia.Rbf
 {
     /// <summary>
@@ -67,7 +69,7 @@ if (ptr.Packed == 0) { /* 无效引用 */ }
 
 ## 2. Address64 完全移除
 
-### 条款 [R-RBF-ADDRESS64-DEPRECATED]
+### 条款 [R-RBF-ADDRESS64-REMOVED]
 
 **规则**：Address64 类型及其所有成员完全移除，不再出现在 RBF 设计文档和代码中。
 
@@ -124,7 +126,7 @@ if (ptr.Packed == 0) { /* 无效引用 */ }
 | `IRbfFramer.Append()` 返回值 | `Address64` | `SizedPtr` |
 | `RbfFrameBuilder.Commit()` 返回值 | `Address64` | `SizedPtr` |
 | `IRbfScanner.TryReadAt()` 参数 | `Address64` | `SizedPtr` |
-| `RbfFrame.Address` 属性 | `Address64` | `SizedPtr Ptr` |
+| `RbfFrame.Address` 属性 | `Address64` | `RbfFrame.Ptr`（`SizedPtr`） |
 
 ---
 

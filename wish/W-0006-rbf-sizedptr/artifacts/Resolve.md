@@ -14,13 +14,13 @@ issues:
     description: "SizedPtr 的 256MB Length 上限对大 Blob 场景的适用性"
     status: "resolved"
   - id: "I-TERM-DRIFT-RISK"
-    description: "Address64.Value 与 SizedPtr.OffsetBytes 术语混淆风险"
+    description: "Address64 文件偏移与 SizedPtr.OffsetBytes 术语混淆风险"
     status: "resolved"
 ---
 
 # W-0006 Resolve-Tier
 
-> **一句话判定**：RBF 缺乏显式区间类型，SizedPtr 已实现可复用，值得引入以统一"区间"语义表达。
+> **一句话判定**：SizedPtr 替代 Address64 作为 RBF Interface 层的 Frame 句柄类型。
 
 ---
 
@@ -46,11 +46,7 @@ RBF 是 SizedPtr 的首个目标用户，引入是自然的扩展。
 
 ### 目标
 
-统一"区间"的表达方式：
-- **Address64**：指向 Frame 起点的纯位置（point-to 语义）
-- **SizedPtr**：表达 offset+length 的紧凑区间（range 语义）
-
-减少重复设计，提升跨层复用。
+用 SizedPtr 替代 Address64，统一"区间"表达，减少重复设计。
 
 ---
 
@@ -100,7 +96,7 @@ RBF 是 SizedPtr 的首个目标用户，引入是自然的扩展。
 | 维度 | 症状 |
 |:-----|:-----|
 | **症状** | RBF 使用 `Offset`（Address64 的文件偏移）；SizedPtr 使用 `OffsetBytes`/`LengthBytes`；术语混用导致"这里的 Offset 是哪个？" |
-| **证据** | [畅谈会讨论](meeting/2026-01-05-scope-and-approach.md#L286) 已识别此风险 |
+| **证据** | [畅谈会讨论](../meeting/2026-01-05-scope-and-approach.md#L286) 已识别此风险 |
 | **后果** | 跨文档阅读时需持续"心智翻译"，增加理解成本和误用风险 |
 
 **tier**: Shape-Tier  
@@ -114,12 +110,10 @@ RBF 是 SizedPtr 的首个目标用户，引入是自然的扩展。
 
 | 范围 | 说明 |
 |:-----|:-----|
-| **RBF 设计文档修订** | 修订 `rbf-interface.md`、`rbf-format.md`，引入 SizedPtr |
-| **语义边界定义** | 明确 Address64 vs SizedPtr 的使用场景和判断依据 |
+| **RBF 设计文档修订** | 修订 `rbf-interface.md`、`rbf-format.md`，用 SizedPtr 替代 Address64 |
 | **StateJournal 约束视角** | 作为"目标用户"参与设计约束，**不修订 StateJournal 文档本身** |
 
 ### Out-of-Scope
-
 | 范围 | 说明 |
 |:-----|:-----|
 | **RBF 代码实现** | Phase 2 可选，本 Wish 主体是设计文档修订 |
@@ -142,7 +136,7 @@ RBF 是 SizedPtr 的首个目标用户，引入是自然的扩展。
 
 本 Resolve 基于以下输入：
 - **Investigation Brief**: [w0006-resolve-brief.md](../../agent-team/handoffs/w0006-resolve-brief.md)
-- **畅谈会决议**: [2026-01-05-scope-and-approach.md](meeting/2026-01-05-scope-and-approach.md)
+- **畅谈会决议**: [2026-01-05-scope-and-approach.md](../meeting/2026-01-05-scope-and-approach.md)
 - **Wish 定义**: [wish.md](wish.md)
 
 ---
@@ -209,12 +203,11 @@ RBF 是 SizedPtr 的首个目标用户，引入是自然的扩展。
 
 监护人的输入揭示了一个重要认知转变：
 
-| 之前理解（Resolve 初稿） | 实际情况（监护人澄清） |
-|:-------------------------|:----------------------|
-| SizedPtr 是"可选增强" | SizedPtr 是 Interface 层核心类型 |
-| Address64 与 SizedPtr 共存 | SizedPtr 直接替代 Address64 |
-| 需要复杂的语义边界规则 | 简单：对外全部用 SizedPtr |
-| Null 语义是"冲突" | Null 语义由 RBF 层定义约定 |
+| 初始理解 | 澄清后结论 |
+|:---------|:-----------|
+| 共存分工 | 直接替代 |
+| 需要语义边界规则 | 对外全部用 SizedPtr |
+| Null 语义冲突 | RBF 层定义约定 |
 
 **下一步影响**：
 - Shape-Tier 大幅简化（不需要复杂的"共存策略"）

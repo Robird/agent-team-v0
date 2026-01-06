@@ -19,16 +19,14 @@ produce_by:
 |:-----|:-----|:---------|
 | 1.1 | 修订 rbf-interface.md | 移除 Address64，引入 SizedPtr + NullPtr |
 | 1.2 | 修订 rbf-format.md | 更新 Wire Format 章节 |
-| 1.3 | 更新条款索引 | 条款编号一致性检查 |
-| 1.4 | 添加 artifacts 导航锚点 | 文档头部增加设计演进链接 |
+| 1.3 | 添加 artifacts 导航锚点 | 文档头部增加设计演进链接 |
 
 ### Phase 2：代码实现（可选，未来 Wish）
 
 | 步骤 | 内容 | 说明 |
 |:-----|:-----|:-----|
-| 2.1 | 删除 `Address64.cs` | 已归档在 archive/ |
-| 2.2 | 更新 RBF 实现 | 使用 SizedPtr 替代 Address64 |
-| 2.3 | 更新 StateJournal | 另一个 Wish 负责 |
+| 2.1 | 更新 RBF 实现 | 使用 SizedPtr 替代 Address64 |
+| 2.2 | 更新 StateJournal | 另一个 Wish 负责 |
 
 ---
 
@@ -38,32 +36,29 @@ produce_by:
 
 ### 2.1 删除操作
 
-| 位置 | 原内容摘要 | 操作 | 说明 |
-|:-----|:----------|:-----|:-----|
-| L82-97 | §2.3 Address64 类型定义（含代码块） | 删除整节 | 被新 §2.3 SizedPtr 替代 |
-| L406 条款索引 | `[F-ADDRESS64-DEFINITION]` 条目 | 删除 | 条款已移除 |
-| L407 条款索引 | `[F-ADDRESS64-ALIGNMENT]` 条目 | 删除 | 约束已由 SizedPtr 定义 |
-| L408 条款索引 | `[F-ADDRESS64-NULL]` 条目 | 删除 | 被 NullPtr 约定替代 |
+| 目标 | 操作 | 说明 |
+|:-----|:-----|:-----|
+| §2.3 Address64 整节 | 删除 | 被新 §2.3 SizedPtr 替代 |
+| 条款索引 `[F-ADDRESS64-DEFINITION]` | 删除 | 条款已移除 |
+| 条款索引 `[F-ADDRESS64-ALIGNMENT]` | 删除 | 约束已由 SizedPtr 定义 |
+| 条款索引 `[F-ADDRESS64-NULL]` | 删除 | 被 NullPtr 约定替代 |
 
 ### 2.2 新增操作
 
-| 目标位置 | 新增内容 | 条款 ID |
-|:---------|:---------|:--------|
+| 目标 | 新增内容 | 条款 ID |
+|:-----|:---------|:--------|
 | §2.3（原 Address64 位置） | SizedPtr 定义 + NullPtr 约定 | `[F-SIZEDPTR-DEFINITION]`, `[F-RBF-NULLPTR]` |
-| §6 条款索引 | 新条款条目 | — |
 
 ### 2.3 替换操作
 
-| 位置 | 原内容 | 修改为 | 类型 |
-|:-----|:-------|:-------|:-----|
-| L106-107 | "写入返回 Address64，读取通过 Address64 定位" | "写入返回 SizedPtr，读取通过 SizedPtr 定位" | 术语替换 |
-| L134 | `Address64 Append(...)` 返回类型 | `SizedPtr Append(...)` | 签名替换 |
-| L187 | `Address64 Commit()` 返回类型 | `SizedPtr Commit()` | 签名替换 |
-| L262 | `TryReadAt(Address64 address, ...)` 参数 | `TryReadAt(SizedPtr ptr, ...)` | 签名替换 |
-| L359 | `public Address64 Address { get; }` | `public SizedPtr Ptr { get; }` | 属性替换（含名称变更） |
-| L376 | 示例代码 `Address64 WriteFrame(...)` | `SizedPtr WriteFrame(...)` | 示例更新 |
-| L383 | 示例代码 `ProcessFrame(..., Address64 addr)` | `ProcessFrame(..., SizedPtr ptr)` | 示例更新 |
-| L385 | 示例代码 `TryReadAt(addr, ...)` | `TryReadAt(ptr, ...)` | 示例更新 |
+| 原内容 | 修改为 | 类型 |
+|:-------|:-------|:-----|
+| §3 "写入返回 Address64，读取通过 Address64 定位" | "写入返回 SizedPtr，读取通过 SizedPtr 定位" | 术语替换 |
+| `IRbfFramer.Append` 返回类型 `Address64` | `SizedPtr` | 签名替换 |
+| `RbfFrameBuilder.Commit` 返回类型 `Address64` | `SizedPtr` | 签名替换 |
+| `IRbfScanner.TryReadAt(Address64 address, ...)` | `TryReadAt(SizedPtr ptr, ...)` | 签名替换 |
+| `RbfFrame.Address` 属性 | `RbfFrame.Ptr`（类型 `SizedPtr`） | 属性替换 |
+| 示例代码中所有 `Address64` | `SizedPtr` | 示例更新 |
 
 ### 2.4 详细修订内容
 
@@ -111,16 +106,16 @@ if (ptr == default) { /* 无效引用 */ }
 
 ### 3.1 替换操作
 
-| 位置 | 原内容 | 修改为 | 类型 |
-|:-----|:-------|:-------|:-----|
-| L28 | "Address64 等接口类型（见 rbf-interface.md）" | "SizedPtr 等接口类型（见 rbf-interface.md）" | 术语替换 |
-| L289 §7 标题 | "Address64 / Ptr64（编码层）" | "SizedPtr（Wire Format）" | 标题替换 |
-| L293 | "本规范所称"地址（Address64/Ptr64）"" | "SizedPtr（8 字节紧凑区间）" | 术语替换 |
-| L296 条款标题 | `[F-PTR64-WIRE-FORMAT]` | `[F-SIZEDPTR-WIRE-FORMAT]` | 条款 ID 替换 |
-| L298-300 | Wire Format 描述（纯偏移量） | Wire Format 描述（offset+length） | 内容替换 |
-| L302 | "接口层的类型化封装见...Address64" | "接口层定义见...SizedPtr" | 引用替换 |
-| L310 | DataTail "地址（见 §7）" | "SizedPtr.OffsetBytes（见 §7）" | 术语替换 |
-| L377 条款索引 | `[F-PTR64-WIRE-FORMAT]` | `[F-SIZEDPTR-WIRE-FORMAT]` | 条款 ID 替换 |
+| 原内容 | 修改为 | 类型 |
+|:-------|:-------|:-----|
+| §1 "Address64 等接口类型" | "SizedPtr 等接口类型" | 术语替换 |
+| §7 标题 "Address64 / Ptr64（编码层）" | "SizedPtr（Wire Format）" | 标题替换 |
+| §7 "本规范所称"地址（Address64/Ptr64）"" | "SizedPtr（8 字节紧凑区间）" | 术语替换 |
+| 条款 `[F-PTR64-WIRE-FORMAT]` | `[F-SIZEDPTR-WIRE-FORMAT]` | 条款 ID 替换 |
+| §7 Wire Format 描述 | 改为 offset+length 语义 | 内容替换 |
+| §7 "接口层的类型化封装见...Address64" | "接口层定义见...SizedPtr" | 引用替换 |
+| DataTail "地址（见 §7）" | "SizedPtr.OffsetBytes（见 §7）" | 术语替换 |
+| 条款索引 `[F-PTR64-WIRE-FORMAT]` | `[F-SIZEDPTR-WIRE-FORMAT]` | 条款 ID 替换 |
 
 ### 3.2 详细修订内容
 
@@ -200,10 +195,10 @@ Null 语义是 **RBF 层的业务约定**：
 
 | 标准 | 验证方法 |
 |:-----|:---------|
-| 所有 `Address64` 引用已移除 | `grep -r "Address64" atelia/docs/Rbf/` 返回空 |
-| 所有新增的 `SizedPtr` 引用正确 | 人工复核 §2.3 定义 |
-| 条款编号已更新 | 条款索引无遗漏/无悬挂引用 |
-| 文档头部增加设计演进锚点 | 两个文档的 frontmatter 含 `produce_by` 指向本 wish |
+| rbf-interface.md / rbf-format.md 中 `Address64` 已替换为 `SizedPtr` | 人工复核核心章节 |
+| 新增 `SizedPtr` 定义完整 | 复核 §2.3 含 `[F-SIZEDPTR-DEFINITION]`、`[F-RBF-NULLPTR]` |
+| 条款索引已同步 | 索引无悬挂引用 |
+| frontmatter 含 `produce_by` | 指向本 wish |
 
 ### 5.2 变更日志条目
 

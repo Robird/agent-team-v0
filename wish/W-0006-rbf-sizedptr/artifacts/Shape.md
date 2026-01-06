@@ -33,32 +33,24 @@ produce_by:
 
 ## 2. Glossary Alignment（术语对照表）
 
-| 术语（新） | 术语（旧） | 定义 | 备注 |
-|:----------|:----------|:-----|:-----|
-| `SizedPtr` | `Address64` | 8 字节紧凑表示的 offset+length 区间 | 完全替代 |
-| `SizedPtr.OffsetBytes` | `Address64.Value` | 指向 Frame 起点的 file offset | 4B 对齐，38-bit（~1TB 范围） |
-| `SizedPtr.LengthBytes` | （无） | Frame 的字节长度 | 4B 对齐，26-bit（~256MB 范围） |
-| `RbfInterface.NullPtr` | `Address64.Null` | RBF 层的 Null 约定 | `= default(SizedPtr)` |
-| `ptr == default` | `address.IsNull` | 判断是否为无效引用 | 标准值类型判等 |
+| 术语（新） | 术语（旧） | 定义 |
+|:----------|:----------|:-----|
+| `SizedPtr` | `Address64` | 8 字节紧凑 offset+length 区间，完全替代 Address64 |
+| `RbfInterface.NullPtr` | `Address64.Null` | `= default(SizedPtr)`，表示无效引用 |
 
-**术语合同**：
-- 跨文档使用时，`Offset` 一词专指 `SizedPtr.OffsetBytes`
-- 不再出现 `Address64` 术语
+**术语合同**：不再出现 `Address64` 术语
 
 ---
 
 ## 3. Interface Contract（关键用途）
 
-基于监护人的核心描述，SizedPtr 在 RBF 中有三个关键用途：
+SizedPtr 在 RBF 中有三个关键用途：
 
 ### 3.1 写数据路径
 
-**场景**：`Append()` / `Commit()` 返回值
+**改进**：写入方法返回 `SizedPtr`，一次性告诉调用方地址+长度。
 
-**改进**（监护人原话）：
-> 一次性告诉外界地址+长度。RBF append 数据返回的 Address64 只包含偏移，导致后续随机读取时需要：先读开头拿长度，再次读取全长，验证。如果用 RandomAccess 类进行 IO，需要至少 2 次独立的 IO。
-
-**新行为**：返回 `SizedPtr`，调用方获得完整的 offset+length 信息。
+原 Address64 只包含偏移，导致后续随机读取需要至少 2 次独立 IO（先读长度，再读全文）。
 
 ### 3.2 读数据路径
 

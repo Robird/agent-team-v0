@@ -1,11 +1,12 @@
 ---
 wishId: "W-0006"
 title: "修订 RBF 设计稿：引入/改用 SizedPtr"
-status: Completed
+status: Abandoned
 owner: "AI Team"
 created: 2026-01-04
-updated: 2026-01-05
-completed: 2026-01-05
+updated: 2026-01-06
+abandoned: 2026-01-06
+abandoned_reason: "审阅方法论失败：Craftsman 陷入学术论文审阅模式，产生大量伪问题（证据链、可追溯性等形式要求），偏离工程交付目标"
 tags: [rbf, design, migration]
 produce:
   # 外部产物文档
@@ -55,16 +56,34 @@ produce:
 | Rule-Tier | 🟢 完成 | [artifacts/Rule.md](artifacts/Rule.md) | NullPtr 定义、Address64 废弃 |
 | Plan-Tier | 🟢 完成 | [artifacts/Plan.md](artifacts/Plan.md) | 修订计划 + Migration Notes |
 | Craft-Tier | 🟢 完成 | [修订后的文档](../../atelia/docs/Rbf/) | Phase 1 文档修订已完成 |
+| Review-Tier | 🔴 失败 | [审阅报告](../../agent-team/handoffs/w0006-review-*.md) | **审阅方法论失败，产生大量伪问题** |
 
-> **状态符号**: ⚪ 未开始 | 🟡 进行中 | 🟢 完成 | 🔴 阻塞 | ➖ N/A  
-> **Phase 1 完成**：✅ 2026-01-05（文档修订）  
+> **状态符号**: ⚪ 未开始 | 🟡 进行中 | 🟢 完成 | 🔴 阻塞/失败 | ➖ N/A  
+> **技术交付**：✅ 2026-01-05（文档修订完成）  
+> **质量审阅**：❌ 2026-01-06（方法论失败，Wish 放弃）  
 > **Phase 2 计划**：代码实现（留给未来 Wish，当前无 active code）
 
 ## 关联 Issue
 
 见：[artifacts/Resolve.md](artifacts/Resolve.md) frontmatter（已全部 resolved）
 
-**完成总结**：监护人提供的核心决策直接解答了 Resolve-Tier 识别的 4 个问题，使后续 Tier 大幅简化。
+## 放弃原因 (Abandonment Reason)
+
+**技术交付已完成**（2026-01-05）：
+- ✅ 文档修订：rbf-interface.md v0.17→v0.18, rbf-format.md v0.16→v0.17
+- ✅ 5 个 Tier 文档产出：Resolve/Shape/Rule/Plan/Craft
+- ✅ SizedPtr 完全替代 Address64
+
+**审阅方法论失败**（2026-01-06）：
+- Craftsman 审阅产生 36 个问题（18 文档/措辞 + 18 设计/工程）
+- **核心问题**：陷入"学术论文审阅模式"，过度关注形式（证据链、可追溯性、历史可复核），偏离工程目标（代码/文档正确性）
+- **典型伪问题示例**：
+  - E1："Resolve 引用的 rbf-interface.md 已被修订为 SizedPtr，证据不可复核" → **倒果为因**：文档被修订正是 Wish 成功的证据
+  - E2："256MB 足够需要追溯之前在哪里分析过" → **过度要求**：监护人决策即为依据
+  - 大量"链接路径""措辞一致性""表述演进"等抠字眼问题
+- **结论**：伪问题增长速度远超真问题，审阅成本 >> 价值
+
+**监护人决策**：放弃本 Wish，RBF 文档修订成果保留（技术上正确），另寻更有效的质量保证方法。
 
 ## 背景
 
