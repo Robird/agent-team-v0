@@ -1,10 +1,11 @@
 ---
 wishId: "W-0006"
 title: "修订 RBF 设计稿：引入/改用 SizedPtr"
-status: Active
+status: Completed
 owner: "AI Team"
 created: 2026-01-04
 updated: 2026-01-05
+completed: 2026-01-05
 tags: [rbf, design, migration]
 produce:
   # 外部产物文档
@@ -41,25 +42,29 @@ produce:
 
 ## 验收标准 (Acceptance Criteria)
 
-- [ ] `atelia/docs/Rbf/rbf-interface.md` 修订完成
-- [ ] `atelia/docs/Rbf/rbf-format.md` 修订完成
-- [ ] 新增 Decision Log 记录"为什么/如何引入 SizedPtr"的 tradeoff
+- [x] `atelia/docs/Rbf/rbf-interface.md` 修订完成（v0.18）
+- [x] `atelia/docs/Rbf/rbf-format.md` 修订完成（v0.17）
+- [x] 新增 Decision Log 记录"为什么/如何引入 SizedPtr"的 tradeoff（Resolve.md §6-7）
 
 ## 层级进度 (Layer Progress)
 
 | Artifact Tier | 状态 | 产物链接 | 备注 |
 |:--------------|:-----|:---------|:-----|
-| Resolve-Tier | 🟡 进行中 | [artifacts/Resolve.md](artifacts/Resolve.md) | 来自 Wish-0004 的后续演化方向 |
-| Shape-Tier | ⚪ 未开始 | [artifacts/Shape.md](artifacts/Shape.md) | 概念边界与术语对齐 |
-| Rule-Tier | ⚪ 未开始 | [artifacts/Rule.md](artifacts/Rule.md) | 条款层的类型/字段约束 |
-| Plan-Tier | ⚪ 未开始 | [artifacts/Plan.md](artifacts/Plan.md) | 迁移步骤（文档层）|
-| Craft-Tier | ➖ N/A | [artifacts/Craft.md](artifacts/Craft.md) | 本 Wish 不做实现 |
+| Resolve-Tier | 🟢 完成 | [artifacts/Resolve.md](artifacts/Resolve.md) | 动机、现状问题、Scope + 监护人决策澄清 |
+| Shape-Tier | 🟢 完成 | [artifacts/Shape.md](artifacts/Shape.md) | 术语对齐、Interface Contract |
+| Rule-Tier | 🟢 完成 | [artifacts/Rule.md](artifacts/Rule.md) | NullPtr 定义、Address64 废弃 |
+| Plan-Tier | 🟢 完成 | [artifacts/Plan.md](artifacts/Plan.md) | 修订计划 + Migration Notes |
+| Craft-Tier | 🟢 完成 | [修订后的文档](../../atelia/docs/Rbf/) | Phase 1 文档修订已完成 |
 
-> **状态符号**: ⚪ 未开始 | 🟡 进行中 | 🟢 完成 | 🔴 阻塞 | ➖ N/A
+> **状态符号**: ⚪ 未开始 | 🟡 进行中 | 🟢 完成 | 🔴 阻塞 | ➖ N/A  
+> **Phase 1 完成**：✅ 2026-01-05（文档修订）  
+> **Phase 2 计划**：代码实现（留给未来 Wish，当前无 active code）
 
 ## 关联 Issue
 
-见：[project-status/issues.gen.md](project-status/issues.gen.md)
+见：[artifacts/Resolve.md](artifacts/Resolve.md) frontmatter（已全部 resolved）
+
+**完成总结**：监护人提供的核心决策直接解答了 Resolve-Tier 识别的 4 个问题，使后续 Tier 大幅简化。
 
 ## 背景
 
