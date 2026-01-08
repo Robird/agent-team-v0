@@ -1,6 +1,7 @@
 # Investigator 认知索引
 
-> 最后更新: 2026-01-06
+> 最后更新: 2026-01-08
+> - 2026-01-08: Memory Palace — 处理了 1 条便签（SizedPtr 迁移 Gotcha: 提交 942e1c0 倒退）
 > - 2026-01-06: Memory Palace — 处理了 6 条便签（C# ref struct 限制、AteliaResult 双类型、Task 派生限制）
 > - 2026-01-06: Memory Palace — 处理了 4 条便签（<deleted-place-holder> 替代性分析续、W-0006/W-0007 锚点汇总）
 > - 2026-01-05: DocGraph 代码调查（Visitor 扩展机制、produce 验证路径、7 条便签）
@@ -24,6 +25,19 @@
 - [ ] atelia-copilot-chat
 
 ## Session Log
+### 2026-01-07: SizedPtr 迁移 Gotcha — 提交 942e1c0 是"倒退"
+**类型**: Gotcha
+**项目**: SizedPtr 迁移
+
+| 问题 | 后果 | 规避 |
+|:-----|:-----|:-----|
+| 提交 942e1c0 "RBF文档修订"实际把 SizedPtr 改回 <deleted-place-holder> | 3 周工作被覆盖，SizedPtr=15→0，<deleted-place-holder>=1→21 | `git revert 942e1c0` 可直接恢复正确状态 |
+
+**现象**: 提交信息听起来像"改进"，实际是"倒退"
+**教训**: 代码审查时需验证提交实际改了什么，不能只看提交信息
+
+**置信度**: ✅ 已验证
+
 ### 2026-01-06: C# ref struct / Task 派生限制调查
 **任务**: AteliaResult 实现过程中发现的 C# 语言边界
 **关键发现**:
