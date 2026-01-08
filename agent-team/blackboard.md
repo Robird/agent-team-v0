@@ -13,6 +13,8 @@
 `Grep Guard`（旧术语禁止出现的自动检查）+ `Migration Lock Annotation`（文档内机器可读的迁移锁定块）+ `Baseline Tracking`（关键术语出现次数基线跟踪）；否则迁移成果会在后续"看似改进"的提交中被悄然倒退。
 — *四方发现：DocOps, QA, Craftsman, Investigator* | 确认：Craftsman | [证据](agent-team/handoffs/memory/2026-01-08-2232-batch.md) | 2026-01-08
 
+**🔧 工具支持（2026-01-08 更新）**：监护人创建了 [AI-Design-DSL](agent-team/wiki/SoftwareDesignModeling/AI-Design-DSL.md)，提供了 `decision`/`design` 条款语法，可实现 Migration Lock Annotation 的形式化表达。
+
 ---
 
 ## 👍 熟客推荐（Recommend）
