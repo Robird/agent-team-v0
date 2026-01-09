@@ -44,18 +44,31 @@
 
 ---
 
-## term `ATX-Node` 标题节点
-用于将Markdown从块级元素序列，以ATX Heading为单位，构建为节点序列。
-由一个Markdown ATX Heading自身及其后直至下一个ATX Heading(或EOF)之间的所有文本复合而成。
-开头的ATX Heading作为@`ATX-Node`的Heading。
-@`ATX-Node`具有深度`Depth`（取嵌套深度语义），定义为其ATX Heading中的井号`#`个数。
-ATX Heading下的所有其他内容定义为@`ATX-Node`的内容`Content`。
+## term `Heading-Node` 标题节点
+一个@`Heading-Node`由以下部分复合而成：
+- `Heading`属性，其内容为Markdown Inline元素组成的序列。
+- `Content`属性，其内容为Markdown Block元素组成的序列。
+- `Depth`属性，应与嵌套深度正相关。
+
+## term `Root-Node` 根节点
+是一种@`Heading-Node`，以文档为单位，由解析器隐式创建，作为整个文档的根节点。它位于任何其他@`Heading-Node`之前。
+- `Heading`属性 SHOULD 为文档URI。
+- `Content`属性 MUST 来源于文档front-matter之后，首个有效ATX Heading（或EOF）之前的全部块级内容。
+- `Depth`属性 MUST 为0。
+
+## term `ATX-Node` ATX节点
+是一种@`Heading-Node`，由解析器为每一个**源ATX Heading**创建。
+- `Heading`属性 MUST 等效于对应**源ATX Heading**的文本按以下步骤导出得到：
+  1. 去除开头 ATX opening sequence（正则表达式`^#+`）。
+  2. 去除 ATX closing sequence（正则表达式`#+$`）。
+  3. 去除中间结果的首尾空白。
+  4. 将结果按 GFM inline 规则解析为行内元素序列。
+- `Content`属性 MUST 等效于对应**源ATX Heading**之后，下一个有效ATX Heading（或EOF）之前的全部块级内容。
+- `Depth`属性 MUST 为**源ATX Heading**中开头 ATX opening sequence的井号`#`个数。*注意！为了简单性，此Depth并非有效嵌套层级，而是仅看字面量。*
 
 ## term `ATX-Tree` 标题树
-用于将@`ATX-Node`按照各自的深度构建为一棵节点树。
-对于任意一个@`ATX-Node` X，沿着节点序列向前逐个检查节点Y，若Y的深度小于X的深度，则终止迭代，并且定义Y是X的父节点。
-所有无显式父节点的节点，都是其所在文档的抽象根节点的子节点。
-**TODO:研究要不要保留此概念。@`ATX-Tree`这个概念目前还没啥用，考虑不正式使用**
+将文档包含的所有@`Heading-Node`按照嵌套关系构建而成的节点树。
+对于任意一个@`ATX-Node` X，定义其上方首个`Depth`属性更小的节点Y，为X的父节点。*由于我们定义了@`Root-Node`位于最前端，所以若X前面没有任何显式节点，则Y就是@`Root-Node`*
 
 ---
 
@@ -68,7 +81,7 @@ ATX Heading下的所有其他内容定义为@`ATX-Node`的内容`Content`。
 
 ### term `Term-ID-Literal` 术语名字字面量
 是@`Term-ID`的字面量写法：在@`Term-ID`外层包裹一对ASCII反引号\`\`。
-@`Term-ID-Literal`主要用于@`Term-Node`的定义（Heading）与引用（便于文本搜索与阅读）。
+@`Term-ID-Literal`主要用于@`Term-Node`的定义（`Heading`属性模式匹配）与引用（便于文本搜索与阅读）。
 
 ### spec [F-TERM-ID-FORMAT] 定义@`Term-ID`格式
 采用逐个单词首字母大写形式（Title-Kebab）英文单词，首字母缩写可全大写（如：`DNA`、`ID`等）。
@@ -86,7 +99,7 @@ ATX Heading下的所有其他内容定义为@`ATX-Node`的内容`Content`。
 其最小形式为：字符`@`后紧跟一个@`Term-ID-Literal`。
 
 ### spec [F-TERM-DEFINITION-FORMAT]
-@`Term-Node`的Heading正文中以`term`关键字开头，空白后紧跟@`Term-ID-Literal`，(可选)空白后再跟Title。
+@`Term-Node`的`Heading`属性以`term`关键字开头，空白后紧跟@`Term-ID-Literal`，(可选)空白后再跟Title。
 
 ---
 
@@ -100,7 +113,7 @@ ATX Heading下的所有其他内容定义为@`ATX-Node`的内容`Content`。
 
 ### term `Clause-ID-Literal` 条款编号字面量
 是@`Clause-ID`的字面量写法：在@`Clause-ID`外层包裹一对ASCII方括号`[]`。
-@`Clause-ID-Literal`主要用于@`Clause-Node`的定义（Heading）与引用（便于文本搜索与阅读）。
+@`Clause-ID-Literal`主要用于@`Clause-Node`的定义（`Heading`属性模式匹配）与引用（便于文本搜索与阅读）。
 
 ### spec [F-CLAUSE-ID-FORMAT] 定义@`Clause-ID`的格式
 采用全大写形式英文单词。
@@ -129,7 +142,7 @@ ATX Heading下的所有其他内容定义为@`ATX-Node`的内容`Content`。
 @`Clause-Modifier` MUST 是单个英文单词。
 
 ### spec [F-CLAUSE-DEFINITION-FORMAT] @`Clause-Node`的定义格式
-@`Term-Node`的Heading正文中以@`Clause-Modifier`开头，空白后紧跟被ASCII方括号`[]`包裹的@`Clause-ID`（即@`Clause-ID-Literal`），(可选)空白后再跟Title。
+@`Term-Node`的`Heading`属性以@`Clause-Modifier`开头，空白后紧跟被ASCII方括号`[]`包裹的@`Clause-ID`（即@`Clause-ID-Literal`），(可选)空白后再跟Title。
 
 ---
 
@@ -165,10 +178,25 @@ ATX Heading下的所有其他内容定义为@`ATX-Node`的内容`Content`。
 *选Matter这个词纯粹是为了拉近与front-matter的关系，让LLM感到熟悉。*
 
 ### spec [F-CLAUSE-MATTER-FORMAT] 定义Clause的元信息格式
-是Markdown fenced code block, 且info string MUST 是自定义标记`clause-matter`，且**紧跟**在@`Clause-Node`的Heading下面。
-**紧跟**指ATX Heading的下一行 MUST 是 fence 起始行，两行之间只有一个`\n`，MUST NOT 出现空行、注释行、或其它块级元素插入。
+是Markdown fenced code block, 且info string MUST 是自定义标记`clause-matter`，且 SHOULD 紧跟在@`Clause-Node`的Heading下面。
+解析器 SHOULD 容忍在Heading和clause-matter之间出现空行，但为了最佳可读性，建议不要插入其他内容。
 
 ### derived [F-CLAUSE-MATTER-EXAMPLE] 条款元信息示例
 ```clause-matter
 note:注意这条Markdown fence紧跟在@[F-CLAUSE-MATTER-EXAMPLE]条款的标题下。
 ```
+
+---
+
+## term `Summary-Node` 摘要节点
+用于机读摘要。
+是一种@`ATX-Node`，且 MUST 同时满足如下条件：
+  - `Heading`属性 MUST 等于全小写的关键字`summary`或`gist`。
+  - `Depth`属性为1。*当前严格是为了避免捕获父链Heading的复杂性。未来可能放宽。*
+  - 是@`ATX-Tree`中的叶节点。*当前严格是为了避免子节点的复杂性。未来可能放宽。*
+@`Summary-Node` MAY 出现在文档的任何位置。
+@`Summary-Node` MAY 出现多个。机读时 MUST 保序聚合。
+*机读摘要主要有2种目的：1. 自动多文件聚合；2. 让LLM可以在读取全文之前了解核心信息。*
+关键字`gist`在此处是一种详略级别，比普通的摘要更短，仅保留最短的实用性信息。**
+
+---
