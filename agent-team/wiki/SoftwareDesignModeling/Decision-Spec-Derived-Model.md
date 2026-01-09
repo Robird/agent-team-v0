@@ -11,9 +11,9 @@
 
 | 术语 | 全称 | 中文 | 定义 | AI 权限 |
 |:---|:---|:---|:---|:---|
-| **Decision** | Decision Layer | 决策层 | 定义**目标与约束**（Why & Constraints）。如技术选型、公理、不动点。 | 🚫 **只读** (除非被明确要求重审) |
-| **Spec** | Specification Layer | 规格层 | 定义**具体实现规格**（What & How）。如接口签名、数据布局、状态机。 | ✅ **主要产出** (基于 Decision 生成) |
-| **Derived** | Derived Layer | 推导层 | 定义**辅助理解信息**（Context & Examples）。如 FAQ、图示、用例。 | ♻️ **不仅可改，可销毁重建** |
+| **Decision** | Decision Layer | 决策层 | 定义**目标与约束**（Why & Constraints）。如技术选型、公理、不动点。 | **只读** (除非被明确要求重审) |
+| **Spec** | Specification Layer | 规格层 | 定义**具体实现规格**（What & How）。如接口签名、数据布局、状态机。 | **主要产出** (基于 Decision 生成) |
+| **Derived** | Derived Layer | 推导层 | 定义**辅助理解信息**（Context & Examples）。如 FAQ、图示、用例。 | **不仅可改，可销毁重建** |
 | **Normative**| Normative Clauses | 规范性集合| `Decision` + `Spec` 的合集。这些是必须遵守的约束。 | - |
 | **SSOT** | Single Source of Truth| 唯一真实源| 一种**属性**。同一事实只能有一个 canonical definition（No Double Write）。 | - |
 | **Canonical Source** | Canonical Source | 权威源 | Canonical definition 所在的**权威载体**（文件/章节/条款）。 | - |
@@ -103,6 +103,18 @@ flowchart TD
   - **默认规则**：冲突仲裁使用 `project` 作用域；局部引用使用 `doc` 作用域
 - **冲突仲裁**：当 `Derived` 内容与 `Normative` 内容冲突时，**以 `Normative` 为准**。
 
+### 3.2 长期演进愿景：生成式设计规划 (Generative Design Planning)
+
+我们将 AI 辅助软件设计视为一个 **动态的多步规划过程**。设计空间被建模为一个有向图，图中的节点代表决策点，而路径构成了当前的设计状态。Spec 的生成与演进，实质上是 LLM 在此状态图上进行的 **启发式搜索**。
+
+在此过程中，LLM 扮演三个决定性角色：
+- **节点展开 (Generator)**：基于已有路径累积的 Normative 上下文，生成多个可能的 Spec 候选项。
+- **策略引导 (Policy)**：作为启发式指引，选择当前最优的 Spec 分支。
+- **价值评估 (Value Function)**：评估整条设计路径的一致性可能与优劣。
+
+> **注意**：基于上述愿景，以下章节内容目前作为 **待定草稿 (Draft)** 保留，等待重构。
+
+~~~markdown
 #### 3.1.1 冲突仲裁矩阵
 
 当发现设计文档中存在冲突信息时，按以下规则处理：
@@ -185,5 +197,5 @@ flowchart TD
 1. 自动判定：按照 §3.1.1 冲突仲裁矩阵确定优先级
 2. 若可自动修复：执行修复并在输出中说明（"发现冲突 X，已按规则修改 Y"）
 3. 若需人工裁决：停止修改，向用户报告冲突并请求指示
-
+~~~
 ---
