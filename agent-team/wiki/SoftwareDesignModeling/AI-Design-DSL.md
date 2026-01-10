@@ -33,6 +33,20 @@
 
 ---
 
+## 通用词法规则
+定义本DSL中通用的词法解析行为。
+
+### spec [S-KEYWORD-CASE-INSENSITIVITY] 关键字大小写不敏感
+本DSL中的所有关键字（Keyword）在解析时 MUST 忽略大小写（Case-Insensitive）。
+关键字包括但不限于：`term`、`decision`、`spec`、`derived`、`import`、`summary`、`gist`。
+*例如：`Decision`、`DECISION` 和 `decision` 均应被识别为相同的关键字。*
+
+### spec [F-KEYWORD-PREFERRED-STYLE] 风格约定
+尽管解析器支持宽松匹配，但在编写文档时，关键字 SHOULD 优先使用全小写形式。
+*全小写有助于在视觉上区分“DSL元数据”与“自然语言标题”。*
+
+---
+
 ## term `TODO-Element` 待办事项
 用于记录待办事项。
 
@@ -135,13 +149,10 @@
 - reference-style link：`@` + @`Clause-ID-Literal`，并在文档其他位置提供对应的Link Reference Definition。
 
 ### term `Clause-Modifier` 职能修饰符
-@`Clause-Modifier`是一种关键字，用于表述@`Clause-Node`的亚型。采用全小写单个英文单词形式。
-*@`Clause-Modifier`目前有3种：`decision`、`spec`、`derived`。*
-
-### spec [F-CLAUSE-MODIFIER-CONSTRAINT] @`Clause-Modifier`格式约束
+@`Clause-Modifier`是一种关键字，用于表述@`Clause-Node`的亚型。采用单个英文单词形式。
 @`Clause-Modifier` MUST NOT 省略。
-@`Clause-Modifier` MUST 全部小写。
 @`Clause-Modifier` MUST 是单个英文单词。
+*@`Clause-Modifier`目前有3种：`decision`、`spec`、`derived`。*
 
 ### spec [F-CLAUSE-DEFINITION-FORMAT] @`Clause-Node`的定义格式
 @`Term-Node`的`Heading`属性以@`Clause-Modifier`开头，空白后紧跟被ASCII方括号`[]`包裹的@`Clause-ID`（即@`Clause-ID-Literal`），(可选)空白后再跟Title。
@@ -176,7 +187,7 @@
 ## term `Summary-Node` 摘要节点
 用于机读摘要。
 是一种@`ATX-Node`，且 MUST 同时满足如下条件：
-  - `Heading`属性 MUST 等于全小写的关键字`summary`或`gist`。
+  - `Heading`属性 MUST 等于关键字`summary`或`gist`。
   - `Depth`属性为1。*当前严格是为了避免捕获父链Heading的复杂性。未来可能放宽。*
   - 是@`ATX-Tree`中的叶节点。*当前严格是为了避免子节点的复杂性。未来可能放宽。*
 @`Summary-Node` MAY 出现在文档的任何位置。
@@ -188,7 +199,7 @@
 
 ## term `Import-Node` 导入节点
 是一种@`ATX-Node`，用于将外部文档的符号表引入当前文档上下文。
-`Heading`属性以关键字`import`开头（建议全小写）。
+`Heading`属性以关键字`import`开头。
 
 ### spec [F-IMPORT-SYNTAX] 定义导入语法
 @`Import-Node` 的 `Heading` 属性 MUST 包含一个合法的 GFM Link 元素，形式为 `[Prefix](Url)`。
