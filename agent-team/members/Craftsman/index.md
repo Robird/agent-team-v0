@@ -79,7 +79,10 @@
     - 单向引用验证闭环：`grep -E '\\[D-|rbf-derived' <SSOT文件>` 检测逆流引用 → 修复 → 再验证。
     - "锁定的 SSOT 位置"审计信息亦可能构成逆流（条款 ID 双写）——需删除反向引用，仅保留决策语义。  - **Design-DSL 映射（2026-01-09）**：
     - DSL modifier 与三层推荐映射：`decision` ≈ Decision-Layer，`design` ≈ SSOT/Normative-Layer（Decision+Design 都属于 SSOT-Clauses），`hint` ≈ Derived/Informative-Layer。
-    - Clause-ID 前缀规范：继续收敛为 `F-`/`A-`/`S-`/`R-`；不再使用 `D-*`/`H-*` 作为 Clause-ID（避免与 spec-conventions Requirement-ID 前缀冲突）。- [I-011] **最小对齐策略（够用即可）**：
+    - Clause-ID 前缀规范：继续收敛为 `F-`/`A-`/`S-`/`R-`；不再使用 `D-*`/`H-*` 作为 Clause-ID（避免与 spec-conventions Requirement-ID 前缀冲突）。  - **RBF v0.25 核查（2026-01-11）**：
+    - rbf-interface.md 与 rbf-type-bone.md 接口签名已对齐（含 Truncate long）。
+    - P1：derived 条款中出现规范性 MUST（ScanReverse.Current 生命周期提示），建议改为 spec 或降级措辞。
+    - P2：关系表"实现"措辞可改为"SSOT/定义"；derived 中写死 SizedPtr 38:26 位分配可能漂移。
   - 让“会影响实现/测试的语义”有且仅有一个权威定义（通常是类型/接口/格式规范中的定义段）。
   - 其他位置只做**链接或一句话转述**（informative），不再维护第二份等价定义。
   - 示例代码以“能编译/能跑测试”为准；无法保证同步就不要放“看似正式”的长示例。
