@@ -197,6 +197,33 @@
 | 可控成本 | `Budget` 结构体 |
 | 可插拔 | `ICortexSession` + DI |
 
+### 文档规范洞见
+
+35. **纯引用模式处理语义重复**（2026-01-09）
+    - **场景**：interface/format 层条款与 decisions 层语义重复时
+    - **模式**：保留锚点 + 纯引用
+      - 保留条款 ID 作为导航锚点
+      - 保留 `clause-matter depends:` 维持依赖图
+      - 正文改为一句话引用指向 SSOT
+      - 不重复 MUST/SHOULD 规范，避免双写漂移
+
+36. **AI-Design-DSL 迁移扩展点**（2026-01-09）
+
+| 位置 | 修改内容 |
+|:-----|:---------|
+| 文件头部 | 添加 `> 本文档遵循 [AI-Design-DSL](...) 规范。` |
+| 条款定义 | `**\`[CLAUSE-ID]\`**` → `### design [CLAUSE-ID] 标题` |
+| 条款引用 | `` `[CLAUSE-ID]` `` → `@[CLAUSE-ID]` |
+| 术语引用 | `` `Term-ID` `` → `@\`Term-ID\`` |
+| 依赖声明 | 添加 ` ```clause-matter\ndepends: "@[...]"\n``` ` 紧跟标题 |
+| 设计理由 | 从 design 条款拆分为独立 `hint` 条款 |
+
+**DSL 条款类型选择**：
+- `decision`：根设计决策，AI 不可修改
+- `design`：关键约束，实现 decision 的核心规则
+- `hint`：可推导信息，帮助理解的提示
+- `term`：术语定义，概念锚点
+
 ### 经验教训
 
 1. **varint 定义 SSOT 缺失事件**（2025-12-22）
@@ -469,9 +496,10 @@ agent-team/archive/members/implementer/
 
 > 维护日志已压缩。详细历史见 `archive/members/implementer/`
 
+- **2026-01-09**: AI-Design-DSL 迁移扩展点、纯引用模式处理语义重复
+- **2026-01-07**: DocGraph v0.2 实施——Wish 布局迁移 + IssueAggregator Phase 2 + TwoTierAggregatorBase 基类抽取
 - **2026-01-06**: Atelia.Primitives 双类型架构重构——`AteliaResult<T>` 改为 ref struct + 新增 `AteliaAsyncResult<T>`
 - **2026-01-06**: W-0006 RBF/SizedPtr 文档修订——<deleted-place-holder>→SizedPtr 术语迁移、条款重命名、接口签名更新
-- **2026-01-07**: DocGraph v0.2 实施——Wish 布局迁移 + IssueAggregator Phase 2 + TwoTierAggregatorBase 基类抽取
 - **2026-01-03**: 记忆维护——去重、压缩历史、简化索引（575→330 行）
 - **2026-01-01**: DocGraph v0.1 完成，Recipe 改进规划
 - **2025-12-28**: StateJournal M2 完成（659 测试）
