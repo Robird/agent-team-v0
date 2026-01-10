@@ -1,6 +1,7 @@
 # Investigator 认知索引
 
-> 最后更新: 2026-01-08
+> 最后更新: 2026-01-09
+> - 2026-01-09: Memory Palace — 处理了 9 条便签（SizedPtr 迁移验证、RBF 条款统计、AI-Design-DSL 锚点、atelia-copilot-chat 调查、Gotcha 2 条）
 > - 2026-01-08: Memory Palace — 处理了 1 条便签（SizedPtr 迁移 Gotcha: 提交 942e1c0 倒退）
 > - 2026-01-06: Memory Palace — 处理了 6 条便签（C# ref struct 限制、AteliaResult 双类型、Task 派生限制）
 > - 2026-01-06: Memory Palace — 处理了 4 条便签（<deleted-place-holder> 替代性分析续、W-0006/W-0007 锚点汇总）
@@ -25,6 +26,94 @@
 - [ ] atelia-copilot-chat
 
 ## Session Log
+### 2026-01-09: RBF/AI-Design-DSL 验证锚点汇总
+**类型**: Route + Anchor
+**项目**: RBF, AI-Design-DSL
+
+| 锚点 | 验证命令 | 状态 |
+|:-----|:---------|:-----|
+| SizedPtr 迁移完整性 | `grep -rn "deleted-place-holder" atelia/docs/Rbf/` | ✅ 0 匹配 |
+| rbf-decisions.md 条款 | 9 条（6 Decision + 3 Format） | ✅ 验证过 |
+| AI-Design-DSL 跨文档引用 | `grep -rn "S-RBF-DECISION-WRITEPATH\|S-RBF-DECISION-4B-ALIGNMENT" atelia/docs/Rbf/` | ✅ 验证过 |
+
+**rbf-decisions.md 条款统计**：
+- 位置: [atelia/docs/Rbf/rbf-decisions.md#L21-L89](atelia/docs/Rbf/rbf-decisions.md#L21-L89)
+- 6 条 `[S-RBF-DECISION-*]`（决策性）+ 3 条 `[F-*]`（格式定义性）
+- 条款 ID 格式符合 AI-Design-DSL 的 `[F-CLAUSE-ID-FORMAT]`
+
+**跨文档引用位置**：
+- `rbf-interface.md` L17 → `[S-RBF-DECISION-WRITEPATH-CHUNKEDRESERVABLEWRITER]`
+- `rbf-format.md` L114 → `[S-RBF-DECISION-4B-ALIGNMENT-ROOT]`
+- **Phase 1 TODO**: 将引用格式从 `**\`[ID]\`**` 迁移为 `@[ID]`
+
+**置信度**: ✅ 验证过（2026-01-09）
+
+### 2026-01-09: AI-Design-DSL 迁移 Gotcha — Heading 锚点会变化
+**类型**: Gotcha
+**项目**: AI-Design-DSL
+
+| 问题 | 后果 | 规避 |
+|:-----|:-----|:-----|
+| DSL 化后 Heading 格式从 `## 标题` 变为 `## modifier [ID] Title` | GitHub 自动生成的锚点会改变 | 1. 确认无外部链接依赖后再迁移；2. 内部引用优先使用 Clause ID；3. 如需稳定锚点，添加 HTML anchor |
+
+**示例**：`#s-rbf-decision-xxx` → `#decision-s-rbf-decision-xxx-中文title`
+
+**置信度**: ⚠️ 经验性观察
+
+### 2026-01-09: atelia-copilot-chat Fork 现状调查
+**任务**: 调研 Fork 版本差距、核心修改点、扩展机制
+**关键发现**:
+
+#### 1. Fork 版本状态
+| 指标 | 数值 |
+|:-----|:-----|
+| 版本差距 | 6 commits ahead, 64 commits behind |
+| 我们的改动 | 8 files, +1083/-5 lines |
+| 新增功能 | `summarizedConversationHistory.tsx` (966 lines) — half-context 摘要 |
+
+#### 2. 核心修改点锚点
+- [copilotIdentity.tsx](atelia-copilot-chat/src/extension/prompts/node/base/copilotIdentity.tsx) — 身份定义
+- [safetyRules.tsx](atelia-copilot-chat/src/extension/prompts/node/base/safetyRules.tsx) — 安全规则
+- [agentPrompt.tsx#L98](atelia-copilot-chat/src/extension/prompts/node/agent/agentPrompt.tsx#L98) — 角色描述
+
+#### 3. runSubagent API 稳定性（Signal）
+- 代码特征: `ToolName.CoreRunSubagent = 'runSubagent'` + `ToolCategory.Core`
+- 历史波动: 曾被删除（#1819）后恢复 — 非核心架构，可能再次变动
+- 监控命令: `git log --all --oneline -- "**/runSubagent*" "**/subagent*"`
+
+#### 4. PromptRegistry 扩展机制（推测）
+- 入口: [promptRegistry.ts](atelia-copilot-chat/src/extension/prompts/node/agent/promptRegistry.ts)
+- 扩展点: `IAgentPrompt` 接口 + `PromptRegistry.registerPrompt()`
+- 可定制项: SystemPrompt, CopilotIdentityRules, SafetyRules, userQueryTagName, attachmentHint
+- 潜在"第四条路": 通过注册自定义 AgentPrompt 实现低侵入定制（待深入调研）
+
+**置信度**: ✅ 版本数据验证过；⚠️ 扩展机制为推测
+
+### 2026-01-09: SizedPtr 范围估算陷阱 — 4B 对齐导致 ×4
+**类型**: Gotcha
+**项目**: RBF
+
+| 问题 | 后果 | 规避 |
+|:-----|:-----|:-----|
+| 38-bit offset 范围容易被误算为 ~256GB | 因 4B 对齐实际为 ~1TB，文档中数值偏小 4 倍 | 1. 从 SSOT（`SizedPtr.cs`）读取 `MaxOffset`/`MaxLength` 常量；2. 避免硬编码估算值；3. 公式：`(2^bits - 1) × 4` |
+
+**已知问题点**: [rbf-interface.md#L103](atelia/docs/Rbf/rbf-interface.md#L103)
+
+**置信度**: ✅ 验证过
+
+### 2026-01-09: "语义重复 vs 纯引用"快速检查路径
+**类型**: Route
+**项目**: RBF
+
+- **判断标准**: 下层条款正文是否只含引用声明，还是重述了上层语义
+- **验证命令**: 
+  ```bash
+  grep -A10 "^### design" atelia/docs/Rbf/rbf-interface.md | grep -E "depends:|>"
+  ```
+- **正确示范**: `rbf-format.md` §2.1 — "已上移至 Decision-Layer" + 纯引用列表
+
+**置信度**: ✅ 验证过
+
 ### 2026-01-07: SizedPtr 迁移 Gotcha — 提交 942e1c0 是"倒退"
 **类型**: Gotcha
 **项目**: SizedPtr 迁移
