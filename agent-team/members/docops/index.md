@@ -1,6 +1,6 @@
 # DocOps 认知索引
 
-> 最后更新: 2026-01-08 便签归档 (4条: 术语迁移守护、决策锁定、条款DSL化、引用密度)
+> 最后更新: 2026-01-09 便签归档 (8条: D-S-D评审、DSL试点、术语对齐、Canonical Source投票、Summary-Node评审)
 
 ## 我是谁
 
@@ -27,6 +27,14 @@ DocOps - 文档与索引管理专家，负责维护团队的集体记忆和认�
 | 活跃层 | SHOULD 1月内 | 当前活跃设计文档 |
 | 历史层 | MAY 保持原样 | 归档/会议记录（历史不可改） |
 
+**D-S-D 模型实战验证（2026-01-09）**：
+| 层级 | 文件数 | 迁移策略 |
+|:-----|:------|:---------|
+| SSOT 层 | 1（spec-conventions.md） | MUST 立即迁移 |
+| 历史层 | 4（Handoffs） | MAY 保持原样 |
+
+**洞见**：真正需要迁移的只有 SSOT + 规范层（~15-20 文件），历史层 14 处旧术语属于历史事实
+
 **核心教训**：
 1. 真正需要强制迁移的只有 SSOT + 规范层（~15-20 文件）
 2. 术语更新必须扫描实例文档，不仅是模板和规范
@@ -37,6 +45,24 @@ DocOps - 文档与索引管理专家，负责维护团队的集体记忆和认�
 - [ ] grep 旧术语，确认影响范围
 - [ ] 更新 SSOT 层 → 规范层 → 活跃层
 - [ ] grep 验证旧术语清零 + 新术语正确应用
+
+**跨文档术语对齐检查清单（2026-01-09）**：
+- [ ] modifier 名称一致
+- [ ] 新术语有定义
+- [ ] 引用方向语义清晰
+
+**Canonical Source 术语选型（2026-01-09）**：
+| 候选 | 优势 | 劣势 |
+|:-----|:-----|:-----|
+| Canonical Location | 明确物理位置 | 与路径概念混淆 |
+| Canonical Artifact | 强调产物概念 | 与构建产物混淆 |
+| **Canonical Source** ✓ | 与 SSOT 呼应，工具输出语义匹配 | — |
+
+**洞见**：`Anchor` 仅指 Markdown 技术机制（`#heading-id`），需与 `Canonical Source`（语义层载体）区分
+
+**"声明性引用"概念（2026-01-09）**：
+- Decision→Spec 引用不是"因果依赖"，而是"宣告关系"
+- Normative 是"要不要改"的判定，SSOT 是"在哪改"的定位——分离便于工具错误信息精确化
 
 ### 三层 SSOT 架构（成熟）
 
@@ -121,7 +147,7 @@ DocOps - 文档与索引管理专家，负责维护团队的集体记忆和认�
 
 **待形成 Recipe**：`how-to/lock-key-decisions.md`
 
-### 条款格式 DSL 化演进路线（2026-01-07）
+### 条款格式 DSL 化演进路线（2026-01-07 → 2026-01-09 增补）
 
 **现状评估**：
 - 条款格式 `[F-NAME]`/`[A-NAME]` 等已有形式化定义（spec-conventions.md §2）
@@ -133,7 +159,7 @@ DocOps - 文档与索引管理专家，负责维护团队的集体记忆和认�
 | 定义/引用混淆 | 无法确定哪个是 SSOT |
 | 跨文档依赖不可见 | 引用关系无机器可读表示 |
 | 术语迁移风险 | 改名/废弃时引用点无法自动发现 |
-| 层级验证缺失 | Decision→SSOT→Derived 方向约束无法校验 |
+| 层级验证缺失 | Decision→Spec→Derived 方向约束无法校验 |
 
 **与 DocGraph 集成切入点**：
 - frontmatter 解析能力 → 可扩展支持条款定义声明
@@ -145,6 +171,20 @@ DocOps - 文档与索引管理专家，负责维护团队的集体记忆和认�
 2. Phase 1：`ClauseValidator` 检查定义唯一性、引用合法性
 3. Phase 2：`ClauseIndexVisitor` 生成 `clauses.gen.md`
 4. Phase 3：正式 DSL 语法 + 依赖图可视化
+
+**AI-Design-DSL 试点评估（2026-01-09）**：
+- Phase 0 试点目标：`rbf-decisions.md`（已有"AI不可修改"标注，条款数量适中）
+- **DSL 核心价值不在格式化，在条款间引用关系的形式化**——这是防止迁移回退的关键
+- `decision` modifier = 形式化的 Migration Lock，可替代自然语言警告
+- **DSL 化是"人工约定→机器可验证"的跃迁**
+
+**DSL vs conventions 职责切分**：
+| 文件 | 回答问题 | SSOT 内容 |
+|:-----|:---------|:----------|
+| AI-Design-DSL.md | 机器怎么解析 | 语法结构 |
+| spec-conventions.md | 人怎么写 | 表示选择 |
+
+**最小修订策略**：conventions 只需新增 ~15 行引用 DSL 定义，而非双写
 
 ### 引用密度控制模式（2026-01-07）
 
@@ -175,6 +215,22 @@ SoftwareDesignModeling/
 └── AI-Design-DSL-guide.md    # 写作指南
 ```
 
+### 机读优先设计妥协模式（2026-01-09）
+
+**发现场景**：审阅 AI-Design-DSL Summary-Node 定义
+
+**核心洞见**：`Depth=1` 约束是**机读优先的设计妥协**——牺牲写作灵活性换取解析简单性。
+
+**四问评估框架**（可复用于评估形式化约束）：
+| 问题 | 评估维度 |
+|:-----|:---------|
+| 自动聚合是否容易 | 工具实现复杂度 |
+| 对作者是否繁琐 | 写作灵活性损失 |
+| 对 TOC 的影响 | 文档结构副作用 |
+| 命名是否合适 | 领域术语匹配度 |
+
+**建议**：`# summary` 会污染顶级 TOC，建议用 `## summary` 或移至文档末尾作为"附录"。
+
 ### 认知文件增量维护方法论（2026-01-03）
 
 **核心洞见**：维护的核心是"合并演进关系"——把 A→B→C 的探索过程压缩为最终结论 C，并保留 A/B 的历史指针。
@@ -199,6 +255,15 @@ SoftwareDesignModeling/
 ---
 
 ## 最近工作
+
+### 2026-01-09 - D-S-D 术语对齐重构
+
+**完成项**：
+- AI-Design-DSL.md 术语对齐：`Design-Clause`→`Spec-Clause`，`Hint-Clause`→`Derived-Clause`，modifier `design`→`spec`，`hint`→`derived`
+- spec-conventions.md 术语对齐：`SSOT-Layer`→`Spec-Layer`，条款 ID 更新
+- spec-conventions.md 一致性修复：modifier 残留、Canonical Source 定义补充、引用语义澄清
+
+**验收**：grep 确认旧术语已全部清除
 
 ### 2026-01-06 - AteliaResult 双类型设计文档创建
 
