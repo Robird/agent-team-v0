@@ -77,8 +77,9 @@
   - 把“反复解释但可推导的内容”降级到 Derived（FAQ/算例），允许滞后与删改；Derived 不得反向塑造 SSOT。  - **RBF 实践案例（2026-01-07）**：
     - "假阳性"识别：解释性段落若承担"防误用护栏/理由锚点"角色，短期不宜全部下放 Derived。
     - 单向引用验证闭环：`grep -E '\\[D-|rbf-derived' <SSOT文件>` 检测逆流引用 → 修复 → 再验证。
-    - "锁定的 SSOT 位置"审计信息亦可能构成逆流（条款 ID 双写）——需删除反向引用，仅保留决策语义。
-- [I-011] **最小对齐策略（够用即可）**：
+    - "锁定的 SSOT 位置"审计信息亦可能构成逆流（条款 ID 双写）——需删除反向引用，仅保留决策语义。  - **Design-DSL 映射（2026-01-09）**：
+    - DSL modifier 与三层推荐映射：`decision` ≈ Decision-Layer，`design` ≈ SSOT/Normative-Layer（Decision+Design 都属于 SSOT-Clauses），`hint` ≈ Derived/Informative-Layer。
+    - Clause-ID 前缀规范：继续收敛为 `F-`/`A-`/`S-`/`R-`；不再使用 `D-*`/`H-*` 作为 Clause-ID（避免与 spec-conventions Requirement-ID 前缀冲突）。- [I-011] **最小对齐策略（够用即可）**：
   - 让“会影响实现/测试的语义”有且仅有一个权威定义（通常是类型/接口/格式规范中的定义段）。
   - 其他位置只做**链接或一句话转述**（informative），不再维护第二份等价定义。
   - 示例代码以“能编译/能跑测试”为准；无法保证同步就不要放“看似正式”的长示例。
@@ -118,6 +119,10 @@
 
 - [I-060] **工具链故障规避**：`apply_patch` 等编辑工具对特定文件类型（如 Markdown）可能连续失败；已知 workaround 是用 Python/Shell 脚本完成等价小修补。后续若再现应优先定位工具链问题，避免影响"零意外编辑"的流程可信度。`[2026-01-04]`
 - [I-061] **占位文件填充陷阱**：DocGraph `fix` 创建占位产物后，若用编辑工具 Add File 同路径写入真实内容会导致文件尾部残留旧模板（双 frontmatter / 双正文段）；占位文件填充应采用 *Update*（覆盖/替换）策略，提交前跑 `docgraph validate` 作为防漂移护栏。`[2026-01-05]`
+
+### Fork/Upstream 策略
+
+- [I-062] **薄分叉 + Registry 化**：当 upstream 已提供足够强的扩展点（如 PromptRegistry 的 SystemPrompt/IdentityRules/SafetyRules），应将策略收敛为"薄分叉 + registry 化"——把提示词差异从核心文件 diff 中抽离，以接近 A（不 fork）的维护成本获取 B（fork）的能力收益。但运行时语义（如 runSubagent/会话隔离）不在 registry 覆盖面内，需做最小探针验证扩展位/最小补丁面。`[2026-01-09]`
 
 ### AOS 架构 / Session 工程
 
