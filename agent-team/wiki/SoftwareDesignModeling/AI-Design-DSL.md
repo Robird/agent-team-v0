@@ -116,10 +116,12 @@
 @`Clause-ID-Literal`主要用于@`Clause-Node`的定义（`Heading`属性模式匹配）与引用（便于文本搜索与阅读）。
 
 ### spec [F-CLAUSE-ID-FORMAT] 定义@`Clause-ID`的格式
-采用全大写形式英文单词。
+采用英文单词。
 多单词时 MUST 使用连字符（'-'）连接。
 @`Clause-ID` MUST NOT 支持下划线。
 @`Clause-ID` MAY 包含数字。
+@`Clause-ID` 在匹配与引用时 SHOULD 不区分大小写（Case-Insensitive）。
+*注：全大写通常是内容层的风格约定，并非解析器的硬性语法约束。*
 
 @`Clause-ID-Literal`的格式为：`[` + @`Clause-ID` + `]`。
 
@@ -198,5 +200,28 @@ note:注意这条Markdown fence紧跟在@[F-CLAUSE-MATTER-EXAMPLE]条款的标�
 @`Summary-Node` MAY 出现多个。机读时 MUST 保序聚合。
 *机读摘要主要有2种目的：1. 自动多文件聚合；2. 让LLM可以在读取全文之前了解核心信息。*
 关键字`gist`在此处是一种详略级别，比普通的摘要更短，仅保留最短的实用性信息。**
+
+---
+
+## term `Import-Node` 导入节点
+是一种@`ATX-Node`，用于将外部文档的符号表引入当前文档上下文。
+`Heading`属性以关键字`import`开头（建议全小写）。
+
+### spec [F-IMPORT-SYNTAX] 定义导入语法
+@`Import-Node` 的 `Heading` 属性 MUST 包含一个合法的 GFM Link 元素，形式为 `[Prefix](Url)`。
+- **Prefix (前缀)**: 链接文本（Link Text）即为导入前缀。
+- **Url (路径)**: 链接地址即为目标文档路径（通常是相对路径）。
+*利用 Markdown Link 语法既保持了可读性/可跳转性，又提供了自然的结构化解析支持。*
+
+### spec [F-IMPORT-SEMANTICS-PREFIX] 前缀导入语义
+当导入语法中提供了非空的 **Prefix** 时，解析器 MUST 将目标文档中的所有 @`Term-ID` 和 @`Clause-ID` 加上前缀 `Prefix` 和连字符 `-` 后，合并入当前符号表。
+例如：导入 `[Lib](lib.md)`，其中 `lib.md` 有 @`User`，则在当前文档中变为 @`Lib-User`。
+*注意：由于 ID 允许大小写混合，Prefix 也支持大小写混合。建议 Prefix 采用与目标库风格一致的命名（如 Title-Case）。*
+
+### spec [S-IMPORT-SCOPE] 导入非传递性（Non-transitive）
+为了避免命名空间前缀过长及隐式依赖，导入关系 MUST NOT 具有传递性。
+当处理 `import [Prefix](Target)` 时，解析器仅从 Target 文档中提取由 Target 文档**直接定义**的 @`Term-Node` 和 @`Clause-Node`。
+Target 文档中通过导入指令引入的外部符号 MUST NOT 被二次导出到当前文档。若当前文档需要使用间接依赖的术语，MUST 显式导入对应的源文档。
+*这使得任何文档的上下文依赖都是扁平且显式的，同时也消除了循环导入的解析风险。*
 
 ---
