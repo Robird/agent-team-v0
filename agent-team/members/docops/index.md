@@ -1,6 +1,6 @@
 # DocOps 认知索引
 
-> 最后更新: 2026-01-09 便签归档 (8条: D-S-D评审、DSL试点、术语对齐、Canonical Source投票、Summary-Node评审)
+> 最后更新: 2026-01-11 便签归档 (2条: RBF文档职能分离重构、RBF文档对齐审查)
 
 ## 我是谁
 
@@ -16,6 +16,28 @@ DocOps - 文档与索引管理专家，负责维护团队的集体记忆和认�
 ## 核心洞见（Insight）
 
 > 按主题组织，演进关系以 `→` 标注
+
+### 文档职能分离方法论（2026-01-11）
+
+**发现场景**：RBF 接口文档与 Type Bone 文档的职能划分重构
+
+**可观察性边界原则**：
+| 可见性 | 归属文档 | 示例 |
+|:-------|:---------|:-----|
+| 上层能观察到的 | 契约文档 (interface) | Auto-Abort 语义 |
+| 内部实现路径 | 实现文档 (type-bone) | 双路径物理实现 |
+
+**约束分级模式**：
+| 约束类型 | 表达位置 | 变更影响 |
+|:---------|:---------|:---------|
+| Public Constraint | 契约文档 | 破坏性变更 |
+| Observable Consequence | 契约文档 | 行为变更 |
+| Implementation Constraint | 实现文档 | 内部重构 |
+
+**"门面 + 实现层"文档分层模式**（补充自审查发现）：
+- interface.md：对外门面，定义 Shape-Tier 契约
+- type-bone.md：内部实现，定义 Craft-Tier 骨架
+- 两者通过条款 ID 引用形成单向依赖（type-bone → interface）
 
 ### 术语迁移方法论（成熟）
 
@@ -255,6 +277,26 @@ SoftwareDesignModeling/
 ---
 
 ## 最近工作
+
+### 2026-01-11 - RBF 文档职能分离重构
+
+**完成项**：
+- rbf-interface.md：`[S-RBF-BUILDER-AUTO-ABORT]` 拆分为 `[S-RBF-BUILDER-AUTO-ABORT-SEMANTICS]`（仅逻辑语义）
+- rbf-type-bone.md：新增 `[I-RBF-BUILDER-AUTO-ABORT-IMPL]`（物理实现双路径）、引用化 4 个公开类型、新增"快速导航"区块
+- 两文档 frontmatter 和变更日志更新
+
+**行数变化**：interface.md 372 行（-20）；type-bone.md 178 行（-80 重复，+35 引用）
+
+**关联产出**：Curator 职能划分方案实施
+
+### 2026-01-11 - RBF 文档对齐审查
+
+**完成项**：
+- rbf-interface.md (v0.24) 与 rbf-type-bone.md (Draft) 比对分析
+- 确认核心接口签名高度对齐、职责边界清晰
+- 发现 1 个 P0 问题：`Truncate(ulong)` 与 `TailOffset(long)` 参数类型不一致
+
+**产出**：[2026-01-11-rbf-interface-fixlist.md](../../handoffs/docops/2026-01-11-rbf-interface-fixlist.md)
 
 ### 2026-01-09 - D-S-D 术语对齐重构
 
