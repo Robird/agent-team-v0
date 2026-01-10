@@ -36,6 +36,17 @@
 ## 通用词法规则
 定义本DSL中通用的词法解析行为。
 
+### term `Identifier` 标识符
+本 DSL 中的通用标识符，用于命名术语、条款及作为导入前缀。
+
+#### spec [S-IDENTIFIER-FORMAT] 标识符格式
+@`Identifier` 的字符序列 MUST 符合正则表达式：`^[a-zA-Z0-9]+(-[a-zA-Z0-9]+)*$`。
+*即：由字母数字组成，中间可用单个连字符连接。*
+
+#### spec [S-IDENTIFIER-CASE-SENSITIVITY] 大小写敏感性
+在解析、匹配与引用 @`Identifier` 时，MUST 忽略大小写（Case-Insensitive）。
+*注：为了文档的一致性与美观，工具可能会对不符合推荐大小写风格的标识符产生 Warning，但这不应被视为语法错误。*
+
 ### spec [S-KEYWORD-CASE-INSENSITIVITY] 关键字大小写不敏感
 本DSL中的所有关键字（Keyword）在解析时 MUST 忽略大小写（Case-Insensitive）。
 关键字包括但不限于：`term`、`decision`、`spec`、`derived`、`import`、`summary`、`gist`。
@@ -44,6 +55,22 @@
 ### spec [F-KEYWORD-PREFERRED-STYLE] 风格约定
 尽管解析器支持宽松匹配，但在编写文档时，关键字 SHOULD 优先使用全小写形式。
 *全小写有助于在视觉上区分“DSL元数据”与“自然语言标题”。*
+
+---
+
+## 通用引用规则
+定义本DSL中通用的引用机制。
+
+### term `ID-Qualifier` ID限定符
+用于在引用时指定命名空间前缀。
+格式为 `Prefix` + `.`。
+其中 `Prefix` 为导入时对应的命名空间标识符。
+*注：仅当导入指定了非空前缀时才存在限定符。本定义隐含 `Prefix` 不能为空，即不允许单独使用 `.` 作为限定符。*
+
+### spec [S-QUALIFIER-USAGE] 限定符使用约束
+本DSL中的 ID 字面量（如 @`Term-ID-Literal` 和 @`Clause-ID-Literal`）均遵循以下限定符使用规则：
+- **定义时 (Definition)**: MUST NOT 包含 @`ID-Qualifier`。ID 必须是简单形式。
+- **引用时 (Reference)**: MAY 包含 @`ID-Qualifier`。
 
 ---
 
@@ -91,24 +118,18 @@
 用于承载一个设计概念。
 
 ### term `Term-ID` 术语名字
-是@`Term-Node`的文本形式标识符。
+是用于标识 @`Term-Node` 的 @`Identifier`。
+
+### spec [F-TERM-ID-STYLE] 术语名字风格约定
+@`Term-ID` SHOULD 采用 **Title-Kebab** 风格（即单词首字母大写，用连字符连接）。
+*例如：`User-Account`、`DNA-Sequence`。解析器对于非此风格的 ID MAY 生成警告。*
 
 ### term `Term-ID-Literal` 术语名字字面量
-是@`Term-ID`的字面量写法：在@`Term-ID`外层包裹一对ASCII反引号\`\`。
+是@`Term-ID`的字面量写法：在@`Term-ID`（可选携带前导@`ID-Qualifier`）外层包裹一对ASCII反引号\`\`。
 @`Term-ID-Literal`主要用于@`Term-Node`的定义（`Heading`属性模式匹配）与引用（便于文本搜索与阅读）。
-
-### spec [F-TERM-ID-FORMAT] 定义@`Term-ID`格式
-采用逐个单词首字母大写形式（Title-Kebab）英文单词，首字母缩写可全大写（如：`DNA`、`ID`等）。
-多单词时 MUST 使用连字符（'-'）连接。
-@`Term-ID` MUST NOT 支持下划线。
-@`Term-ID` MAY 包含数字。
-*首字母缩写可全大写这个豁免条件其实很难做严格。这是英语的老大难问题了，暂时不追求精确，不耽误使用。*
-
-@`Term-ID-Literal`的格式为：\` + @`Term-ID` + \`。
+@`Term-ID-Literal`的格式为：\` + (可选 @`ID-Qualifier`) + @`Term-ID` + \`。
 
 ### spec [F-TERM-REFERENCE-FORMAT] 定义引用@`Term-Node`的格式
-是一种Markdown Code Inline Element。
-
 引用@`Term-Node`时，MUST 显式使用前导符号`@`。
 其最小形式为：字符`@`后紧跟一个@`Term-ID-Literal`。
 
@@ -123,21 +144,16 @@
 按职能不同，其具有3种亚型：@`Decision-Clause`(决策)、@`Spec-Clause`(服务于@`Decision-Clause`的关键规格)、@`Derived-Clause`(可由@`Spec-Clauses`推导得出的信息)。
 
 ### term `Clause-ID` 条款编号
-是@`Clause-Node`的文本形式标识符。
+是用于标识 @`Clause-Node` 的 @`Identifier`。
+
+### spec [F-CLAUSE-ID-STYLE] 条款编号风格约定
+@`Clause-ID` SHOULD 采用全小写或全大写的英文单词组合。
+*例如：`data-consistency` 或 `DATA-CONSISTENCY`。解析器对于混杂大小写的 ID MAY 生成警告。*
 
 ### term `Clause-ID-Literal` 条款编号字面量
-是@`Clause-ID`的字面量写法：在@`Clause-ID`外层包裹一对ASCII方括号`[]`。
+是@`Clause-ID`的字面量写法：在@`Clause-ID`（可选携带前导@`ID-Qualifier`）外层包裹一对ASCII方括号`[]`。
 @`Clause-ID-Literal`主要用于@`Clause-Node`的定义（`Heading`属性模式匹配）与引用（便于文本搜索与阅读）。
-
-### spec [F-CLAUSE-ID-FORMAT] 定义@`Clause-ID`的格式
-采用英文单词。
-多单词时 MUST 使用连字符（'-'）连接。
-@`Clause-ID` MUST NOT 支持下划线。
-@`Clause-ID` MAY 包含数字。
-@`Clause-ID` 在匹配与引用时 SHOULD 不区分大小写（Case-Insensitive）。
-*注：全大写通常是内容层的风格约定，并非解析器的硬性语法约束。*
-
-@`Clause-ID-Literal`的格式为：`[` + @`Clause-ID` + `]`。
+@`Clause-ID-Literal`的格式为：`[` + (可选 @`ID-Qualifier`) + @`Clause-ID` + `]`。
 
 ### spec [F-CLAUSE-REFERENCE-FORMAT] 定义引用@`Clause-Node`的格式
 引用@`Clause-Node`时，MUST 显式使用前导符号`@`。
@@ -203,14 +219,23 @@
 
 ### spec [F-IMPORT-SYNTAX] 定义导入语法
 @`Import-Node` 的 `Heading` 属性 MUST 包含一个合法的 GFM Link 元素，形式为 `[Prefix](Url)`。
-- **Prefix (前缀)**: 链接文本（Link Text）即为导入前缀。
+- **Prefix (前缀)**: 链接文本（Link Text）。**MAY 为空**。非空时即为命名空间标识符。
 - **Url (路径)**: 链接地址即为目标文档路径（通常是相对路径）。
 *利用 Markdown Link 语法既保持了可读性/可跳转性，又提供了自然的结构化解析支持。*
 
-### spec [F-IMPORT-SEMANTICS-PREFIX] 前缀导入语义
-当导入语法中提供了非空的 **Prefix** 时，解析器 MUST 将目标文档中的所有 @`Term-ID` 和 @`Clause-ID` 加上前缀 `Prefix` 和连字符 `-` 后，合并入当前符号表。
-例如：导入 `[Lib](lib.md)`，其中 `lib.md` 有 @`User`，则在当前文档中变为 @`Lib-User`。
-*注意：由于 ID 允许大小写混合，Prefix 也支持大小写混合。建议 Prefix 采用与目标库风格一致的命名（如 Title-Case）。*
+### spec [S-IMPORT-PREFIX-FORMAT] 导入前缀格式
+导入语法中的 `Prefix` 若非空，MUST 是一个合法的 @`Identifier`。
+
+### spec [F-IMPORT-SEMANTICS] 导入语义
+导入语义取决于 **Prefix** 是否为空：
+1. **带前缀导入 (Qualified Import)**: 当 **Prefix** 非空时，引用目标文档符号 MUST 使用 @`ID-Qualifier`（即 `Prefix.` 前缀）。
+2. **直接导入 (Direct Import)**: 当 **Prefix** 为空时，目标文档符号直接合并入当前符号表，引用时 MUST NOT 使用 @`ID-Qualifier`。
+
+例如：
+- 导入 `[Lib](lib.md)`：`lib.md` 中的 @`User` 在当前文档引用为 @`Lib.User`。
+- 导入 `[](core.md)`：`core.md` 中的 @`Base` 在当前文档引用为 @`Base`。
+
+*注意：限定引用中的 `.` 仅影响“引用语法/符号解析”，不改变目标文档中符号定义的本质。*
 
 ### spec [S-IMPORT-SCOPE] 导入非传递性（Non-transitive）
 为了避免命名空间前缀过长及隐式依赖，导入关系 MUST NOT 具有传递性。
