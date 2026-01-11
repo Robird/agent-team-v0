@@ -14,10 +14,10 @@
 ### decision [S-MARKDOWN-COMPATIBLE] 兼容GFM
 @`Design-DSL` MUST 是合法 GFM Markdown，可被 Markdig 解析。
 
-### decision [S-FORMAL-PARSING] 形式化解析支持
+### decision [S-FORMAL-PARSING-SUPPORTED] 形式化解析支持
 @`Design-DSL` MUST 在语法上显式区分定义与引用，支持形式化解析。
 
-### decision [S-DEPENDENCY-GRAPH] 依赖关系显式化
+### decision [S-DEPENDENCY-GRAPH-SUPPORTED] 依赖关系显式化
 @`Design-DSL` MUST 支持构建条款依赖图。
 
 ### decision [S-DOC-GRAPH-COMPATIBLE] 工具链集成
@@ -39,11 +39,11 @@
 ### term `Identifier` 标识符
 本 DSL 中的通用标识符，用于命名术语、条款及作为导入前缀。
 
-#### spec [S-IDENTIFIER-FORMAT] 标识符格式
+#### spec [S-IDENTIFIER-ALNUM-HYPHENATED] 标识符格式
 @`Identifier` 的字符序列 MUST 符合正则表达式：`^[a-zA-Z0-9]+(-[a-zA-Z0-9]+)*$`。
 *即：由字母数字组成，中间可用单个连字符连接。*
 
-#### spec [S-IDENTIFIER-CASE-SENSITIVITY] 大小写敏感性
+#### spec [S-IDENTIFIER-CASE-INSENSITIVE] 标识符大小写不敏感
 在解析、匹配与引用 @`Identifier` 时，MUST 忽略大小写（Case-Insensitive）。
 *注：为了文档的一致性与美观，工具可能会对不符合推荐大小写风格的标识符产生 Warning，但这不应被视为语法错误。*
 
@@ -52,7 +52,7 @@
 关键字包括但不限于：`term`、`decision`、`spec`、`derived`、`import`、`summary`、`gist`。
 *例如：`Decision`、`DECISION` 和 `decision` 均应被识别为相同的关键字。*
 
-### spec [F-KEYWORD-PREFERRED-STYLE] 风格约定
+### spec [F-KEYWORD-LOWERCASE-PREFERRED] 风格约定
 尽管解析器支持宽松匹配，但在编写文档时，关键字 SHOULD 优先使用全小写形式。
 *全小写有助于在视觉上区分“DSL元数据”与“自然语言标题”。*
 
@@ -67,21 +67,21 @@
 其中 `Prefix` 为导入时对应的命名空间标识符。
 *注：仅当导入指定了非空前缀时才存在限定符。本定义隐含 `Prefix` 不能为空，即不允许单独使用 `.` 作为限定符。*
 
-### spec [S-QUALIFIER-USAGE] 限定符使用约束
+### spec [S-QUALIFIER-IN-REFERENCE-ONLY] 限定符使用约束
 本DSL中的 ID 字面量（如 @`Term-ID-Literal` 和 @`Clause-ID-Literal`）均遵循以下限定符使用规则：
 - **定义时 (Definition)**: MUST NOT 包含 @`ID-Qualifier`。ID 必须是简单形式。
 - **引用时 (Reference)**: MAY 包含 @`ID-Qualifier`。
 
 ---
 
-## term `TODO-Element` 待办事项
+## term `TODO-Emphasis` 待办事项
 用于记录待办事项。
 
-### spec [F-TODO-FORMAT] 定义@`TODO-Element`的格式
+### spec [F-TODO-FORMAT] 定义@`TODO-Emphasis`的格式
 是EmphasisInline，是加粗（`IsDouble`），内容（外层星号的内部）精确以`TODO:`开头。
 
-@`TODO-Element` MUST NOT 支持前导空白。
-@`TODO-Element` MUST NOT 要求冒号后有空白。
+@`TODO-Emphasis` MUST NOT 支持前导空白。
+@`TODO-Emphasis` MUST NOT 要求冒号后有空白。
 
 ---
 
@@ -120,7 +120,7 @@
 ### term `Term-ID` 术语名字
 是用于标识 @`Term-Node` 的 @`Identifier`。
 
-### spec [F-TERM-ID-STYLE] 术语名字风格约定
+### spec [F-TERM-ID-TITLE-KEBAB] 术语名字风格约定
 @`Term-ID` SHOULD 采用 **Title-Kebab** 风格（即单词首字母大写，用连字符连接）。
 *例如：`User-Account`、`DNA-Sequence`。解析器对于非此风格的 ID MAY 生成警告。*
 
@@ -226,7 +226,7 @@
 ### spec [S-IMPORT-PREFIX-FORMAT] 导入前缀格式
 导入语法中的 `Prefix` 若非空，MUST 是一个合法的 @`Identifier`。
 
-### spec [F-IMPORT-SEMANTICS] 导入语义
+### spec [F-IMPORT-QUALIFIED-VS-DIRECT] 导入语义
 导入语义取决于 **Prefix** 是否为空：
 1. **带前缀导入 (Qualified Import)**: 当 **Prefix** 非空时，引用目标文档符号 MUST 使用 @`ID-Qualifier`（即 `Prefix.` 前缀）。
 2. **直接导入 (Direct Import)**: 当 **Prefix** 为空时，目标文档符号直接合并入当前符号表，引用时 MUST NOT 使用 @`ID-Qualifier`。
@@ -237,10 +237,16 @@
 
 *注意：限定引用中的 `.` 仅影响“引用语法/符号解析”，不改变目标文档中符号定义的本质。*
 
-### spec [S-IMPORT-SCOPE] 导入非传递性（Non-transitive）
+### spec [S-IMPORT-NON-TRANSITIVE] 导入非传递性（Non-transitive）
 为了避免命名空间前缀过长及隐式依赖，导入关系 MUST NOT 具有传递性。
 当处理 `import [Prefix](Target)` 时，解析器仅从 Target 文档中提取由 Target 文档**直接定义**的 @`Term-Node` 和 @`Clause-Node`。
 Target 文档中通过导入指令引入的外部符号 MUST NOT 被二次导出到当前文档。若当前文档需要使用间接依赖的术语，MUST 显式导入对应的源文档。
 *这使得任何文档的上下文依赖都是扁平且显式的，同时也消除了循环导入的解析风险。*
 
 ---
+
+## 变更日志
+
+| 版本 | 日期 | 变更 |
+|------|------|------|
+| 0.2 | 2026-01-12 | 条款ID立场命名审阅：8个条款改名以符合@[S-DOC-CID-STANCE-NAMING]规则 |
