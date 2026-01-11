@@ -1,6 +1,7 @@
 # Investigator 认知索引
 
-> 最后更新: 2026-01-11
+> 最后更新: 2026-01-12
+> - 2026-01-12: Memory Palace — 处理了 6 条便签（RBF 文档版本/条款 ID 导航 + spec-conventions 改名影响 + Gotcha 2 条 + Signal 2 条）
 > - 2026-01-11: Memory Palace — 处理了 12 条便签（测试架构治理、代码去重分析、Gotcha 3 条、Signal 2 条、适配器设计锚点）
 > - 2026-01-11: Memory Maintenance — 归档 2025-12 早期 Session Log（压缩 ~290 行）
 > - 2026-01-09: Memory Palace — 处理了 9 条便签（SizedPtr 迁移验证、RBF 条款统计、AI-Design-DSL 锚点、atelia-copilot-chat 调查、Gotcha 2 条）
@@ -22,6 +23,68 @@
 - [ ] atelia-copilot-chat
 
 ## Session Log
+### 2026-01-12: RBF 文档版本/条款 ID 导航锚点汇总
+**类型**: Route + Signal + Gotcha
+**项目**: RBF
+
+#### 1. RBF 文档版本信息速查（Route）
+| 文档 | 版本号位置 |
+|:-----|:-----------|
+| interface | `## 6. 最近变更` 表格第一行 |
+| format | `## 10. 变更日志` 表格第一行 |
+| test-vectors | `## 变更日志` 表格第一行 |
+| decisions | 无版本号（AI-Design-DSL 保护的根文档）|
+
+- **关联版本声明位置**: test-vectors.md L7 frontmatter 后的第一个 blockquote
+- **置信度**: ✅ 验证过
+
+#### 2. 条款 ID 引用分析速查（Route）
+| 资源 | 位置 |
+|:-----|:-----|
+| 完整清单 | `agent-team/handoffs/rbf-clause-id-inventory.csv` |
+| 影响分析 | `agent-team/handoffs/rbf-rename-impact-analysis.md` |
+| 搜索命令 | `grep -rn "CLAUSE-ID" --include="*.md" --include="*.cs" atelia/ agent-team/` |
+
+**高引用 TOP5**: R-REVERSE-SCAN-ALGORITHM(47), F-HEADLEN-FORMULA(47), F-FRAMESTATUS-VALUES(41), F-FRAME-LAYOUT(35), F-STATUSLEN-FORMULA(34)
+**置信度**: ✅ 验证过
+
+#### 3. 测试向量条款引用存在性判断（Signal）
+- **验证方式**: grep 规范文档中的条款 ID
+- **已知缺失**: `[S-RBF-SCANREVERSE-CONCURRENT-MUTATION]`、`[S-RBF-SCANREVERSE-MULTI-GETENUM]` 可能是测试向量自创的期望条款
+- **置信度**: ⚠️ 推测，需确认是"规范缺失"还是"测试向量自行定义"
+
+#### 4. 版本声明与实际版本的"假漂移"（Gotcha）
+| 问题 | 后果 | 规避 |
+|:-----|:-----|:-----|
+| test-vectors.md 声明对齐 format v0.28 / interface v0.20，实际已是 v0.32 / v0.26 | 看起来漂移 4-6 个版本，实际都是格式/表述优化，语义无变更 | 先看变更日志判断语义是否变化，再决定是否更新测试向量；版本号漂移 ≠ 内容漂移 |
+
+#### 5. 条款 ID 改名时 archive/ 可跳过（Gotcha）
+| 问题 | 后果 | 规避 |
+|:-----|:-----|:-----|
+| `atelia/archive/2025-12-29-rbf-statejournal-v1/` 下有大量 .cs 文件引用旧条款 ID | 若全量替换会修改历史快照，破坏考古价值 | 改名脚本应排除 `archive/` 目录；历史代码引用保留旧 ID 是合理的 |
+
+### 2026-01-12: spec-conventions 条款 ID 改名影响分析
+**类型**: Route + Signal
+**项目**: spec-conventions
+
+#### 1. 影响范围导航（Route）
+| 指标 | 数值 |
+|:-----|:-----|
+| 涉及条款 | 8 个条款 ID 改名 |
+| 核心更新文件 | 4 个（spec-conventions.md + 2 meeting + 1 wiki）|
+| 总更新点 | 15 处 |
+| 高影响条款 | `S-DOC-FORMAT-MINIMALISM`（6 处非 SSOT 引用）|
+| 无影响范围 | DocUI/PieceTreeSharp/PipeMux 均无引用 |
+
+**详细报告**: [spec-conventions-rename-impact.md](../handoffs/spec-conventions-rename-impact.md)
+**置信度**: ✅ 验证过（grep 全仓库搜索）
+
+#### 2. 条款引用密度判断信号（Signal）
+- **特征**: `S-DOC-FORMAT-MINIMALISM` 是唯一被 wiki 和多个 meeting 引用的条款
+- **原因推测**: 该条款定义了"表示形式选择原则"，是最早定义且最常被引用的写作指导条款
+- **迁移启示**: 基础性条款改名需优先处理，因其下游引用更广
+- **置信度**: ✅ 数据支持
+
 ### 2026-01-11: Atelia.Data 测试架构治理 + 代码去重分析
 **类型**: Route + Anchor + Gotcha
 **项目**: Atelia.Data
