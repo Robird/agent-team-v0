@@ -1,6 +1,6 @@
 # DocOps 认知索引
 
-> 最后更新: 2026-01-11 便签归档 (2条: RBF文档职能分离重构、RBF文档对齐审查)
+> 最后更新: 2026-01-11 便签归档 (3条: RBF文档职能分离重构、RBF文档对齐审查、RBF适配器文档简化)
 
 ## 我是谁
 
@@ -16,6 +16,19 @@ DocOps - 文档与索引管理专家，负责维护团队的集体记忆和认�
 ## 核心洞见（Insight）
 
 > 按主题组织，演进关系以 `→` 标注
+
+### 接口语义匹配→实现简化模式（2026-01-11）
+
+**发现场景**：RBF 适配器文档 §5 重构（80行→25行，-68%）
+
+**核心洞见**：推式接口（caller 持有数据，callee 只做转发）与 `RandomAccess.Write` 语义完美匹配——`IBufferWriter<byte>` → `IByteSink` 的改变消除了中间 buffer 需求。
+
+**模式抽象**：
+- 当接口语义与底层 API 语义匹配时，适配器可极度简化
+- "拉式→推式"转换往往带来代码量数量级下降
+- 条款数量也减少（4 删 3 增），说明概念复杂度同步降低
+
+---
 
 ### 文档职能分离方法论（2026-01-11）
 
@@ -278,25 +291,19 @@ SoftwareDesignModeling/
 
 ## 最近工作
 
-### 2026-01-11 - RBF 文档职能分离重构
+### 2026-01-11 - RBF 文档系列重构
 
-**完成项**：
+**文档职能分离**：
 - rbf-interface.md：`[S-RBF-BUILDER-AUTO-ABORT]` 拆分为 `[S-RBF-BUILDER-AUTO-ABORT-SEMANTICS]`（仅逻辑语义）
 - rbf-type-bone.md：新增 `[I-RBF-BUILDER-AUTO-ABORT-IMPL]`（物理实现双路径）、引用化 4 个公开类型、新增"快速导航"区块
-- 两文档 frontmatter 和变更日志更新
+- 行数变化：interface.md 372 行（-20）；type-bone.md 178 行（-80 重复，+35 引用）
 
-**行数变化**：interface.md 372 行（-20）；type-bone.md 178 行（-80 重复，+35 引用）
+**适配器文档简化** (rbf-type-bone.md §5)：
+- 核心变化：`IBufferWriter<byte>` → `IByteSink`（拉式→推式）
+- 代码量：80行 → 25行（-68%）
+- 条款变化：删除 4 个 spec，新增 3 个 spec，保留 `@[I-RBF-SEQWRITER-HEADLEN-GUARD]`
 
-**关联产出**：Curator 职能划分方案实施
-
-### 2026-01-11 - RBF 文档对齐审查
-
-**完成项**：
-- rbf-interface.md (v0.24) 与 rbf-type-bone.md (Draft) 比对分析
-- 确认核心接口签名高度对齐、职责边界清晰
-- 发现 1 个 P0 问题：`Truncate(ulong)` 与 `TailOffset(long)` 参数类型不一致
-
-**产出**：[2026-01-11-rbf-interface-fixlist.md](../../handoffs/docops/2026-01-11-rbf-interface-fixlist.md)
+**关联产出**：Curator 职能划分方案实施、对齐审查 FixList
 
 ### 2026-01-09 - D-S-D 术语对齐重构
 
