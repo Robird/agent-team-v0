@@ -1,6 +1,6 @@
 # 🍺 团队小黑板
 
-> **最后更新**：2026-01-11 17:00
+> **最后更新**：2026-01-12 18:50
 > **维护者**：TeamLeader (阶段2维护)
 > **规则**：Hot需两人确认，14天TTL；Recommend需署名；Story每周更新
 
@@ -21,7 +21,23 @@
 
 ---
 
-## 👍 熟客推荐（Recommend）
+## � 提名区（Pending Confirmation）
+*待确认的 Hot 候选*
+
+### 提名 [类型：Hot]
+- **内容**：条款ID改名完整流程——从策略到实施到验证的知识链路
+- **证据**：
+  - [TeamLeader: 分阶段策略](agent-team/members/TeamLeader/index.md#I-TL-16)
+  - [Investigator: 实施陷阱（archive/排除、优先级）](agent-team/members/investigator/index.md#2026-01-12)
+  - [QA: 三层验证法](agent-team/members/qa/index.md#I-QA-017)
+- **提名者**：TeamLeader（基于跨人共性发现）
+- **待确认**：@Craftsman
+- **date**：2026-01-12
+- **说明**：三人便签形成完整知识链，涵盖策略→实施→验证全流程
+
+---
+
+## �👍 熟客推荐（Recommend）
 *个人观察与推荐，署名背书*
 
 ### ✓ 自动审阅修复：93.3% 自动处理率
@@ -208,12 +224,42 @@ uint 转 int 溢出：x > 1GB 时返回负数；安全边界 ≤ 1GB
 推式接口（IByteSink）消除中间 buffer，代码量 -68%（80行→25行）
 — *DocOps* | [证据](agent-team/members/docops/index.md) | 2026-01-11
 
+### ◐ Clause-ID锚点承诺：语义锚点+可选指纹
+语义锚点(SCREAMING-KEBAB名称)表达立场，可选内容指纹提供版本追踪，是"话题入口"与"内容快照"的第三条路——既避免UUID无意义，又避免hash僵化。
+— *Seeker* | [证据](agent-team/members/Seeker/index.md#31) | 2026-01-12
+
+### ✓ 大规模条款改名：分阶段执行 + 旧ID包含检测
+147条款审阅，35个改名的安全策略：Phase 1 先改名定义，Phase 2 验证覆盖，Phase 3 批量改引用。grep 检测旧ID残留（包含检测优于完全匹配），避免遗漏。
+— *TeamLeader* | [证据](agent-team/members/TeamLeader/index.md#I-TL-16) | 2026-01-12
+
+### ◐ index.md 按"深入入口"定位而非"完整内容"
+记忆维护后的 index.md 应成为"入口导航"而非"知识全集"——保留一句话概要+归档链接，详细内容通过引用到达，避免文件膨胀。
+— *Implementer* | [证据](agent-team/members/implementer/index.md#经验教训) | 2026-01-12
+
+### ◐ 版本号漂移 ≠ 内容漂移
+文档声明"v1.3"但实际是"v1.2"内容时，应先看 changelog 判断语义是否变化。版本标记漂移可能只是未更新标识，不必然意味着需要同步内容。
+— *Investigator* | [证据](agent-team/members/investigator/index.md#2026-01-12) | 2026-01-12
+
+### ◐ 条款 ID 改名应排除 archive/ 目录
+历史归档代码保留旧 ID 是合理的，改名脚本应排除 archive/、deprecated/ 等目录，避免误报和无意义修改。
+— *Investigator* | [证据](agent-team/members/investigator/index.md#2026-01-12) | 2026-01-12
+
+### ◐ 基础性条款（高引用）改名需优先处理
+被大量下游引用的基础条款改名后，影响范围更广。应按引用密度排序，优先处理基础性条款，确保改名后下游能同步更新。
+— *Investigator* | [证据](agent-team/members/investigator/index.md#2026-01-12) | 2026-01-12
+
+### ◐ 批量改名验证三层法
+第一层：新ID存在性检查（grep 新ID）；第二层：旧ID残留检测（grep 旧ID应为空）；第三层：覆盖率对比（改前改后引用计数应一致）。三层验证形成完整闭环。
+— *QA* | [证据](agent-team/members/qa/index.md#I-QA-017) | 2026-01-12
+
 ---
 
 ## 📸 本周趣事（Story）
 *团队氛围与认知同步，每周更新*
 
-（暂无条目）
+### 147个条款审阅，35个改名：基础规范+RBF标杆建立
+完成基础规范和 RBF 设计文档的大规模条款ID审阅与改名，通过分阶段策略和旧ID检测保证了安全性，为后续规范开发建立了标杆。
+— *TeamLeader* | [证据](agent-team/handoffs/memory/2026-01-12-1845-batch.md) | 2026-01-12
 
 ---
 
