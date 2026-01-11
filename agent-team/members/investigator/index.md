@@ -1,6 +1,7 @@
 # Investigator 认知索引
 
 > 最后更新: 2026-01-11
+> - 2026-01-11: Memory Palace — 处理了 12 条便签（测试架构治理、代码去重分析、Gotcha 3 条、Signal 2 条、适配器设计锚点）
 > - 2026-01-11: Memory Maintenance — 归档 2025-12 早期 Session Log（压缩 ~290 行）
 > - 2026-01-09: Memory Palace — 处理了 9 条便签（SizedPtr 迁移验证、RBF 条款统计、AI-Design-DSL 锚点、atelia-copilot-chat 调查、Gotcha 2 条）
 > - 2026-01-08: Memory Palace — 处理了 1 条便签（SizedPtr 迁移 Gotcha: 提交 942e1c0 倒退）
@@ -9,8 +10,6 @@
 > - 2026-01-05: DocGraph 代码调查（Visitor 扩展机制、produce 验证路径、7 条便签）
 > - 2026-01-04: Memory Palace — 处理了 3 条便签（SizedPtr/RBF/<deleted-place-holder> 调查锚点）
 > - 2026-01-01: workspace_info 机制调查（Copilot Chat Agent Prompt System）
-> - 2025-12-27: Workspace/ObjectLoader/RBF 设计意图调查
-> - 2025-12-26: `_removedFromCommitted` 设计洞见
 
 ## 我是谁
 源码分析专家，负责分析源码并产出实现 Brief。
@@ -23,6 +22,83 @@
 - [ ] atelia-copilot-chat
 
 ## Session Log
+### 2026-01-11: Atelia.Data 测试架构治理 + 代码去重分析
+**类型**: Route + Anchor + Gotcha
+**项目**: Atelia.Data
+
+#### 1. 测试泛化陷阱（Gotcha）
+| 问题 | 后果 | 规避 |
+|:-----|:-----|:-----|
+| 测试断言 `IsPassthrough` 或中间状态 `inner.Data()` | 泛化到 `IReservableBufferWriter` 接口后 `SinkReservableWriter` 测试失败 | 只验证最终结果；`IsPassthrough`（Chunked）与 `IsIdle`（Sink）语义不同，需拆分测试 |
+
+#### 2. 接口契约 vs 实现细节判定锚点
+| 问题 | 答案 |
+|:----|:----|
+| 最终数据顺序 | ✅ 接口契约 |
+| Flush 时机 | ❌ 实现细节 |
+| 中间状态可观察性 | ❌ 实现细节 |
+| Reservation 阻塞语义 | ⚠️ 契约推论（不乱序 flush）|
+
+**位置**: [IReservableBufferWriter.cs](atelia/src/Data/IReservableBufferWriter.cs) 接口注释
+
+#### 3. 测试架构治理导航（Route）
+**快速判定三问**:
+1. 只用 `IReservableBufferWriter` 方法？ → Yes=可接口化
+2. 只验证最终数据？ → Yes=可接口化
+3. 使用 `IsPassthrough`/`FlushedLength`/`BlockingReservationToken`？ → Yes=实现级
+
+**文件改造速查**: NegativeTests ✅ Done, Tests P0, P1Tests/OptionsTests P1, P2Tests/StatsTests P3
+**详细分析**: [2026-01-11-test-architecture-governance-analysis.md](agent-team/handoffs/2026-01-11-test-architecture-governance-analysis.md)
+
+#### 4. CRW/SRW 去重分析锚点
+**代码重复统计**: 完全相同 ~36%, 高度相似 ~19%, 语义相同 ~10%, 可提取总量 ~65%
+**关键可提取项**: `Bijection` P0, `AllocReservationToken`/Chunk尺寸计算/`TryRecycleFlushedChunks` P1, `Reservation`类 P2
+**统一差异**: `unchecked`→统一为 unchecked, `DataBegin=0`→统一为显式
+**详细分析**: [2026-01-11-deduplication-analysis.md](agent-team/handoffs/2026-01-11-deduplication-analysis.md)
+
+#### 5. ReservableWriter Chunk 统一方案锚点
+- **CRW 定义**: [ChunkedReservableWriter.cs#L33-L44](atelia/src/Data/ChunkedReservableWriter.cs#L33-L44)
+- **SRW 定义**: [SinkReservableWriter.cs#L28-L40](atelia/src/Data/SinkReservableWriter.cs#L28-L40)
+- **差异**: 7/8 成员相同，1 属性 CRW 独有，1 方法 SRW 独有
+- **结论**: 合并为 `internal sealed class ReservableWriterChunk`
+- **分析报告**: [2026-01-11-unified-chunk-analysis.md](agent-team/handoffs/2026-01-11-unified-chunk-analysis.md)
+
+#### 6. BitOperations.RoundUpToPowerOf2 溢出陷阱（Gotcha）
+| 输入 | 返回 (uint) | 转 int |
+|:-----|:------------|:-------|
+| 1GB | 1GB | 1GB ✅ |
+| 1GB+1 | 2GB (0x80000000) | -2147483648 ❌ |
+
+**规避**: 仅对 `candidate ≤ (1 << 30)` 调用 RoundUp
+**位置**: [ChunkSizingStrategy.cs#L38-L39](atelia/src/Data/ChunkSizingStrategy.cs#L38-L39)
+**分析报告**: [2026-01-11-p0-overflow-fix-analysis.md](agent-team/handoffs/2026-01-11-p0-overflow-fix-analysis.md)
+
+#### 7. P1 可变 struct 设计问题（Gotcha + Anchor）
+| struct | 位置 | 问题 |
+|:-------|:-----|:-----|
+| `ReservationTracker` | [ReservationTracker.cs#L14](atelia/src/Data/ReservationTracker.cs#L14) | mutable struct + 引用字段 |
+| `ChunkSizingStrategy` | [ChunkSizingStrategy.cs#L7](atelia/src/Data/ChunkSizingStrategy.cs#L7) | mutable struct + 值字段 |
+
+**核心风险**: struct 复制后值字段独立、引用字段共享→"部分分叉部分共享"
+**BCL 惯例**: List/Dictionary/Queue/Stack 全是 class，无 mutable struct 先例
+**推荐方案**: 改为 `sealed class`（2 行改动）
+**分析报告**: [2026-01-11-p1-mutable-struct-analysis.md](agent-team/handoffs/2026-01-11-p1-mutable-struct-analysis.md)
+
+#### 8. IBufferWriter<byte> + IByteSink 双接口兼容性（Signal）
+- Pull（IBufferWriter）与 Push（IByteSink）正交，可共存
+- 两者共享同一个 `_pos` / `MemoryStream`
+
+#### 9. RandomAccess → IByteSink 适配器设计锚点
+- **设计报告**: [2026-01-11-randomaccess-bytesink-design.md](agent-team/handoffs/2026-01-11-randomaccess-bytesink-design.md)
+- **旧方案**: `SequentialRandomAccessBufferWriter` (~80行) → **新方案**: `RandomAccessByteSink` (~25行, 68%减少)
+- **关键约束**: `@[I-RBF-SEQWRITER-HEADLEN-GUARD]` 保留
+
+#### 10. IByteSink 推式接口完美匹配 RandomAccess.Write（Signal）
+- `IByteSink.Push(ReadOnlySpan<byte>)` 语义 = `RandomAccess.Write(handle, data, offset)` 语义
+- 对比 `IBufferWriter<byte>` 需 ArrayPool 适配，`IByteSink` 可直接转发
+
+**置信度**: ✅ 全部验证过
+
 ### 2026-01-09: RBF/AI-Design-DSL 验证锚点汇总
 **类型**: Route + Anchor
 **项目**: RBF, AI-Design-DSL
