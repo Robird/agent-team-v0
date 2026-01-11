@@ -29,6 +29,7 @@
 
 | 项目 | 状态 | 最后更新 | 备注 |
 |------|------|----------|------|
+| Atelia.Data | Phase 3 完成 ✅ | 2026-01-11 | 测试架构治理完成，103 测试 |
 | DocGraph | v0.2 进行中 🔄 | 2026-01-07 | v0.2: Wish 布局迁移 + IssueAggregator Phase 2 |
 | StateJournal | M2 完成 ✅ | 2025-12-28 | 659 测试通过，待 M3 |
 | DocUI | 待启动 | 2025-12-15 | MVP-0 规划完成 |
@@ -223,6 +224,23 @@
 - `design`：关键约束，实现 decision 的核心规则
 - `hint`：可推导信息，帮助理解的提示
 - `term`：术语定义，概念锚点
+
+### 测试架构治理洞见（2026-01-11）
+
+37. **Theory 化测试的中间状态断言**
+    - 不同实现（CRW vs SRW）的 flush 时机不同
+    - 接口级测试只验证最终结果，跳过中间状态断言
+    - 中间状态验证放在实现级 Fact 测试中
+
+38. **xUnit TheoryData 工厂模式**
+    - 私有辅助类型需通过 `Func<(PublicInterface, Delegate)>` 封装
+    - 元组返回避免 CS0059 可访问性错误
+    - `using var disposable = writer as IDisposable;` 模式处理 IDisposable 接口
+
+39. **CollectingWriter 双接口实现**
+    - `IBufferWriter<byte>`（供 CRW）+ `IByteSink`（供 SRW）
+    - Pull 模型与 Push 模型共存，共享 `_pos` 游标
+    - 测试辅助类可在 Phase 3 提取到共享文件
 
 ### 经验教训
 
@@ -423,6 +441,12 @@
 |:-----|:-----|
 | `src/Data/SizedPtr.cs` | 38:26 bit 分配的 Fat Pointer 实现 |
 | `tests/Data.Tests/SizedPtrTests.cs` | 50 个测试：roundtrip、对齐、边界、FromPacked、Contains |
+| `tests/Data.Tests/TestHelpers.cs` | `CollectingWriter`（IBufferWriter + IByteSink 双接口） |
+
+**测试文件命名约定**（2026-01-11）：
+- 接口级测试：`{InterfaceName}Tests.cs`（如 `ReservableWriterTests.cs`）
+- 实现级测试：`{ClassName}Tests.cs`（如 `ChunkedReservableWriterP1Tests.cs`）
+- 负面路径测试：`{InterfaceName}NegativeTests.cs`
 
 **关键设计**：
 - `FromPacked()` 不校验，任意 ulong 可解包
@@ -496,6 +520,7 @@ agent-team/archive/members/implementer/
 
 > 维护日志已压缩。详细历史见 `archive/members/implementer/`
 
+- **2026-01-11**: Atelia.Data 测试辅助类共享位置（TestHelpers.cs）+ 测试文件命名约定
 - **2026-01-09**: AI-Design-DSL 迁移扩展点、纯引用模式处理语义重复
 - **2026-01-07**: DocGraph v0.2 实施——Wish 布局迁移 + IssueAggregator Phase 2 + TwoTierAggregatorBase 基类抽取
 - **2026-01-06**: Atelia.Primitives 双类型架构重构——`AteliaResult<T>` 改为 ref struct + 新增 `AteliaAsyncResult<T>`
