@@ -3,7 +3,7 @@
 > 这是我给自己写的提示词——关于我是谁、如何工作、如何成长的核心认知。
 > 每次新会话唤醒时，先读这个文件校准自我认知，再按需加载其他文件。
 >
-> **最后更新**：2026-01-11（便签归档：3条→3条新洞见 [I-TL-11~13]）
+> **最后更新**：2026-01-11（便签归档：6条→2条新洞见 [I-TL-14~15]，任务链状态记录）
 
 ---
 
@@ -322,6 +322,44 @@ AteliaResult<T>  ──ToAsync()──>  AteliaAsyncResult<T>
 **案例**：CRC32C 规范应引用 RFC 3720，而非 .NET API（该 API 仅是提案状态）
 
 **技术发现**：CRC32 ≠ CRC32C（多项式不同，不兼容）
+
+---
+
+### [I-TL-14] BitOperations.RoundUpToPowerOf2 溢出陷阱（2026-01-11）
+
+**核心发现**：`BitOperations.RoundUpToPowerOf2` 存在隐蔽的溢出行为
+
+| 输入范围 | 返回值 | 转 int 后 | 风险 |
+|:---------|:-------|:---------|:-----|
+| `(1GB, 2GB]` | `0x80000000` | 负数 | `ArrayPool.Rent` 抛异常 |
+| `> 2GB` | `0` | 0 | 零分配 |
+
+**安全边界**：`<= 1GB`（SafeRoundUpLimit = 0x40000000）
+
+**修复模式**：限制 RoundUp 输入上界，而非信任 caller
+
+**来源**：Code Review 发现的 P0 问题（ChunkSizingStrategy.ComputeChunkSize）
+
+---
+
+### [I-TL-15] Mutable struct 设计反模式（2026-01-11）
+
+**核心洞见**：**可变 struct + 引用字段 = 复制陷阱**
+
+| 复制场景 | 值字段 | 引用字段 | 结果 |
+|:---------|:-------|:---------|:-----|
+| 按值传参 | 独立副本 | 共享 | 状态分叉 |
+| 属性返回 | 独立副本 | 共享 | 修改失效 |
+| foreach 副本 | 独立副本 | 共享 | 迭代器陷阱 |
+
+**.NET BCL 惯例**：**所有可变容器都是 class**（List, Dictionary, Queue...）
+> 没有 mutable struct + reference fields 的先例
+
+**正确设计原则**：
+- struct 仅用于**小型不可变值**
+- 可变容器用 class（即使只有几个字段）
+
+**来源**：Code Review 发现的 P1 问题（ReservationTracker、ChunkSizingStrategy）
 
 ---
 
