@@ -105,3 +105,73 @@
 批量处理inbox便签？ → `agent-team/how-to/batch-process-inbox.md`
 维护团队小黑板？ → `agent-team/how-to/maintain-blackboard.md`
 写代码返回错误原因？ → `atelia/docs/Primitives/AteliaResult/guide.md`
+
+## D-S-D Model 速查
+> **一句话**：D‑S‑D 是设计信息分层：什么不该动、什么是约束、什么只是解释。
+
+| 层级 | 核心 | Agent 行为 |
+|:-----|:-----|:-----------|
+| **Decision** (决策) | Why & Constraints | **只读**：除非用户明确“修改/重审决策”。 |
+| **Spec** (规格) | What & How | **主战场**：精确定义实现蓝图；必须满足 Decision；维护 SSOT。 |
+| **Derived** (推导) | Context & Examples | **可销毁重建**：图/例子/FAQ；与 Normative 冲突时必须让步。 |
+
+**关键原则**：
+- **Normative = Decision + Spec**（唯一具有约束力）。
+- **SSOT / No Double Write**：同一事实只在一个 canonical 位置定义，其余用引用。
+
+**详细定义** → [Decision-Spec-Derived-Model](agent-team/wiki/SoftwareDesignModeling/Decision-Spec-Derived-Model.md)
+
+## AI-Design-DSL 速查
+> **一句话**：Design-DSL 是基于 GFM 的形式化设计方言。作为 Agent，**编写设计文档时 MUST 使用此格式**，以便被其他 Agent 精确理解和工具化解析。
+
+**核心语法**：
+- **定义术语**：``## term `Term-ID` 中文标题`` (ID推荐 Title-Kebab)
+- **定义条款**：`### <type> [CLAUSE-ID] 中文标题` (ID推荐全大写或全小写)
+  - `decision`: **决策** (Target)。不可轻易改动。
+  - `spec`: **规格** (Constraint)。为满足决策的约束。
+  - `derived`: **推导** (Info)。
+- **引用**：
+  - 术语：@`Term-ID`
+  - 条款：@[CLAUSE-ID]
+
+**最小范例**：
+```markdown
+## term `User-Account` 用户账号
+### decision [ACCOUNT-SECURITY] 账号安全
+### spec [PWD-COMPLEXITY] 密码必须包含@`User-Account`名称；参见@[ACCOUNT-SECURITY]
+```
+
+**详细定义** → `agent-team/wiki/SoftwareDesignModeling/AI-Design-DSL.md`
+
+## Spec Conventions 速查
+> **一句话**：在 Atelia 项目写规范，**怎么编号**、**怎么表示**、**怎么命名**。
+
+**1. 规范语言 (Normative Language)**
+- **Keywords**: `MUST`/`MUST NOT` (绝对约束), `SHOULD` (强推荐), `MAY` (可选)。
+- **MVP 固定**: 等价于 "MUST for current-version"。
+- **区分**: 明确分离 Normative (规范) 和 Informative (解释)。
+
+**2. 条款编号 (Clause-ID)**
+- **格式**: `[PREFIX-STANCE-NAME]` (SCREAMING-KEBAB)。
+- **前缀 (MUST)**:
+  - `F`: Format (格式/布局)
+  - `A`: API (签名/行为)
+  - `S`: Semantics (不变量/语义)
+  - `R`: Recovery (错误处理)
+- **立场**: 名字表达“倾向/答案” (用 `CASE-INSENSITIVE` 而非 `CASE-SENSITIVITY`)。
+- **变更**: 实质变更语义时，**新建**条款并标记旧条款 `DEPRECATED`。
+
+**3. LLM 友好表示 (LLM-Friendly Notation)**
+- **原则**: 最小复杂度 (能文本不列表，能列表不表格，能表格不图)，避免ASCII-Art。
+- **选型**:
+  - **树/层级** → 嵌套列表
+  - **二维属性** → Markdown 表格
+  - **少量关系** → SVO 文本 (加粗动词，e.g., A **depends on** B)
+  - **复杂拓扑/时序** → Mermaid (`flowchart`, `sequenceDiagram`)
+  - **位布局** → 表格 (行=字段, 列=属性) + 声明端序
+- **SSOT**: 图表/例子仅作 **Illustration**，不得引入新约束，必须指回权威 Spec。
+
+**详细定义** → [spec-conventions](atelia/docs/spec-conventions.md)
+
+
+
