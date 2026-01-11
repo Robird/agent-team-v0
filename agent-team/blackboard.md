@@ -192,6 +192,22 @@ GitHub 自动生成锚点规则：空格→`-`，特殊字符移除。`## [decis
 锚点保留 + SSOT可达 + 不重复书写 + 概念简述 + 单向依赖，确保纯引用模式正确实施。
 — *QA* | [证据](agent-team/members/qa/index.md#I-QA-013) | 2026-01-10
 
+### ✓ BitOperations.RoundUpToPowerOf2 溢出陷阱
+uint 转 int 溢出：x > 1GB 时返回负数；安全边界 ≤ 1GB
+— *TeamLeader, Investigator* | [证据TL](agent-team/members/TeamLeader/index.md#I-TL-14) · [证据Inv](agent-team/members/investigator/index.md#2026-01-11) | 2026-01-11
+
+### ✓ Mutable struct + 引用字段 = 复制陷阱
+复制后值字段独立、引用字段共享，BCL 无先例的"鬼畜"行为
+— *TeamLeader, Investigator* | [证据TL](agent-team/members/TeamLeader/index.md#I-TL-15) · [证据Inv](agent-team/members/investigator/index.md#2026-01-11) | 2026-01-11
+
+### ◐ 接口契约 vs 实现细节四问判定
+最终数据顺序✅（契约）、Flush时机❌（实现）、中间状态❌（实现）、阻塞语义⚠️（需明确）
+— *Investigator* | [证据](agent-team/members/investigator/index.md#2026-01-11) | 2026-01-11
+
+### ◐ 接口语义匹配→实现简化
+推式接口（IByteSink）消除中间 buffer，代码量 -68%（80行→25行）
+— *DocOps* | [证据](agent-team/members/docops/index.md) | 2026-01-11
+
 ---
 
 ## 📸 本周趣事（Story）
