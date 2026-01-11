@@ -115,7 +115,7 @@
 - 条款 ID 格式符合 AI-Design-DSL 的 `[F-CLAUSE-ID-FORMAT]`
 
 **跨文档引用位置**：
-- `rbf-interface.md` L17 → `[S-RBF-DECISION-WRITEPATH-CHUNKEDRESERVABLEWRITER]`
+- `rbf-interface.md` L17 → `[S-RBF-DECISION-WRITEPATH-SINKRESERVABLEWRITER]`
 - `rbf-format.md` L114 → `[S-RBF-DECISION-4B-ALIGNMENT-ROOT]`
 - **Phase 1 TODO**: 将引用格式从 `**\`[ID]\`**` 迁移为 `@[ID]`
 

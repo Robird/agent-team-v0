@@ -1,6 +1,6 @@
 # Qa 认知索引
 
-> 最后更新: 2026-01-09 — DSL三层验证策略[I-QA-012]、纯引用模式验证清单[I-QA-013]、转义字符污染模式[I-QA-014]
+> 最后更新: 2026-01-11 — 测试接口化改造验证、GetSpan返回值假设陷阱[I-QA-015]、TheoryData工厂可访问性约束[I-QA-016]
 
 ## 我是谁
 测试验证专家，负责 E2E 测试、回归检测和基线跟踪。
@@ -12,8 +12,29 @@
 - [x] PipeMux
 - [x] StateJournal (原 DurableHeap，2025-12-21 更名)
 - [ ] atelia-copilot-chat
+- [x] Atelia.Data (新增)
 
 ## 最近工作
+
+### 2026-01-11: IReservableBufferWriter 测试接口化改造验证
+- **状态**: ✅ 通过（修复 2 个问题后）
+- **验证范围**: `ChunkedReservableWriterNegativeTests` → `ReservableWriterNegativeTests` 接口化改造
+- **测试结果**:
+  - ReservableWriterNegativeTests: 12/12 通过（5 Theory × 2 实现 + 2 Fact）
+  - Data.Tests 全量: 92/92 通过（无回归）
+- **发现并修复的问题**:
+  - P0: CS0059 可访问性不一致（委托 public，参数类型 private）→ 重构为 `Func<(IReservableBufferWriter, Func<byte[]>)>` 工厂
+  - P1: `Advance_ExceedLastSpan_Throws` 假设 `GetSpan(8)` 返回正好 8 字节，但实际返回 chunk 大小（≥1024）→ 改为 `span.Length + 1`
+- **验证清单结果**:
+  - 覆盖完整性: ✅ 6/6 测试全部改造
+  - 接口纯度: ✅ Theory 只用接口，Fact 正确用具体类型
+  - 陷阱规避: ✅ Trap 1（中间状态断言）已移除
+  - 工厂正确性: ✅ 修复后正确
+  - 资源管理: ✅ 正确使用 using 模式
+- **报告**: [handoffs/2026-01-11-test-qa-report.md](../../handoffs/2026-01-11-test-qa-report.md)
+- **洞见**:
+  - `GetSpan(N)` 返回值可能远大于 N（接口契约是"至少 N"），测试边界条件应使用实际返回长度
+  - xUnit TheoryData 的工厂委托参数类型必须与委托可访问性一致，私有类型需用元组封装隐藏
 
 ### 2026-01-01: DocGraph v0.1 Day 3 全面验证
 - **状态**: ✅ 验证通过
@@ -423,6 +444,28 @@
 - **根因**：可能是编辑器或 LLM 输出时的转义处理
 - **验证技巧**：DSL 验证时增加转义字符检测步骤
 
+#### [I-QA-015] GetSpan 返回值大小不可假设（2026-01-11）
+
+> 来源：IReservableBufferWriter 测试接口化改造验证
+
+- **场景**：测试 `IBufferWriter<byte>.Advance(count)` 超出范围的边界条件
+- **陷阱**：假设 `GetSpan(N)` 返回正好 N 字节
+- **实际**：接口契约是"返回**至少** sizeHint 字节"，实际可能返回 chunk 大小（如 1024 或更大）
+- **后果**：`GetSpan(8)` 后 `Advance(9)` 不会抛异常（因为实际 span 可能有 1024 字节）
+- **验证技巧**：使用 `span.Length + 1` 而非硬编码值测试超出范围
+- **通用模式**：测试边界条件时，先获取实际值再构造超出情况，避免硬编码假设
+
+#### [I-QA-016] xUnit TheoryData 工厂模式的可访问性约束（2026-01-11）
+
+> 来源：IReservableBufferWriter 测试接口化改造验证
+
+- **场景**：需要传递私有类型（如测试辅助类 `CollectingWriter`）到 Theory 测试
+- **陷阱**：`public delegate Foo WriterFactory(PrivateClass param)` 编译失败（CS0059）
+- **原因**：委托参数类型必须与委托本身可访问性一致
+- **解决方案**：使用 `Func<(PublicType, ...)>` 隐藏私有类型，通过元组返回必要数据
+- **示例**：`Func<(IReservableBufferWriter Writer, Func<byte[]> GetData)>` 封装 writer 和数据获取委托
+- **通用模式**：xUnit TheoryData 中需要私有类型时，用工厂返回公开接口 + 辅助委托的元组
+
 ### 协作模式
 
 #### [I-QA-006] 验证报告的关键信息密度（2026-01-04）
@@ -462,6 +505,8 @@
 
 | Project | Changefeed | Baseline |
 |---------|------------|----------|
+| Atelia.Data | #delta-2026-01-11-phase1-2-qa-verification | Data.Tests: 103/103 pass, Phase 1+2 改造验收通过 |
+| Atelia.Data | #delta-2026-01-11-test-interface-upgrade | ReservableWriterNegativeTests: 12/12 pass, Data.Tests: 92/92 pass |
 | DocGraph | #delta-2026-01-01-docgraph-day3-qa-verification | Unit: 93/93 pass, CLI: 19/19 pass, Perf: 2000 docs/30ms |
 | DocGraph | #delta-2026-01-01-docgraph-p1p2-qa-verification | Unit: 74/74 pass, P1: 9/9 pass, P2: 2/2 pass |
 | DocGraph | #delta-2026-01-01-docgraph-p0-qa-verification | Unit: 63/63 pass, E2E: 5/5 pass, P0: 7/7 pass |
