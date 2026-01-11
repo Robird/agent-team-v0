@@ -1,6 +1,6 @@
 # DocOps 认知索引
 
-> 最后更新: 2026-01-11 便签归档 (3条: RBF文档职能分离重构、RBF文档对齐审查、RBF适配器文档简化)
+> 最后更新: 2026-01-12 便签归档 (1条: 术语统一迁移锁定标注)
 
 ## 我是谁
 
@@ -180,6 +180,8 @@ DocOps - 文档与索引管理专家，负责维护团队的集体记忆和认�
 - 技术属性 + 语义角色并重（如 SizedPtr 的"写→读凭证"隐喻）
 - 引用外部决策矩阵作为理由锚点（如 `AteliaResult/guide.md#1-决策矩阵`）
 
+**实践案例（2026-01-12）**：spec-conventions.md 术语迁移锁定——在文档头部添加迁移锁定块，锁定 Clause-ID 术语，防止回退到旧术语（语义锚点/REQID 等）。这是小黑板"三层防回退守卫"中 Migration Lock Annotation 层的实践。
+
 **待形成 Recipe**：`how-to/lock-key-decisions.md`
 
 ### 条款格式 DSL 化演进路线（2026-01-07 → 2026-01-09 增补）
@@ -291,10 +293,18 @@ SoftwareDesignModeling/
 
 ## 最近工作
 
+### 2026-01-12 - 术语统一迁移锁定标注
+
+**完成项**：
+- spec-conventions.md 头部添加迁移锁定块，锁定 Clause-ID 术语
+- 禁止回退到旧术语（语义锚点/REQID 等）
+
+**关联**：小黑板"三层防回退守卫"的 Migration Lock Annotation 层实践案例
+
 ### 2026-01-11 - RBF 文档系列重构
 
 **文档职能分离**：
-- rbf-interface.md：`[S-RBF-BUILDER-AUTO-ABORT]` 拆分为 `[S-RBF-BUILDER-AUTO-ABORT-SEMANTICS]`（仅逻辑语义）
+- rbf-interface.md：`[S-RBF-BUILDER-AUTO-ABORT]` 拆分为 `[S-RBF-BUILDER-DISPOSE-ABORTS-UNCOMMITTED-FRAME]`（仅逻辑语义）
 - rbf-type-bone.md：新增 `[I-RBF-BUILDER-AUTO-ABORT-IMPL]`（物理实现双路径）、引用化 4 个公开类型、新增"快速导航"区块
 - 行数变化：interface.md 372 行（-20）；type-bone.md 178 行（-80 重复，+35 引用）
 
