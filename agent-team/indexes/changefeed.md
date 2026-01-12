@@ -147,7 +147,7 @@ Why-Tier → Resolve-Tier 术语迁移完成。
 - `path/to/updated-file.md`
 
 **会议记录**:
-- [会议标题](../meeting/YYYY-MM-DD-topic.md)
+- [会议标题](../meeting/<project>/YYYY-MM-DD-topic.md)
 
 #### 引用更新需求
 - [ ] 需要更新的引用1

@@ -74,7 +74,7 @@
 ## 关键路径
 | 用途 | 路径模式 |
 |:-----|:---------|
-| 会议文件 | `agent-team/meeting/YYYY-MM-DD-<topic>.md` |
+| 会议文件 | `agent-team/meeting/<project>/YYYY-MM-DD-<topic>.md` |
 | 成员认知 | `agent-team/members/<name>/index.md` |
 | 共享知识 | `agent-team/wiki/` |
 | 记忆积累 | `agent-team/wiki/memory-accumulation-spec.md` |

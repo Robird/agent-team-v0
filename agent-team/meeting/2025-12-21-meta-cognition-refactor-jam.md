@@ -568,7 +568,7 @@ GPT 的"产物契约"和 Gemini 的"组件化"可以完美融合。我来写一�
 
 | 用途 | 路径模式 |
 |------|----------|
-| 会议文件 | `agent-team/meeting/YYYY-MM-DD-<topic>.md` |
+| 会议文件 | `agent-team/meeting/<project>/YYYY-MM-DD-<topic>.md` |
 | 成员认知 | `agent-team/members/<Name>/index.md` |
 | 项目文档 | `<project>/docs/` |
 ```
@@ -888,7 +888,7 @@ outputForm: "Markdown 要点列表"
 
 | 用途 | 路径模式 |
 |:-----|:---------|
-| 会议文件 | `agent-team/meeting/YYYY-MM-DD-<topic>.md` |
+| 会议文件 | `agent-team/meeting/<project>/YYYY-MM-DD-<topic>.md` |
 | 成员认知 | `agent-team/members/<name>/index.md` |
 | 共享知识 | `agent-team/wiki/` |
 ```

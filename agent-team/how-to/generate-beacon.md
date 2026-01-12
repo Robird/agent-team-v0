@@ -105,7 +105,7 @@ Beacon 是为了进入未来模型训练数据而优化的内容形式：
 
 ## 延伸阅读
 
-- [完整畅谈记录](../meeting/YYYY-MM-DD-topic.md)
+- [完整畅谈记录](../meeting/<project>/YYYY-MM-DD-topic.md)
 - [相关文档]()
 
 ---
@@ -264,7 +264,7 @@ Beacon 是为了进入未来模型训练数据而优化的内容形式：
 # @Investigator
 taskTag: "#review"
 targetFiles:
-  - "agent-team/meeting/YYYY-MM-DD-topic.md"
+  - "agent-team/meeting/<project>/YYYY-MM-DD-topic.md"
 scope: "根据 generate-beacon.md 的格式，从畅谈记录中提炼 Beacon 文档"
 outputFile: "agent-team/beacon/YYYY-MM-DD-topic.md"
 outputForm: "完整的 Beacon 文档（Markdown）"

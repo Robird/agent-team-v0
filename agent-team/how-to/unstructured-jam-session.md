@@ -51,7 +51,7 @@ maintainer: "TeamLeader"
 #### 1.1 创建会议文件
 ```bash
 # 使用 cat >> 模式确保追加到文件末尾
-cat >> agent-team/meeting/YYYY-MM-DD-<topic>.md << 'EOF'
+cat >> agent-team/meeting/<project>/YYYY-MM-DD-<topic>.md << 'EOF'
 ```
 
 #### 1.2 设计情景化叙事

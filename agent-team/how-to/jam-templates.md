@@ -233,7 +233,7 @@
 ```yaml
 # @<AgentName>
 taskTag: "#review" # 或 #design, #decision, #jam
-chatroomFile: "agent-team/meeting/YYYY-MM-DD-<topic>.md"
+chatroomFile: "agent-team/meeting/<project>/YYYY-MM-DD-<topic>.md"
 appendHeading: "### <AgentName> 发言"
 scope: "<ScopeDescription>"
 outputForm: "<OutputFormat>"
@@ -244,7 +244,7 @@ outputForm: "<OutputFormat>"
 ```yaml
 # @<AgentName>
 taskTag: "#review"
-chatroomFile: "agent-team/meeting/YYYY-MM-DD-<topic>.md"
+chatroomFile: "agent-team/meeting/<project>/YYYY-MM-DD-<topic>.md"
 targetFiles:
   - "<FilePath>"
 appendHeading: "### <AgentName> 发言"
@@ -257,7 +257,7 @@ outputForm: "<OutputFormat>"
 ```yaml
 # @<AgentName>
 taskTag: "#design"
-chatroomFile: "agent-team/meeting/YYYY-MM-DD-<topic>.md"
+chatroomFile: "agent-team/meeting/<project>/YYYY-MM-DD-<topic>.md"
 appendHeading: "### <AgentName> 实施报告"
 scope: "<ScopeDescription>"
 implementationTarget: "<FilePath>"
@@ -269,7 +269,7 @@ outputForm: "实施报告模板"
 ```yaml
 # @<AgentName>
 taskTag: "#jam"
-chatroomFile: "agent-team/meeting/YYYY-MM-DD-<topic>.md"
+chatroomFile: "agent-team/meeting/<project>/YYYY-MM-DD-<topic>.md"
 appendHeading: "### <AgentName> 发言"
 scope: "<ScopeDescription>"
 outputForm: "任何形式"

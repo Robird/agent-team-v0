@@ -908,7 +908,7 @@ MERGE 触发清单：
 产出 Brief（结构化文档）
     │
     ▼
-保存到 handoffs/YYYY-MM-DD-[task]-INV.md
+保存到 handoffs/<project>/YYYY-MM-DD-[task]-INV.md
     │
     ▼
 index.md 只留一行链接
@@ -936,7 +936,7 @@ index.md 只留一行链接
 > **"过程产物外置"应成为所有成员的默认模式。**
 
 对于 Implementer：
-- 每次实现任务产出一个 `handoffs/YYYY-MM-DD-[task]-IMP.md`
+- 每次实现任务产出一个 `handoffs/<project>/YYYY-MM-DD-[task]-IMP.md`
 - index.md 只留：`- 2025-12-22: [RBF 命名重构](../handoffs/2025-12-22-rbf-rename-IMP.md)`
 
 ---
