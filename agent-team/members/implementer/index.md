@@ -29,6 +29,7 @@
 
 | 项目 | 状态 | 最后更新 | 备注 |
 |------|------|----------|------|
+| DesignDsl | Parser MVP ✅ | 2026-01-14 | 67 测试通过，Term/Clause 节点解析 |
 | Atelia.Data | Phase 3 完成 ✅ | 2026-01-11 | 测试架构治理完成，103 测试 |
 | DocGraph | v0.2 进行中 🔄 | 2026-01-07 | v0.2: Wish 布局迁移 + IssueAggregator Phase 2 |
 | StateJournal | M2 完成 ✅ | 2025-12-28 | 659 测试通过，待 M3 |
@@ -138,6 +139,22 @@
 
 26. **验收→实现映射**：可启动 / 可回放 / 可解释 / 可控成本 / 可插拔
 
+### DesignDsl Parser 洞见（2026-01-14）
+
+27. **Markdig Setext Heading 陷阱**
+    - `text\n---` 被解析为 Setext Heading（Level=2），而非 ThematicBreakBlock
+    - 测试 Case 需适应 Markdig 实际解析行为
+
+28. **INodeBuilder 职责链模式**
+    - 接口 `TryBuild()` 返回 `Node?`，null 表示不匹配
+    - Pipeline 按顺序调用，DefaultNodeBuilder 作兜底
+    - 扩展：`InsertBefore()` 注册到 Default 之前
+
+29. **AI-Design-DSL 正则模式**
+    - Term: `` ^\s*term\s+`([^`]+)`(?:\s+(.+?))?\s*$ ``
+    - Clause: `` ^\s*(decision|design|hint)\s+\[([^\]]+)\](?:\s+(.+?))?\s*$ ``
+    - 使用 `[GeneratedRegex]` 优化性能
+
 ### 经验教训
 
 1. **SSOT 缺失/冲突事件**
@@ -173,6 +190,7 @@
 
 | 时间 | 项目 | 主要交付 |
 |------|------|----------|
+| 2026-01 | DesignDsl | Parser MVP（INodeBuilder 框架 + Term/Clause 解析），67 测试 |
 | 2026-01 | Atelia.Primitives | 双类型架构重构（AteliaResult ref struct + AteliaAsyncResult），39 测试 |
 | 2026-01 | DocGraph v0.1 | 93 测试通过，validate/fix/generate 命令 |
 | 2025-12 | StateJournal M2 | 659 测试通过，完整二阶段提交 + Recovery |
@@ -258,6 +276,7 @@ agent-team/archive/members/implementer/
 
 > 详细历史见 `archive/members/implementer/`
 
+- **2026-01-14**: DesignDsl Parser MVP 完成（INodeBuilder 框架 + Term/Clause 节点），67 测试
 - **2026-01-11**: 记忆维护完成（530→262行，-51%）；洞见合并（39→26条）；180+ 行项目表格外迁归档
 - **2026-01-11**: Atelia.Data 测试治理（Theory 化 + TheoryData 工厂 + 双接口模式）
 - **2026-01-09**: DSL 迁移扩展点 + 纯引用模式
