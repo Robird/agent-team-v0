@@ -139,7 +139,7 @@
 ---
 
 ## term `Clause-Node` 条款
-是一种@`Term-Node`，且具有特定的Heading文本模式。
+是一种@`ATX-Node`，且具有特定的Heading文本模式。
 用于承载一个设计约束。
 按职能不同，其具有3种亚型：@`Decision-Clause`(决策)、@`Spec-Clause`(服务于@`Decision-Clause`的关键规格)、@`Derived-Clause`(可由@`Spec-Clauses`推导得出的信息)。
 
@@ -244,9 +244,3 @@ Target 文档中通过导入指令引入的外部符号 MUST NOT 被二次导出
 *这使得任何文档的上下文依赖都是扁平且显式的，同时也消除了循环导入的解析风险。*
 
 ---
-
-## 变更日志
-
-| 版本 | 日期 | 变更 |
-|------|------|------|
-| 0.2 | 2026-01-12 | 条款ID立场命名审阅：8个条款改名以符合@[S-DOC-CID-STANCE-NAMING]规则 |
