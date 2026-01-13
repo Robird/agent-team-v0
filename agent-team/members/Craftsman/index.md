@@ -127,11 +127,19 @@
 
 - [I-062] **薄分叉 + Registry 化**：当 upstream 已提供足够强的扩展点（如 PromptRegistry 的 SystemPrompt/IdentityRules/SafetyRules），应将策略收敛为"薄分叉 + registry 化"——把提示词差异从核心文件 diff 中抽离，以接近 A（不 fork）的维护成本获取 B（fork）的能力收益。但运行时语义（如 runSubagent/会话隔离）不在 registry 覆盖面内，需做最小探针验证扩展位/最小补丁面。`[2026-01-09]`
 
+### RBF 实现审阅
+
+- [I-073] **ref struct 实现接口的生态红利陷阱**：RbfFrameBuilder 若直接实现 IReservableBufferWriter，需警惕"ref struct 实现接口但无法以接口形态传参/存储（避免装箱）"——可能拿不到 BufferExtensions/IBufferWriter 生态红利。另外 `Commit()`（帧提交）与 `Commit(int)`（reservation 提交）在同一接收者上会放大误用风险；建议保持 `Payload` 并用转发方法解决 DX。`[2026-01-12]`
+
 ### AOS 架构 / Session 工程
 
 - [I-070] **AOS 核心三要素**：SSOT 设为只追加 Frame Journal（可回放/可解释/可回归），而非某次 Prompt；多 Session 工程关键是"结构化 Context Patch 协议 + 确定性 Builder + 预算护栏"。`[2026-01-05]`
 - [I-071] **AOS-Kernel MVP 架构**：SessionManager/Scheduler/ContextBuilder/ExecutionEngine/Journal + 4 个 Cortex Session（Observer/Retriever/Planner/Critic）。`[2026-01-05]`
 - [I-072] **AOS 六条验收**：可启动、可回放、可解释、可控成本、可插拔、可对照——可作为 MVP 验收清单。`[2026-01-05]`
+
+### Design-DSL 实现
+
+- [I-074] **term 定义的反引号语法与 Markdig 解析陷阱**：Design-DSL 的 term 定义依赖反引号语法 `term \`Term-ID\``，但 Markdig AST 会把反引号解析为 `CodeInline` 并在"纯文本提取"时丢失反引号，导致基于 regex 的 matcher 误判。解法：(1) matcher 直接基于 Inline 结构匹配（关键字 + CodeInline(TermId)），或 (2) 先把 Inline 规范化回带反引号的 DSL 文本再匹配；并把"headingText 的定义"写进验收标准。`[2026-01-12]`
 
 ---
 
