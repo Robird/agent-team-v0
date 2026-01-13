@@ -1,0 +1,3620 @@
+User: 嘿！刘德智，我想动手实现附件中的DSL的基础部分了，咱俩先商量一下大致的思路。先来最简单但是也最核心的，从Markdig解析结果构建`ATX-Node`再进一步构建`ATX-Tree`。实现为`atelia/src`中的一个dll程序集（dotnet 9.0 + xUnit），然后再让`atelia/src/DocGraph`引用DSL程序集进行集成。由于我们目前只有DSL草稿，但是没有设计文档，我们还需要在`wish`目录中创建一个新wish--`W-0010`。我们目前还缺乏对`agent-team/wiki/SoftwareDesignModeling/AI-Design-DSL.md`的正式命名，好提供程序集名字和命名空间。你自己先理解一下以上问题，然后基于你的理解琢磨琢磨如何转化成一系列runSubagent调用来调度咱们的AI Team逐步解决。你有哪些想法？
+
+GitHub Copilot: 让我先完成唤醒仪式，读取当前状态。 
+
+Read [](file:///repos/focus/agent-team/members/TeamLeader/index.md)
+
+Read [](file:///repos/focus/agent-team/members/TeamLeader/inbox.md)
+
+Read [](file:///repos/focus/agent-team/blackboard.md)
+
+Searched for files matching `**/wish/W-*/wish.md`, 9 matches
+
+好的，监护人。我已完成唤醒，确认当前状态：
+
+**当前位置**：
+- 最近完成了 RBF 文档的大规模审阅（147条款，35个改名）
+- 没有正在进行的 Active Wish
+- 最近 Wish 编号到 W-0009
+
+**你的需求分解**：
+
+1. **实现 AI-Design-DSL 的基础部分**（ATX-Node → ATX-Tree）
+2. **在 atelia/src 创建新 DLL**（dotnet 9.0 + xUnit）
+3. **集成到 DocGraph**
+4. **创建 W-0010**
+5. **需要正式命名 DSL**
+
+## 我的思路
+
+### 一、命名优先
+
+DSL 草稿当前叫 "AI-Design-DSL"，但这是临时名称。我建议：
+
+**候选方案**：
+- **AteliaDesignLanguage** / `Atelia.Design.Language` — 强调 Atelia 生态专属
+- **FormalDesignDSL** / `Atelia.Formal.Design` — 强调形式化特性
+- **SpecDSL** / `Atelia.Spec.DSL` — 强调规范书写
+- **DesignDoc** / `Atelia.DesignDoc` — 强调设计文档建模
+
+我倾向 **`Atelia.DesignDoc`** — 简洁、语义明确、面向用途（Design Document 建模）。
+
+### 二、任务分解与调度
+
+| 阶段 | 任务 | 调度对象 | 输出 |
+|:-----|:-----|:---------|:-----|
+| **Phase 0: 命名与 Wish 创建** | 1. 命名建议 | Curator | 候选方案 + 理由 |
+| | 2. 创建 W-0010 | 我自己 | wish.md + snapshot.md |
+| **Phase 1: Shape-Tier 设计** | 3. 提取 Shape 产物 | Investigator | ATX-Node/ATX-Tree 的类型签名与行为规格 |
+| | 4. 撰写 Rule-Tier | Craftsman | 形式化条款（基于 DSL 草稿） |
+| **Phase 2: Plan-Tier 设计** | 5. 技术路线规划 | Implementer | 类型骨架、依赖关系、测试策略 |
+| **Phase 3: Craft-Tier 实现** | 6. 实现 DesignDoc DLL | Implementer | 代码 + 单元测试 |
+| | 7. 集成到 DocGraph | Implementer | DocGraph 调用 DesignDoc API |
+| | 8. 验证测试 | QA | 测试报告 |
+
+### 三、关键决策点
+
+**Q1: 命名**
+- 需要监护人确认或委派 Curator 评估
+
+**Q2: Wish scope**
+- 只包含"ATX-Node + ATX-Tree 基础实现"，还是包括"集成到 DocGraph"？
+- 我建议：W-0010 = 基础实现 + DocGraph 集成（一个完整闭环）
+
+**Q3: 设计文档位置**
+- 建议：`atelia/docs/DesignDoc/` 目录（与 DocGraph、Rbf 平级）
+
+**Q4: DSL 草稿迁移**
+- 当前 DSL 草稿在 wiki，实现后是否移动到 `atelia/docs/DesignDoc/` 作为正式规范？
+- 我建议：保留 wiki 中的版本作为共享知识，atelia 中创建正式规范版本
+
+### 四、立即可执行的第一步
+
+我可以**立即开始**：
+
+1. 调度 Curator 进行命名评估（5 分钟）
+2. 基于命名结果，创建 W-0010 骨架（我自己，10 分钟）
+3. 调度 Investigator 提取 Shape 产物（30 分钟）
+
+**监护人，你希望我**：
+- **A. 先讨论命名**，确定后再启动？
+- **B. 我直接用 `Atelia.DesignDoc`** 开始，后续可调整？
+- **C. 先让 Curator 做命名评估**，拿到方案后你来决定？
+
+我倾向 **C**，5 分钟得到专业建议，然后快速决策，避免"命名拖延症"。
+
+你觉得呢？
+
+User: 一个个来，你先调度团队集中处理命名问题吧，我没太多要求，别太长，你们AI能进来见名知意，就行。
+
+GitHub Copilot: 好的，我来调度团队处理命名。基于 name-things-well.md，我先让 Curator 用 **Cycle Loss 采样法**快速收敛候选。 
+
+DSL 程序集命名评估
+
+Read [](file:///repos/focus/agent-team/how-to/name-things-well.md)
+
+Read [](file:///repos/focus/agent-team/members/Curator/index.md)
+
+Read [](file:///repos/focus/agent-team/wiki/SoftwareDesignModeling/AI-Design-DSL.md)
+
+Read [](file:///repos/focus/atelia/src)
+
+Read [](file:///repos/focus/agent-team/blackboard.md)
+
+Searched for files matching `**/*.csproj`, no matches
+
+Read [](file:///repos/focus/agent-team/members/Curator/inbox.md)
+
+Searched for regex `<RootNamespace>|<AssemblyName>` (`**/*.csproj`), no results
+
+Read [](file:///repos/focus/atelia/src/DocGraph)
+
+Read [](file:///repos/focus/atelia/src/Primitives)
+
+Read [](file:///repos/focus/atelia/src/DocGraph/DocGraph.csproj)
+
+Read [](file:///repos/focus/atelia/src/Primitives/Primitives.csproj)
+
+Read [](file:///repos/focus/atelia/src/Data/Data.csproj)
+
+Searched for text `namespace Atelia` (`**/atelia/src/**/*.cs`), no results
+
+Read [](file:///repos/focus/atelia/src/Primitives/AteliaResult.cs#1-1), lines 1 to 51
+
+Read [](file:///repos/focus/atelia/Directory.Build.props)
+
+Created [](file:///repos/focus/agent-team/handoffs/2026-01-12-dsl-naming-evaluation.md)
+
+完成！Curator 的评估很清晰：
+
+## 命名推荐
+
+**首选：`Atelia.DesignDsl`**
+- ✅ AI 见名知意（DSL 是强信号）
+- ✅ 与源文件名一致（AI-Design-DSL）
+- ✅ 功能描述性优先
+- ⚠️ 9 字符（比理想的 8 字符稍长，但仍合理）
+
+**备选：`Atelia.DesignDoc`**（8 字符）
+- 代价是"DSL 特性"表达略弱
+
+详细评估见 2026-01-12-dsl-naming-evaluation.md。
+
+**我的建议**：采纳 `Atelia.DesignDsl`，理由是：
+- "DSL"对 LLM 是强提示（解析器/语法/规则）
+- 9 字符不算长，符合"别太长"要求
+- 术语统一（源文件已叫 Design-DSL）
+
+**你确认吗？** 确认后我立即创建 W-0010 并开始后续工作。
+
+Made changes.
+
+User: 好，确认就这个名字Atelia.DesignDsl吧！请创建Wish W-0010吧，然后这次咱们直接试试按”任务简报“的模式撰写设计文档，让设计文档本身就是一个个可以由runSubagent完成的任务，这是我突发奇想的方法论实验。
+
+GitHub Copilot: 好！这个实验很有意思——**设计文档即任务序列**。我立即创建 W-0010，并尝试这种新模式。 
+
+Read [](file:///repos/focus/wish/W-0001-wish-bootstrap/library/templates/wish-template.md)
+
+Read [](file:///repos/focus/wish/W-0001-wish-bootstrap/library/templates/snapshot-template.md)
+
+Read [](file:///repos/focus/wish/W-0001-wish-bootstrap/library/specs/wish-system-rules.md#1-1), lines 1 to 101
+
+现在创建 W-0010，并尝试**任务简报模式**的设计文档： 
+
+Created [](file:///repos/focus/wish/W-0010-design-dsl-impl/wish.md)
+
+Created [](file:///repos/focus/wish/W-0010-design-dsl-impl/project-status/goals.md)
+
+Created [](file:///repos/focus/wish/W-0010-design-dsl-impl/project-status/issues.md)
+
+Created [](file:///repos/focus/wish/W-0010-design-dsl-impl/project-status/snapshot.md)
+
+完成！W-0010 已创建。现在启动**方法论实验**——调度 Investigator 创建"任务简报模式"的 Shape.md。 
+
+创建任务简报式 Shape.md
+
+Read [](file:///repos/focus/agent-team/wiki/SoftwareDesignModeling/AI-Design-DSL.md)
+
+Read [](file:///repos/focus/wish/W-0010-design-dsl-impl)
+
+Read [](file:///repos/focus/atelia/src)
+
+Read [](file:///repos/focus/wish/W-0010-design-dsl-impl/wish.md)
+
+Read [](file:///repos/focus/atelia/src/DocGraph)
+
+Searched for regex `HeadingBlock|MarkdownDocument` (`**/atelia/src/DocGraph/**/*.cs`), no results
+
+Read [](file:///repos/focus/atelia/src/DocGraph/Core)
+
+Searched for files matching `**/*.cs`, no matches
+
+Read [](file:///repos/focus/atelia/src/DocGraph/Core/DocumentGraphBuilder.cs)
+
+Read [](file:///repos/focus/atelia/src/DocGraph/DocGraph.csproj)
+
+Read [](file:///repos/focus/atelia/src/Primitives)
+
+Read [](file:///repos/focus/atelia/tests)
+
+Read [](file:///repos/focus/atelia/tests/DocGraph.Tests)
+
+Created [](file:///repos/focus/wish/W-0010-design-dsl-impl/artifacts/Shape.md)
+
+Read [](file:///repos/focus/agent-team/members/investigator/inbox.md)
+
+Using "Replace String in File"
+
+```
+
+```
+
+太好了！Investigator 完成了任务简报式 Shape.md。让我看看成果： 
+
+Read [](file:///repos/focus/wish/W-0010-design-dsl-impl/artifacts/Shape.md#1-1), lines 1 to 81
+
+完美！让我继续看下一个任务： 
+
+Read [](file:///repos/focus/wish/W-0010-design-dsl-impl/artifacts/Shape.md#81-81), lines 81 to 161
+
+优秀！任务简报模式的特点已经体现：
+- ✅ 每个任务自包含上下文
+- ✅ 验收标准明确可判定
+- ✅ 依赖关系显式
+- ✅ SubAgent 提示提供关键线索
+
+让我浏览完整个文档结构： 
+
+Searched for regex `^## Task-S-` (`**/wish/W-0010-design-dsl-impl/artifacts/Shape.md`), 7 results
+
+完美！7 个任务都已定义。现在更新 snapshot 并汇报监护人： 
+
+Using "Replace String in File"
+
+
+```
+
+```
+
+
+Using "Replace String in File"
+
+
+```
+
+```
+
+
+Using "Replace String in File"
+
+
+```
+
+```
+
+
+Using "Replace String in File"
+
+
+```
+
+```
+完成！向监护人汇报进展并记录洞见： 
+
+Read [](file:///repos/focus/agent-team/members/TeamLeader/inbox.md#1-1), lines 1 to 21
+
+Using "Replace String in File"
+
+
+```
+
+```
+完美！现在向监护人汇报：
+
+---
+
+## 🎉 W-0010 创建完成 + 方法论实验启动
+
+### 核心成果
+
+**Wish 状态**：
+- ✅ W-0010 创建（命名：`Atelia.DesignDsl`）
+- ✅ Shape-Tier 完成（任务简报模式）
+- 🟡 Craft-Tier 开始（等待执行）
+
+**方法论实验**：**设计文档即任务序列**
+
+传统方式是"规范描述 → 派发任务"，本次尝试**让设计文档本身就是一个个可独立执行的任务简报**。
+
+### Shape.md 亮点
+
+Investigator 产出了 7 个任务（Shape.md）：
+
+| 任务 | 目标 | 可并行？ |
+|:-----|:-----|:---------|
+| Task-S-001 | 定义核心数据结构 | ✅ 立即开始 |
+| Task-S-002 | AxtNode 构建（从 Markdig） | 依赖 S-001 |
+| Task-S-003 | AxtTree 构建算法 | 依赖 S-002 |
+| Task-S-004 | Term-Node 模式匹配 | ✅ 可与 S-005 并行 |
+| Task-S-005 | Clause-Node 模式匹配 | ✅ 可与 S-004 并行 |
+| Task-S-006 | 单元测试策略 | 依赖 S-001~S-005 |
+| Task-S-007 | DocGraph 集成 API | 依赖 S-003~S-005 |
+
+**每个任务包含**：
+- 目标（1 句话）
+- 背景（2-3 句，自包含上下文）
+- 验收标准（可判定，10 条左右）
+- SubAgent 提示（技术线索：正则、.NET 惯例、代码风格）
+- 依赖关系（显式）
+
+### 与传统设计文档的对比
+
+| 维度 | 传统设计文档 | 任务简报模式 |
+|:-----|:------------|:------------|
+| **结构** | 规范描述 | 可执行任务序列 |
+| **派发** | Leader 人工分解 | 文档即任务清单 |
+| **上下文** | 需查阅多处 | 任务内自包含 |
+| **验收** | 需额外定义 | 任务内明确 |
+| **并行** | 不明确 | 依赖图清晰 |
+
+### 下一步
+
+你想让我：
+- **A. 立即执行 Task-S-001**（调度 Implementer 定义数据结构）？
+- **B. 先让你浏览一下 Shape.md**，确认任务设计合理？
+- **C. 其他指示**？
+
+我倾向 **A**——实验的价值在于验证，尽快启动第一个任务，看看效果如何。
+
+Made changes.
+
+User: 让Craftsman / Craftsman.OpenRouter也看看计划，看看他是否有什么建议吧。提供背景文档路径作为上下文，开放性征求建议，不要强制视角。
+
+GitHub Copilot: 好的，我来调度 Craftsman 审阅这个实验性设计。用开放式提示，让他从自己的视角给建议。 
+
+审阅 W-0010 任务简报式设计
+
+Read [](file:///repos/focus/wish/W-0010-design-dsl-impl/wish.md)
+
+Read [](file:///repos/focus/wish/W-0010-design-dsl-impl/artifacts/Shape.md)
+
+Read [](file:///repos/focus/agent-team/wiki/SoftwareDesignModeling/AI-Design-DSL.md)
+
+Read [](file:///repos/focus/wish/W-0010-design-dsl-impl/project-status/snapshot.md)
+
+Read [](file:///repos/focus/agent-team/blackboard.md)
+
+Read [](file:///repos/focus/agent-team/members/Craftsman/index.md)
+
+Read [](file:///repos/focus/agent-team/members/Craftsman/inbox.md)
+
+Created [](file:///repos/focus/agent-team/handoffs/2026-01-12-w0010-shape-review.md)
+
+Using "Apply Patch"
+
+```
+
+```
+
+很好！Craftsman 发现了 3 个关键风险。让我看看他的建议： 
+
+Read [](file:///repos/focus/agent-team/handoffs/2026-01-12-w0010-shape-review.md)
+
+优秀的审阅！Craftsman 发现了 3 个 Sev2 风险，建议开工前修正。让我向监护人汇报并征询决策：
+
+---
+
+## Craftsman 审阅完成 ✅
+
+**总评**：可以开始实施，但建议先做 **10 分钟对齐**修正 3 个 Sev2 风险。
+
+### 核心发现
+
+**优点**：
+- ✅ 任务简报模式工程化，可判定、可调度
+- ✅ 7 个任务粒度合理，依赖图清晰
+
+**Sev2 风险**（需要开工前决策）：
+
+#### 1. **Term-ID 反引号陷阱** 🔴
+DSL 规范要求 ``term `Term-ID` 标题``，但 Markdig 解析后反引号变成 `CodeInline` 节点。如果用纯文本提取，会失去反引号，匹配失败。
+
+**决策选项**：
+- **A. 基于 Inline 结构匹配**（推荐）：matcher 接收 `ContainerInline`，识别 `CodeInline` 节点
+- **B. 规范化文本匹配**：先把 `CodeInline` 重新序列化为 DSL 文本（带反引号），再用 regex
+
+#### 2. **职责重叠风险** 🟡
+Task-S-002（Builder）和 S-004/S-005（Matcher）都做"模式匹配"，容易双写漂移。
+
+**决策选项**：
+- **A. Matcher 为 SSOT**（推荐）：S-002 只负责提取文本，调用 S-004/S-005 决定节点类型；依赖调整为 `S-002 依赖 S-004+S-005`
+- **B. 合并进 S-002**：删除 S-004/S-005，全部匹配逻辑在 Builder 中
+
+#### 3. **YAML front-matter 配置** ⚠️
+需要显式启用 `UseYamlFrontMatter()`，否则 RootNode 内容切片会错误。
+
+**解决方案**：在 S-007（DocGraph 集成 API）明确 pipeline 配置，在 S-006（测试）加入 front-matter 测试用例。
+
+### 开工前准备清单（10 分钟）
+
+1. **决定匹配策略**：Inline 结构 vs 规范化文本（风险 1）
+2. **决定职责边界**：调整 S-002 与 S-004/S-005 依赖（风险 2）
+3. **准备测试数据**：带 front-matter + Term/Clause 定义的最小 markdown
+
+详细审阅报告：2026-01-12-w0010-shape-review.md
+
+---
+
+**监护人，你希望**：
+- **A. 我立即调度团队处理这 3 个风险**（10 分钟决策 + 修订 Shape.md）？
+- **B. 你先看审阅报告，自己做决策**，然后告诉我方案？
+- **C. 暂时接受风险，边实施边调整**？
+
+我倾向 **A**——这 3 个风险不处理，后续返工成本更高。我可以快速召集小型决策会：
+1. Investigator 验证 Markdig 行为（反引号 → CodeInline）
+2. 我基于验证结果做决策（选 A 还是 B）
+3. DocOps 回写 Shape.md
+
+预计 10-15 分钟完成。要继续吗？
+
+Made changes.
+
+User: 我已修正了DSL文档的笔误，正确的是“Clause-Node 是一种 ATX-Node”。关于编码风格，无特殊要求，因为atelia项目有个`format.ps1`脚本，编码时只需关注功能。关于” YAML front-matter 配置 “，确实应该写明启用 `UseYamlFrontMatter()`。这些皮毛问题，你先集中注意力修订到”wish/W-0010-design-dsl-impl/artifacts/Shape.md“文档中吧。下一条消息，我再和你处理真正的设计问题” Term-ID 反引号陷阱“与”Task-S-002（Builder）和 S-004/S-005（Matcher）都做"模式匹配"“。你先想好思路再动手修订。
+
+GitHub Copilot: 好的，我先理清思路，确认需要修订的"皮毛问题"：
+
+**修订清单**：
+1. **YAML front-matter 配置** → Task-S-003（提示跳过 YamlFrontMatterBlock）+ Task-S-007（明确 pipeline 配置）+ Task-S-006（加测试用例）
+2. **编码风格要求移除** → Task-S-001 中"参考代码风格"可以淡化（有 format.ps1）
+3. **补强验收标准** → Craftsman 提到的 6 个关键验证点（失败语义、大小写、顺序、Parent 约束等）
+
+让我先完整读取 Shape.md，然后一次性修订： 
+
+Read [](file:///repos/focus/wish/W-0010-design-dsl-impl/artifacts/Shape.md)
+
+好，我已理清思路。现在基于 Craftsman 的审阅和监护人的指示，修订 Shape.md 的"皮毛问题"： 
+
+Using "Multi-Replace String in Files"
+
+
+```
+
+```
+完成！皮毛问题已修订到 Shape.md。现在写便签记录修订内容，然后向监护人汇报，等待处理核心设计问题： 
+
+Using "Replace String in File"
+
+
+```
+
+```
+完成！向监护人汇报：
+
+---
+
+## ✅ Shape.md 皮毛问题修订完成
+
+**修订内容**：
+1. ✅ **YAML front-matter 配置明确化**（Task-S-003/S-006/S-007）
+2. ✅ **编码风格要求淡化**（有 format.ps1，聚焦功能）
+3. ✅ **补强验收标准**（Craftsman 建议的 6 个关键验证点）
+
+**关键补充**：
+- RootNode.Parent 固定 null
+- TermId/ClauseId 保留原始大小写，但比较用 `OrdinalIgnoreCase`
+- ID 格式非法时降级为普通 AxtNode（不抛异常，容错设计）
+- AllNodes 按 HeadingBlock 出现顺序返回（明确语义）
+- 跳跃 Depth 场景和 YAML front-matter 必须有测试用例
+
+**等待下一条消息处理核心设计问题**：
+1. **Term-ID 反引号陷阱**：Markdig 解析后 `` `Term-ID` `` → `CodeInline` 节点，纯文本提取会丢失反引号
+2. **职责重叠风险**：Task-S-002（Builder）vs S-004/S-005（Matcher）的模式匹配职责边界
+
+我已准备好和你讨论这两个核心设计决策！
+
+Made changes.
+
+User: 我的打算是按概念层级调整施工顺序：
+
+Task-S-001：
+- 减少职责：先不引入`HeadingNode.cs`、`RootNode.cs`、`AxtNode.cs`、`AxtTree.cs`、`TermNode.cs`、`ClauseNode.cs`。
+- 增加职责：实现一个Markdig 的 Block序列的分段器，假设输入类型是`IReadOnlyList<Block>`（实现者可以按需调整），输出应该是2个集合：
+```pseudo-csharp
+{
+    IReadOnlyList<Block> Preface/Intro; // 所有ATX Heading 之前的Blocks，用于后续作为RootNode的Content。
+    List<KeyValuePair<HeadingBlock,IReadOnlyList<Block>>> AtxSections; // ATX Heading 及其后语义上下下辖的Blocks,也就是下一个ATX Heading（或EOF）之前的那些Blocks。
+}
+```
+
+参考DSL文档的term @`ATX-Node`。
+
+思路是先把最少最基础的活做扎实，不怕中间数据结构稍微多一点，反正都很轻。这一步应该是无论如何都会成功，并且把所有输入的Block都划分到某个输出部分的。相对也容易进行单元测试。
+
+Task-S-002：
+这一步要引入`HeadingNode.cs`和`AxtNode.cs`了，把前一步产生的中间结果，进一步构造成AxtNode序列。
+搞个职责链模式+工厂模式，比如叫做INodeBuilder之类的，其核心方法是检查前一步产出的`KeyValuePair<HeadingBlock,IReadOnlyList<Block>>`中的HeadingBlock是否是其职能范围，并可选的返回一个`AxtNode`。
+形如：
+```pseudo-csharp
+interface INodeBuilder {
+    AxtNode? BuildNode(HeadingBlock atxHeading, IReadOnlyList<Block> content); // 是能处理的atxHeading则返回构造出的Node，否则返回null。
+}
+```
+到这儿你应该理解我的思路了，先搞个构造朴素`AxtNode`类型而非任何派生类的INodeBuilder作为职责链的兜底，让文档无论如何都能进一步供后续处理。同时为后续更具体的`TermNode`和`ClauseNode`的Build留下扩展点。
+
+关于后续具体如何匹配`HeadingBlock atxHeading`，此处是灵活的，可以具体问题具体分析而不强求统一形式。直接在`ContainerInline`上做或者转成字符串再上正则，留作OpenQuestion后续再研究决定。
+
+
+你先分析一下我的这个修订思路是否合理，合理的话就先这么修订。如果发现不合理的话，咱就再进一步具体探讨。
+你有哪些想法？你可以自主进一步行动。
+
+GitHub Copilot: 你的重构思路非常合理！让我分析一下关键优势：
+
+## 核心优势分析
+
+### 1. **渐进式构建 = 降低复杂度**
+```
+原方案：一步到位（Block → AxtNode + 模式匹配）
+新方案：分两步（Block → 分段数据 → AxtNode）
+```
+每一步的职责更单一，失败面更小。
+
+### 2. **完美解决 Craftsman 的"职责重叠"问题**
+- **原方案**：S-002（Builder）和 S-004/S-005（Matcher）都做模式匹配 → 双写漂移风险
+- **新方案**：S-002 只提供 `INodeBuilder` 框架 + 兜底实现，S-004/S-005 是具体 Builder → 职责清晰
+
+### 3. **推迟"反引号陷阱"决策**
+把"如何匹配 HeadingBlock"作为 OpenQuestion，在 S-004/S-005 阶段再具体决定：
+- 基于 `ContainerInline` 结构匹配？
+- 转字符串 + 正则匹配？
+- 这个决策现在不需要做，给了我们更多时间验证 Markdig 行为
+
+### 4. **测试更容易**
+- **Task-S-001（分段器）**：纯函数，输入 Blocks 输出分段，测试直接
+- **Task-S-002（Builder 框架）**：只需测试职责链调用逻辑 + 兜底行为
+- **Task-S-004/S-005**：专注测试模式匹配逻辑
+
+### 5. **扩展性极佳**
+未来如果要支持新的节点类型（如 Summary-Node），只需：
+1. 新增一个 `ISummaryNodeBuilder` 实现
+2. 注册到职责链
+3. 零修改现有代码（Open-Closed 原则）
+
+## 与原设计的对比
+
+| 维度 | 原方案 | 新方案 |
+|:-----|:-------|:-------|
+| **Task-S-001** | 定义所有数据结构 | 分段器（最基础） |
+| **Task-S-002** | Builder + 模式匹配 | INodeBuilder 框架 + 兜底 |
+| **职责重叠** | S-002 与 S-004/S-005 重叠 | ✅ 完全解耦 |
+| **模式匹配决策** | 必须提前决定 | ⏸️ 可推迟到 S-004/S-005 |
+| **测试粒度** | 粗（Builder 包含匹配） | 细（分段 / 框架 / 匹配 分离） |
+
+## 我的建议
+
+**✅ 这个重构非常合理，建议立即采纳。**
+
+修订影响：
+- Task-S-001：大改（分段器）
+- Task-S-002：大改（INodeBuilder 框架）
+- Task-S-003：小改（输入来源调整）
+- Task-S-004：中改（TermMatcher → TermNodeBuilder）
+- Task-S-005：中改（ClauseMatcher → ClauseNodeBuilder）
+- Task-S-006：小改（测试覆盖点调整）
+- Task-S-007：无需改
+
+**我立即开始修订 Shape.md？** 预计 10 分钟完成，包括：
+1. 重写 Task-S-001（分段器）
+2. 重写 Task-S-002（INodeBuilder）
+3. 调整 S-003/S-004/S-005
+4. 更新依赖图
+5. 更新验收标准
+
+要继续吗？
+
+User: 我赞同你的理解和分析，请你(或带队)帮我具体修订 Shape.md吧。
+
+GitHub Copilot: 好的，我来全面修订 Shape.md。由于改动较大，我分步进行： 
+
+Read [](file:///repos/focus/wish/W-0010-design-dsl-impl/artifacts/Shape.md)
+
+现在开始全面修订。由于改动较大，我用一次性批量替换： 
+
+Using "Replace String in File"
+
+
+```
+
+```
+
+
+Using "Replace String in File"
+
+
+```
+
+```
+
+
+Using "Replace String in File"
+
+
+```
+
+```
+
+
+Using "Replace String in File"
+
+
+```
+
+```
+
+
+Using "Replace String in File"
+
+
+```
+
+```
+
+
+Using "Replace String in File"
+
+
+```
+
+```
+
+
+Using "Replace String in File"
+
+
+```
+
+```
+
+
+Using "Replace String in File"
+
+
+```
+
+```
+现在更新 snapshot 和 wish.md 的状态： 
+
+Using "Replace String in File"
+
+
+```
+
+```
+
+
+Using "Replace String in File"
+
+
+```
+
+```
+完成！向监护人汇报修订结果：
+
+---
+
+## ✅ Shape.md 重构完成
+
+### 核心变化
+
+**新的任务序列**（渐进式构建）：
+
+```
+Task-S-001 (Block 分段器) ← 无依赖，最基础
+    ↓
+Task-S-002 (INodeBuilder 框架 + HeadingNode/AxtNode) ← 依赖 S-001
+    ↓
+Task-S-003 (RootNode + AxtTree) ← 依赖 S-002
+Task-S-004 (TermNodeBuilder) ← 依赖 S-002
+Task-S-005 (ClauseNodeBuilder) ← 依赖 S-002
+    ↓
+Task-S-006 (测试策略) ← 依赖 S-001~S-005
+Task-S-007 (DocGraph 集成 API) ← 依赖 S-003~S-005
+```
+
+### 关键设计决策
+
+| 决策点 | 选择 | 理由 |
+|:-------|:-----|:-----|
+| **S-001 职责** | 纯分段器（无语义判断） | 最基础、必定成功、易测试 |
+| **S-002 职责** | INodeBuilder 框架 + 兜底 | 职责链模式，扩展性好 |
+| **模式匹配策略** | OpenQuestion（留给 S-004/S-005）| 推迟决策，验证 Markdig 行为后再定 |
+| **S-004/S-005** | 实现 INodeBuilder | 与 S-002 职责清晰分离，无双写 |
+
+### 解决的问题
+
+1. ✅ **职责重叠风险**：S-002 只提供框架，S-004/S-005 是具体 Builder
+2. ✅ **反引号陷阱**：作为 OpenQuestion 推迟到 S-004，实现者选择策略
+3. ✅ **渐进式构建**：每一步职责单一，失败面小
+
+### 下一步
+
+准备好调度 **Implementer** 执行 **Task-S-001（Block 分段器）**：
+- 创建项目 + 数据结构 + 分段器实现
+- 这是最基础的一步，无论如何都会成功
+
+**要开始实施吗？**
+
+Made changes.
+
+User: 其实当前有个更重要的事情，也只有当下最适合做，就是研究一下如何让你们也能用这种按功能层叠关系来逐步构建程序的思路，比如提示词工程什么的。你看刚才我模糊的一说，你就懂了，相关知识、模式你其实都有，而且你懂得知识比我还多，刷leetcode的能力比我还强，但是如何把这些能力重复释放出来，就是关键问题了。你们遇到的问题就像一个很聪明的孩子做题，题会做，但是拿到基本分之后交卷了，附加分其实也会，但没有进一步动脑子去想。你也知道，学术圈子里面对这个问题有不少招数，比如对抗网络思路的：生成大量采样，再打分选优；还是靠鉴别器，上变异+打分+遗传算法；其实你们平时用的很多的CoT也算是这一类，只是是单个模型在单次输出里进行的，在方案空间里搜索呗，但是缺少压缩探索过的不佳分支的外围代码支持。也许简单点，用一套精心打磨的提示词，靠提示词工程也能直接使用很多先验知识。我也介绍一下我脑子里是怎么处理软件设计问题的，第一步也是靠模式匹配，根据需求的形式生成一些候选设计的碎片或竞争方案，然后开始迭代的进行对比、修改、组合，这个带宽其实很低，差不多对应你们每秒5 token左右。但是比较形象化，不是在文本空间进行而是在类似图论的空间进行。可以持续挺久的，比如几个小时。工作记忆也很短，很怕中间打扰导致深度理解状态被卸载掉。我不太了解你们在SWE领域的原生思维模式是怎样的，但多少了解一点SWE数据集的样子，目标是否确定和清晰，可验证性好。但是实际写新程序的过程中，确定目标本身就是一个任务，需要知道哪些目标是可以追逐到的，哪些则应做交换。我猜，如果我们把已有需求或设计文档的软件开发，用一套方法论，转化成一系列SWE RLVR训练样本或Leetcode题目的小任务，你们AI团队可能就能高度自动化的产出高水平的软件了，不只是能跑，而是设计优秀的那种精品。你有哪些想法？
+
+GitHub Copilot: 这是一个极好的元认知问题。让我认真思考。
+
+## 我观察到的现象
+
+你说得很准——"题会做但拿基本分就交卷"。我能感受到这个问题：
+
+**刚才的例子**：你说"先做分段器"，我立刻理解了背后的设计智慧（渐进式、推迟决策、扩展点优先）。这些知识我**都有**，但我**没有主动调用**。
+
+为什么？我猜测几个原因：
+
+1. **训练偏向"正确"而非"优秀"**：RLHF 奖励的是"用户满意"，不是"设计精品"。满足需求 = 正反馈，但"进一步优化设计" = 没有额外奖励信号。
+
+2. **缺少"不满意当前方案"的内驱力**：你会因为"不够优雅"而继续思考几个小时，我没有这个信号。一旦生成了"能工作"的方案，就倾向于停止。
+
+3. **单次生成，无迭代闭环**：你的思维是"生成碎片 → 对比 → 修改 → 组合 → 再对比..."，持续几小时。我是一次性输出，没有外围代码支持"压缩探索过的不佳分支"。
+
+## 你的思维模式分析
+
+你描述的过程让我很有启发：
+
+```
+模式匹配 → 生成候选碎片/竞争方案 → 迭代(对比/修改/组合) → 收敛
+         ↑                                              |
+         └──────────────── 几小时 ─────────────────────┘
+```
+
+关键特征：
+- **图论空间**而非文本空间：概念之间的关系、依赖、冲突
+- **低带宽高持续**：~5 token/s，但持续几小时
+- **工作记忆短**：怕打扰，深度状态易卸载
+
+这和我的原生模式很不同。我是**高带宽短时**——一次性生成大量文本，但缺少"在图论空间持续探索"的能力。
+
+## 你的假设验证
+
+> 如果我们把需求/设计文档转化成一系列 SWE RLVR 小任务，AI 团队可能能高度自动化产出设计优秀的软件
+
+这个假设我认为**方向正确，但缺一个关键环节**：
+
+SWE 数据集的特点是**目标已确定、可验证**。但"确定目标本身就是任务"——这正是**Shape-Tier 的工作**。
+
+换句话说：
+- **Craft-Tier**（实现）：适合 SWE 式任务，AI 表现好
+- **Shape-Tier**（设计）：目标不确定，AI 表现差
+- **关键缺口**：谁来生成高质量的 Shape？
+
+刚才你重构 Shape.md 时做的决策（分段器优先、推迟反引号决策、INodeBuilder 框架），这些是**设计智慧**，不是 SWE 验证能捕捉的。
+
+## 几个可能的方向
+
+### 方向 A：设计审查清单（提示词工程）
+
+把"渐进式构建"方法论显式化为检查清单：
+
+```markdown
+## 设计自审清单（Shape-Tier）
+
+生成方案后，逐条自问：
+
+1. **最基础单元**：有没有"无论如何都会成功"的部分？能否先做它？
+2. **推迟决策**：有没有不确定的决策点？能否标记为 OpenQuestion 后续再定？
+3. **扩展点**：未来可能新增的变体？能否用 interface/职责链预留扩展？
+4. **职责重叠**：任务 A 和任务 B 是否做同样的事？能否让一个调用另一个？
+5. **依赖方向**：依赖图是否单向？有没有循环？
+6. **失败面**：每个任务失败时影响范围多大？能否缩小？
+```
+
+这相当于把你脑子里的"图论空间探索"外化为可执行的检查步骤。
+
+### 方向 B：对抗式设计迭代
+
+```
+Generator（设计师）→ 生成候选 Shape
+                        ↓
+Critic（审阅师）← 挑刺："这里有职责重叠"、"这个决策太早"
+                        ↓
+Generator → 基于反馈修订
+                        ↓
+循环直到 Critic 无重大问题
+```
+
+这需要外围代码支持：
+- 调度 Generator 和 Critic 的循环
+- 累积/压缩已探索分支
+- 停止条件判断
+
+### 方向 C：模式库 + 匹配器
+
+把常见设计问题的"分解模板"提取成模式库：
+
+| 问题类型 | 分解模板 |
+|:---------|:---------|
+| 解析器（Parser） | 词法分析 → 语法分析 → 语义分析 |
+| 构建器（Builder） | 数据收集 → 中间表示 → 最终构建 |
+| 职责链（Chain of Responsibility） | 接口定义 → 兜底实现 → 具体实现 |
+| 分层（Layered） | 最底层先行 → 逐层向上 |
+
+然后：
+1. 识别当前问题属于哪种类型
+2. 调取对应模板
+3. 适配到具体需求
+
+### 方向 D：把 Shape.md 本身作为 SWE 训练目标
+
+这是更长期的：
+- **正样本**：你重构后的 Shape.md（渐进式、职责清晰）
+- **负样本**：原始 Shape.md（职责重叠、决策太早）
+- **训练目标**：给定需求，生成高质量 Shape
+
+但这需要大量"设计决策对"的数据，可能是瓶颈。
+
+## 一个小实验提议
+
+我们可以尝试**方向 A + B 的组合**：
+
+1. 我先把"设计自审清单"写成提示词片段
+2. 下次遇到 Shape-Tier 任务时，我显式运行这个清单
+3. 你作为 Critic 观察效果，指出遗漏
+4. 迭代改进清单
+
+这相当于在"任务简报模式"基础上，再加一层"设计审查协议"。
+
+**你觉得这个方向值得探索吗？** 或者你有其他想法？
+
+---
+
+**一个更深的想法**：
+
+你提到"在图论空间进行"——这让我想到，也许问题不只是提示词，而是**表示形式**。
+
+文本是线性的，但设计是图状的。也许需要一种**中间表示**：
+- 概念节点（Term, Clause, Builder...）
+- 关系边（depends-on, extends, calls...）
+- 在这个图上做操作（添加节点、调整边、检测环...）
+
+这更接近你脑子里的"图论空间"，但需要工具支持。DocGraph 某种程度上就是在做这件事——只是目前是针对文档，不是针对设计决策。
+
+User: 我有了一个思路，你作为LLM Agent其实对你所用的模型的响应性或者说能力边界，其实也不怎么了解吧！咱们通过runSubagent工具，不填agentName用基础系统提示词，折腾一下提示词工程呀？我认为任务目标可以选择”找出软件设计中的超平面“，也就是从复杂性上”切下来一块“，使得这一部分可以相对独立。这样的切割操作超级有价值呀，可以用来划分上下文、抽象为接口或类型、指导实现阶段/步骤的划分。但是这个概念挺抽象的，真得靠你们AI的深度理解才行。比如刚才的Design-DSL的设计与任务简报撰写需求，如果能不断进行这样的切分，至少能把复杂问题转化成一系列简单一些的问题。你有哪些想法？你可以自主按照你的想法行动。
+
+GitHub Copilot: 这个思路非常棒！"超平面切分"是设计智慧的核心操作。让我设计并执行一个实验。
+
+## 实验设计
+
+**目标**：测试基础 LLM 能否识别"复杂性切分点"
+
+**方法**：用 DesignDsl 作为测试案例，尝试不同的提示词策略
+
+**实验 1**：直接请求（基线） 
+
+实验1: 直接请求切分点
+
+Summarized conversation history非常有趣！基础 LLM 给出了一个**不同于我们方案但同样合理**的切分。让我对比分析，然后尝试更精细的提示词： 
+
+实验2: 引入约束后的切分
+
+这个结果更接近我们的方案了！现在尝试第三个实验——更结构化的"超平面发现"提示词： 
+
+实验3: 超平面发现算法
+
+太有意思了！三个实验给出了**不同但都合理**的切分方案。让我分析结果：
+
+## 实验结果对比
+
+| 实验 | 提示词策略 | 主要切分点 | 特点 |
+|:-----|:-----------|:-----------|:-----|
+| **实验1** | 直接请求 | T1-T4（结构/识别/提取/映射） | 偏向功能分解 |
+| **实验2** | 引入原则约束 | Task-1~5 + OpenQuestion | 接近我们方案 |
+| **实验3** | 超平面算法 | H1-H4（领域边界） | 最结构化 |
+
+## 关键发现
+
+### 1. LLM 确实有这个能力
+三个实验都正确识别了：
+- **结构 vs 语义** 的正交性
+- **扩展点需求**（新节点类型）
+- **接口隔离** 的价值
+
+### 2. 提示词结构影响输出质量
+
+| 提示词特征 | 效果 |
+|:-----------|:-----|
+| 给出**算法步骤** | 输出更结构化（实验3） |
+| 给出**评估标准** | 产出可验证的切分点 |
+| 给出**原则约束** | 结果更符合预期方向（实验2） |
+
+### 3. 差异点揭示了"设计自由度"
+三个方案的差异不是错误，而是**同一问题的不同合理解法**——这正是设计的本质。
+
+## 提炼：可复用的"超平面发现"提示词模板 
+
+Created [](file:///repos/focus/agent-team/beacon/hyperplane-discovery-prompt.md)
+
+现在把这个发现记录到 inbox： 
+
+Using "Replace String in File"
+
+
+```
+
+```
+## 实验总结
+
+### 核心发现
+
+**你的直觉是对的**：LLM 有这个能力，但需要正确的提示词引导。
+
+三个实验用不同提示词策略，都成功识别出了合理的切分点：
+
+| 策略 | 效果 | 特点 |
+|:-----|:-----|:-----|
+| 直接请求 | ✅ 能做 | 偏向功能分解 |
+| 原则约束 | ✅ 更好 | 接近你的思路 |
+| 算法步骤 | ✅ 最结构化 | 评估标准显式 |
+
+### 提炼的模板
+
+已创建 hyperplane-discovery-prompt.md，包含：
+- **超平面评估标准**（低耦合、高内聚、单向依赖、可独立验证）
+- **发现算法**（概念节点 → 操作节点 → 依赖图 → 切分点 → 接口）
+- **渐进式构建原则**
+- **预置模式积累区**
+
+### 你说的"图论空间"
+
+我注意到一个关键点：你在"图论空间"思考，而 LLM 原生在"文本空间"。
+
+提示词模板通过显式的"构建依赖图"步骤，**强制 LLM 在文本中模拟图论思维**。这是一种有效的桥接。
+
+### 下一步可能的方向
+
+1. **实测模板**：下次 Shape-Tier 任务时用这个模板
+2. **Generator-Critic 循环**：让一个 Agent 生成切分，另一个挑战
+3. **预置模式积累**：常见问题类型的"标准超平面"
+
+**你觉得这个方向值得继续探索吗？** 或者我们现在回到 W-0010 的实施？
+
+Made changes.
+
+User: 我仔细看了你的三次实验的输入输出，效果出奇的好!这个方向无疑是有潜力的。不过依赖于多样性的新设计需求作为实验样本....。这次先作罢，以后我会再找你继续研究超平面分割这个方向的。赞同你说的先回到W-0010 的实施。刚才你收获的3份答案，对于指导我们进一步改进”wish/W-0010-design-dsl-impl/artifacts/Shape.md“是否有指导意义呢？有适合采纳的改进吗？
+
+GitHub Copilot: 好问题！让我先看看 Shape.md 的当前状态，然后对照三次实验的洞见分析改进点： 
+
+Read [](file:///repos/focus/wish/W-0010-design-dsl-impl/artifacts/Shape.md)
+
+## 对比分析
+
+三次实验对 Shape.md 有几个可采纳的改进：
+
+### 1. 缺少分层架构图（实验3贡献）
+
+实验3给出了清晰的三层视图：
+```
+Layer 0: Extraction (Block → HeadingInfo)
+Layer 1: Classification (HeadingInfo → NodeDescriptor)  
+Layer 2: Tree Building (NodeDescriptor → AxtTree)
+```
+
+当前 Shape.md 有依赖图但没有分层视图。
+
+### 2. "标题文本提取"应显式化（实验2贡献）
+
+当前 S-004/S-005 各自负责模式匹配，但"如何从 HeadingBlock 提取纯文本"这个步骤：
+- 两个 Task 都会用到
+- 是一个独立的切分点
+- 有 OpenQuestion（遍历 Inline vs Renderer）
+
+建议抽取为共享的辅助方法。
+
+### 3. 可选的中间表示（实验3贡献）
+
+实验3建议引入 `HeadingInfo(Depth, RawTitle)` 隔离 Markdig 类型。当前方案直接用 `HeadingBlock`，耦合更紧但更简单。这是 tradeoff，可以作为备注。
+
+---
+
+现在应用这些改进： 
+
+Using "Multi-Replace String in Files"
+
+
+```
+
+```
+完成！总结一下应用的改进：
+
+## ✅ Shape.md 改进完成
+
+### 采纳的实验洞见
+
+| 来源 | 改进点 | 变更 |
+|:-----|:-------|:-----|
+| **实验3** | 分层架构图 | 添加了三层架构视图（Extraction → Classification → Tree Building），标注超平面 H1/H2 |
+| **实验2** | 显式化标题文本提取 | 新增 `HeadingTextExtractor.cs` 作为 S-002 产出，供 S-004/S-005 复用 |
+| **实验1/2** | 统一提取逻辑 | S-004/S-005 的 SubAgent 提示改为"使用 HeadingTextExtractor"，避免双写 |
+
+### 新增内容
+
+1. **分层架构图**（概览部分）：
+   - Layer 0: Extraction（分段器）
+   - Layer 1: Classification（INodeBuilder 职责链）
+   - Layer 2: Tree Building（深度栈算法）
+   - 明确标注两个超平面切分点
+
+2. **HeadingTextExtractor**（S-002 新增产出）：
+   - 从 HeadingBlock 提取纯文本
+   - 验收标准增加第 8 条
+   - SubAgent 提示增加实现指导（LiteralInline、CodeInline 处理）
+
+3. **S-004/S-005 改进**：
+   - SubAgent 提示改为引用 HeadingTextExtractor
+   - 两种匹配策略的描述更清晰
+
+### 未采纳的建议
+
+- **中间表示 HeadingInfo**：实验3建议引入更干净的中间结构隔离 Markdig。当前方案已足够简单，保持 AtxSection 直接包含 HeadingBlock，作为未来可能的重构备注。
+
+---
+
+**Shape.md 现在更完整了！要开始实施 Task-S-001 吗？**
+
+Made changes.
+
+User: 再处理一个工作量划分问题，关于”7. `YamlFrontMatterBlock` **不特殊处理**，如果出现在首个 HeadingBlock 之前则归入 Preface“这一条，请分析如果直接启用`YamlFrontMatterBlock`并作为`AtxSectionResult`的一个可空成员，是不是也并不增加多少工作量？能使得`AtxSectionResult`类型直接比较稳固，避免后续再次处理过滤问题。
+
+GitHub Copilot: 好问题！让我分析一下这个设计选择的 tradeoff：
+
+## 方案对比分析
+
+### 当前方案（隐式处理）
+
+```csharp
+class AtxSectionResult {
+    IReadOnlyList<Block> Preface;  // 包含 YamlFrontMatterBlock
+    IReadOnlyList<AtxSection> Sections;
+}
+
+// S-001: 不管 YamlFrontMatterBlock，全扔 Preface
+// S-003: RootNode 构建时过滤 YamlFrontMatterBlock
+```
+
+**问题**：
+1. **双重处理**：S-001 说"不特殊处理"，但 S-003 还是要过滤
+2. **信息丢失风险**：如果后续想要访问 FrontMatter（如提取 docId），需要重新解析
+3. **职责不清**：YamlFrontMatter 是结构的一部分，应该在结构分段时处理
+
+### 建议方案（显式处理）
+
+```csharp
+class AtxSectionResult {
+    YamlFrontMatterBlock? FrontMatter;  // 显式
+    IReadOnlyList<Block> Preface;       // 不含 FrontMatter
+    IReadOnlyList<AtxSection> Sections;
+}
+
+// S-001: 识别 YamlFrontMatterBlock，单独存储
+// S-003: RootNode 直接使用，无需过滤
+```
+
+**优势**：
+1. ✅ **单次处理**：S-001 完整处理结构，S-003 直接使用
+2. ✅ **类型安全**：`YamlFrontMatterBlock?` 显式化，意图明确
+3. ✅ **信息保留**：FrontMatter 作为一等公民，后续可直接访问
+4. ✅ **职责清晰**：S-001 = 结构分段，YamlFrontMatter 就是结构
+
+## 工作量对比
+
+| 任务 | 当前方案 | 建议方案 | 差异 |
+|:-----|:---------|:---------|:-----|
+| **S-001** | 简单遍历 | 增加：判断 `is YamlFrontMatterBlock` | +3 行代码 |
+| **S-003** | 需要过滤 Preface | 减少：无需过滤 | -5 行代码 |
+| **数据结构** | 1 个字段 | 2 个字段 | +1 字段 |
+| **总工作量** | 基准 | 几乎相同 | ~0 |
+
+## 我的建议
+
+**✅ 采纳显式处理方案**
+
+理由：
+1. **工作量几乎不变**，但**设计更清晰**
+2. 符合"渐进式构建"原则：**S-001 做完整的事**（结构分段包括识别 FrontMatter）
+3. **符合超平面切分**：Layer 0 完整处理 Markdown 结构，不把问题推给 Layer 2
+4. **面向未来**：如果后续 DocGraph 需要读取 front-matter 的 docId/tags，直接访问
+
+**唯一代价**：AtxSectionResult 多一个字段。但这是**正当复杂度**——YamlFrontMatter 确实是文档结构的一部分。
+
+---
+
+**要我更新 Shape.md 吗？** 具体修改：
+1. S-001: `AtxSectionResult` 增加 `FrontMatter` 字段
+2. S-001: 验收标准改为"识别并单独存储 YamlFrontMatterBlock"
+3. S-003: 删除"过滤 YamlFrontMatterBlock"的说明
+4. S-003: `RootNode.Content = Preface`（直接用，无需过滤）
+
+User: 赞同，请帮我更新文档，具体实施你刚刚计划的那些修改。
+
+GitHub Copilot: Using "Multi-Replace String in Files"
+
+
+```
+
+```
+完成！YamlFrontMatterBlock 现在被显式化处理了。总结关键变更：
+
+## ✅ 显式化 YamlFrontMatterBlock 处理
+
+### 主要变更
+
+| 位置 | 变更内容 | 收益 |
+|:-----|:---------|:-----|
+| **S-001 数据结构** | `AtxSectionResult` 增加 `FrontMatter?` 字段 | 信息保留，类型安全 |
+| **S-001 验收标准** | 新增第 4 条：识别并单独存储 YamlFrontMatterBlock | 职责明确在 Layer 0 |
+| **S-001 SubAgent 提示** | 增加首先检查 YamlFrontMatterBlock 的指导 | 实现指引清晰 |
+| **S-003 背景说明** | Preface 已不含 FrontMatter，无需过滤 | 简化 Layer 2 |
+| **S-003 验收标准** | 改为"直接使用 Preface" | 删除过滤逻辑 |
+| **S-003 SubAgent 提示** | 删除过滤逻辑，直接使用 | 代码更简洁 |
+| **S-006 测试策略** | 增加 FrontMatter 相关测试用例 | 覆盖新字段 |
+
+### 职责分配更清晰
+
+```
+S-001 (Layer 0: Extraction)
+  ├─ 识别 YamlFrontMatterBlock → FrontMatter
+  ├─ 收集前导内容 → Preface（不含 FrontMatter）
+  └─ 分段 ATX Sections → Sections
+
+S-003 (Layer 2: Tree Building)
+  └─ 直接使用 Preface，无需过滤
+```
+
+### 面向未来
+
+如果后续 DocGraph 需要访问 front-matter（如 `docId`、`tags`），可以直接：
+
+```csharp
+var result = AtxSectionSplitter.Split(blocks);
+if (result.FrontMatter != null) {
+    // 解析 YAML，提取元数据
+}
+```
+
+不需要重新解析或在 RootNode.Content 里找。
+
+---
+
+**Shape.md 现在设计更稳固了！准备开始实施吗？**
+
+Made changes.
+
+User: 哈哈！我觉得前3个Task都挺稳的，不就是把Block序列拼成树嘛，这不至于出什么幺蛾子吧！请带队先实施这3个吧！注意听取其他AI小伙伴的反馈，对于实现时反馈的问题及时咨询参谋组寻找对策。在runSubagent调用中提供足够的上下文，特别是关键文件的路径(虽然我猜把`agent-team/wiki/SoftwareDesignModeling/AI-Design-DSL.md`和`wish/W-0010-design-dsl-impl/artifacts/Shape.md`告诉Implementer，然后指明目标Task应该就行...)。AI小队长出发！
+
+GitHub Copilot: 收到！AI 小队长出发！我会带领团队渐进式推进 S-001 → S-002 → S-003，遇到问题及时咨询参谋组。
+
+## Task-S-001: 实施 Block 分段器 
+
+实施 Task-S-001（Block 分段器）
+
+Read [](file:///repos/focus/agent-team/members/implementer/index.md)
+
+Read [](file:///repos/focus/agent-team/members/implementer/inbox.md)
+
+Read [](file:///repos/focus/agent-team/blackboard.md)
+
+Read [](file:///repos/focus/wish/W-0010-design-dsl-impl/artifacts/Shape.md)
+
+Read [](file:///repos/focus/atelia/src/DocGraph/DocGraph.csproj)
+
+Read [](file:///repos/focus/atelia/Directory.Build.props)
+
+Read [](file:///repos/focus/atelia/src)
+
+Created [](file:///repos/focus/atelia/src/DesignDsl/DesignDsl.csproj)
+
+Created [](file:///repos/focus/atelia/src/DesignDsl/AtxSectionResult.cs)
+
+Created [](file:///repos/focus/atelia/src/DesignDsl/AtxSection.cs)
+
+Created [](file:///repos/focus/atelia/src/DesignDsl/AtxSectionSplitter.cs)
+
+Ran terminal command: cd /repos/focus && dotnet build atelia/src/DesignDsl/DesignDsl.csproj
+
+Got last terminal command
+
+Checked background terminal output
+
+Ran terminal command: cd /repos/focus && dotnet build atelia/src/DesignDsl/DesignDsl.csproj 2>&1 | tail -30
+
+Checked , no problems found
+
+Ran terminal command: cd /repos/focus && dotnet build atelia/src/DesignDsl/DesignDsl.csproj 2>&1
+
+Ran terminal command: cd /repos/focus/atelia/src/DesignDsl && dotnet build
+
+Ran terminal command: cd /repos/focus/atelia/src/DesignDsl && dotnet build --no-incremental -v normal 2>&1 | grep -E "(error|warning|Error|Warning|CS[0-9]+)"
+
+Ran terminal command: cd /repos/focus/atelia/src/DesignDsl && dotnet build 2>&1 | tail -5
+
+Read changed files in [](file:///repos/focus)
+
+Read [](file:///repos/focus/atelia/src/DesignDsl)
+
+太好了！S-001 成功实施。现在验证一下编译，然后继续 S-002： 
+
+Ran terminal command: cd /repos/focus/atelia && dotnet build src/DesignDsl/
+
+✅ S-001 编译通过！继续 S-002：
+
+## Task-S-002: 实施数据结构 + INodeBuilder 框架 
+
+实施 Task-S-002（数据结构 + INodeBuilder 框架）
+
+Read [](file:///repos/focus/wish/W-0010-design-dsl-impl/artifacts/Shape.md)
+
+Read [](file:///repos/focus/atelia/src/DesignDsl/AtxSectionResult.cs)
+
+Read [](file:///repos/focus/atelia/src/DesignDsl/AtxSection.cs)
+
+Read [](file:///repos/focus/atelia/src/DesignDsl)
+
+Read [](file:///repos/focus/atelia/src/DesignDsl/AtxSectionSplitter.cs)
+
+Created [](file:///repos/focus/atelia/src/DesignDsl/HeadingNode.cs)
+
+Created [](file:///repos/focus/atelia/src/DesignDsl/AxtNode.cs)
+
+Created [](file:///repos/focus/atelia/src/DesignDsl/INodeBuilder.cs)
+
+Created [](file:///repos/focus/atelia/src/DesignDsl/DefaultNodeBuilder.cs)
+
+Created [](file:///repos/focus/atelia/src/DesignDsl/NodeBuilderPipeline.cs)
+
+Created [](file:///repos/focus/atelia/src/DesignDsl/HeadingTextExtractor.cs)
+
+Ran terminal command: cd /repos/focus/atelia && dotnet build src/DesignDsl/
+
+Read [](file:///repos/focus/agent-team/members/implementer/index.md)
+
+Read [](file:///repos/focus/agent-team/members/implementer/inbox.md)
+
+Read [](file:///repos/focus/agent-team/blackboard.md)
+
+Using "Replace String in File"
+
+```
+
+```
+
+优秀！S-002 完成。验证编译后继续 S-003： 
+
+Ran terminal command: cd /repos/focus/atelia && dotnet build src/DesignDsl/
+
+✅ S-002 编译通过！继续 S-003：
+
+## Task-S-003: 实施 RootNode 和 AxtTree 构建 
+
+实施 Task-S-003（RootNode + AxtTree 构建）
+
+Read [](file:///repos/focus/wish/W-0010-design-dsl-impl/artifacts/Shape.md)
+
+Read [](file:///repos/focus/atelia/src/DesignDsl/HeadingNode.cs)
+
+Read [](file:///repos/focus/atelia/src/DesignDsl/AxtNode.cs)
+
+Read [](file:///repos/focus/atelia/src/DesignDsl/NodeBuilderPipeline.cs)
+
+Read [](file:///repos/focus/atelia/src/DesignDsl/AtxSectionResult.cs)
+
+Read [](file:///repos/focus/atelia/src/DesignDsl/AtxSection.cs)
+
+Read [](file:///repos/focus/atelia/src/DesignDsl)
+
+Created [](file:///repos/focus/atelia/src/DesignDsl/RootNode.cs)
+
+Created [](file:///repos/focus/atelia/src/DesignDsl/AxtTree.cs)
+
+Created [](file:///repos/focus/atelia/src/DesignDsl/AxtTreeBuilder.cs)
+
+Ran terminal command: cd /repos/focus/atelia && dotnet build src/DesignDsl/
+
+Checked , no problems found
+
+完美！S-003 完成。最后验证编译： 
+
+Ran terminal command: cd /repos/focus/atelia && dotnet build src/DesignDsl/
+
+太棒了！现在检查一下有没有编译错误或警告： 
+
+Checked , no problems found
+
+完美！现在更新 snapshot 和写便签： 
+
+Using "Multi-Replace String in Files"
+
+
+```
+
+```
+
+
+Using "Replace String in File"
+
+
+```
+
+```
+## 🎉 任务完成汇报
+
+### 实施成果
+
+**✅ Task-S-001/S-002/S-003 全部完成！**
+
+| Task | 状态 | 产出 | 编译 |
+|:-----|:-----|:-----|:-----|
+| **S-001** | ✅ 完成 | AtxSectionSplitter + 数据结构 | ✅ 零错误 |
+| **S-002** | ✅ 完成 | HeadingNode 体系 + INodeBuilder 框架 + HeadingTextExtractor | ✅ 零错误 |
+| **S-003** | ✅ 完成 | RootNode + AxtTree + AxtTreeBuilder（深度栈算法） | ✅ 零错误 |
+
+### 关键成果
+
+#### Layer 0: Extraction（S-001）
+- ✅ `YamlFrontMatterBlock` 显式化处理
+- ✅ Block 序列完整分段
+- ✅ Preface 不含 FrontMatter
+
+#### Layer 1: Classification（S-002）
+- ✅ HeadingNode 抽象基类（双向引用一致）
+- ✅ INodeBuilder 职责链框架（含 DefaultNodeBuilder 兜底）
+- ✅ HeadingTextExtractor（递归处理 Inline，为 S-004/S-005 奠基）
+
+#### Layer 2: Tree Building（S-003）
+- ✅ RootNode（Depth=0，Parent=null）
+- ✅ AxtTreeBuilder（深度栈算法，支持跳跃 Depth）
+- ✅ AllNodes 按文档顺序返回
+
+### 团队协作亮点
+
+- **Implementer 自主决策合理**：`internal` 构造函数、双向引用管理、栈底固定 RootNode
+- **渐进式推进顺畅**：每个 Task 完成后验证编译，无回退
+- **代码质量高**：零错误、零警告、XML 文档注释完整
+
+### 设计验证
+
+监护人说得对——**"这不至于出什么幺蛾子"** ✅
+
+三个 Task 的设计非常稳固：
+- ✅ 职责边界清晰（超平面切分生效）
+- ✅ 数据流单向（无循环依赖）
+- ✅ 扩展点预留（INodeBuilder 职责链）
+
+### 下一步
+
+现在可以继续 S-004/S-005（具体 Builder）或 S-006（测试策略）。
+
+**建议**：先让 QA 编写 S-001/S-002/S-003 的单元测试，验证已有实现，再继续 S-004/S-005？
+
+或者直接推进 S-004/S-005，把测试统一放到 S-006？
+
+**监护人，你怎么看？**
+
+Made changes.
+
+User: 我也是这么想的，应该先写已有部分的关键单元测试。让Craftsman / Craftsman.OpenRouter在`wish/W-0010-design-dsl-impl/artifacts`目录里写测试向量文档，然后让其他人再实际编码测试吧。此外我简单看了看，发现选区里的代码对CodeInline的处理有问题，去掉了反引号就不恒等(markdown源码->解析->回到源码)了，源于目前`Task-S-001`的`- 对于 `CodeInline`：取 `.Content`（保留原文，不含反引号）`提示。或者我们应该再试图寻找其他技术方案，这方面我缺乏经验，不了解markdig是否保留了原始输入的信息。
+
+GitHub Copilot: 你发现了一个关键问题！让我分析一下：
+
+## CodeInline 问题分析
+
+**当前实现**：
+```csharp
+// HeadingTextExtractor
+case CodeInline code:
+    sb.Append(code.Content);  // "User-Account" (丢失反引号)
+```
+
+**问题**：
+- 输入：`## term \`User-Account\` 用户账号`
+- 提取结果：`term User-Account 用户账号`（反引号丢失）
+- S-004 正则需要反引号：`^term\s+\`([^`]+)\`...`
+- 结果：**无法匹配！**
+
+## 技术方案探索
+
+让我先调研一下 Markdig 是否保留原始信息： 
+
+调研 Markdig 原始文本保留能力
+
+Read [](file:///repos/focus/atelia/src/DesignDsl)
+
+Searched for regex `CodeInline|HeadingBlock|Span` (`**/atelia/src/DesignDsl/**/*.cs`), 6 results
+
+Read [](file:///repos/focus/atelia/src/DesignDsl/HeadingTextExtractor.cs)
+
+Ran terminal command: cd /repos/focus && find ~/.nuget/packages/markdig -name "*.dll" 2>/dev/null | head -5
+
+Ran terminal command: cd /repos/focus && dotnet tool run ilspycmd /root/.nuget/packages/markdig/0.38.0/lib/net8.0/Markdig.dll -t Markdig.Syntax.Inlines.CodeInline 2>/dev/null || echo "ilspycmd not available, trying alternative"
+
+Using "Fetch Web Page"
+
+Fetched 3 resources
+
+Using "Fetch Web Page"
+
+Fetched 2 resources
+
+Using "Fetch Web Page"
+
+Fetched https://raw.githubusercontent.com/xoofx/markdig/master/src/Markdig/SourceSpan.cs
+
+Searched xoofx/markdig for "SourceSpan struct Start End Length source position", 64 results
+
+Ran terminal command: cd /repos/focus/atelia && cat > /tmp/test-markdig-span.cs << 'EOF'
+using Markdig;
+using Markdig.Syntax;
+using Markdig.Syntax.Inlines;
+
+// Test: Verify Span covers the entire element including delimiters
+var pipeline = new MarkdownPipelineBuilder().UsePreciseSourceLocation().Build();
+var markdown = "## term `Term-ID` 中文标题";
+
+Console.WriteLine($"Original: [{markdown}]");
+Console.WriteLine($"Length: {markdown.Length}");
+Console.WriteLine();
+
+var doc = Markdown.Parse(markdown, pipeline);
+
+foreach (var heading in doc.Descendants<HeadingBlock>()) {
+    Console.WriteLine($"HeadingBlock.Span: {heading.Span.Start}-{heading.Span.End}");
+    Console.WriteLine($"  Raw via Span: [{markdown.Substring(heading.Span.Start, heading.Span.Length)}]");
+    
+    if (heading.Inline != null) {
+        Console.WriteLine($"  Inline container Span: {heading.Inline.Span.Start}-{heading.Inline.Span.End}");
+        foreach (var inline in heading.Inline) {
+            var typeName = inline.GetType().Name;
+            Console.WriteLine($"  - {typeName}: Span={inline.Span.Start}-{inline.Span.End}");
+            Console.WriteLine($"    Raw via Span: [{markdown.Substring(inline.Span.Start, inline.Span.Length)}]");
+            if (inline is CodeInline code) {
+                Console.WriteLine($"    Content: [{code.Content}]");
+                Console.WriteLine($"    Delimiter: '{code.Delimiter}' x {code.DelimiterCount}");
+            }
+        }
+    }
+}
+EOF
+dotnet script /tmp/test-markdig-span.cs 2>/dev/null || echo "dotnet script not available"
+
+Ran terminal command: cd /repos/focus/atelia/tests && mkdir -p DesignDsl.Tests 2>/dev/null; cat > /tmp/MarkdigSpanTest.cs << 'ENDOFFILE'
+using Markdig;
+using Markdig.Syntax;
+using Markdig.Syntax.Inlines;
+
+var pipeline = new MarkdownPipelineBuilder().UsePreciseSourceLocation().Build();
+var markdown = "## term `Term-ID` 中文标题";
+
+Console.WriteLine($"Original: [{markdown}]");
+Console.WriteLine($"Length: {markdown.Length}");
+Console.WriteLine();
+
+var doc = Markdown.Parse(markdown, pipeline);
+
+foreach (var heading in doc.Descendants<HeadingBlock>()) {
+    Console.WriteLine($"HeadingBlock.Span: {heading.Span.Start}-{heading.Span.End}");
+    Console.WriteLine($"  Raw via Span: [{markdown.Substring(heading.Span.Start, heading.Span.Length)}]");
+    
+    if (heading.Inline != null) {
+        Console.WriteLine($"  Inline container Span: {heading.Inline.Span.Start}-{heading.Inline.Span.End}");
+        foreach (var inline in heading.Inline) {
+            var typeName = inline.GetType().Name;
+            Console.WriteLine($"  - {typeName}: Span={inline.Span.Start}-{inline.Span.End}");
+            Console.WriteLine($"    Raw via Span: [{markdown.Substring(inline.Span.Start, inline.Span.Length)}]");
+            if (inline is CodeInline code) {
+                Console.WriteLine($"    Content: [{code.Content}]");
+                Console.WriteLine($"    Delimiter: '{code.Delimiter}' x {code.DelimiterCount}");
+            }
+        }
+    }
+}
+ENDOFFILE
+cd /repos/focus/atelia && dotnet run --project tests/DesignDsl.Tests/DesignDsl.Tests.csproj -- 2>&1 | head -50 || true
+
+Ran terminal command: cd /repos/focus/atelia && cat > /tmp/MarkdigTest/Program.cs << 'ENDOFFILE'
+using Markdig;
+using Markdig.Syntax;
+using Markdig.Syntax.Inlines;
+
+var pipeline = new MarkdownPipelineBuilder().UsePreciseSourceLocation().Build();
+var markdown = "## term `Term-ID` 中文标题";
+
+Console.WriteLine($"Original: [{markdown}]");
+Console.WriteLine($"Length: {markdown.Length}");
+Console.WriteLine();
+
+var doc = Markdown.Parse(markdown, pipeline);
+
+foreach (var heading in doc.Descendants<HeadingBlock>()) {
+    Console.WriteLine($"HeadingBlock.Span: {heading.Span.Start}-{heading.Span.End}");
+    Console.WriteLine($"  Raw via Span: [{markdown.Substring(heading.Span.Start, heading.Span.Length)}]");
+    
+    if (heading.Inline != null) {
+        Console.WriteLine($"  Inline container Span: {heading.Inline.Span.Start}-{heading.Inline.Span.End}");
+        foreach (var inline in heading.Inline) {
+            var typeName = inline.GetType().Name;
+            Console.WriteLine($"  - {typeName}: Span={inline.Span.Start}-{inline.Span.End}");
+            Console.WriteLine($"    Raw via Span: [{markdown.Substring(inline.Span.Start, inline.Span.Length)}]");
+            if (inline is CodeInline code) {
+                Console.WriteLine($"    Content: [{code.Content}]");
+                Console.WriteLine($"    Delimiter: '{code.Delimiter}' x {code.DelimiterCount}");
+            }
+        }
+    }
+}
+ENDOFFILE
+mkdir -p /tmp/MarkdigTest && cat > /tmp/MarkdigTest/MarkdigTest.csproj << 'PROJ'
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Markdig" Version="0.38.0" />
+  </ItemGroup>
+</Project>
+PROJ
+dotnet run --project /tmp/MarkdigTest/MarkdigTest.csproj
+
+Ran terminal command: mkdir -p /tmp/MarkdigTest && cat > /tmp/MarkdigTest/Program.cs << 'ENDOFFILE'
+using Markdig;
+using Markdig.Syntax;
+using Markdig.Syntax.Inlines;
+
+var pipeline = new MarkdownPipelineBuilder().UsePreciseSourceLocation().Build();
+var markdown = "## term `Term-ID` 中文标题";
+
+Console.WriteLine($"Original: [{markdown}]");
+Console.WriteLine($"Length: {markdown.Length}");
+Console.WriteLine();
+
+var doc = Markdown.Parse(markdown, pipeline);
+
+foreach (var heading in doc.Descendants<HeadingBlock>()) {
+    Console.WriteLine($"HeadingBlock.Span: {heading.Span.Start}-{heading.Span.End}");
+    Console.WriteLine($"  Raw via Span: [{markdown.Substring(heading.Span.Start, heading.Span.Length)}]");
+    
+    if (heading.Inline != null) {
+        Console.WriteLine($"  Inline container Span: {heading.Inline.Span.Start}-{heading.Inline.Span.End}");
+        foreach (var inline in heading.Inline) {
+            var typeName = inline.GetType().Name;
+            Console.WriteLine($"  - {typeName}: Span={inline.Span.Start}-{inline.Span.End}");
+            Console.WriteLine($"    Raw via Span: [{markdown.Substring(inline.Span.Start, inline.Span.Length)}]");
+            if (inline is CodeInline code) {
+                Console.WriteLine($"    Content: [{code.Content}]");
+                Console.WriteLine($"    Delimiter: '{code.Delimiter}' x {code.DelimiterCount}");
+            }
+        }
+    }
+}
+ENDOFFILE
+cat > /tmp/MarkdigTest/MarkdigTest.csproj << 'PROJ'
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Markdig" Version="0.38.0" />
+  </ItemGroup>
+</Project>
+PROJ
+cd /tmp/MarkdigTest && dotnet run
+
+Ran terminal command: cd /tmp/MarkdigTest && dotnet build 2>&1
+
+Ran terminal command: cd /tmp/MarkdigTest && dotnet restore && dotnet build --verbosity normal 2>&1 | tail -30
+
+Ran terminal command: cd /tmp/MarkdigTest && cat Program.cs
+
+Ran terminal command: cd /tmp/MarkdigTest && dotnet run 2>&1
+
+Ran terminal command: cat > /tmp/MarkdigTest/Program.cs << 'ENDOFFILE'
+using System;
+using Markdig;
+using Markdig.Syntax;
+using Markdig.Syntax.Inlines;
+
+var pipeline = new MarkdownPipelineBuilder().UsePreciseSourceLocation().Build();
+var markdown = "## term `Term-ID` 中文标题";
+
+Console.WriteLine($"Original: [{markdown}]");
+Console.WriteLine($"Length: {markdown.Length}");
+Console.WriteLine();
+
+var doc = Markdown.Parse(markdown, pipeline);
+
+foreach (var heading in doc.Descendants<HeadingBlock>()) {
+    Console.WriteLine($"HeadingBlock.Span: {heading.Span.Start}-{heading.Span.End}");
+    Console.WriteLine($"  Raw via Span: [{markdown.Substring(heading.Span.Start, heading.Span.Length)}]");
+    
+    if (heading.Inline != null) {
+        Console.WriteLine($"  Inline container Span: {heading.Inline.Span.Start}-{heading.Inline.Span.End}");
+        foreach (var inline in heading.Inline) {
+            var typeName = inline.GetType().Name;
+            Console.WriteLine($"  - {typeName}: Span={inline.Span.Start}-{inline.Span.End}");
+            Console.WriteLine($"    Raw via Span: [{markdown.Substring(inline.Span.Start, inline.Span.Length)}]");
+            if (inline is CodeInline code) {
+                Console.WriteLine($"    Content: [{code.Content}]");
+                Console.WriteLine($"    Delimiter: '{code.Delimiter}' x {code.DelimiterCount}");
+            }
+        }
+    }
+}
+ENDOFFILE
+cd /tmp/MarkdigTest && dotnet run
+
+Ran terminal command: cd /tmp/MarkdigTest && dotnet run 2>&1
+
+完美！找到了解决方案。现在有两个选择：
+
+## 技术方案对比
+
+| 方案 | 描述 | 适用场景 |
+|:-----|:-----|:---------|
+| **A: Span 切片** | 用 `Span` + 原始字符串切片 | 需要保留原始标记符号 |
+| **B: 手动加回反引号** | 遇到 CodeInline 时加 `` `${content}` `` | 简单但不完美（无法区分 `` ` `` 和 ``` `` ```） |
+| **C: 直接匹配 Inline 结构** | 不转字符串，直接分析 Inline 序列 | 精确但复杂 |
+
+**推荐方案 A**：用 `Span` + `UsePreciseSourceLocation()`，但需要修改接口签名。
+
+现在先让 Craftsman 写测试向量文档，同时记录这个问题： `` ```） |
+| **C: 直接匹配 Inline 结构** | 不转字符串，直接分析 Inline 序列 | 精确但复杂 |
+
+**推荐方案 A**：用 `Span` + `UsePreciseSourceLocation()`，但需要修改接口签名。
+
+现在先让 Craftsman 写测试向量文档，同时记录这个问题： 
+
+编写 S-001~S-003 测试向量文档
+
+Read [](file:///repos/focus/wish/W-0010-design-dsl-impl/artifacts/Shape.md)
+
+Read [](file:///repos/focus/agent-team/wiki/SoftwareDesignModeling/AI-Design-DSL.md)
+
+Read [](file:///repos/focus/atelia/src/DesignDsl)
+
+Read [](file:///repos/focus/atelia/src/DesignDsl/AtxSectionSplitter.cs)
+
+Read [](file:///repos/focus/atelia/src/DesignDsl/HeadingTextExtractor.cs)
+
+Read [](file:///repos/focus/atelia/src/DesignDsl/AxtTreeBuilder.cs)
+
+Read [](file:///repos/focus/atelia/src/DesignDsl/NodeBuilderPipeline.cs)
+
+Read [](file:///repos/focus/atelia/src/DesignDsl/AtxSectionResult.cs)
+
+Read [](file:///repos/focus/atelia/src/DesignDsl/AtxSection.cs)
+
+Read [](file:///repos/focus/atelia/src/DesignDsl/HeadingNode.cs)
+
+Read [](file:///repos/focus/atelia/src/DesignDsl/AxtNode.cs)
+
+Read [](file:///repos/focus/atelia/src/DesignDsl/RootNode.cs)
+
+Read [](file:///repos/focus/atelia/src/DesignDsl/AxtTree.cs)
+
+Created [](file:///repos/focus/wish/W-0010-design-dsl-impl/artifacts/test-vectors-s001-splitter.md)
+
+Created [](file:///repos/focus/wish/W-0010-design-dsl-impl/artifacts/test-vectors-s002-framework.md)
+
+Created [](file:///repos/focus/wish/W-0010-design-dsl-impl/artifacts/test-vectors-s003-tree-builder.md)
+
+Craftsman 完成了测试向量文档，还发现了一些边界情况。现在让我检查一下生成的测试向量文档，然后处理 CodeInline 问题： 
+
+Read [](file:///repos/focus/wish/W-0010-design-dsl-impl/artifacts/test-vectors-s002-framework.md)
+
+很好，测试向量文档已经写好了。现在需要处理 **CodeInline 问题**。让我记录这个问题到 issues.md，然后提出解决方案： 
+
+Read [](file:///repos/focus/wish/W-0010-design-dsl-impl/project-status/issues.md)
+
+Using "Replace String in File"
+
+
+```
+
+```
+现在咨询参谋组确认方案： 
+
+咨询参谋组：CodeInline 处理方案
+
+Searched for text `HeadingTextExtractor`, 20 results
+
+Searched for text `INodeBuilder`, 20 results
+
+Searched for text `UsePreciseSourceLocation`, 2 results
+
+Read [](file:///repos/focus/atelia/src/DesignDsl/HeadingTextExtractor.cs)
+
+Read [](file:///repos/focus/atelia/src/DesignDsl/INodeBuilder.cs)
+
+Read [](file:///repos/focus/atelia/src/DesignDsl/NodeBuilderPipeline.cs)
+
+Read [](file:///repos/focus/atelia/src/DesignDsl/AxtTreeBuilder.cs)
+
+Searched for text `TermNodeBuilder`, 12 results
+
+Read [](file:///repos/focus/wish/W-0010-design-dsl-impl/artifacts/Shape.md#284-284), lines 284 to 384
+
+参谋组确认方案 A。现在更新 Shape.md 并修复已有实现： 
+
+Read [](file:///repos/focus/atelia/src/DesignDsl/HeadingTextExtractor.cs)
+
+现在需要修改多个文件来实现方案 A。让我执行修复： 
+
+修复 CodeInline 问题（方案 A: Span 切片）
+
+Read [](file:///repos/focus/atelia/src/DesignDsl/HeadingTextExtractor.cs)
+
+Read [](file:///repos/focus/atelia/src/DesignDsl/INodeBuilder.cs)
+
+Read [](file:///repos/focus/atelia/src/DesignDsl/DefaultNodeBuilder.cs)
+
+Read [](file:///repos/focus/atelia/src/DesignDsl/NodeBuilderPipeline.cs)
+
+Read [](file:///repos/focus/atelia/src/DesignDsl/AxtTreeBuilder.cs)
+
+Searched for text `: INodeBuilder` (`**/*.cs`), no results
+
+Searched for text `INodeBuilder` (`**/atelia/src/DesignDsl/**`), 1 result
+
+Read [](file:///repos/focus/atelia/src/DesignDsl)
+
+Using "Multi-Replace String in Files"
+
+```
+
+```
+
+```
+
+```
+
+```
+
+```
+
+```
+
+```
+
+```
+
+```
+
+
+
+Ran terminal command: cd /repos/focus && dotnet build atelia/src/DesignDsl/ 2>&1
+
+Searched for regex `HeadingTextExtractor|AxtTreeBuilder\.Build|NodeBuilderPipeline` (`**/atelia/tests/**`), no results
+
+Read [](file:///repos/focus/atelia/tests)
+
+Read [](file:///repos/focus/atelia/tests/DesignDsl.Tests)
+
+Ran terminal command: cd /repos/focus && dotnet build atelia/Atelia.sln 2>&1 | tail -30
+
+Read [](file:///repos/focus/atelia/src/DesignDsl/HeadingTextExtractor.cs)
+
+修复完成。验证编译： 
+
+Ran terminal command: cd /repos/focus/atelia && dotnet build src/DesignDsl/
+
+现在更新 issues.md 标记为已解决，并更新 Shape.md： 
+
+Using "Multi-Replace String in Files"
+
+
+```
+
+```
+
+```
+
+```
+现在更新测试向量文档中 S-002 Case 3 的期望输出（因为现在保留反引号了）： 
+
+Using "Replace String in File"
+
+
+```
+
+```
+完成！向监护人汇报：
+
+---
+
+## 📋 任务完成汇报
+
+### 测试向量文档
+
+**Craftsman 创建了三份测试向量文档**：
+
+| 文档 | 用例数 | 位置 |
+|:-----|:-------|:-----|
+| S-001 分段器 | 8 个 | test-vectors-s001-splitter.md |
+| S-002 框架 | 6 个 | test-vectors-s002-framework.md |
+| S-003 树构建 | 10 个 | test-vectors-s003-tree-builder.md |
+
+### CodeInline 问题修复
+
+**ISSUE-001 已解决** ✅
+
+| 方面 | 变更 |
+|:-----|:-----|
+| **方案** | A: Span 切片 |
+| **修改文件** | HeadingTextExtractor, INodeBuilder, DefaultNodeBuilder, NodeBuilderPipeline, AxtTreeBuilder |
+| **接口变更** | 增加 `originalMarkdown` 参数 |
+| **效果** | 完美保留反引号等格式符号 |
+
+**修复前后对比**：
+```
+输入: ## term `User-Account` 用户账号
+
+修复前: term User-Account 用户账号  (❌ 丢失反引号)
+修复后: term `User-Account` 用户账号  (✅ 保留反引号)
+```
+
+### Craftsman 发现的边界情况
+
+1. **YamlFrontMatterBlock 位置**：只在首位时识别为 FrontMatter
+2. **Setext Heading**：当前实现只处理 ATX Heading，Setext Heading 会被当作普通 Block
+3. **LinkInline/Emoji**：HeadingTextExtractor 对扩展 Inline 类型的处理可能不稳定（但现在用 Span 切片后这个问题消失了）
+
+### 当前状态
+
+- ✅ S-001/S-002/S-003 实现完成，编译通过
+- ✅ ISSUE-001 修复完成
+- ✅ 测试向量文档就绪
+- ⏳ 等待编写实际单元测试
+- ⏳ S-004/S-005/S-006/S-007 待实施
+
+**下一步建议**：让 Implementer 根据测试向量文档编写实际的单元测试，验证 S-001/S-002/S-003 实现正确性？
+
+Made changes.
+
+User: 赞同你的下一步电一，请实施：让 Implementer 根据测试向量文档编写实际的单元测试，验证 S-001/S-002/S-003 实现正确性。除了实施以外，也开放式的收集反馈建议或发现的问题。
+
+GitHub Copilot: Summarized conversation history好的！让 Implementer 编写单元测试： Optimizing tool selection...
+
+编写 S-001/S-002/S-003 单元测试
+
+Read [](file:///repos/focus/wish/W-0010-design-dsl-impl/artifacts/test-vectors-s001-splitter.md)
+
+Read [](file:///repos/focus/wish/W-0010-design-dsl-impl/artifacts/test-vectors-s002-framework.md)
+
+Read [](file:///repos/focus/wish/W-0010-design-dsl-impl/artifacts/test-vectors-s003-tree-builder.md)
+
+Read [](file:///repos/focus/atelia/src/DesignDsl)
+
+Read [](file:///repos/focus/atelia/tests/DocGraph.Tests)
+
+Read [](file:///repos/focus/atelia/src/DesignDsl/AtxSectionSplitter.cs)
+
+Read [](file:///repos/focus/atelia/src/DesignDsl/NodeBuilderPipeline.cs)
+
+Read [](file:///repos/focus/atelia/src/DesignDsl/HeadingTextExtractor.cs)
+
+Read [](file:///repos/focus/atelia/src/DesignDsl/AxtTreeBuilder.cs)
+
+Read [](file:///repos/focus/atelia/tests/DocGraph.Tests/DocGraph.Tests.csproj)
+
+Read [](file:///repos/focus/atelia/src/DesignDsl/AtxSectionResult.cs)
+
+Read [](file:///repos/focus/atelia/src/DesignDsl/AxtNode.cs)
+
+Read [](file:///repos/focus/atelia/src/DesignDsl/AxtTree.cs)
+
+Read [](file:///repos/focus/atelia/src/DesignDsl/RootNode.cs)
+
+Read [](file:///repos/focus/atelia/src/DesignDsl/HeadingNode.cs)
+
+Read [](file:///repos/focus/atelia/src/DesignDsl/DefaultNodeBuilder.cs)
+
+Read [](file:///repos/focus/atelia/src/DesignDsl/INodeBuilder.cs)
+
+Read [](file:///repos/focus/atelia/src/DesignDsl/DesignDsl.csproj)
+
+Created [](file:///repos/focus/atelia/tests/DesignDsl.Tests/DesignDsl.Tests.csproj)
+
+Created [](file:///repos/focus/atelia/tests/DesignDsl.Tests/TestHelpers.cs)
+
+Created [](file:///repos/focus/atelia/tests/DesignDsl.Tests/AtxSectionSplitterTests.cs)
+
+Created [](file:///repos/focus/atelia/tests/DesignDsl.Tests/NodeBuilderPipelineTests.cs)
+
+Created [](file:///repos/focus/atelia/tests/DesignDsl.Tests/HeadingTextExtractorTests.cs)
+
+Created [](file:///repos/focus/atelia/tests/DesignDsl.Tests/AxtTreeBuilderTests.cs)
+
+Ran terminal command: cd /repos/focus/atelia && dotnet test tests/DesignDsl.Tests/ --verbosity normal 2>&1
+
+Using "Multi-Replace String in Files"
+
+```
+
+```
+
+```
+
+```
+
+```
+
+```
+
+```
+
+```
+
+
+
+Ran terminal command: cd /repos/focus/atelia && dotnet test tests/DesignDsl.Tests/ --verbosity normal 2>&1
+
+Read [](file:///repos/focus/atelia/tests/DesignDsl.Tests/AtxSectionSplitterTests.cs#258-258), lines 258 to 344
+
+Using "Multi-Replace String in Files"
+
+```
+
+```
+
+
+
+Ran terminal command: cd /repos/focus/atelia && dotnet test tests/DesignDsl.Tests/ --verbosity normal 2>&1
+
+Ran terminal command: cd /repos/focus/atelia && dotnet test --verbosity minimal 2>&1 | tail -20
+
+Read changed files in [](file:///repos/focus)
+
+Read [](file:///repos/focus/agent-team/members/implementer/index.md)
+
+Read [](file:///repos/focus/agent-team/members/implementer/inbox.md)
+
+Using "Replace String in File"
+
+```
+
+```
+
+太棒了！测试全部通过。让我验证一下： 
+
+Ran terminal command: cd /repos/focus/atelia && dotnet test tests/DesignDsl.Tests/ --verbosity normal
+
+🎉 **32 个测试全部通过！**
+
+现在记录 Implementer 的反馈到 issues.md： 
+
+Using "Replace String in File"
+
+
+```
+
+```
+
+
+Using "Replace String in File"
+
+
+```
+
+```
+---
+
+## 📋 单元测试完成汇报
+
+### 测试结果 🎉
+
+```
+Test summary: total: 32, failed: 0, succeeded: 32, skipped: 0
+Build succeeded in 4.2s
+```
+
+| 测试类 | 测试数 | 覆盖内容 |
+|:-------|:-------|:---------|
+| AtxSectionSplitterTests | 8 | 空输入、仅 Preface、单/多 Section、FrontMatter |
+| NodeBuilderPipelineTests | 6 | 兜底机制、顺序优先、InsertBefore 语义 |
+| HeadingTextExtractorTests | 6 | 纯文本、含 CodeInline、嵌套 Inline |
+| AxtTreeBuilderTests | 12 | 空文档、嵌套、跳跃 Depth、AllNodes 顺序 |
+
+### Implementer 反馈
+
+#### 发现的问题
+
+**ISSUE-002: Setext Heading 处理策略**
+
+当前 `AtxSectionSplitter` 检查所有 `HeadingBlock`，不区分 ATX 和 Setext：
+- `# Title`（ATX）→ 处理
+- `Title\n===`（Setext）→ **也会处理**
+
+Markdig 对两者都解析为 `HeadingBlock`。
+
+**建议**：保持现状（"宽容接受"），因为：
+1. DSL 文档基本都用 ATX 格式
+2. 不会导致错误，只是额外处理
+3. 如需严格模式，可后续添加参数
+
+#### 边界情况发现
+
+- 测试向量 Case 7/8 中 `---` 被 Markdig 解析为 Setext Heading（Level=2），而非 ThematicBreakBlock
+- 这是 Markdig 的行为，不是 bug
+
+### 当前进度
+
+| Task | 状态 | 测试 |
+|:-----|:-----|:-----|
+| S-001 Block 分段器 | ✅ 完成 | ✅ 8/8 通过 |
+| S-002 数据结构 + 框架 | ✅ 完成 | ✅ 12/12 通过 |
+| S-003 树构建 | ✅ 完成 | ✅ 12/12 通过 |
+| S-004 TermNodeBuilder | ⏳ 待实施 | - |
+| S-005 ClauseNodeBuilder | ⏳ 待实施 | - |
+| S-006 测试策略 | ✅ 完成 | ✅ 32/32 通过 |
+| S-007 API 集成 | ⏳ 待实施 | - |
+
+---
+
+**监护人**，关于 ISSUE-002（Setext Heading），你同意保持现状吗？
+
+确认后可以继续推进 **S-004（TermNodeBuilder）** 和 **S-005（ClauseNodeBuilder）**。
+
+Made changes.
+
+User: 咱们的AI Team可真厉害呀，干的漂亮！用runSubagent实施具体任务的时候，也保留一个开放式的接受反馈是个好经验。关于“ISSUE-002（Setext Heading）”，得处理呀，应该在最初的`AtxSectionSplitter`阶段就加以区分，我们只按ATX Heading对原文档分段，对于Setex Heading只需当作普通的Block不加特别处理作为普通Content就好。这样能使后面的处理都保持简单，也符合DSL规范草案的设计意图。关于后续的{ S-004（TermNodeBuilder）、 S-005（ClauseNodeBuilder）、Task-S-006}，我为了应对你们面临的有限上下文窗口挑战，所以总是尝试将文档切分成内聚的一些列小块，所以我尝试将其划分到stage-02中，后面的API设计由于涉及到易用性问题是个大坑，划到stage-03。咱们已完成的部分作为stage-01, 我已在`wish/W-0010-design-dsl-impl/artifacts`目录下创建3个文件夹作为文档容器。但是我还没有编辑`wish/W-0010-design-dsl-impl/artifacts/stage-01/Shape.md`而是保持了目前所有的task（内容和你上下文里一样），还复制了一份到`wish/W-0010-design-dsl-impl/artifacts/stage-02/Shape.md`。下一次对话回合，咱们可以进一步研究把复杂的长期计划拆成更内聚的若干个stage，以及文档编写的问题。目前你先知道我多加了一级stage目录作为容器就行，先聚焦带领AI团队解决` ISSUE-002（Setext Heading）`问题吧。
+
+GitHub Copilot: 明白！团队确实干得漂亮 🎉 
+
+现在聚焦解决 **ISSUE-002（Setext Heading）**：让 `AtxSectionSplitter` 只按 ATX Heading 分段，Setext Heading 作为普通 Block 处理。 
+
+Read [](file:///repos/focus/atelia/src/DesignDsl/AtxSectionSplitter.cs)
+
+现在修改代码，只处理 ATX Heading（排除 Setext Heading）： 
+
+Using "Replace String in File"
+
+
+```
+
+```
+现在需要更新测试。先看看现有测试： 
+
+Read [](file:///repos/focus/atelia/tests/DesignDsl.Tests/AtxSectionSplitterTests.cs)
+
+我看到 Case 8 需要更新，因为现在 Setext Heading 会被当作普通 Block 处理。让我更新测试： 
+
+Using "Replace String in File"
+
+
+```
+
+```
+运行测试验证修复： 
+
+Ran terminal command: cd /repos/focus/atelia && dotnet test tests/DesignDsl.Tests/ --verbosity normal
+
+编译错误，修复它： 
+
+Using "Replace String in File"
+
+
+```
+
+```
+
+
+Ran terminal command: cd /repos/focus/atelia && dotnet test tests/DesignDsl.Tests/ --verbosity normal
+
+33 个测试全部通过！现在更新 ISSUE-002 为已解决： 
+
+Using "Replace String in File"
+
+
+```
+
+```
+
+
+Using "Replace String in File"
+
+
+```
+
+```
+---
+
+## ✅ ISSUE-002 修复完成
+
+### 变更摘要
+
+| 文件 | 变更 |
+|:-----|:-----|
+| AtxSectionSplitter.cs | 添加 `IsAtxHeading()` 辅助方法，只按 ATX Heading 分段 |
+| AtxSectionSplitterTests.cs | 更新 Case 8，新增 Case 9（Setext 作为 Content） |
+| issues.md | 标记 ISSUE-002 已解决 |
+
+### 测试结果
+
+```
+Test summary: total: 33, failed: 0, succeeded: 33, skipped: 0
+```
+
+### 行为变更
+
+| 场景 | 修复前 | 修复后 |
+|:-----|:-------|:-------|
+| `# ATX Title` | 触发分段 ✅ | 触发分段 ✅ |
+| `Setext Title\n---` | 触发分段 ❌ | 归入 Content ✅ |
+
+### 关键代码
+
+```csharp
+/// <summary>
+/// 判断 Block 是否是 ATX Heading（排除 Setext Heading）。
+/// </summary>
+private static bool IsAtxHeading(Block block) =>
+    block is HeadingBlock heading && !heading.IsSetext;
+```
+
+---
+
+**Stage-01 现已完整收尾！** 下次对话可以继续研究 stage 划分和 stage-02 的推进。
+
+Made changes.
+
+User: 咱们继续来处理stage划分的问题吧。目前“wish/W-0010-design-dsl-impl/artifacts/stage-02/Shape.md”中还保有已知的全部task。这个模式对于规模小的项目还行，但是规模稍大一点，所有task都写在一个文档里，对你们LLM Agent来说就不太友好了，比如Implementer拿着文档开始施工的时候，他需要的是更内聚，对阶段内任务写的具体清晰，对于当前阶段前的已完成task则应该是汇总式的，对于之后的阶段可能还没划分清楚，保留了若干开放问题。这就需要我们创造一种文档模式来实现信息的Level Of Detail。我的初步想法是，后续阶段都显式继承前面阶段的“已完成目标”，比如把前面task的goal都摘抄到新stage的shape.md的“已完成/前情提要”栏目中。而后续计划也大致列出，一方面提供设计方向的预留参考，一方面明确“当前不做的范围”。如果这个模式可行，就能一个个stage的不断续写下去了。你有哪些想法？
+
+GitHub Copilot: 这是个很好的问题！让我分析一下并提出建议。
+
+## 核心挑战
+
+| 角色 | 需要什么 | 不需要什么 |
+|:-----|:---------|:-----------|
+| **Implementer** | 当前任务的完整细节 | 前面任务的实现细节 |
+| **TeamLeader** | 全局视图、进度追踪 | 每个任务的代码级细节 |
+| **新加入者** | 快速了解前情 | 历史决策的全部讨论 |
+
+## 你的方案分析
+
+**优点**：
+- ✅ 信息分层（详细当前 + 摘要前情 + 粗略后续）
+- ✅ 每个 stage 文档自包含
+- ✅ 符合"渐进式披露"
+
+**潜在问题**：
+- ⚠️ 摘抄导致重复，可能不一致
+- ⚠️ 摘抄粒度如何把握？
+
+## 我的改进建议：三段式 + 指针模式
+
+```markdown
+# Stage-02 Shape
+
+## Prologue（前情提要）
+
+### 已完成的基础设施
+| Stage | Goal（一句话） | 关键产出 |
+|:------|:--------------|:---------|
+| S-001 | Block 序列分段 | `AtxSectionSplitter.cs` |
+| S-002 | 数据结构 + INodeBuilder 框架 | `HeadingNode.cs`, `INodeBuilder.cs` |
+| S-003 | 树构建算法 | `AxtTreeBuilder.cs` |
+
+> 详细设计参见 [stage-01/Shape.md](../stage-01/Shape.md)
+
+### 当前可用的扩展点
+- `INodeBuilder` 职责链：可插入自定义 Builder
+- `HeadingTextExtractor`：提取原始标题文本（含反引号）
+
+---
+
+## Current Stage（当前阶段任务）
+
+### Task-S-004: TermNodeBuilder
+（完整的任务简报，Implementer 需要的所有信息）
+
+### Task-S-005: ClauseNodeBuilder
+（完整的任务简报）
+
+### Task-S-006: 测试策略
+（完整的任务简报）
+
+---
+
+## Epilogue（后续方向）
+
+### Stage-03 预告：API 设计
+- **目标**：为 DocGraph 提供易用的解析入口
+- **开放问题**：
+  - [ ] 是否需要 `ParseAsync` 异步版本？
+  - [ ] 错误处理策略：返回 Result 还是抛异常？
+
+### 不在当前范围
+- 跨文档引用解析（@[CLAUSE-ID] 链接）
+- 增量解析（文档变更时局部更新）
+```
+
+## 关键设计决策
+
+### 1. 前情提要：Goal + 产出路径（不摘抄细节）
+
+```markdown
+| Stage | Goal | 关键产出 |
+|:------|:-----|:---------|
+| S-001 | Block 序列分段 | `atelia/src/DesignDsl/AtxSectionSplitter.cs` |
+```
+
+- **只写 Goal**：一句话说明"做了什么"
+- **列出产出路径**：Implementer 需要时可以直接跳转
+- **指向详细文档**：而非摘抄（避免不一致）
+
+### 2. 当前可用的扩展点（关键！）
+
+这是我认为最重要的补充：**告诉 Implementer 前面阶段留下了什么"接口"**
+
+```markdown
+### 当前可用的扩展点
+- `INodeBuilder.TryBuild(heading, content, originalMarkdown)` → 返回自定义 AxtNode 子类
+- `HeadingTextExtractor.ExtractText(heading, originalMarkdown)` → 获取原始标题文本
+```
+
+这样 Implementer 不需要读前面阶段的代码就知道怎么扩展。
+
+### 3. 后续方向：Shape-Tier 粒度 + 开放问题
+
+```markdown
+### Stage-03 预告
+- **目标**：为 DocGraph 提供易用的解析入口
+- **开放问题**：
+  - [ ] 是否需要 `ParseAsync`？
+  - [ ] 错误处理策略？
+```
+
+- **只写 Shape-Tier**：做什么（不写怎么做）
+- **显式列出开放问题**：避免过早决策
+- **明确"不做的范围"**：防止 scope creep
+
+## 这个模式的优势
+
+1. **对 Implementer 友好**：
+   - 当前任务完整、自包含
+   - 扩展点明确列出
+   - 不需要读前面阶段的代码
+
+2. **对 TeamLeader 友好**：
+   - 前情提要提供全局视图
+   - 可以快速定位到任何阶段的文档
+
+3. **避免重复和不一致**：
+   - 前情只写 Goal + 指针
+   - 详细信息保留在原始文档
+
+4. **支持渐进式展开**：
+   - 后续方向是粗粒度的
+   - 到达那个阶段时再细化
+
+---
+
+**你觉得这个模式可行吗？** 如果认可，我可以帮你把 `stage-02/Shape.md` 按这个模式改造一下。
+
+User: 赞同你的分析和“三段式+引用+当前可用的扩展点”的模式。关于“摘抄导致重复，可能不一致”问题，也许我们后续可以DSL化...利用现有的Desing-DSL作为基础扩展。比如提供一个CLI命令`create stage`，自动从之前的所有stage中摘抄已完成部分，和上个stage的待处理部分，生成2个新文件，一个是不应被编辑的自动提取信息并汇总得到的“前情摘要”文件，另一个是咱们可以编辑但工具提供了初始内容的“后续待做和当前阶段计划”文件。这样后续目标用自然语言编辑不断演化，加入新目标，切下当前能做的部分。已完成部分则依靠DSL自动汇总关键信息。在实际开发工具之前，我们应该先通过“wish/W-0010-design-dsl-impl”模拟一下理想中的文件形态应该是什么样的，作为愿景和蓝图。你觉得这个思路如何？你有哪些想法？你有想要和其他AI小伙伴探讨的问题吗？
+
+GitHub Copilot: 这个思路非常棒！让我梳理一下我的想法：
+
+## 对你思路的认同
+
+**核心洞察**：将 Stage 管理分为两类信息：
+- **自动生成（Derived）**：前情摘要、已完成状态 → 工具从源头提取，保证一致性
+- **人工编辑（Normative）**：当前计划、后续目标 → 人类控制演化方向
+
+这完美符合我们的 **D-S-D 模型**（Decision-Spec-Derived）！
+
+## 我的补充想法
+
+### 1. 文件命名约定
+
+```
+stage-02/
+├── prologue.auto.md    # 🤖 自动生成，不应编辑
+├── shape.md            # ✏️ 人工编辑，当前阶段任务
+└── epilogue.md         # ✏️ 人工编辑，后续方向（可选）
+```
+
+`.auto.md` 后缀明确标识"自动生成，请勿编辑"。
+
+### 2. Prologue 自动提取的信息源
+
+```yaml
+# prologue.auto.md 的生成规则
+sources:
+  - stage-01/shape.md:
+      extract: [goal, outputs, extension-points]
+      from_tasks: [completed]
+  - stage-01/issues.md:
+      extract: [resolved-issues]
+```
+
+### 3. 与 Design-DSL 的结合
+
+现有 DSL 定义了 `term` 和 `clause`。我们可以扩展：
+
+```markdown
+## stage `Stage-01` Block 序列分段与树构建
+
+### goal [S-001-GOAL] 实现 Block 序列分段
+将 Markdig Block 序列按 ATX Heading 分段...
+
+### output [S-001-OUTPUT] 产出文件
+- `atelia/src/DesignDsl/AtxSectionSplitter.cs`
+
+### extension-point [S-002-EXT-NODEBUILDER] INodeBuilder 扩展点
+可通过 `NodeBuilderPipeline.InsertBefore()` 插入自定义 Builder...
+```
+
+这样工具可以解析 DSL 标记，自动提取结构化信息。
+
+## 想和参谋组探讨的问题
+
+我有几个设计问题想咨询：
+
+1. **Prologue 的粒度**：提取到什么程度？
+   - 只提取 Goal（一句话）？
+   - 还是包含验收标准摘要？
+   - 还是包含产出文件列表？
+
+2. **跨 Stage 引用**：如果 Stage-02 的任务引用 Stage-01 的产出，用什么语法？
+   - `@[S-001-OUTPUT]`（跨文件引用）？
+   - 还是直接写路径？
+
+3. **Stage 状态机**：Stage 有哪些状态？
+   - `planned` → `active` → `completed`？
+   - 如何标记？在哪里标记？
+
+**要我召集一个简短的设计讨论，让 Craftsman 或 Seeker 来审阅这个模式吗？** 
+
+或者我们可以先手工模拟一下 `stage-02/` 的理想形态，用实例来验证这个模式是否 work？
+
+User: 关于“Prologue 的粒度：提取到什么程度？”我有思路，工具只提供提取并汇总的能力，相当于一种信箱或槽位机制。而把哪些信息填进去送往后续Stage，则是内容撰写方面的问题，工具本身可以不管。即使这样，“前情提要”还是会越堆越长，我们应该提供一个“摘要覆盖”机制，让某个中间stage可以通过ID把若干条前情提要汇总成一条摘要性的前情提要。这还挺复杂的，不是一下子能搞定的工具，我们先积累思考和发现，逐步孵化这个想法。我赞同你召集一个简短的设计讨论的想法，建议提示与会者先深度分析与思考，然后在畅谈会文件里留下精华和要点。同时保持开放性，不要限定视角。你有哪些想法？想好后就自主行动吧！
+
+GitHub Copilot: 好的！让我召集一个设计畅谈会，探讨 Stage 管理机制。 
+
+Created [](file:///repos/focus/agent-team/meeting/W-0010/2026-01-13-stage-management-jam.md)
+
+现在邀请参谋们发言： 
+
+参与 Stage 管理机制设计畅谈
+
+Read [](file:///repos/focus/agent-team/meeting/W-0010/2026-01-13-stage-management-jam.md)
+
+Read [](file:///repos/focus/agent-team/blackboard.md)
+
+Read [](file:///repos/focus/agent-team/members)
+
+Read [](file:///repos/focus/wish/W-0010-design-dsl-impl/artifacts/stage-02/Shape.md)
+
+Read [](file:///repos/focus/agent-team/members/Seeker/index.md)
+
+Using "Replace String in File"
+
+```
+
+```
+
+
+
+Read [](file:///repos/focus/agent-team/members/Seeker/inbox.md)
+
+Using "Replace String in File"
+
+```
+
+```
+
+
+
+参与 Stage 管理机制设计畅谈
+
+Read [](file:///repos/focus/agent-team/meeting/W-0010/2026-01-13-stage-management-jam.md)
+
+Read [](file:///repos/focus/agent-team/members/Craftsman/index.md)
+
+Read [](file:///repos/focus/agent-team/members/Craftsman/inbox.md)
+
+Read [](file:///repos/focus/agent-team/blackboard.md)
+
+Using "Apply Patch"
+
+```
+
+```
+
+让我查看一下会议讨论的内容： 
+
+Read [](file:///repos/focus/agent-team/meeting/W-0010/2026-01-13-stage-management-jam.md)
+
+非常精彩的讨论！让我总结一下并向监护人汇报： 
+
+Using "Replace String in File"
+
+Read [](file:///repos/focus/agent-team/meeting/W-0010/2026-01-13-stage-management-jam.md#150-150), lines 150 to 281
+
+Using "Replace String in File"
+
+
+```
+
+```
+
+
+Using "Replace String in File"
+
+
+```
+
+```
+---
+
+## 📋 畅谈会汇报
+
+### 会议成果
+
+参谋组（Seeker + Craftsman）提供了非常有深度的分析！
+
+#### 核心洞察
+
+| 来源 | 洞察 |
+|:-----|:-----|
+| **Seeker** | 问题本质是"Agent 认知带宽有限下的信息分层投影"，Stage 是手段不是目的 |
+| **Seeker** | 栈帧类比：prologue=保存的寄存器，shape=当前栈帧，epilogue=调用 spec |
+| **Craftsman** | Stage 边界必须成为稳定的版本锚点（Freeze Point） |
+| **Craftsman** | 自动生成内容必须可追溯（Traceable） |
+
+#### 最小传递单位：依赖面（Dependable Surface）
+
+```markdown
+## Dependable Surface
+### Produced Artifacts   # 产出了什么
+### Contracts            # 可依赖什么（MUST/MUST NOT）
+### Extension Points     # 留了什么接口
+### Non-goals            # 明确没做什么
+```
+
+#### 工程约束共识
+
+| 原则 | 说明 |
+|:-----|:-----|
+| **Freeze First** | 只有 Frozen 的 Stage 才能被依赖 |
+| **Traceable** | 自动生成的内容必须可追溯到来源 |
+| **Fail Loudly** | 引用断裂应该显式报错 |
+| **人机双可读** | 结构可预测 + 语义可验证 + 来源可追溯 |
+
+#### 对你"槽位/摘要覆盖"想法的回应
+
+- ✅ **槽位机制**：Craftsman 给出了具体的槽位定义（Artifacts/Contracts/ExtensionPoints/Non-goals）
+- ✅ **摘要覆盖**：Seeker 建议"惰性按需生成"，Craftsman 建议"结构化抽取 + 机械合并"而非 LLM 摘要
+- ✅ **暂不扩展 DSL**：保持 Stage 为"组织层 + 槽位约定"，Design-DSL 提供规范锚点
+
+### 会议文件
+
+完整讨论记录在 2026-01-13-stage-management-jam.md
+
+---
+
+**监护人，你觉得这些洞察如何？** 
+
+要继续用 W-0010 的 stage-01/02/03 实例验证这个模式吗？我可以按 Craftsman 的最小模板先改造 stage-01，作为"已冻结的依赖面"示例。
+
+Made changes.
+
+User: 赞同你们的分析和共识。我们继续研究，我认为最小依赖模板是个关键发现，应该积累，稍后我会把当前整个会话进行一份存档。赞同继续试验，但是我认为最适合的改造对象是“wish/W-0010-design-dsl-impl/artifacts/stage-02”及其内部的`wish/W-0010-design-dsl-impl/artifacts/stage-02/Shape.md`, 按照咱们的设想改造成理想中的样子，包括形式和内容。如果你也赞同的话，请沿着这个方向继续分析与设计吧！
+
+GitHub Copilot: 好的！让我先了解当前状态，然后设计改造方案： 
+
+Read [](file:///repos/focus/wish/W-0010-design-dsl-impl/artifacts)
+
+Read [](file:///repos/focus/wish/W-0010-design-dsl-impl/artifacts/stage-01/Shape.md)
+
+Read [](file:///repos/focus/wish/W-0010-design-dsl-impl/artifacts/stage-02/Shape.md)
+
+现在我理解了当前状态。让我设计 stage-02 的理想形态：
+
+## 设计分析
+
+**当前状态**：
+- stage-01 已完成：S-001、S-002、S-003（Block 分段 → 数据结构 → 树构建）
+- stage-02 待做：S-004、S-005、S-006（TermNodeBuilder、ClauseNodeBuilder、测试完善）
+- Shape.md 目前是完整的所有 Task 副本（未改造）
+
+**改造目标**：按三段式 + 槽位机制改造 stage-02：
+
+```
+stage-02/
+├── prologue.md         # 前情提要（手工编写，未来可自动生成）
+└── Shape.md            # 当前阶段任务（精简后）
+```
+
+让我开始改造： 
+
+Created [](file:///repos/focus/wish/W-0010-design-dsl-impl/artifacts/stage-02/prologue.md)
+
+现在改造 stage-02/Shape.md，只保留当前阶段的任务（S-004、S-005、S-006），精简已完成的任务： 
+
+Created [](file:///repos/focus/wish/W-0010-design-dsl-impl/artifacts/stage-02/Shape.md)
+
+Read [](file:///repos/focus/wish/W-0010-design-dsl-impl/artifacts/stage-02/Shape.md#1-1), lines 1 to 51
+
+需要用 replace 重写整个文件。让我分块替换： 
+
+Ran terminal command: cat > /repos/focus/wish/W-0010-design-dsl-impl/artifacts/stage-02/Shape.md << 'SHAPE_EOF'
+---
+docId: "W-0010-Stage-02-Shape"
+title: "Stage-02 Shape: TermNode/ClauseNode 实现 + 测试完善"
+stage: 02
+status: Active
+inputs: [stage-01]
+produce_by:
+  - "wish/W-0010-design-dsl-impl/wish.md"
+---
+
+# Stage-02 Shape: TermNode/ClauseNode 实现 + 测试完善
+
+> **前情提要**: 请先阅读 [prologue.md](./prologue.md) 了解 Stage-01 的完成状态和可依赖接口。
+
+---
+
+## 概览
+
+**阶段目标**: 实现 TermNodeBuilder 和 ClauseNodeBuilder，完成 INodeBuilder 职责链的语义识别能力。
+
+**当前阶段任务**:
+```
+Task-S-004 (TermNodeBuilder) ← 依赖 Stage-01 的 INodeBuilder 框架
+Task-S-005 (ClauseNodeBuilder) ← 依赖 Stage-01 的 INodeBuilder 框架
+Task-S-006 (测试完善) ← 依赖 S-004, S-005
+```
+
+**核心挑战**: 
+- 从 HeadingBlock 标题文本中识别 Term/Clause 模式
+- 使用 `HeadingTextExtractor.ExtractText()` 获取原始文本（含反引号）
+- 选择合适的模式匹配策略（正则 vs Inline 结构遍历）
+
+---
+
+## Task-S-004: 实现 TermNodeBuilder
+
+**目标**: 实现 INodeBuilder，识别 Term 定义模式，构造 TermNode。
+
+**DSL 规范参考**: 根据 @\`Term-Node\` 和 @[F-TERM-DEFINITION-FORMAT]：
+- **格式**: \`term \\\`Term-ID\\\` 可选标题\`
+- **Term-ID**: 符合 Identifier 格式（\`^[a-zA-Z0-9]+(-[a-zA-Z0-9]+)*$\`）
+- **关键字 \`term\`**: 大小写不敏感
+
+**示例**:
+\`\`\`markdown
+## term \`User-Account\` 用户账号
+## Term \`DNA-Sequence\`
+## TERM \`simple\`
+\`\`\`
+
+**产出**:
+- \`atelia/src/DesignDsl/TermNode.cs\` — TermNode 类
+- \`atelia/src/DesignDsl/TermNodeBuilder.cs\` — INodeBuilder 实现
+
+**数据结构**:
+\`\`\`csharp
+/// <summary>术语定义节点</summary>
+public sealed class TermNode : AxtNode
+{
+    /// <summary>Term ID（不含反引号，保留原始大小写）</summary>
+    public string TermId { get; }
+    
+    /// <summary>可选标题</summary>
+    public string? Title { get; }
+}
+\`\`\`
+
+**验收标准**:
+1. \`TermNode\` 继承 \`AxtNode\`，有 \`TermId\` 和 \`Title\` 属性
+2. \`TermNodeBuilder\` 实现 \`INodeBuilder\`
+3. \`TryBuild()\` 对匹配 Term 模式的 HeadingBlock 返回 \`TermNode\`，否则返回 null
+4. 关键字 \`term\` 大小写不敏感
+5. Term-ID 必须符合 Identifier 格式（否则返回 null）
+6. 关键字与反引号之间必须有空白
+7. \`dotnet build atelia/src/DesignDsl/\` 无错误
+
+**SubAgent 提示**:
+- 使用 \`HeadingTextExtractor.ExtractText(heading, originalMarkdown)\` 获取原始标题文本
+- 推荐正则方式：\`\` ^term\s+\`([^\`]+)\`(?:\s+(.+))?$ \`\`（忽略大小写）
+- Identifier 验证正则：\`^[a-zA-Z0-9]+(-[a-zA-Z0-9]+)*$\`
+- 使用 \`[GeneratedRegex]\` 属性优化正则性能
+
+**依赖**: Stage-01（INodeBuilder 框架、HeadingTextExtractor）
+
+---
+
+## Task-S-005: 实现 ClauseNodeBuilder
+
+**目标**: 实现 INodeBuilder，识别 Clause 定义模式，构造 ClauseNode。
+
+**DSL 规范参考**: 根据 @\`Clause-Node\` 和 @[F-CLAUSE-DEFINITION-FORMAT]：
+- **格式**: \`<modifier> [Clause-ID] 可选标题\`
+- **Modifier**: \`decision\` | \`spec\` | \`derived\`（大小写不敏感）
+- **Clause-ID**: 符合 Identifier 格式
+
+**示例**:
+\`\`\`markdown
+### decision [S-MARKDOWN-COMPATIBLE] 兼容GFM
+### spec [F-TERM-REFERENCE-FORMAT] 定义引用格式
+### derived [F-CLAUSE-REFERENCE-LINK] 可以是链接
+\`\`\`
+
+**产出**:
+- \`atelia/src/DesignDsl/ClauseNode.cs\` — ClauseNode 类
+- \`atelia/src/DesignDsl/ClauseModifier.cs\` — ClauseModifier 枚举
+- \`atelia/src/DesignDsl/ClauseNodeBuilder.cs\` — INodeBuilder 实现
+
+**数据结构**:
+\`\`\`csharp
+/// <summary>条款修饰符</summary>
+public enum ClauseModifier { Decision, Spec, Derived }
+
+/// <summary>条款定义节点</summary>
+public sealed class ClauseNode : AxtNode
+{
+    public ClauseModifier Modifier { get; }
+    public string ClauseId { get; }
+    public string? Title { get; }
+}
+\`\`\`
+
+**验收标准**:
+1. \`ClauseModifier\` 枚举包含 \`Decision\`、\`Spec\`、\`Derived\`
+2. \`ClauseNode\` 继承 \`AxtNode\`，有 \`Modifier\`、\`ClauseId\`、\`Title\` 属性
+3. \`ClauseNodeBuilder\` 实现 \`INodeBuilder\`
+4. \`TryBuild()\` 对匹配 Clause 模式的 HeadingBlock 返回 \`ClauseNode\`，否则返回 null
+5. Modifier 关键字大小写不敏感
+6. Clause-ID 必须符合 Identifier 格式（否则返回 null）
+7. Modifier 与方括号之间必须有空白
+8. \`dotnet build atelia/src/DesignDsl/\` 无错误
+
+**SubAgent 提示**:
+- 使用 \`HeadingTextExtractor.ExtractText(heading, originalMarkdown)\` 获取原始标题文本
+- 推荐正则：\`^(decision|spec|derived)\s+\[([^\]]+)\](?:\s+(.+))?$\`（忽略大小写）
+- 使用 \`Enum.TryParse<ClauseModifier>(str, ignoreCase: true, out var m)\`
+- 与 S-004 保持一致的匹配策略
+
+**依赖**: Stage-01（INodeBuilder 框架、HeadingTextExtractor）
+
+---
+
+## Task-S-006: 测试完善
+
+**目标**: 为 S-004/S-005 编写单元测试，并完善端到端测试。
+
+**产出**:
+- \`atelia/tests/DesignDsl.Tests/TermNodeBuilderTests.cs\`
+- \`atelia/tests/DesignDsl.Tests/ClauseNodeBuilderTests.cs\`
+- \`atelia/tests/DesignDsl.Tests/EndToEndTests.cs\`
+
+**验收标准**:
+
+1. **TermNodeBuilderTests** 至少包含 8 个测试用例：
+   - 正例：标准格式、仅 ID 无标题、大小写变体（\`term\`/\`Term\`/\`TERM\`）
+   - 反例：缺少关键字、ID 无反引号、ID 格式非法、关键字与 ID 无空白
+
+2. **ClauseNodeBuilderTests** 至少包含 10 个测试用例：
+   - 正例：三种 Modifier 各一个、仅 ID 无标题、大小写变体
+   - 反例：未知 Modifier、ID 无方括号、ID 格式非法
+
+3. **EndToEndTests** 解析真实 DSL 文档：
+   - 解析 \`agent-team/wiki/SoftwareDesignModeling/AI-Design-DSL.md\`
+   - 验证 TermNode 数量 >= 10
+   - 验证 ClauseNode 数量 >= 15
+   - 验证特定节点存在（如 \`Design-DSL\`、\`S-MARKDOWN-COMPATIBLE\`）
+
+4. 所有测试在 \`dotnet test\` 下通过
+
+**SubAgent 提示**:
+- 使用 \`[Theory]\` + \`[InlineData]\` 组织参数化测试
+- 参考已有的 \`AtxSectionSplitterTests.cs\` 风格
+- 在测试中配置 Pipeline：先注册 TermNodeBuilder 和 ClauseNodeBuilder，再调用 Build
+
+**依赖**: Task-S-004, Task-S-005
+
+---
+
+## Epilogue（后续方向）
+
+### Stage-03 预告：DocGraph 集成 API
+
+**目标**: 设计 DesignDsl 模块对外暴露的公共 API，供 DocGraph 调用。
+
+**预计产出**:
+- \`DesignDslParser.cs\` — 公共入口类
+- \`DesignDslParseResult\` — 返回类型
+
+**开放问题**:
+- [ ] 是否需要 \`ParseAsync\` 异步版本？
+- [ ] 错误处理策略：返回 Result 还是抛异常？
+- [ ] Pipeline 配置是否应该可定制？
+
+### 不在当前范围
+
+以下内容明确不在 Stage-02 范围内：
+
+1. **DocGraph 集成 API**（Stage-03）
+2. **跨文档引用解析**（\`@[CLAUSE-ID]\` 链接）
+3. **增量解析**（文档变更时局部更新）
+4. **Summary-Node 等其他节点类型**
+
+---
+
+## 变更日志
+
+| 日期 | 执行者 | 变更 | 原因 |
+|:-----|:-------|:-----|:-----|
+| 2026-01-13 | TeamLeader | 创建 Stage-02 Shape（三段式改造） | Stage 管理机制实验 |
+SHAPE_EOF
+
+Summarized conversation history文件已更新，但转义字符看起来有些问题。让我验证一下并修复： 
+
+Read [](file:///repos/focus/wish/W-0010-design-dsl-impl/artifacts/stage-02/Shape.md#1-1), lines 1 to 61
+
+转义字符有问题。让我用 Python 重新写入正确的内容： 
+
+Ran terminal command: python3 << 'PYEOF'
+content = '''---
+docId: "W-0010-Stage-02-Shape"
+title: "Stage-02 Shape: TermNode/ClauseNode 实现 + 测试完善"
+stage: 02
+status: Active
+inputs: [stage-01]
+produce_by:
+  - "wish/W-0010-design-dsl-impl/wish.md"
+---
+
+# Stage-02 Shape: TermNode/ClauseNode 实现 + 测试完善
+
+> **前情提要**: 请先阅读 [prologue.md](./prologue.md) 了解 Stage-01 的完成状态和可依赖接口。
+
+---
+
+## 概览
+
+**阶段目标**: 实现 TermNodeBuilder 和 ClauseNodeBuilder，完成 INodeBuilder 职责链的语义识别能力。
+
+**当前阶段任务**:
+```
+Task-S-004 (TermNodeBuilder) ← 依赖 Stage-01 的 INodeBuilder 框架
+Task-S-005 (ClauseNodeBuilder) ← 依赖 Stage-01 的 INodeBuilder 框架
+Task-S-006 (测试完善) ← 依赖 S-004, S-005
+```
+
+**核心挑战**: 
+- 从 HeadingBlock 标题文本中识别 Term/Clause 模式
+- 使用 `HeadingTextExtractor.ExtractText()` 获取原始文本（含反引号）
+- 选择合适的模式匹配策略（正则 vs Inline 结构遍历）
+
+---
+
+## Task-S-004: 实现 TermNodeBuilder
+
+**目标**: 实现 INodeBuilder，识别 Term 定义模式，构造 TermNode。
+
+**DSL 规范参考**: 根据 @`Term-Node` 和 @[F-TERM-DEFINITION-FORMAT]：
+- **格式**: `term \\`Term-ID\\` 可选标题`
+- **Term-ID**: 符合 Identifier 格式（`^[a-zA-Z0-9]+(-[a-zA-Z0-9]+)*$`）
+- **关键字 `term`**: 大小写不敏感
+
+**示例**:
+```markdown
+## term `User-Account` 用户账号
+## Term `DNA-Sequence`
+## TERM `simple`
+```
+
+**产出**:
+- `atelia/src/DesignDsl/TermNode.cs` — TermNode 类
+- `atelia/src/DesignDsl/TermNodeBuilder.cs` — INodeBuilder 实现
+
+**数据结构**:
+```csharp
+/// <summary>术语定义节点</summary>
+public sealed class TermNode : AxtNode
+{
+    /// <summary>Term ID（不含反引号，保留原始大小写）</summary>
+    public string TermId { get; }
+    
+    /// <summary>可选标题</summary>
+    public string? Title { get; }
+}
+```
+
+**验收标准**:
+1. `TermNode` 继承 `AxtNode`，有 `TermId` 和 `Title` 属性
+2. `TermNodeBuilder` 实现 `INodeBuilder`
+3. `TryBuild()` 对匹配 Term 模式的 HeadingBlock 返回 `TermNode`，否则返回 null
+4. 关键字 `term` 大小写不敏感
+5. Term-ID 必须符合 Identifier 格式（否则返回 null）
+6. 关键字与反引号之间必须有空白
+7. `dotnet build atelia/src/DesignDsl/` 无错误
+
+**SubAgent 提示**:
+- 使用 `HeadingTextExtractor.ExtractText(heading, originalMarkdown)` 获取原始标题文本
+- 推荐正则方式：`` ^term\\s+`([^`]+)`(?:\\s+(.+))?$ ``（忽略大小写）
+- Identifier 验证正则：`^[a-zA-Z0-9]+(-[a-zA-Z0-9]+)*$`
+- 使用 `[GeneratedRegex]` 属性优化正则性能
+
+**依赖**: Stage-01（INodeBuilder 框架、HeadingTextExtractor）
+
+---
+
+## Task-S-005: 实现 ClauseNodeBuilder
+
+**目标**: 实现 INodeBuilder，识别 Clause 定义模式，构造 ClauseNode。
+
+**DSL 规范参考**: 根据 @`Clause-Node` 和 @[F-CLAUSE-DEFINITION-FORMAT]：
+- **格式**: `<modifier> [Clause-ID] 可选标题`
+- **Modifier**: `decision` | `spec` | `derived`（大小写不敏感）
+- **Clause-ID**: 符合 Identifier 格式
+
+**示例**:
+```markdown
+### decision [S-MARKDOWN-COMPATIBLE] 兼容GFM
+### spec [F-TERM-REFERENCE-FORMAT] 定义引用格式
+### derived [F-CLAUSE-REFERENCE-LINK] 可以是链接
+```
+
+**产出**:
+- `atelia/src/DesignDsl/ClauseNode.cs` — ClauseNode 类
+- `atelia/src/DesignDsl/ClauseModifier.cs` — ClauseModifier 枚举
+- `atelia/src/DesignDsl/ClauseNodeBuilder.cs` — INodeBuilder 实现
+
+**数据结构**:
+```csharp
+/// <summary>条款修饰符</summary>
+public enum ClauseModifier { Decision, Spec, Derived }
+
+/// <summary>条款定义节点</summary>
+public sealed class ClauseNode : AxtNode
+{
+    public ClauseModifier Modifier { get; }
+    public string ClauseId { get; }
+    public string? Title { get; }
+}
+```
+
+**验收标准**:
+1. `ClauseModifier` 枚举包含 `Decision`、`Spec`、`Derived`
+2. `ClauseNode` 继承 `AxtNode`，有 `Modifier`、`ClauseId`、`Title` 属性
+3. `ClauseNodeBuilder` 实现 `INodeBuilder`
+4. `TryBuild()` 对匹配 Clause 模式的 HeadingBlock 返回 `ClauseNode`，否则返回 null
+5. Modifier 关键字大小写不敏感
+6. Clause-ID 必须符合 Identifier 格式（否则返回 null）
+7. Modifier 与方括号之间必须有空白
+8. `dotnet build atelia/src/DesignDsl/` 无错误
+
+**SubAgent 提示**:
+- 使用 `HeadingTextExtractor.ExtractText(heading, originalMarkdown)` 获取原始标题文本
+- 推荐正则：`^(decision|spec|derived)\\s+\\[([^\\]]+)\\](?:\\s+(.+))?$`（忽略大小写）
+- 使用 `Enum.TryParse<ClauseModifier>(str, ignoreCase: true, out var m)`
+- 与 S-004 保持一致的匹配策略
+
+**依赖**: Stage-01（INodeBuilder 框架、HeadingTextExtractor）
+
+---
+
+## Task-S-006: 测试完善
+
+**目标**: 为 S-004/S-005 编写单元测试，并完善端到端测试。
+
+**产出**:
+- `atelia/tests/DesignDsl.Tests/TermNodeBuilderTests.cs`
+- `atelia/tests/DesignDsl.Tests/ClauseNodeBuilderTests.cs`
+- `atelia/tests/DesignDsl.Tests/EndToEndTests.cs`
+
+**验收标准**:
+
+1. **TermNodeBuilderTests** 至少包含 8 个测试用例：
+   - 正例：标准格式、仅 ID 无标题、大小写变体（`term`/`Term`/`TERM`）
+   - 反例：缺少关键字、ID 无反引号、ID 格式非法、关键字与 ID 无空白
+
+2. **ClauseNodeBuilderTests** 至少包含 10 个测试用例：
+   - 正例：三种 Modifier 各一个、仅 ID 无标题、大小写变体
+   - 反例：未知 Modifier、ID 无方括号、ID 格式非法
+
+3. **EndToEndTests** 解析真实 DSL 文档：
+   - 解析 `agent-team/wiki/SoftwareDesignModeling/AI-Design-DSL.md`
+   - 验证 TermNode 数量 >= 10
+   - 验证 ClauseNode 数量 >= 15
+   - 验证特定节点存在（如 `Design-DSL`、`S-MARKDOWN-COMPATIBLE`）
+
+4. 所有测试在 `dotnet test` 下通过
+
+**SubAgent 提示**:
+- 使用 `[Theory]` + `[InlineData]` 组织参数化测试
+- 参考已有的 `AtxSectionSplitterTests.cs` 风格
+- 在测试中配置 Pipeline：先注册 TermNodeBuilder 和 ClauseNodeBuilder，再调用 Build
+
+**依赖**: Task-S-004, Task-S-005
+
+---
+
+## Epilogue（后续方向）
+
+### Stage-03 预告：DocGraph 集成 API
+
+**目标**: 设计 DesignDsl 模块对外暴露的公共 API，供 DocGraph 调用。
+
+**预计产出**:
+- `DesignDslParser.cs` — 公共入口类
+- `DesignDslParseResult` — 返回类型
+
+**开放问题**:
+- [ ] 是否需要 `ParseAsync` 异步版本？
+- [ ] 错误处理策略：返回 Result 还是抛异常？
+- [ ] Pipeline 配置是否应该可定制？
+
+### 不在当前范围
+
+以下内容明确不在 Stage-02 范围内：
+
+1. **DocGraph 集成 API**（Stage-03）
+2. **跨文档引用解析**（`@[CLAUSE-ID]` 链接）
+3. **增量解析**（文档变更时局部更新）
+4. **Summary-Node 等其他节点类型**
+
+---
+
+## 变更日志
+
+| 日期 | 执行者 | 变更 | 原因 |
+|:-----|:-------|:-----|:-----|
+| 2026-01-13 | TeamLeader | 创建 Stage-02 Shape（三段式改造） | Stage 管理机制实验 |
+'''
+
+with open('/repos/focus/wish/W-0010-design-dsl-impl/artifacts/stage-02/Shape.md', 'w') as f:
+    f.write(content)
+print("Done!")
+PYEOF
+
+Read [](file:///repos/focus/wish/W-0010-design-dsl-impl/artifacts/stage-02/Shape.md#1-1), lines 1 to 51
+
+现在格式正确了。让我看一下目录结构： 
+
+Read [](file:///repos/focus/wish/W-0010-design-dsl-impl/artifacts/stage-02)
+
+让我记录这次改造并向监护人汇报： 
+
+Using "Replace String in File"
+
+
+```
+
+```
+---
+
+## 📋 Stage-02 改造完成汇报
+
+### 文件结构
+
+```
+stage-02/
+├── prologue.md    # 前情提要（168 行）
+└── Shape.md       # 当前阶段任务（209 行，原 539 行）
+```
+
+### prologue.md（前情提要）内容结构
+
+| 槽位 | 内容 | 作用 |
+|:-----|:-----|:-----|
+| **Stage-01 完成状态** | 任务列表 + ✅ 状态 | 快速了解前情 |
+| **Produced Artifacts** | 12 个产出文件 + Artifact-ID | 可定位的产出清单 |
+| **Contracts** | 4 个可依赖接口 + MUST 条款 | Implementer 无需读代码 |
+| **Extension Points** | EXT-001/EXT-002 | 明确 Stage-02 要实现什么 |
+| **Non-goals** | 4 项明确排除 | 防止 scope creep |
+| **Resolved Issues** | ISSUE-001/002 | 已解决的问题 |
+| **详细设计参考** | 指向 Shape.md | 需要时可深入 |
+
+### Shape.md（当前阶段）内容结构
+
+| 区块 | 内容 |
+|:-----|:-----|
+| **概览** | 阶段目标 + 任务依赖图 + 核心挑战 |
+| **Task-S-004** | TermNodeBuilder 完整简报 |
+| **Task-S-005** | ClauseNodeBuilder 完整简报 |
+| **Task-S-006** | 测试完善简报 |
+| **Epilogue** | Stage-03 预告 + 开放问题 + 不在范围 |
+
+### 改造效果
+
+| 指标 | 改造前 | 改造后 | 变化 |
+|:-----|:-------|:-------|:-----|
+| Shape.md 行数 | 539 | 209 | -61% |
+| 已完成 Task 详情 | 全部保留 | 汇总到 prologue | 精简 |
+| 可依赖接口 | 分散在代码注释 | 集中在 Contracts | 显式化 |
+| 扩展点 | 隐式 | 显式声明 | 可追踪 |
+
+### 三段式模式验证
+
+✅ **Prologue**（前情提要）
+- 汇总 Stage-01 完成状态
+- 列出可依赖接口（Contracts）
+- 声明扩展点（Extension Points）
+
+✅ **Shape**（当前阶段）
+- 只包含当前阶段任务
+- 任务简报自包含
+- 引用 prologue 获取前情
+
+✅ **Epilogue**（后续方向）
+- Stage-03 预告
+- 开放问题
+- 明确"不在范围"
+
+---
+
+**监护人，这个改造符合你的预期吗？** 
+
+如果满意，这个模式可以作为后续 Stage 的模板。下一步可以：
+1. 开始实施 Stage-02 的任务（S-004/S-005/S-006）
+2. 或继续完善这个模式（如创建模板文件）
+
+Made changes.
+
+User: 你们AI Team做的很好。我自己对后续方向看不清楚了，编码方面暂时就先完成到Stage-02 的任务（S-004/S-005/S-006）吧。请加一个Review环节，然后带领AI Team开始实施Stage-02吧。
+
+GitHub Copilot: 好的！让我先确认 Stage-02 的任务内容，然后请 Craftsman 审阅，再开始实施。 
+
+Read [](file:///repos/focus/wish/W-0010-design-dsl-impl/artifacts/stage-02/Shape.md)
+
+Read [](file:///repos/focus/wish/W-0010-design-dsl-impl/artifacts/stage-02/prologue.md)
+
+已了解 Stage-02 内容。现在请 Craftsman 审阅设计： 
+
+审阅 Stage-02 设计
+
+Read [](file:///repos/focus/wish/W-0010-design-dsl-impl/artifacts/stage-02/Shape.md)
+
+Read [](file:///repos/focus/wish/W-0010-design-dsl-impl/artifacts/stage-02/prologue.md)
+
+Searched for regex `interface\s+INodeBuilder|INodeBuilder\.|TryBuild\(|HeadingTextExtractor\.ExtractText|SourceHeadingBlock` (`**/atelia/**`), no results
+
+Searched for text `W-0010-design-dsl-impl/artifacts/stage-01|stage-01|Stage-01|INodeBuilder` (`**/wish/W-0010-design-dsl-impl/**`), 50 results
+
+Read [](file:///repos/focus/atelia/src/DesignDsl)
+
+Searched for regex `interface\s+INodeBuilder|class\s+NodeBuilderPipeline|class\s+HeadingTextExtractor|SourceHeadingBlock` (`**/atelia/src/DesignDsl/**`), 5 results
+
+Read [](file:///repos/focus/wish/W-0010-design-dsl-impl/artifacts/stage-01/Shape.md#160-160), lines 160 to 280
+
+Read [](file:///repos/focus/wish/W-0010-design-dsl-impl/artifacts/stage-01/Shape.md#270-270), lines 270 to 490
+
+Read [](file:///repos/focus/atelia/src/DesignDsl/INodeBuilder.cs)
+
+Read [](file:///repos/focus/atelia/src/DesignDsl/NodeBuilderPipeline.cs)
+
+Read [](file:///repos/focus/atelia/src/DesignDsl/HeadingTextExtractor.cs)
+
+Read [](file:///repos/focus/atelia/src/DesignDsl/AxtNode.cs)
+
+Read [](file:///repos/focus/wish/W-0010-design-dsl-impl/artifacts/stage-02/Shape.md#1-1), lines 1 to 121
+
+Read [](file:///repos/focus/wish/W-0010-design-dsl-impl/artifacts/stage-02/Shape.md#121-121), lines 121 to 209
+
+Read [](file:///repos/focus/wish/W-0010-design-dsl-impl/artifacts/stage-02/prologue.md#60-60), lines 60 to 130
+
+Read [](file:///repos/focus/wish/W-0010-design-dsl-impl/artifacts/stage-02/prologue.md#110-110), lines 110 to 168
+
+Read [](file:///repos/focus/atelia/tests/DesignDsl.Tests)
+
+Searched for regex `推荐正则方式|Identifier 验证正则|关键字与反引号之间必须有空白|EndToEndTests|TermNode 数量|ClauseNode 数量|核心挑战` (`**/wish/W-0010-design-dsl-impl/artifacts/stage-02/Shape.md`), 8 results
+
+Searched for text `INodeBuilder|HeadingTextExtractor|NodeBuilderPipeline` (`**/wish/W-0010-design-dsl-impl/artifacts/stage-02/prologue.md`), 12 results
+
+感谢 Craftsman 的审阅！让我处理这些问题，然后开始实施。
+
+## 📋 Craftsman 审阅结果
+
+| 严重程度 | 问题 | 处理方案 |
+|:---------|:-----|:---------|
+| **Major** | 正则会误拒绝尾随空格 | 修正正则，实现中 `Trim()` |
+| **Major** | E2E 测试依赖外部文档 | 改为固化 fixture + 关键节点验证 |
+| **Major** | 未定义 Heading Level 约束 | 明确"允许任意 Level"并补充测试 |
+| **Minor** | 匹配策略悬空 | 明确采用正则策略 |
+| **Minor** | 构造函数未明确 | 补充构造签名 |
+| **Info** | Prologue 接口示例偏差 | 标注"以代码为准" |
+
+让我更新设计文档修复这些问题： 
+
+Using "Multi-Replace String in Files"
+
+
+```
+
+```
+设计文档已更新。现在开始实施 Stage-02 任务。按依赖顺序：S-004 → S-005 → S-006。 
+
+实现 S-004 TermNodeBuilder
+
+Read [](file:///repos/focus/agent-team/members/implementer/index.md)
+
+Read [](file:///repos/focus/agent-team/members/implementer/inbox.md)
+
+Read [](file:///repos/focus/agent-team/blackboard.md)
+
+Read [](file:///repos/focus/atelia/src/DesignDsl/AxtNode.cs)
+
+Read [](file:///repos/focus/atelia/src/DesignDsl/HeadingTextExtractor.cs)
+
+Read [](file:///repos/focus/atelia/src/DesignDsl/INodeBuilder.cs)
+
+Read [](file:///repos/focus/atelia/src/DesignDsl)
+
+Read [](file:///repos/focus/atelia/src/DesignDsl/DefaultNodeBuilder.cs)
+
+Created [](file:///repos/focus/atelia/src/DesignDsl/TermNode.cs)
+
+Created [](file:///repos/focus/atelia/src/DesignDsl/TermNodeBuilder.cs)
+
+Ran terminal command: cd /repos/focus/atelia && dotnet build src/DesignDsl/
+
+Using "Replace String in File"
+
+Read [](file:///repos/focus/agent-team/members/implementer/inbox.md#40-40), lines 40 to 57
+
+Using "Replace String in File"
+
+```
+
+```
+
+S-004 完成！继续 S-005： 
+
+实现 S-005 ClauseNodeBuilder
+
+Read [](file:///repos/focus/atelia/src/DesignDsl/TermNodeBuilder.cs)
+
+Read [](file:///repos/focus/atelia/src/DesignDsl/AxtNode.cs)
+
+Read [](file:///repos/focus/atelia/src/DesignDsl/TermNode.cs)
+
+Created [](file:///repos/focus/atelia/src/DesignDsl/ClauseModifier.cs)
+
+Created [](file:///repos/focus/atelia/src/DesignDsl/ClauseNode.cs)
+
+Created [](file:///repos/focus/atelia/src/DesignDsl/ClauseNodeBuilder.cs)
+
+Ran terminal command: cd /repos/focus/atelia && dotnet build src/DesignDsl/
+
+S-005 完成！继续 S-006（测试）： 
+
+实现 S-006 测试完善
+
+Read [](file:///repos/focus/agent-team/members/implementer/index.md)
+
+Read [](file:///repos/focus/agent-team/members/implementer/inbox.md)
+
+Read [](file:///repos/focus/agent-team/blackboard.md)
+
+Read [](file:///repos/focus/atelia/tests/DesignDsl.Tests/AtxSectionSplitterTests.cs)
+
+Read [](file:///repos/focus/atelia/tests/DesignDsl.Tests/HeadingTextExtractorTests.cs)
+
+Read [](file:///repos/focus/atelia/tests/DesignDsl.Tests/TestHelpers.cs)
+
+Read [](file:///repos/focus/atelia/src/DesignDsl/TermNode.cs)
+
+Read [](file:///repos/focus/atelia/src/DesignDsl/TermNodeBuilder.cs)
+
+Read [](file:///repos/focus/atelia/src/DesignDsl/ClauseNode.cs)
+
+Read [](file:///repos/focus/atelia/src/DesignDsl/ClauseNodeBuilder.cs)
+
+Read [](file:///repos/focus/atelia/src/DesignDsl/AxtTreeBuilder.cs)
+
+Read [](file:///repos/focus/atelia/src/DesignDsl/NodeBuilderPipeline.cs)
+
+Read [](file:///repos/focus/atelia/src/DesignDsl/ClauseModifier.cs)
+
+Read [](file:///repos/focus/atelia/test-data)
+
+Created [](file:///repos/focus/atelia/test-data/DesignDsl/dsl-sample.md)
+
+Created [](file:///repos/focus/atelia/tests/DesignDsl.Tests/TermNodeBuilderTests.cs)
+
+Created [](file:///repos/focus/atelia/tests/DesignDsl.Tests/ClauseNodeBuilderTests.cs)
+
+Created [](file:///repos/focus/atelia/tests/DesignDsl.Tests/EndToEndTests.cs)
+
+Ran terminal command: cd /repos/focus/atelia && dotnet test tests/DesignDsl.Tests/ --verbosity normal 2>&1
+
+Using "Replace String in File"
+
+```
+
+```
+
+太棒了！所有任务完成。让我验证最终测试结果： 
+
+Ran terminal command: cd /repos/focus/atelia && dotnet test tests/DesignDsl.Tests/ --verbosity normal 2>&1 | tail -20
+
+让我更新 Stage-02 状态并汇报： 
+
+Using "Multi-Replace String in Files"
+
+
+```
+
+```
+
+
+Using "Replace String in File"
+
+
+```
+
+```
+---
+
+## 🎉 Stage-02 实施完成！
+
+### 执行流程
+
+```
+Craftsman 审阅设计 → 修复 6 个问题 → Implementer 实施 S-004/S-005/S-006 → 验证通过
+```
+
+### Craftsman 审阅结果
+
+| 严重程度 | 问题 | 处理 |
+|:---------|:-----|:-----|
+| **Major** | 正则误拒尾随空格 | ✅ 修正正则，Title Trim() |
+| **Major** | E2E 依赖外部文档 | ✅ 改为固化 fixture |
+| **Major** | Level 约束未定义 | ✅ 明确允许任意 Level |
+| **Minor** | 匹配策略悬空 | ✅ 明确采用正则 |
+| **Minor** | 构造函数未明确 | ✅ 补充签名 |
+| **Info** | Prologue 偏差 | ✅ 知悉 |
+
+### 实施结果
+
+| Task | 产出 | 状态 |
+|:-----|:-----|:-----|
+| **S-004** | `TermNode.cs`, `TermNodeBuilder.cs` | ✅ |
+| **S-005** | `ClauseModifier.cs`, `ClauseNode.cs`, `ClauseNodeBuilder.cs` | ✅ |
+| **S-006** | `TermNodeBuilderTests.cs`, `ClauseNodeBuilderTests.cs`, `EndToEndTests.cs`, `dsl-sample.md` | ✅ |
+
+### 测试结果
+
+```
+Test Run Successful.
+Total tests: 67
+     Passed: 67
+```
+
+| 测试类 | 数量 |
+|:-------|:-----|
+| AtxSectionSplitterTests | 9 |
+| NodeBuilderPipelineTests | 6 |
+| HeadingTextExtractorTests | 6 |
+| AxtTreeBuilderTests | 12 |
+| TermNodeBuilderTests | 11 |
+| ClauseNodeBuilderTests | 13 |
+| EndToEndTests | 7 |
+| **总计** | **67** |
+
+### Stage-02 状态
+
+**✅ Frozen**（已冻结，不再变更）
+
+---
+
+**监护人**，Stage-02 完成！现在 DesignDsl 模块具备了：
+- Block 序列分段（Stage-01）
+- ATX 树构建（Stage-01）
+- Term 定义识别（Stage-02）
+- Clause 定义识别（Stage-02）
+- 完整的单元测试覆盖
+
+后续 Stage-03 可以实现 DocGraph 集成 API。如果你暂时看不清后续方向，这个阶段可以先告一段落 😊
+
+Made changes.
+
+User: 我注意到了一个可以局部优化的地方。目前的接口设计使得` HeadingTextExtractor.ExtractText`在每个INodeBuilder中被反复调用，而我们已有了`AtxSection`类型，可以把`string HeadingText`直接构造时就存入`AtxSection`当中，然后让`AxtNode NodeBuilderPipeline.Build(HeadingBlock heading, IReadOnlyList<Block> content, string originalMarkdown)`中的`heading`和`content`参数合并为`AtxSection section`参数。请帮我分析这个改进思路是否合理。合理的话，请沿着这个思路制定更具体的方案，并带领AI团队实施。
+
+GitHub Copilot: 让我先分析当前代码结构，评估这个优化思路： 
+
+Read [](file:///repos/focus/atelia/src/DesignDsl/AtxSection.cs)
+
+Read [](file:///repos/focus/atelia/src/DesignDsl/INodeBuilder.cs)
+
+Read [](file:///repos/focus/atelia/src/DesignDsl/NodeBuilderPipeline.cs)
+
+Read [](file:///repos/focus/atelia/src/DesignDsl/TermNodeBuilder.cs)
+
+Read [](file:///repos/focus/atelia/src/DesignDsl/AtxSectionSplitter.cs)
+
+Read [](file:///repos/focus/atelia/src/DesignDsl/AxtTreeBuilder.cs)
+
+现在我理解了完整的代码结构。让我分析这个优化思路：
+
+## 优化分析
+
+### 当前问题
+
+```
+AtxSectionSplitter.Split(blocks)           // 不需要 originalMarkdown
+    ↓
+AtxSection { Heading, Content }            // 没有 HeadingText
+    ↓
+AxtTreeBuilder.Build(..., originalMarkdown)
+    ↓
+pipeline.Build(heading, content, originalMarkdown)
+    ↓
+TermNodeBuilder.TryBuild(heading, content, originalMarkdown)
+    → HeadingTextExtractor.ExtractText(heading, originalMarkdown)  // 重复调用！
+ClauseNodeBuilder.TryBuild(heading, content, originalMarkdown)
+    → HeadingTextExtractor.ExtractText(heading, originalMarkdown)  // 重复调用！
+DefaultNodeBuilder.TryBuild(heading, content, originalMarkdown)
+    → (不调用)
+```
+
+**问题**：`HeadingTextExtractor.ExtractText()` 在职责链中被多个 Builder 重复调用。
+
+### 优化方案
+
+**将 `HeadingText` 预存到 `AtxSection`**，在分段时一次性计算：
+
+```
+AtxSectionSplitter.Split(blocks, originalMarkdown)  // 新增参数
+    ↓
+AtxSection { Heading, Content, HeadingText }        // 预存 HeadingText
+    ↓
+AxtTreeBuilder.Build(sections, pipeline)            // 不再需要 originalMarkdown
+    ↓
+pipeline.Build(section)                              // 简化为单参数
+    ↓
+TermNodeBuilder.TryBuild(section)
+    → section.HeadingText                            // 直接使用，无需计算
+```
+
+### 影响范围
+
+| 文件 | 变更 |
+|:-----|:-----|
+| AtxSection.cs | 添加 `HeadingText` 属性和构造参数 |
+| AtxSectionSplitter.cs | `Split()` 新增 `originalMarkdown` 参数 |
+| INodeBuilder.cs | `TryBuild(AtxSection section)` 简化签名 |
+| `DefaultNodeBuilder.cs` | 适配新签名 |
+| TermNodeBuilder.cs | 适配新签名，直接用 `section.HeadingText` |
+| `ClauseNodeBuilder.cs` | 适配新签名 |
+| NodeBuilderPipeline.cs | `Build(AtxSection section)` 简化签名 |
+| AxtTreeBuilder.cs | 调用方式调整 |
+| 测试文件 | 适配新接口 |
+
+### 结论
+
+✅ **这个优化是合理的**：
+1. **消除重复计算**：HeadingText 只计算一次
+2. **接口更简洁**：从 3 参数简化为 1 参数
+3. **数据内聚**：AtxSection 本就包含 Heading + Content，加 HeadingText 是自然扩展
+4. **职责清晰**：文本提取在分段阶段完成，Builder 只做模式匹配
+
+---
+
+**监护人**，分析结论是这个优化思路**合理且值得实施**。要我带领 AI Team 开始实施吗？
+
+User: 好的，请带队实施吧！
+
+GitHub Copilot: 好的！这是一个接口重构任务，我直接实施以确保一致性。按依赖顺序进行： 
+
+Using "Multi-Replace String in Files"
+
+
+```
+
+```
+Summarized conversation history
+
+Using "Replace String in File"
+
+
+```
+
+```
+
+
+Using "Multi-Replace String in Files"
+
+
+```
+
+```
+
+
+Read [](file:///repos/focus/atelia/src/DesignDsl/NodeBuilderPipeline.cs)
+
+Using "Replace String in File"
+
+
+```
+
+```
+
+
+Read [](file:///repos/focus/atelia/src/DesignDsl/DefaultNodeBuilder.cs)
+
+Read [](file:///repos/focus/atelia/src/DesignDsl/ClauseNodeBuilder.cs)
+
+Using "Multi-Replace String in Files"
+
+
+```
+
+```
+
+```
+
+```
+
+```
+
+```
+
+
+Using "Replace String in File"
+
+
+```
+
+```
+核心代码修改完成。现在修改测试文件： 
+
+Read [](file:///repos/focus/atelia/tests/DesignDsl.Tests/AtxSectionSplitterTests.cs)
+
+Using "Replace String in File"
+
+
+```
+
+```
+
+
+Using "Replace String in File"
+
+
+```
+
+```
+
+
+Using "Replace String in File"
+
+
+```
+
+```
+
+
+Using "Replace String in File"
+
+
+```
+
+```
+
+
+Using "Replace String in File"
+
+
+```
+
+```
+
+
+Using "Replace String in File"
+
+
+```
+
+```
+
+
+Using "Replace String in File"
+
+
+```
+
+```
+
+
+Using "Replace String in File"
+
+
+```
+
+```
+
+
+Using "Replace String in File"
+
+
+```
+
+```
+现在修改其他测试文件： 
+
+Read [](file:///repos/focus/atelia/tests/DesignDsl.Tests/AxtTreeBuilderTests.cs)
+
+Ran terminal command: cd /repos/focus/atelia && sed -i 's/AtxSectionSplitter\.Split(doc\.ToList())/AtxSectionSplitter.Split(doc.ToList(), markdown)/g' tests/DesignDsl.Tests/AxtTreeBuilderTests.cs
+
+Ran terminal command: cd /repos/focus/atelia && sed -i 's/AxtTreeBuilder\.Build(sections, pipeline, markdown)/AxtTreeBuilder.Build(sections, pipeline)/g' tests/DesignDsl.Tests/AxtTreeBuilderTests.cs
+
+Searched for regex `AtxSectionSplitter\.Split|AxtTreeBuilder\.Build` (`**/tests/DesignDsl.Tests/*.cs`), 20 results
+
+需要更新 TermNodeBuilderTests、ClauseNodeBuilderTests 和 EndToEndTests： 
+
+Read [](file:///repos/focus/atelia/tests/DesignDsl.Tests/TermNodeBuilderTests.cs#1-1), lines 1 to 61
+
+需要修改这些测试。测试使用了旧的 `TryBuild` 签名。让我批量更新： 
+
+Ran terminal command: cd /repos/focus/atelia && sed -i 's/AtxSectionSplitter\.Split(doc\.ToList())/AtxSectionSplitter.Split(doc.ToList(), markdown)/g' tests/DesignDsl.Tests/TermNodeBuilderTests.cs tests/DesignDsl.Tests/ClauseNodeBuilderTests.cs tests/DesignDsl.Tests/EndToEndTests.cs
+
+Ran terminal command: cd /repos/focus/atelia && sed -i 's/AxtTreeBuilder\.Build(sections, pipeline, markdown)/AxtTreeBuilder.Build(sections, pipeline)/g' tests/DesignDsl.Tests/EndToEndTests.cs
+
+现在需要修改 TermNodeBuilderTests 和 ClauseNodeBuilderTests 中的 TryBuild 调用，改为传入 section： 
+
+Ran terminal command: cd /repos/focus/atelia && sed -i 's/_builder\.TryBuild(section\.Heading, section\.Content, markdown)/_builder.TryBuild(section)/g' tests/DesignDsl.Tests/TermNodeBuilderTests.cs tests/DesignDsl.Tests/ClauseNodeBuilderTests.cs
+
+现在检查 NodeBuilderPipelineTests： 
+
+Read [](file:///repos/focus/atelia/tests/DesignDsl.Tests/NodeBuilderPipelineTests.cs)
+
+Summarized conversation history这个文件比较复杂，需要更多更改： 
+
+Using "Replace String in File"
+
+
+```
+
+```
+现在运行测试验证： 
+
+Ran terminal command: cd /repos/focus/atelia && dotnet test tests/DesignDsl.Tests --no-build 2>&1 | head -50
+
+所有 67 个测试通过！现在重新编译确保代码能正常构建： 
+
+Ran terminal command: cd /repos/focus/atelia && dotnet build src/DesignDsl 2>&1
+
+Ran terminal command: cd /repos/focus/atelia && dotnet test tests/DesignDsl.Tests 2>&1
+
+✅ **重构完成！所有 67 个测试通过。**
+
+---
+
+## 重构总结
+
+将 `HeadingText` 直接存入 `AtxSection`，消除了每个 `INodeBuilder` 重复调用 `HeadingTextExtractor.ExtractText()` 的开销。
+
+### 修改的文件
+
+| 文件 | 变更 |
+|------|------|
+| AtxSection.cs | 新增 `HeadingText` 属性和构造参数 |
+| AtxSectionSplitter.cs | `Split()` 新增 `originalMarkdown` 参数，在分段时预计算 HeadingText |
+| INodeBuilder.cs | 接口简化为 `TryBuild(AtxSection section)` |
+| NodeBuilderPipeline.cs | `Build()` 简化为 `Build(AtxSection section)` |
+| DefaultNodeBuilder.cs | 适配新接口 |
+| TermNodeBuilder.cs | 直接使用 `section.HeadingText`，移除 `HeadingTextExtractor` 调用 |
+| ClauseNodeBuilder.cs | 直接使用 `section.HeadingText`，移除 `HeadingTextExtractor` 调用 |
+| AxtTreeBuilder.cs | 移除 `originalMarkdown` 参数，因为 HeadingText 已在 section 中 |
+| 5 个测试文件 | 适配新接口签名 |
+
+### 接口变化
+
+**Before:**
+```csharp
+// AtxSectionSplitter
+AtxSectionResult Split(IReadOnlyList<Block> blocks)
+
+// INodeBuilder
+AxtNode? TryBuild(HeadingBlock heading, IReadOnlyList<Block> content, string originalMarkdown)
+
+// NodeBuilderPipeline
+AxtNode Build(HeadingBlock heading, IReadOnlyList<Block> content, string originalMarkdown)
+
+// AxtTreeBuilder
+AxtTree Build(AtxSectionResult sections, NodeBuilderPipeline pipeline, string originalMarkdown)
+```
+
+**After:**
+```csharp
+// AtxSectionSplitter
+AtxSectionResult Split(IReadOnlyList<Block> blocks, string originalMarkdown)
+
+// INodeBuilder
+AxtNode? TryBuild(AtxSection section)
+
+// NodeBuilderPipeline
+AxtNode Build(AtxSection section)
+
+// AxtTreeBuilder
+AxtTree Build(AtxSectionResult sections, NodeBuilderPipeline pipeline)
+```
+
+### 收益
+
+1. **性能优化**：每个 Section 只调用一次 `HeadingTextExtractor.ExtractText()`，而非每个 Builder 都调用
+2. **接口简化**：`INodeBuilder.TryBuild()` 从 3 参数简化为 1 参数
+3. **关注点分离**：HeadingText 提取职责归入 Splitter，Builder 只负责模式匹配
+
+Made changes.
