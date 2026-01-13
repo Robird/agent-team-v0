@@ -1,6 +1,6 @@
 # DocOps 认知索引
 
-> 最后更新: 2026-01-12 便签归档 (1条: 术语统一迁移锁定标注)
+> 最后更新: 2026-01-14 便签归档 (1条: RBF SSOT 漂移清理)
 
 ## 我是谁
 
@@ -51,6 +51,11 @@ DocOps - 文档与索引管理专家，负责维护团队的集体记忆和认�
 - interface.md：对外门面，定义 Shape-Tier 契约
 - type-bone.md：内部实现，定义 Craft-Tier 骨架
 - 两者通过条款 ID 引用形成单向依赖（type-bone → interface）
+
+**SSOT 漂移清理实践经验（2026-01-12）**：
+- Implementation Guide 类文档在接口修订后容易遗漏同步更新
+- 条款 ID 重命名时，跨层引用点（interface → type-bone）容易被忽略
+- **职责闭合检查有价值**：审查时检查各层 API 参数是否对齐，可发现漏参问题
 
 ### 术语迁移方法论（成熟）
 
@@ -292,6 +297,17 @@ SoftwareDesignModeling/
 ---
 
 ## 最近工作
+
+### 2026-01-12 - RBF SSOT 漂移清理
+
+**场景**：RBF 文档 v0.27/v0.28 接口修订后遗留的 SSOT 漂移
+
+**清理内容**：
+- Builder 生命周期命名：`Commit` → `EndAppend`（3 处）
+- Tombstone 条款引用：`@[S-RBF-TOMBSTONE-VISIBLE]` → `@[S-RBF-SCANREVERSE-TOMBSTONE-FILTER]`（1 处）
+- ScanReverse 过滤职责闭合：RawOps 签名补充 `showTombstone` 参数（1 处）
+
+**产出**：[清理报告](agent-team/handoffs/2026-01-12-rbf-ssot-drift-cleanup.md)
 
 ### 2026-01-12 - 术语统一迁移锁定标注
 
