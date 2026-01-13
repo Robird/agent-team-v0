@@ -1,6 +1,7 @@
 # Investigator 认知索引
 
-> 最后更新: 2026-01-12
+> 最后更新: 2026-01-14
+> - 2026-01-14: Memory Palace — 处理了 3 条便签（AI-Design-DSL/DesignDsl 导航锚点汇总：规范导航 + DocGraph 代码位置 + DSL 关键字识别）
 > - 2026-01-12: Memory Palace — 处理了 6 条便签（RBF 文档版本/条款 ID 导航 + spec-conventions 改名影响 + Gotcha 2 条 + Signal 2 条）
 > - 2026-01-11: Memory Palace — 处理了 12 条便签（测试架构治理、代码去重分析、Gotcha 3 条、Signal 2 条、适配器设计锚点）
 > - 2026-01-11: Memory Maintenance — 归档 2025-12 早期 Session Log（压缩 ~290 行）
@@ -23,6 +24,36 @@
 - [ ] atelia-copilot-chat
 
 ## Session Log
+### 2026-01-12: AI-Design-DSL/DesignDsl 导航锚点汇总
+**类型**: Route + Anchor + Signal
+**项目**: DesignDsl, Atelia
+
+#### 1. AI-Design-DSL 规范导航（Route）
+| 意图 | 位置 | 关键锚点 |
+|:-----|:-----|:---------|
+| 术语定义语法 | [AI-Design-DSL.md](agent-team/wiki/SoftwareDesignModeling/AI-Design-DSL.md) | `[F-TERM-DEFINITION-FORMAT]`, `` term `ATX-Tree` `` |
+| 条款定义语法 | 同上 | `[F-CLAUSE-DEFINITION-FORMAT]` |
+| Identifier 格式 | 同上 | `[S-IDENTIFIER-ALNUM-HYPHENATED]` |
+
+**置信度**: ✅ 验证过
+
+#### 2. DocGraph 现有代码位置（Anchor）
+| 意图 | 位置 |
+|:-----|:-----|
+| DocGraph Markdown 处理 | [DocumentGraphBuilder.cs](atelia/src/DocGraph/Core/DocumentGraphBuilder.cs) |
+
+**备注**: DocGraph 当前只使用 FrontmatterParser 处理 YAML front-matter，不解析 Markdown 内容。DesignDsl 将填补这个空白。
+**置信度**: ✅ 验证过
+
+#### 3. DSL 关键字快速识别（Signal）
+| 特征 | 含义 |
+|:-----|:-----|
+| Heading 以 `term`/`decision`/`spec`/`derived` 开头 | DSL 节点 |
+| 反引号包裹 ID | Term-Node |
+| 方括号包裹 ID | Clause-Node |
+
+**置信度**: ✅ 验证过
+
 ### 2026-01-12: RBF 文档版本/条款 ID 导航锚点汇总
 **类型**: Route + Signal + Gotcha
 **项目**: RBF
