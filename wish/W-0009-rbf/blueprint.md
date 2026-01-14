@@ -1,40 +1,20 @@
-# RBF 实现待办事项
+# RBF 实现蓝图
 
-> 本文档记录 RBF 实现的阶段性施工方案和后续方向性思路。
+> 本文档是 RBF 实现的**动态蓝图**——记录阶段性施工方案与演进方向。
+> 随着实现推进，已完成的 Stage 会被压缩或移除，新的洞察会补充进来。
 > **维护者**：每个 Stage 完成后由执行者更新。
 
 ---
 
-## 阶段性施工方案
+## 施工阶段（Stage）
 
-### Stage 01: 项目骨架与类型骨架
-**目标**：创建 dotnet 9.0 项目结构，实现主要类型的骨架代码（函数体留空或抛 `NotImplementedException`）。
-
-**交付物**：
-- `atelia/src/Rbf/Rbf.csproj` - 主项目
-- `atelia/tests/Rbf.Tests/Rbf.Tests.csproj` - xUnit 测试项目
-- 类型骨架：
-  - `IRbfFile` 接口
-  - `RbfFile` 静态工厂
-  - `RbfFrame` ref struct
-  - `RbfFrameBuilder` ref struct
-  - `RbfReverseSequence` / `RbfReverseEnumerator` ref struct
-  - `RbfRawOps` 静态类（internal）
-  - `RandomAccessByteSink` 适配器（internal）
-- 基础编译通过
-
-**验收标准**：`dotnet build` 成功，类型签名与 `rbf-interface.md` 对齐。
+### Stage 01: 项目骨架与类型骨架 ✅
+> 已完成（2026-01-14）。详见 `recap.md`。
 
 ---
 
-### Stage 02: 常量与 Fence（Genesis）
-**目标**：实现 Fence 常量、Genesis 验证、`RbfFile.CreateNew/OpenExisting` 工厂方法。
-
-**交付物**：
-- Fence 常量 `RBF1` (ASCII 4B)
-- `CreateNew` 创建仅含 Genesis Fence 的空文件
-- `OpenExisting` 验证 Genesis Fence
-- 对应的单元测试
+### Stage 02: 常量与 Fence（Genesis） ✅
+> 已完成（2026-01-14）。详见 `recap.md`。
 
 ---
 
@@ -111,7 +91,9 @@
 
 ---
 
-## 后续方向性思路
+## 演进方向（Backlog）
+
+> 以下为 MVP 之后的潜在演进方向，优先级可能随需求变化。
 
 - **P2**：异步版本（`RandomAccessByteSinkAsync`）
 - **P2**：性能优化（CRC32C 增量计算、Read Window 调优）
@@ -123,5 +105,7 @@
 
 | 日期 | 变更 |
 |------|------|
+| 2026-01-14 | 文档重构：`todo.md` → `blueprint.md`，语义从"待办"改为"动态蓝图" |
+| 2026-01-14 | Stage 01、02 完成，压缩为引用 |
 | 2026-01-14 | 设计决策：Stage 03/05 独立实现 + 共享辅助函数 |
 | 2026-01-14 | 初始版本：8 阶段施工方案 |

@@ -8,7 +8,7 @@
 ## 上下文文件
 
 - **前情提要**：`wish/W-0009-rbf/recap.md`
-- **后续方向**：`wish/W-0009-rbf/todo.md`
+- **实现蓝图**：`wish/W-0009-rbf/blueprint.md`
 - **接口规范**：`atelia/docs/Rbf/rbf-interface.md`
 - **实现指南**：`atelia/docs/Rbf/rbf-type-bone.md`
 - **现有依赖**：`atelia/src/Data/` 目录

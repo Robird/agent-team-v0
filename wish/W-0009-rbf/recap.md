@@ -7,9 +7,9 @@
 
 ## 当前状态
 
-**阶段**：Stage 01 - 项目骨架与类型骨架 ✅ **已完成**
+**阶段**：Stage 02 - 常量与 Fence（Genesis） ✅ **已完成**
 
-**下一阶段**：Stage 02 - 常量与 Fence（Genesis）
+**下一阶段**：Stage 03 - 简单写入路径（Append）
 
 **基础条件**：
 - 设计文档已就绪：`atelia/docs/Rbf/` 目录下 7 个文档
@@ -35,6 +35,30 @@
 
 ## 已完成的交付成果
 
+### Stage 02: 常量与 Fence（Genesis）（2026-01-14）
+
+**新增类型**：
+- `Internal/RbfConstants.cs` - Fence 常量（`internal` 避免 API surface 污染）
+- `Internal/RbfFileImpl.cs` - `IRbfFile` 内部实现类（Facade 模式）
+
+**工厂方法实现**：
+- `RbfFile.CreateNew(path)` - 创建新文件，写入 Genesis Fence，TailOffset=4
+- `RbfFile.OpenExisting(path)` - 打开已有文件，验证 Genesis + 4B 对齐
+
+**测试覆盖**（8 个测试）：
+- `CreateNew_CreatesFileWithGenesisFence` - 验证新文件内容
+- `CreateNew_FailsIfFileExists` - 文件已存在时抛 IOException
+- `OpenExisting_SucceedsWithValidFile` - 正常打开
+- `OpenExisting_FailsWithInvalidGenesis` - Genesis 不匹配
+- `OpenExisting_FailsIfFileNotExists` - 文件不存在
+- `OpenExisting_FailsWhenFileTooShort` - 文件过短（<4B）
+- `OpenExisting_FailsWhenLengthNotAligned` - 长度非 4B 对齐
+- `RbfFileTests.Placeholder` - 原有占位测试
+
+**设计亮点**：
+- 失败路径确保句柄关闭（try-catch 模式）
+- 入口处校验 4B 对齐根不变量（@[S-RBF-DECISION-4B-ALIGNMENT-ROOT]）
+
 ### Stage 01: 项目骨架与类型骨架（2026-01-14）
 
 **项目结构**：
@@ -46,7 +70,7 @@
 - `IRbfFile.cs` - 接口定义
 - `RbfFile.cs` - 静态工厂（`CreateNew`, `OpenExisting`）
 - `RbfFrame.cs` - `readonly ref struct`
-- `RbfFrameBuilder.cs` - `ref struct`（含 Dispose 模式）
+- `RbfFrameBuilder.cs` - `ref struct : IDisposable`
 - `RbfReverseSequence.cs` - `ref struct`
 - `RbfReverseEnumerator.cs` - `ref struct`
 
@@ -60,6 +84,7 @@
 
 | 日期 | 变更 |
 |------|------|
+| 2026-01-14 | Stage 02 完成：常量与 Fence（Genesis），含 4B 对齐校验 |
 | 2026-01-14 | 设计决策：IDisposable 保留 + Append/BeginAppend 独立实现 |
 | 2026-01-14 | Code Review 修复：4 个 Major 问题已解决 |
 | 2026-01-14 | Stage 01 完成：项目骨架与类型骨架 |
