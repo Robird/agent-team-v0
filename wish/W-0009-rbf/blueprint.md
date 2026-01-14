@@ -18,19 +18,10 @@
 
 ---
 
-### Stage 03: 简单写入路径（Append）
-**目标**：实现 `IRbfFile.Append(tag, payload)` 完整帧写入。
-
-**设计决策**：独立实现，不依赖复杂路径。通过提取共享辅助函数（如帧序列化工具）实现代码复用。
-- 理由：简单路径是"我已准备好"的语义，复杂路径是"延迟决定"的语义——不应让简单的依赖复杂的
-- 渐进交付：Stage 03 交付后立即可用于上层测试
-
-**交付物**：
-- `Append` 方法完整实现
-- FrameBytes 布局正确（HeadLen, Tag, Payload, Status, TailLen, CRC）
-- Fence 写入（帧后）
-- `TailOffset` 更新
-- 对应的单元测试
+### Stage 03: 简单写入路径（Append） ✅
+> 已完成（2026-01-14）。详见 `recap.md`。
+> 关键成果：CRC32CHelper、FrameStatusHelper、RbfRawOps.SerializeFrame、RbfFileImpl.Append
+> 测试覆盖：84 个测试全部通过
 
 ---
 
@@ -105,6 +96,7 @@
 
 | 日期 | 变更 |
 |------|------|
+| 2026-01-14 | Stage 03 完成：Append 实现 + 84 个测试通过 |
 | 2026-01-14 | 文档重构：`todo.md` → `blueprint.md`，语义从"待办"改为"动态蓝图" |
 | 2026-01-14 | Stage 01、02 完成，压缩为引用 |
 | 2026-01-14 | 设计决策：Stage 03/05 独立实现 + 共享辅助函数 |
