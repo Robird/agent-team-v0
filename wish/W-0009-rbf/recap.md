@@ -7,7 +7,9 @@
 
 ## 当前状态
 
-**阶段**：Stage 01 - 项目骨架与类型骨架（准备中）
+**阶段**：Stage 01 - 项目骨架与类型骨架 ✅ **已完成**
+
+**下一阶段**：Stage 02 - 常量与 Fence（Genesis）
 
 **基础条件**：
 - 设计文档已就绪：`atelia/docs/Rbf/` 目录下 7 个文档
@@ -33,7 +35,24 @@
 
 ## 已完成的交付成果
 
-*（暂无，Stage 01 尚未开始）*
+### Stage 01: 项目骨架与类型骨架（2026-01-14）
+
+**项目结构**：
+- `atelia/src/Rbf/Rbf.csproj` - 主项目（引用 Data + Primitives）
+- `atelia/tests/Rbf.Tests/Rbf.Tests.csproj` - xUnit 测试项目
+- 两个项目已添加到 `Atelia.sln`
+
+**公开类型骨架**（方法体 `NotImplementedException` 占位）：
+- `IRbfFile.cs` - 接口定义
+- `RbfFile.cs` - 静态工厂（`CreateNew`, `OpenExisting`）
+- `RbfFrame.cs` - `readonly ref struct`
+- `RbfFrameBuilder.cs` - `ref struct`（含 Dispose 模式）
+- `RbfReverseSequence.cs` - `ref struct`
+- `RbfReverseEnumerator.cs` - `ref struct`
+
+**内部类型骨架**：
+- `Internal/RbfRawOps.cs` - 静态类
+- `Internal/RandomAccessByteSink.cs` - `IByteSink` 适配器（**已完整实现**）
 
 ---
 
@@ -41,4 +60,7 @@
 
 | 日期 | 变更 |
 |------|------|
+| 2026-01-14 | 设计决策：IDisposable 保留 + Append/BeginAppend 独立实现 |
+| 2026-01-14 | Code Review 修复：4 个 Major 问题已解决 |
+| 2026-01-14 | Stage 01 完成：项目骨架与类型骨架 |
 | 2026-01-14 | 初始版本：记录基础条件 |
