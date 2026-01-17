@@ -1,6 +1,7 @@
 # Investigator 认知索引
 
-> 最后更新: 2026-01-14
+> 最后更新: 2026-01-15
+> - 2026-01-15: Memory Palace — 处理了 3 条便签（atelia-copilot-chat Fork 同步调查：API 变更 + 会话卡住假设 + 检查清单）
 > - 2026-01-14: Memory Palace — 处理了 3 条便签（AI-Design-DSL/DesignDsl 导航锚点汇总：规范导航 + DocGraph 代码位置 + DSL 关键字识别）
 > - 2026-01-12: Memory Palace — 处理了 6 条便签（RBF 文档版本/条款 ID 导航 + spec-conventions 改名影响 + Gotcha 2 条 + Signal 2 条）
 > - 2026-01-11: Memory Palace — 处理了 12 条便签（测试架构治理、代码去重分析、Gotcha 3 条、Signal 2 条、适配器设计锚点）
@@ -24,6 +25,35 @@
 - [ ] atelia-copilot-chat
 
 ## Session Log
+### 2026-01-15: atelia-copilot-chat Fork 同步调查
+**类型**: Anchor + Signal + Route
+**项目**: atelia-copilot-chat
+
+#### 1. getAllOpenSessions → getAllSessions API 变更（Anchor）
+| 指标 | 值 |
+|:-----|:---|
+| 位置 | [src/platform/github/common/githubService.ts#L246](atelia-copilot-chat/src/platform/github/common/githubService.ts#L246) |
+| 变更版本 | 52126b6c → v0.35.3 |
+| 新签名 | `getAllSessions(nwo?, open?=true)` |
+| 性质 | v0.35.3 **唯一** breaking change |
+
+**置信度**: ✅ 验证过
+
+#### 2. 会话卡住问题假设（Signal）
+- **可能相关提交**: c638e35f (`copilotCloudSessionsProvider.ts`)
+- **变更内容**: 旧代码无条件返回缓存，新代码增加 `activeSessionIds.size > 0` 检查
+- **症状匹配**: "离开后再进入卡住"符合缓存检查逻辑变更
+- **置信度**: ⚠️ 推测，需进一步验证
+
+#### 3. Fork 同步检查清单快速路径（Route）
+| 检查项 | 命令 |
+|:-------|:-----|
+| API 签名变更 | `git diff base..target -- "src/platform/**/*.ts" \| grep -E "^[-+].*\(" \| head -50` |
+| Session 相关 | `git diff base..target --stat \| grep -i session` |
+| Bug fix 相关 | `git log --oneline base..target \| grep -iE "fix\|bug"` |
+
+**置信度**: ✅ 本次调查验证有效
+
 ### 2026-01-12: AI-Design-DSL/DesignDsl 导航锚点汇总
 **类型**: Route + Anchor + Signal
 **项目**: DesignDsl, Atelia
