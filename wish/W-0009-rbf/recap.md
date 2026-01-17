@@ -7,9 +7,11 @@
 
 ## 当前状态
 
-**阶段**：Stage 03 - 简单写入路径（Append） ✅ **已完成**（含监护人手动重构）
+**阶段**：Stage 04 - 随机读取（ReadFrame） ✅ **已完成**
 
-**下一阶段**：Stage 04 - 随机读取（ReadFrame）
+**下一阶段**：Stage 05 - 复杂写入路径（BeginAppend/EndAppend）
+
+**测试覆盖**：146 个测试全部通过
 
 **基础条件**：
 - 设计文档已就绪：`atelia/docs/Rbf/` 目录下 7 个文档
@@ -44,19 +46,21 @@
 | `RbfFileImpl.cs` | `IRbfFile` Facade 实现（状态管理） |
 | `RbfAppendImpl.cs` | Append 核心实现（自适应 1-3 次写入） |
 | `Crc32CHelper.cs` | CRC32C 计算（Init/Update/Finalize） |
-| `FrameStatusHelper.cs` | StatusLen 计算 + 位域编码 |
-| `RbfRawOps.cs` | 分文件组织：`_BeginFrame.cs`, `ReadFrame.cs`, `ScanReverse.cs` |
+| `FrameStatusHelper.cs` | StatusLen 计算 + 位域编解码 |
+| `RbfRawOps.ReadFrame.cs` | ReadFrame 核心实现 |
+| `RbfErrors.cs` | ReadFrame 错误码定义 |
 | `RandomAccessByteSink.cs` | `IByteSink` 适配器 |
 
 ### 测试分层 (`tests/Rbf.Tests/`)
 
 | 文件 | 职责 | 验证内容 |
 |------|------|----------|
-| `RbfFacadeTests.cs` | Facade 状态测试 | TailOffset 更新、返回值转发 |
+| `RbfFacadeTests.cs` | Facade 状态测试 | TailOffset 更新、返回值转发、ReadFrame 集成 |
 | `RbfAppendImplTests.cs` | Append 格式验证 | HeadLen/CRC/Fence/对齐 |
+| `RbfReadFrameTests.cs` | ReadFrame 格式验证 | Framing 校验/CRC/参数错误/边界值 |
 | `RbfFileFactoryTests.cs` | 工厂方法测试 | CreateNew/OpenExisting |
 | `Crc32CHelperTests.cs` | CRC 工具测试 | RFC 向量 + baseline 对比 |
-| `FrameStatusHelperTests.cs` | Status 工具测试 | 公式 + 值域校验 |
+| `FrameStatusHelperTests.cs` | Status 工具测试 | 编解码 + 公式 + 值域校验 |
 
 ### Benchmark (`benchmarks/Rbf.Benchmarks/`)
 
@@ -65,6 +69,36 @@
 ---
 
 ## 已完成的交付成果
+
+### Stage 04: 随机读取（ReadFrame）（2026-01-15）
+
+**核心实现**：
+- `RbfRawOps.ReadFrame()` - 随机读取指定位置的帧
+  - 完整 Framing 校验（HeadLen/TailLen 对称、FrameStatus 位域+一致性）
+  - CRC32C 校验
+  - Buffer 策略：≤4KB stackalloc，>4KB ArrayPool
+  - Payload 复制到新数组保证生命周期安全
+
+**错误码定义**（`RbfErrors.cs`）：
+- `RbfReadError.ArgumentError` - 参数错误（对齐、长度、越界）
+- `RbfReadError.FramingError` - Framing 校验失败
+- `RbfReadError.CrcMismatch` - CRC 校验失败
+
+**FrameStatus 解码**：
+- `FrameStatusHelper.TryDecodeStatusByte()` - 解码 Tombstone/StatusLen，验证保留位
+- `FrameStatusHelper.ValidateStatusBytesConsistent()` - 验证全字节同值
+
+**设计决策**：
+- **Decision 4.A**：ReadFrame 不校验 Fence（已知位置的随机读，Fence 校验是冗余 I/O）
+- **Decision 4.B**：错误码采用分层聚合（ArgumentError/FramingError/CrcMismatch）
+- **SizedPtr 天然 4B 对齐**：移除不可达的 Misaligned 测试用例
+
+**测试覆盖**（20 个新测试）：
+- 正常路径：ValidFrame/EmptyPayload/LargePayload（Append 闭环）+ Tombstone（手工构造）
+- 参数错误：FrameTooShort/OutOfRange
+- Framing 错误：HeadLenMismatch/TailLenMismatch/InvalidStatus/StatusInconsistent
+- CRC 错误：CrcMismatch
+- 边界值：VariousPayloadAlignments（Theory）
 
 ### Stage 03: 简单写入路径（Append）（2026-01-14 ~ 2026-01-15）
 
@@ -113,6 +147,7 @@
 
 | 日期 | 变更 |
 |------|------|
+| 2026-01-15 | Stage 04 完成：ReadFrame 实现 + 146 个测试通过 |
 | 2026-01-15 | 监护人手动重构：Append 自适应写入、测试分层、常量内聚 |
 | 2026-01-14 | Stage 03 完成：Append 实现 + 测试 |
 | 2026-01-14 | Stage 02 完成：常量与 Fence（Genesis） |

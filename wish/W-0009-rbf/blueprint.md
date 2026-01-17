@@ -25,19 +25,34 @@
 
 ---
 
-### Stage 04: 随机读取（ReadFrame）
-**目标**：实现 `IRbfFile.ReadFrame(SizedPtr)`。
-
-**交付物**：
-- `ReadFrame` 方法完整实现
-- Framing 校验（HeadLen/TailLen 一致性、对齐等）
-- CRC32C 校验
-- `AteliaResult<RbfFrame>` 错误码定义
-- 对应的单元测试
+### Stage 04: 随机读取（ReadFrame） ✅
+> 已完成（2026-01-15）。详见 `recap.md`。
+> 关键成果：RbfRawOps.ReadFrame、RbfReadError、FrameStatus 解码
+> 测试覆盖：146 个测试全部通过
 
 ---
 
-### Stage 05: 复杂写入路径（BeginAppend/EndAppend）
+### Stage 05: ReadFrame 重构与 Buffer 外置 🚧
+**目标**：重构 `RbfRawOps.ReadFrame`，实现 Buffer 外置模式，为 ScanReverse 解耦做准备。
+
+**设计决策**：
+- 移除旧 `ReadFrame(file, ptr)` 签名，直接实现 `ReadFrameInto(file, ptr, buffer)`
+- 不引入 `CrcCheckPolicy`：ReadFrameInto 始终校验 CRC，ScanReverse 始终不校验
+- 内部分层：`ReadRaw` + `ValidateAndParse` + `ValidateAndParseHeader`
+
+**交付物**：
+- `RbfBufferTooSmallError` 新错误类型
+- `RbfRawOps.ValidateAndParse` 校验 + 解析
+- `RbfRawOps.ReadRaw` 纯 I/O
+- `RbfRawOps.ReadFrameInto` 新公开 API
+- `ValidateAndParseHeader` 为 ScanReverse 准备
+- 更新测试适配新 API
+
+**详细任务**：见 `stage/05/task.md`
+
+---
+
+### Stage 06: 复杂写入路径（BeginAppend/EndAppend）
 **目标**：实现流式写入 Builder。
 
 **交付物**：
@@ -50,10 +65,18 @@
 
 ---
 
-### Stage 06: 逆向扫描（ScanReverse）
+### Stage 07: 逆向扫描（ScanReverse）
 **目标**：实现逆向扫描与 Resync。
 
+**设计方向**（待细化）：
+- `ScanReverse` 返回 `FrameInfo`（或 `RbfFrameHeader`）序列而非 `RbfFrame`
+- `FrameInfo` 包含 `SizedPtr` + `Tag` + `IsTombstone`，不含 Payload
+- `FrameInfo` 可能绑定 `RbfFileImpl` 实例，支持惰性读取
+- ScanReverse 只做 framing 校验，不做 CRC 校验
+- 调用方按需使用 `ReadFrameInto` 获取完整 Payload
+
 **交付物**：
+- `FrameInfo` 类型定义（具体设计待 Stage 05 完成后细化）
 - `ScanReverse(showTombstone)` 实现
 - 逆向遍历（从尾到头）
 - Tombstone 过滤（默认隐藏）
@@ -62,7 +85,7 @@
 
 ---
 
-### Stage 07: DurableFlush 与 Truncate
+### Stage 08: DurableFlush 与 Truncate
 **目标**：实现持久化和恢复能力。
 
 **交付物**：
@@ -72,7 +95,7 @@
 
 ---
 
-### Stage 08: 测试向量与集成验证
+### Stage 09: 测试向量与集成验证
 **目标**：对照 `rbf-test-vectors.md` 完成集成测试。
 
 **交付物**：
@@ -89,6 +112,7 @@
 - **P2**：异步版本（`RandomAccessByteSinkAsync`）
 - **P2**：性能优化（CRC32C 增量计算、Read Window 调优）
 - **P3**：错误码体系完善
+- **P3**：`CrcCheckPolicy` 可选参数（如需更灵活的 CRC 控制）
 
 ---
 
@@ -96,6 +120,9 @@
 
 | 日期 | 变更 |
 |------|------|
+| 2026-01-16 | 插入 Stage 05（ReadFrame 重构），原 Stage 05-08 顺延为 06-09 |
+| 2026-01-16 | 设计决策：移除 ReadFrame 兼容层、简化 CRC 策略、ScanReverse 返回 FrameInfo |
+| 2026-01-15 | Stage 04 完成：ReadFrame 实现 + 146 个测试通过 |
 | 2026-01-14 | Stage 03 完成：Append 实现 + 84 个测试通过 |
 | 2026-01-14 | 文档重构：`todo.md` → `blueprint.md`，语义从"待办"改为"动态蓝图" |
 | 2026-01-14 | Stage 01、02 完成，压缩为引用 |
