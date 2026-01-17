@@ -32,23 +32,10 @@
 
 ---
 
-### Stage 05: ReadFrame 重构与 Buffer 外置 🚧
-**目标**：重构 `RbfRawOps.ReadFrame`，实现 Buffer 外置模式，为 ScanReverse 解耦做准备。
-
-**设计决策**：
-- 移除旧 `ReadFrame(file, ptr)` 签名，直接实现 `ReadFrameInto(file, ptr, buffer)`
-- 不引入 `CrcCheckPolicy`：ReadFrameInto 始终校验 CRC，ScanReverse 始终不校验
-- 内部分层：`ReadRaw` + `ValidateAndParse` + `ValidateAndParseHeader`
-
-**交付物**：
-- `RbfBufferTooSmallError` 新错误类型
-- `RbfRawOps.ValidateAndParse` 校验 + 解析
-- `RbfRawOps.ReadRaw` 纯 I/O
-- `RbfRawOps.ReadFrameInto` 新公开 API
-- `ValidateAndParseHeader` 为 ScanReverse 准备
-- 更新测试适配新 API
-
-**详细任务**：见 `stage/05/task.md`
+### Stage 05: ReadFrame 重构与 Buffer 外置 ✅
+> 已完成（2026-01-17）。详见 `recap.md` 和 `stage/05/manual-refactor.md`。
+> 关键成果：`IRbfFrame` 接口、`RbfPooledFrame` 类型、`RbfReadImpl`（Buffer 外置 + Pooled 两种模式）、`SizedPtr` 类型简化（`long`/`int`）
+> 测试覆盖：150 个测试全部通过
 
 ---
 

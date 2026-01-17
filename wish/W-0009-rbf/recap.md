@@ -7,20 +7,23 @@
 
 ## 当前状态
 
-**阶段**：Stage 04 - 随机读取（ReadFrame） ✅ **已完成**
+**阶段**：Stage 05 - ReadFrame 重构与 Buffer 外置 ✅ **已完成**
 
-**下一阶段**：Stage 05 - 复杂写入路径（BeginAppend/EndAppend）
+**下一阶段**：Stage 06 - 复杂写入路径（BeginAppend/EndAppend）
 
-**测试覆盖**：146 个测试全部通过
+**测试覆盖**：150 个 RBF 测试 + 60 个 Primitives 测试 + 117 个 Data 测试（全部通过）
 
 **基础条件**：
-- 设计文档已就绪：`atelia/docs/Rbf/` 目录下 7 个文档
+- 设计文档已就绪：`atelia/docs/Rbf/` 目录下 7 个文档（已同步至 v0.30）
 - 核心依赖已存在于 `atelia/src/Data/`：
-  - `SizedPtr.cs` - 帧位置凭据
+  - `SizedPtr.cs` - 帧位置凭据（v2: `Offset`/`Length` 使用 `long`/`int`）
   - `IByteSink.cs` - 推式写入接口
   - `IReservableBufferWriter.cs` - 可预留的 BufferWriter 接口
   - `SinkReservableWriter.cs` - 基于 IByteSink 的 IReservableBufferWriter 实现
-- `Atelia.Primitives` 中的 `AteliaResult<T>` 可用
+- `Atelia.Primitives` 中的结果类型家族：
+  - `AteliaResult<T>` - 标准结果类型（ref struct）
+  - `DisposableAteliaResult<T>` - 带资源所有权的结果类型
+  - `IAteliaResult<T>` - 公共接口契约
 
 ---
 
@@ -29,14 +32,24 @@
 | 文档 | 层级 | 要点 |
 |------|------|------|
 | [rbf-decisions.md](../../atelia/docs/Rbf/rbf-decisions.md) | Decision | 8 个关键决策（不可修改） |
-| [rbf-interface.md](../../atelia/docs/Rbf/rbf-interface.md) | Shape | `IRbfFile` 门面 + 公开类型契约 |
+| [rbf-interface.md](../../atelia/docs/Rbf/rbf-interface.md) | Shape | `IRbfFile` 门面 + 公开类型契约（v0.30: 新增 `IRbfFrame`/`RbfPooledFrame`） |
 | [rbf-format.md](../../atelia/docs/Rbf/rbf-format.md) | Layer 0 | 二进制线格式（Fence, FrameBytes, CRC） |
-| [rbf-type-bone.md](../../atelia/docs/Rbf/rbf-type-bone.md) | Plan | 实现指南（RbfRawOps, RandomAccessByteSink） |
+| [rbf-type-bone.md](../../atelia/docs/Rbf/rbf-type-bone.md) | Plan | 实现指南（v0.5: `RbfReadImpl`/`RbfWriteImpl` 分离） |
 | [testing-pattern.md](testing-pattern.md) | Craft | 测试分层策略（职责分离模式） |
 
 ---
 
 ## 代码结构速查
+
+### 公开类型 (`src/Rbf/`)
+
+| 文件 | 职责 |
+|------|------|
+| `IRbfFile.cs` | 文件门面接口 |
+| `IRbfFrame.cs` | 帧公共属性契约（`Ticket`, `Tag`, `Payload`, `IsTombstone`） |
+| `RbfFrame.cs` | ref struct 帧实现（生命周期受限于 buffer） |
+| `RbfPooledFrame.cs` | class 帧实现（持有 ArrayPool buffer，需 Dispose） |
+| `RbfFile.cs` | 工厂方法（CreateNew/OpenExisting） |
 
 ### 内部类型 (`Internal/`)
 
@@ -45,30 +58,77 @@
 | `RbfConstants.cs` | 常量定义 + `ComputeFrameLen()` |
 | `RbfFileImpl.cs` | `IRbfFile` Facade 实现（状态管理） |
 | `RbfAppendImpl.cs` | Append 核心实现（自适应 1-3 次写入） |
+| `RbfReadImpl.cs` | ReadFrame 核心实现（Buffer 外置 + Pooled 两种模式） |
 | `Crc32CHelper.cs` | CRC32C 计算（Init/Update/Finalize） |
 | `FrameStatusHelper.cs` | StatusLen 计算 + 位域编解码 |
-| `RbfRawOps.ReadFrame.cs` | ReadFrame 核心实现 |
-| `RbfErrors.cs` | ReadFrame 错误码定义 |
+| `RbfErrors.cs` | 错误码定义（含 `RbfBufferTooSmallError`） |
 | `RandomAccessByteSink.cs` | `IByteSink` 适配器 |
 
 ### 测试分层 (`tests/Rbf.Tests/`)
 
 | 文件 | 职责 | 验证内容 |
 |------|------|----------|
-| `RbfFacadeTests.cs` | Facade 状态测试 | TailOffset 更新、返回值转发、ReadFrame 集成 |
+| `RbfFacadeTests.cs` | Facade 状态测试 | TailOffset 更新、ReadFrame/ReadPooledFrame 集成 |
 | `RbfAppendImplTests.cs` | Append 格式验证 | HeadLen/CRC/Fence/对齐 |
-| `RbfReadFrameTests.cs` | ReadFrame 格式验证 | Framing 校验/CRC/参数错误/边界值 |
+| `RbfReadImplTests.cs` | ReadFrame 格式验证 | Framing 校验/CRC/Buffer 错误/边界值 |
+| `RbfPooledFrameTests.cs` | RbfPooledFrame 生命周期 | Dispose 行为/异常后资源释放 |
 | `RbfFileFactoryTests.cs` | 工厂方法测试 | CreateNew/OpenExisting |
 | `Crc32CHelperTests.cs` | CRC 工具测试 | RFC 向量 + baseline 对比 |
-| `FrameStatusHelperTests.cs` | Status 工具测试 | 编解码 + 公式 + 值域校验 |
 
 ### Benchmark (`benchmarks/Rbf.Benchmarks/`)
 
-新增性能基准测试项目，用于验证 Append 优化效果。
+性能基准测试项目，用于验证 Append 优化效果。
 
 ---
 
 ## 已完成的交付成果
+
+### Stage 05: ReadFrame 重构与 Buffer 外置（2026-01-17）
+
+**核心变更**：
+
+1. **SizedPtr 类型简化**：
+   - `OffsetBytes` → `Offset`（`ulong` → `long`）
+   - `LengthBytes` → `Length`（`uint` → `int`）
+   - 与 .NET I/O API 类型对齐，消除频繁转换
+
+2. **RbfFrame.Ptr → Ticket 重命名**：
+   - "Ticket"语义更明确——表示读取凭据而非裸指针
+
+3. **新增 IRbfFrame 接口**：
+   - 统一 `RbfFrame`（ref struct）和 `RbfPooledFrame`（class）的公共契约
+   - C# 13 特性：ref struct 可实现接口
+
+4. **新增 RbfPooledFrame 类型**：
+   - 封装 ArrayPool buffer 生命周期
+   - 实现 `IDisposable`，调用方 MUST Dispose
+   - Dispose 后 Payload 变为 dangling
+
+5. **ReadFrame API 重构**：
+   - 移除旧签名 `ReadFrame(file, ptr)`
+   - 新增 `ReadFrame(file, ticket, buffer)` — Buffer 外置，zero-copy
+   - 新增 `ReadPooledFrame(file, ticket)` — 自动管理 buffer
+
+6. **新增 DisposableAteliaResult&lt;T&gt;**：
+   - 带资源所有权的结果类型
+   - 支持 `using var result = ...` 语法
+   - 成功时 Dispose 调用 Value.Dispose()
+
+7. **新增 RbfBufferTooSmallError**：
+   - 专用错误类型（RequiredBytes, ProvidedBytes）
+
+**文件变更**：
+- 新增：`IRbfFrame.cs`, `RbfPooledFrame.cs`, `RbfReadImpl.cs`
+- 删除：`RbfRawOps.ReadFrame.cs`
+- 重命名：`RbfReadFrameTests.cs` → `RbfReadImplTests.cs`
+
+**设计决策**：
+- **Decision 5.A**：移除旧 ReadFrame 签名，无兼容层（无外部依赖，轻装上阵）
+- **Decision 5.B**：ReadFrameInto 始终校验 CRC，ScanReverse 始终不校验（职责分离）
+
+**测试覆盖**：150 个测试全部通过
+
+**详细记录**：见 [stage/05/manual-refactor.md](stage/05/manual-refactor.md)
 
 ### Stage 04: 随机读取（ReadFrame）（2026-01-15）
 
@@ -80,25 +140,16 @@
   - Payload 复制到新数组保证生命周期安全
 
 **错误码定义**（`RbfErrors.cs`）：
-- `RbfReadError.ArgumentError` - 参数错误（对齐、长度、越界）
-- `RbfReadError.FramingError` - Framing 校验失败
-- `RbfReadError.CrcMismatch` - CRC 校验失败
+- `RbfArgumentError` - 参数错误（对齐、长度、越界）
+- `RbfFramingError` - Framing 校验失败
+- `RbfCrcMismatchError` - CRC 校验失败
 
 **FrameStatus 解码**：
 - `FrameStatusHelper.TryDecodeStatusByte()` - 解码 Tombstone/StatusLen，验证保留位
-- `FrameStatusHelper.ValidateStatusBytesConsistent()` - 验证全字节同值
 
 **设计决策**：
 - **Decision 4.A**：ReadFrame 不校验 Fence（已知位置的随机读，Fence 校验是冗余 I/O）
 - **Decision 4.B**：错误码采用分层聚合（ArgumentError/FramingError/CrcMismatch）
-- **SizedPtr 天然 4B 对齐**：移除不可达的 Misaligned 测试用例
-
-**测试覆盖**（20 个新测试）：
-- 正常路径：ValidFrame/EmptyPayload/LargePayload（Append 闭环）+ Tombstone（手工构造）
-- 参数错误：FrameTooShort/OutOfRange
-- Framing 错误：HeadLenMismatch/TailLenMismatch/InvalidStatus/StatusInconsistent
-- CRC 错误：CrcMismatch
-- 边界值：VariousPayloadAlignments（Theory）
 
 ### Stage 03: 简单写入路径（Append）（2026-01-14 ~ 2026-01-15）
 
@@ -113,12 +164,6 @@
 - `Crc32CHelper` - 三级优化（ulong/uint/byte）+ `Unsafe.ReadUnaligned` 跨平台安全
 - `FrameStatusHelper` - StatusLen 公式 + 位域编码 + 值域校验
 - `RbfConstants.ComputeFrameLen()` - 帧长度计算（内聚于常量类）
-- `RbfConstants` 字段常量 - 消除魔数（`HeadLenFieldLength`, `TagFieldLength` 等）
-
-**测试分层重构**（监护人手动）：
-- `RbfAppendTests.cs` → `RbfFacadeTests.cs` + `RbfAppendImplTests.cs`
-- 建立职责分离测试模式：Facade 测状态，RawOps 测格式
-- 撰写 `testing-pattern.md` 文档记录测试策略
 
 **关键不变量验证**：
 - 4B 对齐根不变量（@[S-RBF-DECISION-4B-ALIGNMENT-ROOT]）
@@ -147,6 +192,8 @@
 
 | 日期 | 变更 |
 |------|------|
+| 2026-01-17 | Stage 05 完成：ReadFrame 重构 + SizedPtr 简化 + 150 个测试通过 |
+| 2026-01-17 | 设计文档同步：rbf-interface.md v0.30, rbf-type-bone.md v0.5, AteliaResult 文档更新, SizedPtr.md 更新 |
 | 2026-01-15 | Stage 04 完成：ReadFrame 实现 + 146 个测试通过 |
 | 2026-01-15 | 监护人手动重构：Append 自适应写入、测试分层、常量内聚 |
 | 2026-01-14 | Stage 03 完成：Append 实现 + 测试 |
