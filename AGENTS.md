@@ -41,6 +41,18 @@
 
 **详细定义**：参见 [Artifact-Tiers](agent-team/wiki/artifact-tiers.md)
 
+## .NET / C# 新特性备忘
+> **目的**：AI 模型的训练数据可能不包含最新语言特性。此节记录我们实际使用的新特性，供 AI 小伙伴参考。
+**环境**：.NET 9.0 / C# 13
+| 特性 | 说明 | 示例位置 |
+|:-----|:-----|:---------|
+| **ref struct 实现接口** | ref struct 可以实现接口（包括自定义接口），不会装箱 | `atelia/src/Rbf/RbfFrame.cs` : `IRbfFrame` |
+| **allows ref struct** | 泛型约束，允许类型参数为 ref struct | `atelia/src/Primitives/AteliaResult.cs` |
+
+**注意事项**：
+- `allows ref struct` 不能让 `Func<T>` 接受 ref struct（委托限制）
+- `readonly struct` 不能声明 `allows ref struct`（异步场景需"物化"）
+
 ## 团队成员
 
 ### 参谋组 (Advisory Board)
