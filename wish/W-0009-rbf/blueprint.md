@@ -13,7 +13,7 @@
 
 ---
 
-### Stage 02: 常量与 Fence（Genesis） ✅
+### Stage 02: 常量与 Fence✅
 > 已完成（2026-01-14）。详见 `recap.md`。
 
 ---

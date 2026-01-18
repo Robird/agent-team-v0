@@ -53,13 +53,13 @@ Full: dotnet test tests/Rbf.Tests/Rbf.Tests.csproj
 | `Append_MultipleFrames_CorrectAddresses` | <deleted-place-holder> 正确性 |
 | `Append_Returns4ByteAlignedAddress` | [F-<deleted-place-holder>-ALIGNMENT] |
 | `BeginFrame_ReservablePayload_ReturnsNull` | MVP 简化（无 Reservation） |
-| `Framer_WithoutGenesis_StartsAtPosition0` | 追加写入支持 |
+| `Framer_WithoutHeaderFence_StartsAtPosition0` | 追加写入支持 |
 
 ## 已知差异
 
 1. **ReservablePayload 返回 null**：MVP 阶段不实现 Reservation 机制，`ReservablePayload` 始终返回 null。
 
-2. **Genesis Fence 可选**：构造函数添加 `writeGenesis` 参数，支持追加写入场景。
+2. **HeaderFence 可选**：构造函数添加 `writeHeaderFence` 参数，支持追加写入场景。
 
 ## 遗留问题
 

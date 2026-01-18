@@ -129,7 +129,7 @@ public void Append_UpdatesTailOffset() {
     
     // Assert - 只验证状态和返回值
     int expectedHeadLen = RbfRawOps.ComputeHeadLen(payload.Length, out _);
-    Assert.Equal(4UL, ptr.OffsetBytes);  // Genesis 后
+    Assert.Equal(4UL, ptr.OffsetBytes);  // HeaderFence 后
     Assert.Equal((uint)expectedHeadLen, ptr.LengthBytes);
     Assert.Equal(4 + expectedHeadLen + 4, rbf.TailOffset);
 }

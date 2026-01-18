@@ -171,11 +171,11 @@
 - Fence 字节验证（@[F-FENCE-VALUE-IS-RBF1-ASCII-4B]）
 - CRC32C 覆盖范围（@[F-CRC32C-COVERAGE]）
 
-### Stage 02: 常量与 Fence（Genesis）（2026-01-14）
+### Stage 02: 常量与 Fence（2026-01-14）
 
 **工厂方法实现**：
-- `RbfFile.CreateNew(path)` - 创建新文件，写入 Genesis Fence
-- `RbfFile.OpenExisting(path)` - 打开已有文件，验证 Genesis + 4B 对齐
+- `RbfFile.CreateNew(path)` - 创建新文件，写入 HeaderFence
+- `RbfFile.OpenExisting(path)` - 打开已有文件，验证 HeaderFence + 4B 对齐
 
 ### Stage 01: 项目骨架与类型骨架（2026-01-14）
 
@@ -197,6 +197,6 @@
 | 2026-01-15 | Stage 04 完成：ReadFrame 实现 + 146 个测试通过 |
 | 2026-01-15 | 监护人手动重构：Append 自适应写入、测试分层、常量内聚 |
 | 2026-01-14 | Stage 03 完成：Append 实现 + 测试 |
-| 2026-01-14 | Stage 02 完成：常量与 Fence（Genesis） |
+| 2026-01-14 | Stage 02 完成：常量与 Fence|
 | 2026-01-14 | Stage 01 完成：项目骨架与类型骨架 |
 | 2026-01-14 | 初始版本：记录基础条件 |

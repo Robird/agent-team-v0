@@ -94,7 +94,7 @@ public readonly record struct <deleted-place-holder>(ulong Value) {
 }
 ```
 
-**语义**：`Value=0` 表示"无效地址"（文件偏移 0 被 Genesis Fence 占据，不可能是有效 Frame 起点）
+**语义**：`Value=0` 表示"无效地址"（文件偏移 0 被 HeaderFence 占据，不可能是有效 Frame 起点）
 
 ### 3.2 迁移方案
 

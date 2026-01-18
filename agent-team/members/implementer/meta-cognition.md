@@ -195,7 +195,7 @@
 
 4. **Auto-Abort 语义**：未 Commit 就 Dispose 时写入 Tombstone (0xFF)。测试验证了 Tombstone 帧仍通过 CRC 校验，符合 `[S-RBF-BUILDER-AUTO-ABORT]` 规范。
 
-5. **Genesis Fence 可选**：构造函数添加 `writeGenesis` 参数，支持追加写入场景（不重复写 Genesis）。
+5. **HeaderFence 可选**：构造函数添加 `writeHeaderFence` 参数，支持追加写入场景（不重复写 HeaderFence）。
 
 ### ASCII Art 修订规范合规（spec-conventions v0.3）
 

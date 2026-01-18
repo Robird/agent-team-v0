@@ -28,7 +28,7 @@
 **结论**：ReadFrame **不校验**前置/后置 Fence。
 
 **理由**：
-1. @[F-FRAMING-FAIL-REJECT] 后半句"并按 @[R-RESYNC-SCAN-BACKWARD-4B-TO-GENESIS] 进入 Resync"是 **ScanReverse 专属行为**
+1. @[F-FRAMING-FAIL-REJECT] 后半句"并按 @[R-RESYNC-SCAN-BACKWARD-4B-TO-HEADER-FENCE] 进入 Resync"是 **ScanReverse 专属行为**
 2. ReadFrame 是**已知位置的随机读**（SizedPtr 来自 Append 返回或 ScanReverse 产出），调用方已知帧位置
 3. 校验 Fence 需要**额外 I/O**（前 4B + 后 4B），对小帧（20B）影响达 40%
 4. @[S-RBF-SIZEDPTR-WIRE-MAPPING] 明确 SizedPtr 指向 FrameBytes 起点，**不含 Fence**

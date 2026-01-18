@@ -20,7 +20,7 @@ fencePos = alignDown4(fileLength - FenceLen)
   - Python：`-1 % 4 == 3`（floor division）
 - 因此 `alignDown4(-1)` 在 C# 中是 `0`，在 Python 中是 `-4`
 
-虽然步骤 1 已经处理了 `fileLength < GenesisLen` 的情况返回空，但如果实现者重排代码逻辑或遗漏前置检查，负数行为可能导致意外。
+虽然步骤 1 已经处理了 `fileLength < HeaderFenceLen` 的情况返回空，但如果实现者重排代码逻辑或遗漏前置检查，负数行为可能导致意外。
 
 **风险**: 
 跨语言移植或重构时，`alignDown4` 对负数输入的行为差异可能导致计算出错误的 `fencePos`。

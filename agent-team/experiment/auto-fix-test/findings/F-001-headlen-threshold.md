@@ -12,6 +12,6 @@
 ## 验证结果
 
 此问题已在 rbf-format.md v0.15（2025-12-28）修复：
-- 行 239：`GenesisLen + 20` ✓
+- 行 239：`HeaderFenceLen + 20` ✓
 - 行 257：`headLen < 20` ✓
 - 变更日志：「消除内部矛盾：删除过时的 `0x00/0xFF` 值域枚举，修正最小 HeadLen 为 20」

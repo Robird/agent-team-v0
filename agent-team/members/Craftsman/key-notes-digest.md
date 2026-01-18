@@ -434,7 +434,7 @@ graph TD
 ### 2025-12-20 补充：API 回滚语义的"baseline 缺失"规则（可检验写法）
 
 - 当一个 API 同名覆盖多对象生命周期（Persistent/Transient）时，规范必须先钉死“回滚目标 baseline 是否存在”。
-- 若 baseline 不存在，必须在规范层做二选一：`MUST detach (fail-fast)` 或 `MUST reset-to-Genesis (continue usable)`，并连带钉死 `LoadObject/NotFound/IdentityMap` 的可观察行为。
+- 若 baseline 不存在，必须在规范层做二选一：`MUST detach (fail-fast)` 或 `MUST reset-to-First-Base (continue usable)`，并连带钉死 `LoadObject/NotFound/IdentityMap` 的可观察行为。
 
 ### 2025-12-21 补充：命名治理不仅是术语表，也包括 PackageId/namespace（不可逆资产）
 

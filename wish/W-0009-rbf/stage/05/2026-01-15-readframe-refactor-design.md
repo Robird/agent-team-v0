@@ -355,7 +355,7 @@ public static AteliaResult<RbfFrame> ReadFrame(SafeFileHandle file, SizedPtr ptr
 
 ```csharp
 // ScanReverse 内部伪代码
-while (currentOffset > GenesisLength) {
+while (currentOffset > HeaderFenceLength) {
     // 1. 读取尾部 TailLen
     Span<byte> tailBuf = stackalloc byte[4];
     RandomAccess.Read(file, tailBuf, currentOffset - 4);

@@ -1,6 +1,6 @@
-# Stage 02: 常量与 Fence（Genesis）
+# Stage 02: 常量与 Fence
 
-> **目标**：实现 Fence 常量、Genesis 验证、`RbfFile.CreateNew/OpenExisting` 工厂方法。
+> **目标**：实现 Fence 常量、HeaderFence 验证、`RbfFile.CreateNew/OpenExisting` 工厂方法。
 > **验收标准**：单元测试覆盖 CreateNew/OpenExisting 的正常和异常路径。
 
 ---
@@ -10,7 +10,7 @@
 - **前情提要**：`wish/W-0009-rbf/recap.md`
 - **实现蓝图**：`wish/W-0009-rbf/blueprint.md`
 - **格式规范**：`atelia/docs/Rbf/rbf-format.md` - §2 Fence 定义
-- **决策文档**：`atelia/docs/Rbf/rbf-decisions.md` - Genesis Fence 决策
+- **决策文档**：`atelia/docs/Rbf/rbf-decisions.md` - HeaderFence 决策
 
 ---
 
@@ -21,14 +21,14 @@
 - **长度**：4 字节
 - **编码**：ASCII 字节序列（非 u32 端序）
 
-### Genesis Fence 语义（来自 rbf-decisions.md @[F-FILE-STARTS-WITH-GENESIS-FENCE]）
+### HeaderFence 语义（来自 rbf-decisions.md @[F-FILE-STARTS-WITH-HEADER-FENCE]）
 - 每个 RBF 文件 MUST 以 Fence 开头（偏移 0）
-- 新建的 RBF 文件 MUST 仅含 Genesis Fence（长度 = 4 字节）
+- 新建的 RBF 文件 MUST 仅含 HeaderFence（长度 = 4 字节）
 - 首帧起始地址 MUST 为 `offset=4`
 
 ### 工厂方法语义（来自 rbf-interface.md）
-- `RbfFile.CreateNew(path)` - 创建新文件（FailIfExists），写入 Genesis Fence
-- `RbfFile.OpenExisting(path)` - 打开已有文件，验证 Genesis Fence
+- `RbfFile.CreateNew(path)` - 创建新文件（FailIfExists），写入 HeaderFence
+- `RbfFile.OpenExisting(path)` - 打开已有文件，验证 HeaderFence
 
 ---
 
@@ -46,7 +46,7 @@
    - `internal static class RbfConstants`（internal 避免过早暴露 API surface）
    - `public static ReadOnlySpan<byte> Fence => "RBF1"u8;`（C# 11 UTF-8 字面量）
    - `public const int FenceLength = 4;`
-   - `public const int GenesisLength = 4;`（等于 FenceLength，语义别名）
+   - `public const int HeaderFenceLength = 4;`（等于 FenceLength，语义别名）
 
 **验收**：编译通过
 
@@ -85,18 +85,18 @@
 实现创建新 RBF 文件的工厂方法。
 
 **输入**：
-- `rbf-decisions.md` @[F-FILE-STARTS-WITH-GENESIS-FENCE]：新文件 MUST 仅含 Genesis Fence
+- `rbf-decisions.md` @[F-FILE-STARTS-WITH-HEADER-FENCE]：新文件 MUST 仅含 HeaderFence
 
 **产出**：
 1. 修改 `atelia/src/Rbf/RbfFile.cs`：
    - `CreateNew(path)` 实现：
      - 使用 `File.OpenHandle(path, FileMode.CreateNew, FileAccess.ReadWrite)` 打开文件
-     - 写入 Genesis Fence（4 字节）
+     - 写入 HeaderFence（4 字节）
      - 返回 `RbfFileImpl` 实例（`tailOffset = 4`）
 
 **关键约束**：
 - `FileMode.CreateNew` 确保文件不存在时才创建（FailIfExists 语义）
-- 写入后 `TailOffset = 4`（Genesis Fence 长度）
+- 写入后 `TailOffset = 4`（HeaderFence 长度）
 - **失败路径句柄释放**：若写入过程抛异常，MUST 确保句柄关闭（使用 try-catch 或所有权转移模式）
 
 **验收**：编译通过
@@ -112,15 +112,15 @@
 实现打开已有 RBF 文件的工厂方法。
 
 **输入**：
-- `rbf-decisions.md` @[F-FILE-STARTS-WITH-GENESIS-FENCE]：文件 MUST 以 Genesis Fence 开头
+- `rbf-decisions.md` @[F-FILE-STARTS-WITH-HEADER-FENCE]：文件 MUST 以 HeaderFence 开头
 
 **产出**：
 1. 修改 `atelia/src/Rbf/RbfFile.cs`：
    - `OpenExisting(path)` 实现：
      - 使用 `File.OpenHandle(path, FileMode.Open, FileAccess.ReadWrite)` 打开文件
      - 读取前 4 字节，验证是否为 `RBF1`
-     - **边界条件**：若文件长度 < 4 字节，视为 Genesis 缺失，同样抛出异常
-     - 若验证失败，关闭句柄并抛出 `InvalidDataException("Invalid RBF file: Genesis Fence mismatch")`
+     - **边界条件**：若文件长度 < 4 字节，视为 HeaderFence 缺失，同样抛出异常
+     - 若验证失败，关闭句柄并抛出 `InvalidDataException("Invalid RBF file: HeaderFence mismatch")`
      - 获取文件长度作为 `tailOffset`
      - 返回 `RbfFileImpl` 实例
 
@@ -141,10 +141,10 @@
 
 **产出**：
 1. `atelia/tests/Rbf.Tests/RbfFileFactoryTests.cs` - 包含：
-   - `CreateNew_CreatesFileWithGenesisFence()` - 验证新文件长度为 4，内容为 `0x52 0x42 0x46 0x31`（按字节断言，不依赖常量）
+   - `CreateNew_CreatesFileWithHeaderFence()` - 验证新文件长度为 4，内容为 `0x52 0x42 0x46 0x31`（按字节断言，不依赖常量）
    - `CreateNew_FailsIfFileExists()` - 先创建文件，再调用 CreateNew，验证抛出 `IOException`
    - `OpenExisting_SucceedsWithValidFile()` - 先 CreateNew，再 OpenExisting，验证 TailOffset 正确
-   - `OpenExisting_FailsWithInvalidGenesis()` - 创建内容非 `RBF1` 的文件，验证抛出 `InvalidDataException`
+   - `OpenExisting_FailsWithInvalidHeaderFence()` - 创建内容非 `RBF1` 的文件，验证抛出 `InvalidDataException`
    - `OpenExisting_FailsIfFileNotExists()` - 验证文件不存在时抛出 `FileNotFoundException`
    - `OpenExisting_FailsWhenFileTooShort()` - 创建小于 4 字节的文件，验证抛出 `InvalidDataException`
 

@@ -89,7 +89,7 @@
 
 ### T-M3-01（Workspace.Open: 初始化 meta/data handles + scanners）
 - 打通从路径到 `IRbfScanner`/`IRbfFramer` 的对象图。
-- 测试：空目录首次打开产生 genesis。
+- 测试：空目录首次打开产生 HeaderFence。
 
 ### T-M3-02（Recovery: 按写入序读取 committed state）
 - 关键写入序：data durable flush → meta durable flush → FinalizeCommit（由上层 enforce）。

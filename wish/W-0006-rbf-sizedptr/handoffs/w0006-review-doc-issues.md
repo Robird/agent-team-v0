@@ -290,7 +290,7 @@
 - **问题描述**：Shape 将 `ptr == default` 视作"无效引用"；Rule 强调 `Packed=0` 数学上是空区间，但同时又将其作为 null。概念上可自洽，但需要一个"RBF 语义视角"的一句话收束。
 - **分类依据**：两层的定位没有逻辑矛盾（Shape 说"无效引用"，Rule 说"业务约定"，都指向同一件事），只是读者可能困惑"(0,0) 到底是不是合法 range"。补一句收束话术即可。
 - **建议修复**：在 Rule/接口文档补一句明确话术：
-  > "在 RBF 语境中，`(0,0)` 保留为 NullPtr；有效 Frame 引用 MUST 满足 `LengthBytes > 0` 且 `OffsetBytes >= GenesisLen`。"
+  > "在 RBF 语境中，`(0,0)` 保留为 NullPtr；有效 Frame 引用 MUST 满足 `LengthBytes > 0` 且 `OffsetBytes >= HeaderFenceLen`。"
 
 ---
 

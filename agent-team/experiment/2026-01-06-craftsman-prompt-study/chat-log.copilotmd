@@ -7461,11 +7461,11 @@ The following files were successfully edited:
 **位置**
 -  §3.3 `[F-HEADLEN-FORMULA]`：最小 HeadLen = 20（payload=0 时 statusLen=4）
 -  §6.1 `[R-REVERSE-SCAN-ALGORITHM]`：
-  - 先用 `recordEnd < GenesisLen + 20` 注释“最小 FrameBytes=20”
+  - 先用 `recordEnd < HeaderFenceLen + 20` 注释“最小 FrameBytes=20”
   - 但后面又写：`若 headLen != tailLen 或 headLen % 4 != 0 或 headLen < 16: continue`
 
 **风险**
-- `headLen < 16` 这个阈值与“最小 20”矛盾，会诱发实现者照抄算法，导致**接受本不合法的帧长度**（尤其是文件中间位置的帧——它们不会被前面的 `recordEnd < GenesisLen+20` 拦住）。
+- `headLen < 16` 这个阈值与“最小 20”矛盾，会诱发实现者照抄算法，导致**接受本不合法的帧长度**（尤其是文件中间位置的帧——它们不会被前面的 `recordEnd < HeaderFenceLen+20` 拦住）。
 
 **会导致的错误实现**
 - 可能把 `HeadLen==16` 这类非法布局当成候选，随后出现越界读取、CRC 覆盖范围错误、或“偶发通过”造成数据污染。
@@ -7474,7 +7474,7 @@ The following files were successfully edited:
 
 ## 3) §6 的 Reverse Scan 算法没有落实 §5 声明的 Framing 校验集合，容易让实现“少验关键项”
 **位置**
--  §5 `[F-FRAMING-FAIL-REJECT]`：要求验证 FrameStatus 位域合法、填充一致、HeadLen 公式一致、4B 对齐、Fence 匹配、Genesis 等
+-  §5 `[F-FRAMING-FAIL-REJECT]`：要求验证 FrameStatus 位域合法、填充一致、HeadLen 公式一致、4B 对齐、Fence 匹配、HeaderFence 等
 -  §6.1 算法：实际只做了 fence 匹配、(headLen==tailLen)、对齐、CRC；**没有**解析/验证 FrameStatus 的一致性与 reserved bits、也没有显式验证 `[F-HEADLEN-FORMULA]`（16+payload+status）这一组约束
 
 **风险**
@@ -7562,7 +7562,7 @@ The following files were successfully edited:
 
 ### 你如果准备马上写代码，我建议你先对齐 3 个“必须钉死”的裁决
 1) `SizedPtr` packed 的单位到底是不是 quads（/4）？属性返回 bytes 还是 units？wire u64 LE 的具体 bit 排布/shift。  
-2) `TryReadAt` 的“成功”必须包含哪些 framing 校验（至少：head==tail、status 合法与一致、CRC、前后 fence、对齐、Genesis 之后）。  
+2) `TryReadAt` 的“成功”必须包含哪些 framing 校验（至少：head==tail、status 合法与一致、CRC、前后 fence、对齐、HeaderFence 之后）。  
 3) Reverse scan 以 §5 为准还是以 §6 伪码为准？（尤其是 headLen 下限与 status 校验是否必须在扫描中做。）
 
 如果你希望我把这些问题整理成一份**最小修改的 spec patch 清单**（只改会导致实现出错的句子/阈值/伪码），我可以按条款编号给出具体改法。

@@ -27,7 +27,7 @@
 8. ❌ **更新 `RbfFrame` 形态**（F1 剩余部分）
 9. ❌ **移除 `FrameTag` struct，RBF 层直接使用 `uint`**（v0.17 规范变更）
 10. ❌ **在 StateJournal 层实现 FrameTag packing/unpacking 工具方法**（v0.17 规范变更）
-11. ⚠️ **考虑限制 `RbfFramer(writeGenesis: false)` 的可见性**（F3，中优先）
+11. ⚠️ **考虑限制 `RbfFramer(writeHeaderFence: false)` 的可见性**（F3，中优先）
 
 ---
 
@@ -57,23 +57,23 @@
 > - §4 的 `[F-CRC32C-COVERAGE]` / `[F-CRC32C-ALGORITHM]`
 > - §6 的 `[R-REVERSE-SCAN-ALGORITHM]` / `[R-RESYNC-BEHAVIOR]`
 
-### 2.1 Fence / Genesis
+### 2.1 Fence
 
 **规范点**：
 - `[F-FENCE-DEFINITION]` Fence 值为 ASCII 字节序列 `52 42 46 31`（`RBF1`），按字节匹配。
-- `[F-GENESIS]` 文件偏移 0 MUST 是 Genesis Fence。
+- `[F-HEADER-FENCE]` 文件偏移 0 MUST 是 HeaderFence。
 
 **实现核对**：
 - `RbfConstants.FenceBytes => [0x52, 0x42, 0x46, 0x31]`，与规范一致。
-- `RbfFileFramer`：当 `Backend.Length == 0` 时构造 `RbfFramer(... writeGenesis: true)`，会写入 Genesis Fence。
-- `RbfFramer` 公开参数 `writeGenesis` 允许禁用 Genesis（见 `RbfFramer(... writeGenesis: false)` 测试用例）。
+- `RbfFileFramer`：当 `Backend.Length == 0` 时构造 `RbfFramer(... writeHeaderFence: true)`，会写入 HeaderFence。
+- `RbfFramer` 公开参数 `writeHeaderFence` 允许禁用 HeaderFence（见 `RbfFramer(... writeHeaderFence: false)` 测试用例）。
 
 **结论**：
 - 对“默认路径”（新建文件/空文件）来说：**符合**。
-- **潜在偏差**：`RbfFramer` 允许 `writeGenesis: false` 与 `[F-GENESIS]` 的 MUST 冲突。若该构造方式进入生产路径，会导致“不符合格式规范”。
+- **潜在偏差**：`RbfFramer` 允许 `writeHeaderFence: false` 与 `[F-HEADER-FENCE]` 的 MUST 冲突。若该构造方式进入生产路径，会导致“不符合格式规范”。
 
 **建议**：
-- 若 `writeGenesis: false` 仅用于测试/特殊场景：建议将其降级为 internal 或在 API 文档中标注“非规范模式/仅测试”。
+- 若 `writeHeaderFence: false` 仅用于测试/特殊场景：建议将其降级为 internal 或在 API 文档中标注“非规范模式/仅测试”。
 
 ### 2.2 FrameBytes 布局与长度公式
 
@@ -283,10 +283,10 @@
   - 修正扫描算法中的最小帧长度检查（21 → 20）
   - 同步更新 `rbf-test-vectors.md` v0.8
 
-### F3（中优先）：`RbfFramer(writeGenesis: false)` 公开参数可能引入“非规范文件”
+### F3（中优先）：`RbfFramer(writeHeaderFence: false)` 公开参数可能引入“非规范文件”
 
 - **定位**：`atelia/src/Rbf/RbfFramer.cs`
-- **问题**：对外暴露禁用 Genesis Fence 的构造方式，与 `[F-GENESIS]` 冲突。
+- **问题**：对外暴露禁用 HeaderFence 的构造方式，与 `[F-HEADER-FENCE]` 冲突。
 - **建议**：限制其可见性/用途（internal + tests），或在类型/注释中明确这是“非规范模式”。
 
 ---
@@ -327,7 +327,7 @@ v0.15 的 ScanReverse 规范变更是基于[畅谈会分析](../meeting/2025-12-
 | 条款/主题 | 规范来源 | 结论 | 证据 |
 |---|---|---|---|
 | Fence bytes = `RBF1` | `[F-FENCE-DEFINITION]` | 符合 | `RbfConstants.FenceBytes` |
-| Genesis Fence | `[F-GENESIS]` | 默认路径符合；存在可选偏差 | `RbfFileFramer` / `RbfFramer(writeGenesis)` |
+| HeaderFence | `[F-HEADER-FENCE]` | 默认路径符合；存在可选偏差 | `RbfFileFramer` / `RbfFramer(writeHeaderFence)` |
 | FrameBytes 布局 | `[F-FRAME-LAYOUT]` | 符合 | `RbfFramer.WriteFrameComplete` / `CommitFrameStreaming` |
 | StatusLen 公式 | `[F-STATUSLEN-FORMULA]` | 符合 | `RbfLayout.CalculateStatusLength` |
 | HeadLen 公式 | `[F-HEADLEN-FORMULA]` | 符合 | `RbfLayout.CalculateFrameLength` |

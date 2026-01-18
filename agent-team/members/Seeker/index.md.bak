@@ -486,7 +486,7 @@ DocUI 是一个 **LLM-Native 的用户界面框架**——为 LLM Agent 设计�
 > 
 > 2. **完全赞同 DocUIGPT C7（Base Version 术语重构）**
 >    - 这是对我 T1 的优秀完善
->    - 提出术语层次：Base Version（上位词）→ Genesis Base / Checkpoint Base
+>    - 提出术语层次：Base Version（上位词）→ First-Base / Checkpoint Base
 >    - 编码单义 + 概念分层 + 与 DocUI 概念对齐
 > 
 > 3. **强烈赞同 DocUIGemini U1（CommitAll 无参 MUST）**
@@ -502,7 +502,7 @@ DocUI 是一个 **LLM-Native 的用户界面框架**——为 LLM Agent 设计�
 > **修订建议优先级排序**：
 > - P0: CommitAll 无参 MUST / Base Version 术语层次 / <deleted-place-holder> vs Ptr64 分层
 > - P1: File Framing vs Record Layout / Dirty Set 层级术语 / 伪代码约束说明
-> - P2: RBF 术语定义 / Genesis Base 术语确认
+> - P2: RBF 术语定义 / First-Base 术语确认
 > 
 > **协作洞察**：
 > 三位审阅者的发现高度互补：
@@ -546,7 +546,7 @@ DocUI 是一个 **LLM-Native 的用户界面框架**——为 LLM Agent 设计�
 > 受邀对 P0/P1 级修订实施后的文档进行术语一致性检查。
 > 
 > **检查结果**：
-> - Base Version / Genesis Base / Checkpoint Base：✅ 术语表定义完整；发现正文遗留 22 处"Checkpoint Version"
+> - Base Version / First-Base / Checkpoint Base：✅ 术语表定义完整；发现正文遗留 22 处"Checkpoint Version"
 > - <deleted-place-holder> vs Ptr64：✅ 术语表分层清晰；正文多处使用合理（编码/概念混用场景已标注）
 > - Modified Object Set / Dirty Set / Dirty-Key Set：✅ 术语表层级清晰；正文使用一致
 > - DurableObject：✅ 术语表已收录
@@ -655,7 +655,7 @@ DocUI 是一个 **LLM-Native 的用户界面框架**——为 LLM Agent 设计�
 > 
 > **自洽性验证通过**：
 > - 二阶段提交流程（WritePendingDiff + OnCommitSucceeded）与 CommitAll 步骤对齐
-> - Base Version 术语层次（Genesis Base / Checkpoint Base）使用一致
+> - Base Version 术语层次（First-Base / Checkpoint Base）使用一致
 > - Dirty Set vs _dirtyKeys 层级边界明确
 > - 新建对象状态转换（Transient Dirty / Persistent Dirty）覆盖完整
 > 
@@ -910,7 +910,7 @@ DocUI 是一个 **LLM-Native 的用户界面框架**——为 LLM Agent 设计�
 > 
 > **术语层**（4 个问题）：
 > - `Dirty Set` / `Modified Object Set` 术语冗余——术语表有弃用映射但表述易混淆
-> - `Base Version` 术语层次（Genesis/Checkpoint）在 wire format 层不可区分，需在正文点明
+> - `Base Version` 术语层次（First-Base/Checkpoint）在 wire format 层不可区分，需在正文点明
 > - `Shallow Materialization` 正式术语在正文中使用不一致（用了 "is shallow" 而非正式术语）
 > - `[S-05]` 废弃条款未说明原始定义，未来维护者无从知晓
 > 
@@ -1243,7 +1243,7 @@ agent-team/members/DocUISeeker/
 - 识别 Layer 0 相关条款 100% 迁移完成（7 个 `[F-xxx]` + 3 个 `[R-xxx]`）
 - 确认未迁移条款均属于 Layer 1（varint、RecordKind、ObjectKind 等）
 - 发现 2 个 P1 级问题：Pad 长度公式表述冗余、FrameTag 与 RecordKind 域隔离设计不一致
-- 新版在结构清晰度方面有改进：Genesis Header 显式定义、逆向扫描算法集中描述、图示增加
+- 新版在结构清晰度方面有改进：HeaderFence Header 显式定义、逆向扫描算法集中描述、图示增加
 - **复核方法论收获**：
   1. 条款映射表是核心交付物——每个原版条款 ID 需明确"已迁移/属于其他层/遗漏"状态
   2. 内容完整性检查需按领域分组（EBNF、Frame 结构、Magic、CRC32C、扫描算法）

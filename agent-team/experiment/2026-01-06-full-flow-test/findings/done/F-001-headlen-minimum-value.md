@@ -11,7 +11,7 @@ HeadLen = 16 + PayloadLen + StatusLen
 
 然而在 §6.1 `[R-REVERSE-SCAN-ALGORITHM]` 的伪代码中，使用了"最小 FrameBytes = 20"的注释：
 ```
-若 recordEnd < GenesisLen + 20:  // 最小 FrameBytes = 20（PayloadLen=0, StatusLen=4）
+若 recordEnd < HeaderFenceLen + 20:  // 最小 FrameBytes = 20（PayloadLen=0, StatusLen=4）
 ```
 
 问题是：**Reader 实现需要验证 `headLen >= 16` 还是 `headLen >= 20`？**

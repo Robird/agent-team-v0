@@ -225,7 +225,7 @@ BinaryPrimitives.WriteUInt32LittleEndian(dest[(headLen-4)..], crc);
      - SizedPtr 返回值正确
      - 文件内容符合规范（可读取文件字节验证）
    - `Append_MultipleFrames_AppendSequentially()` - 验证多帧追加：
-     - 第二帧 offset = 4 + headLen1 + 4（Genesis + 第一帧 + Fence）
+     - 第二帧 offset = 4 + headLen1 + 4（HeaderFence + 第一帧 + Fence）
      - 所有帧后都有 Fence（验证 Fence 字节 = `0x52 0x42 0x46 0x31`）
    - `Append_EmptyPayload_Succeeds()` - 验证空 payload 场景
    - `Append_LargePayload_Succeeds()` - 验证大 payload（>1KB）
@@ -240,7 +240,7 @@ BinaryPrimitives.WriteUInt32LittleEndian(dest[(headLen-4)..], crc);
 - 读取文件字节，验证 HeadLen 字段值 == TailLen 字段值 == SizedPtr.LengthBytes
 
 **Fence 验证**（@[F-FENCE-VALUE-IS-RBF1-ASCII-4B]）：
-- 验证 Genesis Fence 和每帧后的 Fence 都是 `0x52 0x42 0x46 0x31`
+- 验证 HeaderFence 和每帧后的 Fence 都是 `0x52 0x42 0x46 0x31`
 
 **测试策略**：
 - 使用临时文件

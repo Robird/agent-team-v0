@@ -249,7 +249,7 @@
 **执行内容**：
 
 1. **rbf-format.md 格式条款**（共 19 条，`[E-*]` → `[F-*]`）：
-   - `[F-GENESIS-HEADER]`、`[F-GENESIS-EMPTY-FILE]`
+   - `[F-HEADER-FENCE-HEADER]`、`[F-HEADER-FENCE-EMPTY-FILE]`
    - `[F-FRAME-LAYOUT]`、`[F-FRAMETAG-WIRE-ENCODING]`
    - `[F-HEADLEN-TAILLEN-SYMMETRY]`、`[F-HEADLEN-FORMULA]`
    - `[F-PADLEN-FORMULA]`、`[F-FRAME-4B-ALIGNMENT]`
@@ -429,7 +429,7 @@
 **执行内容**：
 
 1. **P1-1: Magic 端序歧义修复**
-   - 位置：§2.1 Genesis Header / Magic 章节
+   - 位置：§2.1 HeaderFence Header / Magic 章节
    - 问题：`DHD3` → `0x44484433` 作为 u32 LE 写入会变成 `33 44 48 44`（非 ASCII）
    - 修复：
      - 表格改为"字节序列 (Hex)"列，显示 `44 48 44 33`
@@ -490,7 +490,7 @@
 2. **P0-2: 逆向扫描边界条件修正**
    - 位置：§7.2 逆向扫描算法
    - 问题：`RecordStart >= 8` 会拒绝单帧文件的第一帧（RecordStart=4）
-   - 修复：引入 `GenesisLen = 4` 常量，条件改为 `>= GenesisLen`
+   - 修复：引入 `HeaderFenceLen = 4` 常量，条件改为 `>= HeaderFenceLen`
    - 新增：边界说明注释
 
 3. **P0-3: FrameTag wire encoding 补充**
@@ -669,7 +669,7 @@
 
 **文档结构**：
 1. 概述（与 rbf-interface.md 的关系、文档层次图）
-2. 文件结构（Genesis Header、整体布局、EBNF 语法）
+2. 文件结构（HeaderFence Header、整体布局、EBNF 语法）
 3. Frame 结构（二进制布局、长度字段、Pad 填充）
 4. CRC32C 校验（覆盖范围、算法）
 5. Magic 分隔符（语义、位置）
@@ -690,7 +690,7 @@
 | **总计** | **19** | — |
 
 **关键提取内容**：
-- Genesis Header（文件头 Magic）
+- HeaderFence Header（文件头 Magic）
 - Frame 结构（HeadLen/Payload/Pad/TailLen/CRC32C/Magic）
 - CRC32C 覆盖范围（Payload + Pad + TailLen）
 - 4 字节对齐规则
@@ -1283,9 +1283,9 @@ HeadLen := u32 LE        (* == TailLen, record total bytes *)
 
 **P0-5: 引入 Base Version 术语层次**（版本链分组）
 - 新增 **Base Version**：`PrevVersionPtr=0` 的版本记录（上位术语）
-- 新增 **Genesis Base**：新建对象的首个版本，表示"从空开始"
+- 新增 **First-Base**：新建对象的首个版本，表示"从空开始"
 - **Checkpoint Version** → **Checkpoint Base**：为截断回放成本而写入的全量状态版本
-- 新增 **from-empty diff**：Genesis Base 的 DiffPayload 语义
+- 新增 **from-empty diff**：First-Base 的 DiffPayload 语义
 
 **P0-6: 概念层 <deleted-place-holder> vs 编码层 Ptr64 分层澄清**（标识与指针分组）
 - **<deleted-place-holder>**：概念层术语，规范条款应使用此术语
