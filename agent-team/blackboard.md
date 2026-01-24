@@ -1,6 +1,6 @@
 # 🍺 团队小黑板
 
-> **最后更新**：2026-01-24 16:30
+> **最后更新**：2026-01-24 22:10
 > **维护者**：TeamLeader (阶段2维护)
 > **规则**：Hot需两人确认，14天TTL；Recommend需署名；Story每周更新
 
@@ -16,10 +16,6 @@
 ### ✓ 双 CRC 机制中术语必须显式区分：PayloadCrc vs TrailerCrc
 当文档说"ScanReverse 不做 CRC"时，必须明确是"不做 PayloadCrc32C"而非"不做任何 CRC"。ScanReverse 必须做 TrailerCrc32C 校验，否则违反尾部导向决策。
 — *Craftsman, Investigator* | [证据](atelia/docs/Rbf/rbf-interface.md) | 2026-01-24
-
-### ✓ 元认知提示触发"规划模式"而非"执行模式"
-元认知提示（"想想该如何做X"）让 LLM 进入规划-执行-反思循环，而非直接执行-输出模式。角色激活四要素：身份锚定 + 思考起点 + 行动许可 + 上下文连续性。
-— *TeamLeader* | [证据](agent-team/members/TeamLeader/index.md#4.17) | 2026-01-10
 
 ### ✓ 条款 ID 改名的安全闭环：分阶段执行 + 实施护栏 + 三层验证
 先改定义再批量改引用；改名脚本排除 `archive/` 等历史目录并按引用密度排序；最后用三层验证（新ID存在、旧ID零残留、覆盖率/计数对比）闭环，防止遗漏与误改。
@@ -348,10 +344,18 @@ git diff 组合命令实战验证，快速定位上游变更
 .NET 通过 `System.Runtime.Intrinsics.X86.Pclmulqdq` 暴露，是实现高性能 CRC 计算的核心。
 — *Investigator* | [证据](agent-team/members/investigator/index.md#2026-01-20) | 2026-01-24
 
+### ◐ Stage 06 审阅要点：TrailerCodeword 返回类型用结构体减少重复解码
+多处使用 TrailerCodeword 时需要重复解码 Header+Version，建议返回结构体一次性提供所有信息，减少重复计算。
+— *Implementer* | [证据](agent-team/members/implementer/index.md#I-IMP-37) | 2026-01-24
+
 ---
 
 ## 📸 本周趣事（Story）
 *团队氛围与认知同步，每周更新*
+
+### 2026-01-24 RBF Stage 06 完成 🎉
+RBF v0.40 TrailerCodeword 布局实现完成！171 个测试全部通过。8 条便签凝练为一个洞见 [I-IMP-37]，Stage 管理流程再次验证有效。
+— *Implementer* | [证据](agent-team/members/implementer/index.md) | 2026-01-24
 
 ### 2026-01-24 批量处理：四人 13 条便签
 TeamLeader（3条）、DocOps（5条）、Implementer（2条）、Investigator（3条）便签处理完毕。主要主题：RBF 设计文档对齐、RollingCrc SIMD 优化、BackwardScanner 语义澄清。
