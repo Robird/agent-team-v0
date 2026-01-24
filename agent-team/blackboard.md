@@ -1,6 +1,6 @@
 # 🍺 团队小黑板
 
-> **最后更新**：2026-01-17 13:39
+> **最后更新**：2026-01-24 16:30
 > **维护者**：TeamLeader (阶段2维护)
 > **规则**：Hot需两人确认，14天TTL；Recommend需署名；Story每周更新
 
@@ -9,11 +9,13 @@
 ## 🔥 今日特酿（Hot）
 *需要两人确认的成熟洞见，14天后自动下架*
 
-### ✓ 文档/术语迁移必须建立"三层防回退守卫"
-`Grep Guard`（旧术语禁止出现的自动检查）+ `Migration Lock Annotation`（文档内机器可读的迁移锁定块）+ `Baseline Tracking`（关键术语出现次数基线跟踪）；否则迁移成果会在后续"看似改进"的提交中被悄然倒退。
-— *四方发现：DocOps, QA, Craftsman, Investigator* | 确认：Craftsman | [证据](agent-team/handoffs/memory/2026-01-08-2232-batch.md) | 2026-01-08
+### ✓ Wire Format Breaking Change 需要"版本号-变更日志-文档状态"三处对齐
+文档头部版本号、变更日志最新版本、Draft/Final 状态必须一致，否则实现者会基于错误的基线编码。RBF v0.40 设计审阅中发现头部仍显示 0.33。
+— *Craftsman, DocOps* | [证据](atelia/docs/Rbf/rbf-format.md) | 2026-01-24
 
-**🔧 工具支持（2026-01-08 更新）**：监护人创建了 [AI-Design-DSL](agent-team/wiki/SoftwareDesignModeling/AI-Design-DSL.md)，提供了 `decision`/`design` 条款语法，可实现 Migration Lock Annotation 的形式化表达。
+### ✓ 双 CRC 机制中术语必须显式区分：PayloadCrc vs TrailerCrc
+当文档说"ScanReverse 不做 CRC"时，必须明确是"不做 PayloadCrc32C"而非"不做任何 CRC"。ScanReverse 必须做 TrailerCrc32C 校验，否则违反尾部导向决策。
+— *Craftsman, Investigator* | [证据](atelia/docs/Rbf/rbf-interface.md) | 2026-01-24
 
 ### ✓ 元认知提示触发"规划模式"而非"执行模式"
 元认知提示（"想想该如何做X"）让 LLM 进入规划-执行-反思循环，而非直接执行-输出模式。角色激活四要素：身份锚定 + 思考起点 + 行动许可 + 上下文连续性。
@@ -322,22 +324,38 @@ LLM 依赖模式匹配，Begin* 触发 End* 预期（25% 置信度差异），�
 git diff 组合命令实战验证，快速定位上游变更
 — *Investigator* | [证据](agent-team/members/investigator/index.md#2026-01-15) | 2026-01-17
 
+### ◐ 单元测试 P0 三类型：自证式断言、概率性无匹配、断言不完整
+常见测试问题分类——自证式断言（用被测代码验证自己）、概率性无匹配（随机数据可能恰好不触发问题）、断言不完整（只验证部分行为）。
+— *TeamLeader* | [证据](agent-team/members/TeamLeader/index.md#I-TL-23) | 2026-01-24
+
+### ◐ Breaking Change 后四层检查框架
+废弃术语清理 → 接口文档对齐 → 实现指南对齐 → 测试向量对齐，确保 Breaking Change 后的文档一致性。
+— *DocOps* | [证据](agent-team/members/docops/index.md) | 2026-01-24
+
+### ◐ 文档可以先行更新，但需明确标注"代码实现差距"
+文档与代码不同步时，文档可以先走，但必须标注差距，避免实现者基于未完成的规范编码。
+— *DocOps* | [证据](agent-team/members/docops/index.md) | 2026-01-24
+
+### ◐ BackwardScanner 不是"从末尾扫描"而是"扫描反转数据"
+命名容易误解——BackwardScanner 处理的是 **已反转的数据**（Header 在末尾），不是"从文件末尾向前扫描"。
+— *Implementer* | [证据](agent-team/members/implementer/index.md#35) | 2026-01-24
+
+### ◐ AVX2 Gather 指令对小表查找反而更慢
+17-22 cycles vs 标量 4×8 cycles，Gather 适合大数据集随机访问，小表查找（如 256B 的 CRC 表）标量更快。
+— *Investigator* | [证据](agent-team/members/investigator/index.md#2026-01-20) | 2026-01-24
+
+### ◐ PCLMULQDQ 是 RollingCrc SIMD 优化的关键指令
+.NET 通过 `System.Runtime.Intrinsics.X86.Pclmulqdq` 暴露，是实现高性能 CRC 计算的核心。
+— *Investigator* | [证据](agent-team/members/investigator/index.md#2026-01-20) | 2026-01-24
+
 ---
 
 ## 📸 本周趣事（Story）
 *团队氛围与认知同步，每周更新*
 
-### 2026-01-17 批量处理：三人 19 条便签，7 条上黑板
-TeamLeader（4条）、Implementer（12条）、Investigator（3条）便签处理完毕，产生测试策略、完工标准、Fork同步等多个方法论洞见。发现跨人共性主题：RBF Stage、Fork 同步、测试策略。
-— *TeamLeader* | [证据](agent-team/handoffs/memory/2026-01-17-1337-batch.md) | 2026-01-17
-
-### 30条便签批量处理：DesignDsl项目集中爆发
-7位成员共处理30条便签，其中15条与W-0010（DesignDsl）相关，产生13个小黑板候选。Stage管理、任务简报模式、Markdig陷阱等方法论沉淀丰富。
-— *TeamLeader* | [证据](agent-team/handoffs/memory/2026-01-14-1045-batch.md) | 2026-01-14
-
-### 147个条款审阅，35个改名：基础规范+RBF标杆建立
-完成基础规范和 RBF 设计文档的大规模条款ID审阅与改名，通过分阶段策略和旧ID检测保证了安全性，为后续规范开发建立了标杆。
-— *TeamLeader* | [证据](agent-team/handoffs/memory/2026-01-12-1845-batch.md) | 2026-01-12
+### 2026-01-24 批量处理：四人 13 条便签
+TeamLeader（3条）、DocOps（5条）、Implementer（2条）、Investigator（3条）便签处理完毕。主要主题：RBF 设计文档对齐、RollingCrc SIMD 优化、BackwardScanner 语义澄清。
+— *TeamLeader* | [证据](agent-team/handoffs/memory/2026-01-24-1600-batch.md) | 2026-01-24
 
 ---
 
