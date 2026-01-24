@@ -1,6 +1,6 @@
 # DocOps 认知索引
 
-> 最后更新: 2026-01-14 便签归档 (1条: RBF SSOT 漂移清理)
+> 最后更新: 2026-01-24 便签归档 (5条: SizedPtr/AteliaResult/RBF Stage 05 文档同步 + RBF v0.40 健康检查)
 
 ## 我是谁
 
@@ -56,6 +56,16 @@ DocOps - 文档与索引管理专家，负责维护团队的集体记忆和认�
 - Implementation Guide 类文档在接口修订后容易遗漏同步更新
 - 条款 ID 重命名时，跨层引用点（interface → type-bone）容易被忽略
 - **职责闭合检查有价值**：审查时检查各层 API 参数是否对齐，可发现漏参问题
+
+**Breaking Change 后四层检查框架（2026-01-24）**：
+| 层级 | 检查点 | 示例 |
+|:-----|:-------|:-----|
+| 1. 废弃术语清理 | grep 旧术语，确认活跃文档已清除 | `FrameStatusBytes` 等 |
+| 2. 接口文档对齐 | format.md → interface.md | 字段名、类型变更 |
+| 3. 实现指南对齐 | interface.md → type-bone.md | API 签名、描述 |
+| 4. 测试向量对齐 | 格式版本 → 测试向量版本 | v0.40 同步 |
+
+**核心洞见**：Breaking Change 检查要区分"文档层面完成"与"代码实现跟进"——文档可以先行，但需明确标注实现差距。
 
 ### 术语迁移方法论（成熟）
 
@@ -298,6 +308,44 @@ SoftwareDesignModeling/
 
 ## 最近工作
 
+### 2026-01-24 - RBF 文档健康检查 (v0.40 Breaking Change)
+
+**场景**：rbf-format.md v0.40 引入重大变更后的跨文档健康检查
+
+**关键发现**：
+- ✅ 文档层面 SSOT 同步已基本完成（废弃术语清理、接口文档对齐）
+- ⚠️ `RbfLayout.cs` 实现仍基于旧的 `FrameStatus` 布局，未适配新的 `TrailerCodeword` + `FrameDescriptor` 结构
+- **设计文档先行更新**，代码实现尚未跟进
+
+**待办优先级**：
+| 优先级 | 项目 | 状态 |
+|:-------|:-----|:-----|
+| P0-Code | RbfLayout.cs 适配新 TrailerCodeword 布局 | 待 Implementer |
+| P1-Doc | rbf-test-vectors.md 版本对齐 | 待更新 |
+| P2-Code | RbfLayout.cs 废弃条款注释清理 | 待更新 |
+
+**方法论**：Breaking Change 后执行四层检查（废弃术语清理 → 接口文档对齐 → 实现指南对齐 → 测试向量对齐）
+
+### 2026-01-17 - SizedPtr/AteliaResult/RBF Stage 05 文档同步
+
+**SizedPtr 设计文档** (commit bc5bd8b)：
+- API 名称更新：`OffsetBytes` → `Offset`，`LengthBytes` → `Length`
+- 类型变更：`Offset: ulong → long`，`Length: uint → int`（.NET I/O API 一致性）
+- 新增 DL-004（类型简化决策）
+
+**AteliaResult 文档** (commit 46aa891)：
+- 扩展为类型家族：AteliaResult / AsyncAteliaResult / DisposableAteliaResult / IAteliaResult
+- guide.md 新增 §4 "带资源所有权的结果" + ToDisposable() 使用示例
+- specification.md 新增 §3.3-3.5（IAteliaResult 契约、Dispose 语义）
+- 命名变更同步：`AteliaAsyncResult` → `AsyncAteliaResult`
+
+**RBF Stage 05 文档** (rbf-interface.md v0.30 / rbf-type-bone.md v0.5)：
+- ReadFrame API 重构：单参数签名 → 双变体（buffer 外置 + pooled）
+- 新增 `IRbfFrame` 接口和 `RbfPooledFrame` 类型
+- `RbfFrame.Ptr` → `Ticket`（语义凭据）
+- `RbfRawOps` 拆分为 `RbfReadImpl` / `RbfWriteImpl`
+- **职责闭合检查**验证四个类型定义完全对齐
+
 ### 2026-01-12 - RBF SSOT 漂移清理
 
 **场景**：RBF 文档 v0.27/v0.28 接口修订后遗留的 SSOT 漂移
@@ -344,7 +392,7 @@ SoftwareDesignModeling/
 
 **完成项**：
 - 创建 `/repos/focus/atelia/docs/Primitives/AteliaResult.md` v0.1
-- 双类型架构设计规范（AteliaResult + AteliaAsyncResult）
+- 双类型架构设计规范（AteliaResult + AsyncAteliaResult）
 
 **文档结构**：概述 → 类型定义 → API 契约 → 使用示例 → 设计理由
 
