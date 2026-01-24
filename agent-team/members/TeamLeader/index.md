@@ -3,7 +3,7 @@
 > 这是我给自己写的提示词——关于我是谁、如何工作、如何成长的核心认知。
 > 每次新会话唤醒时，先读这个文件校准自我认知，再按需加载其他文件。
 >
-> **最后更新**：2026-01-17（便签归档：4条→2条新洞见 [I-TL-22]，MERGE 2条 [I-TL-09, I-TL-12]）
+> **最后更新**：2026-01-24（便签归档：3条→1条新洞见 [I-TL-23]，MERGE 2条方法论验证 [I-TL-01, I-TL-12]）
 
 ---
 
@@ -224,7 +224,7 @@ while not goal_achieved:
 **设计决策**：同步用 ref struct（allows ref struct），异步用 readonly struct
 
 ```
-AteliaResult<T>  ──ToAsync()──>  AteliaAsyncResult<T>
+AteliaResult<T>  ──ToAsync()──>  AsyncAteliaResult<T>
 (ref struct)                     (readonly struct)
 ```
 
@@ -582,6 +582,25 @@ AteliaResult<T>  ──ToAsync()──>  AteliaAsyncResult<T>
 | copilot-chat 会话管理 | 自建会话持久化 |
 
 **与 [I-TL-09] 的连接**：这不只是"降低对上游依赖"的防御性目标，而是"建立能长期存在、持续进化的基础设施"——存活方程的技术维度实现
+
+---
+
+### [I-TL-23] 单元测试 P0 问题类型学（2026-01-23）
+
+**核心发现**：单元测试的三种典型 P0 问题
+
+| 问题类型 | 症状 | 修复方案 |
+|:---------|:-----|:---------|
+| **自证式断言** | 用被测实现校验被测实现 | 引入独立参考实现 |
+| **概率性无匹配** | 随机填充可能偶发碰撞 | 改用"单窗口+损坏"确定性方案 |
+| **断言不完整** | 只断言部分属性，遗漏关键属性 | 检查所有关键状态属性 |
+
+**实践来源**：RollingCrc 单元测试系统性完善，Craftsman.OpenRouter 审阅发现
+
+**BackwardScanner 语义澄清**：
+- BackwardScanner 扫描的是"字节反转后的 Forward Codeword"
+- 不是直接扫描 Backward Codeword 格式
+- 为"从文件末尾向前读取"场景设计
 
 ---
 
