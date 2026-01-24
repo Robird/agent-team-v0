@@ -29,7 +29,7 @@
 
 | 项目 | 状态 | 最后更新 | 备注 |
 |------|------|----------|------|
-| Rbf | v0.40 重构准备中 🔄 | 2026-01-24 | TrailerCodeword 设计变更，待实现 |
+| Rbf | Stage 06 完成 ✅ | 2026-01-25 | v0.40 TrailerCodeword 布局，171 测试通过 |
 | DesignDsl | Parser MVP ✅ | 2026-01-14 | 67 测试通过，Term/Clause 节点解析 |
 | Atelia.Data | Phase 3 完成 ✅ | 2026-01-11 | SizedPtr 公开 API 改 long/int，测试架构治理完成 |
 | DocGraph | v0.2 进行中 🔄 | 2026-01-07 | v0.2: Wish 布局迁移 + IssueAggregator Phase 2 |
@@ -252,6 +252,24 @@
     **测试陷阱**：不要直接 Seal 一个 Backward Codeword 然后扫描——应该：
     1. Seal Forward Codeword → 2. 反转字节 → 3. 用 BackwardScanner 扫描
 
+36. **Stage 06 审阅要点**（2026-01-24）[I-IMP-37]
+
+    | 要点 | 决策/确认 |
+    |:-----|:---------|
+    | TrailerCodewordHelper 返回类型 | 用 `TrailerCodewordData` 结构体（含计算属性），减少调用点重复解码 |
+    | RollingCrc.CheckCodewordBackward 输入 | 传完整 16B span，TrailerCodeword 布局完美匹配 |
+    | PayloadCrc / TrailerCrc 写入顺序 | 先填充所有字段，最后 seal 两个 CRC |
+    | 测试修复估时调整 | 2h → 3-4h（单 CRC → 双 CRC 大改，测试帧构造全部重写） |
+
+    **Stage 06 实施进度**：
+    - Task 6.1+6.6: RbfLayout v0.40 布局 + RbfFrameInfo 新建
+    - Task 6.2: TrailerCodewordHelper（25 测试）
+    - Task 6.3: RbfAppendImpl 重写（双 CRC + UserMeta + Tombstone）
+    - Task 6.4: RbfReadImpl 重写（双 CRC 校验链）
+    - Task 6.5: 既有测试修复（148 测试通过）
+    - Task 6.7: ReadTrailerBefore（21 测试，168 总计）
+    - Task 6.8: RbfReverseEnumerator + RbfReverseSequence（171 总计）
+
 ### LLM Agent 完工标准差距分析（2026-01-17）[I-IMP-33]
 
 > 从人类打磨 RBF Stage 05 代码中提炼的 6 个关键差距
@@ -388,6 +406,7 @@ agent-team/archive/members/implementer/
 
 > 详细历史见 `archive/members/implementer/`
 
+- **2026-01-25**: Stage 06 完成（Task 6.1-6.8），171 测试通过；Stage 06 审阅要点归档 [I-IMP-37]
 - **2026-01-24**: RollingCrc BackwardScanner 语义澄清（正逆对称性、测试陷阱）；ScanReverse 实现决策（6 项 + ref struct 资源管理模式）
 - **2026-01-24**: RBF v0.40 格式变更认知更新（TrailerCodeword 16B 固定布局、双 CRC、FrameDescriptor 位字段）
 - **2026-01-17**: RBF Stage 05 完成（ValidateAndParse/ReadRaw/ReadFrameInto/ReadPooledFrame），156 测试；LLM 完工标准差距分析（6 维度）
