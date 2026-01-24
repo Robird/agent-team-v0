@@ -7,19 +7,20 @@
 
 ## 当前状态
 
-**阶段**：Stage 05 - ReadFrame 重构与 Buffer 外置 ✅ **已完成**
+**阶段**：Stage 06 - 帧布局 v0.40 + ScanReverse ✅ **已完成**
 
-**下一阶段**：Stage 06 - 复杂写入路径（BeginAppend/EndAppend）
+**下一阶段**：Stage 07 - 复杂写入路径（BeginAppend/EndAppend）
 
-**测试覆盖**：150 个 RBF 测试 + 60 个 Primitives 测试 + 117 个 Data 测试（全部通过）
+**测试覆盖**：197 个 RBF 测试 + 60 个 Primitives 测试 + 117 个 Data 测试（全部通过）
 
 **基础条件**：
-- 设计文档已就绪：`atelia/docs/Rbf/` 目录下 7 个文档（已同步至 v0.30）
+- 设计文档已就绪：`atelia/docs/Rbf/` 目录下 7 个文档（已同步至 v0.40）
 - 核心依赖已存在于 `atelia/src/Data/`：
   - `SizedPtr.cs` - 帧位置凭据（v2: `Offset`/`Length` 使用 `long`/`int`）
   - `IByteSink.cs` - 推式写入接口
   - `IReservableBufferWriter.cs` - 可预留的 BufferWriter 接口
   - `SinkReservableWriter.cs` - 基于 IByteSink 的 IReservableBufferWriter 实现
+  - `RollingCrc.cs` - Codeword 保护（SealCodewordBackward/CheckCodewordBackward）
 - `Atelia.Primitives` 中的结果类型家族：
   - `AteliaResult<T>` - 标准结果类型（ref struct）
   - `DisposableAteliaResult<T>` - 带资源所有权的结果类型
@@ -45,22 +46,25 @@
 
 | 文件 | 职责 |
 |------|------|
-| `IRbfFile.cs` | 文件门面接口 |
+| `IRbfFile.cs` | 文件门面接口（含 ScanReverse） |
 | `IRbfFrame.cs` | 帧公共属性契约（`Ticket`, `Tag`, `Payload`, `IsTombstone`） |
 | `RbfFrame.cs` | ref struct 帧实现（生命周期受限于 buffer） |
 | `RbfPooledFrame.cs` | class 帧实现（持有 ArrayPool buffer，需 Dispose） |
+| `RbfFrameInfo.cs` | 帧元信息（ScanReverse 返回的轻量描述符） |
+| `RbfReverseEnumerator.cs` | 逆向扫描枚举器 |
+| `RbfReverseSequence.cs` | 逆向扫描序列（支持 foreach） |
 | `RbfFile.cs` | 工厂方法（CreateNew/OpenExisting） |
 
 ### 内部类型 (`Internal/`)
 
 | 文件 | 职责 |
 |------|------|
-| `RbfConstants.cs` | 常量定义 + `ComputeFrameLen()` |
+| `RbfLayout.cs` | 布局常量 + FrameLayout 计算 + ResultFromTrailer |
 | `RbfFileImpl.cs` | `IRbfFile` Facade 实现（状态管理） |
-| `RbfAppendImpl.cs` | Append 核心实现（自适应 1-3 次写入） |
-| `RbfReadImpl.cs` | ReadFrame 核心实现（Buffer 外置 + Pooled 两种模式） |
+| `RbfAppendImpl.cs` | Append 核心实现（v0.40: 双 CRC, Tag 在 Trailer） |
+| `RbfReadImpl.cs` | ReadFrame + ReadTrailerBefore 核心实现 |
+| `TrailerCodewordHelper.cs` | TrailerCodeword 编解码（v0.40 新增） |
 | `Crc32CHelper.cs` | CRC32C 计算（Init/Update/Finalize） |
-| `FrameStatusHelper.cs` | StatusLen 计算 + 位域编解码 |
 | `RbfErrors.cs` | 错误码定义（含 `RbfBufferTooSmallError`） |
 | `RandomAccessByteSink.cs` | `IByteSink` 适配器 |
 
@@ -71,6 +75,9 @@
 | `RbfFacadeTests.cs` | Facade 状态测试 | TailOffset 更新、ReadFrame/ReadPooledFrame 集成 |
 | `RbfAppendImplTests.cs` | Append 格式验证 | HeadLen/CRC/Fence/对齐 |
 | `RbfReadImplTests.cs` | ReadFrame 格式验证 | Framing 校验/CRC/Buffer 错误/边界值 |
+| `ReadTrailerBeforeTests.cs` | ReadTrailerBefore 测试 | 正常/Fence损坏/CRC损坏/TailLen越界 |
+| `RbfScanReverseTests.cs` | ScanReverse 集成测试 | 逆向遍历/Tombstone过滤/损坏停止 |
+| `TrailerCodewordHelperTests.cs` | TrailerCodeword 测试 | 端序/位布局/CRC |
 | `RbfPooledFrameTests.cs` | RbfPooledFrame 生命周期 | Dispose 行为/异常后资源释放 |
 | `RbfFileFactoryTests.cs` | 工厂方法测试 | CreateNew/OpenExisting |
 | `Crc32CHelperTests.cs` | CRC 工具测试 | RFC 向量 + baseline 对比 |
@@ -82,6 +89,46 @@
 ---
 
 ## 已完成的交付成果
+
+### Stage 06: 帧布局 v0.40 + ScanReverse（2026-01-24）
+
+**核心变更**：
+
+1. **帧布局 v0.40**（Breaking Change）：
+   - 旧：`[HeadLen][Tag][Payload][Status][TailLen][CRC]`
+   - 新：`[HeadLen][Payload][UserMeta][Padding][PayloadCrc][TrailerCodeword(16B)]`
+   - TrailerCodeword = `[TrailerCrc(4)][FrameDescriptor(4)][FrameTag(4)][TailLen(4)]`
+   - Tag 从头部移至 TrailerCodeword（支持 ScanReverse 单次读取）
+
+2. **双 CRC 机制**：
+   - PayloadCrc32C：覆盖 Payload + UserMeta + Padding，LE 存储
+   - TrailerCrc32C：覆盖 FrameDescriptor + FrameTag + TailLen，BE 存储
+   - 使用 RollingCrc.SealCodewordBackward 实现后向 CRC
+
+3. **ScanReverse 实现**：
+   - `ReadTrailerBefore()`：单次 I/O 读取 20B（TrailerCodeword + Fence），只校验 TrailerCrc
+   - `RbfReverseEnumerator` / `RbfReverseSequence`：支持 foreach 的逆向迭代
+   - `IRbfFile.ScanReverse(showTombstone)`：门面方法
+   - 损坏帧硬停止，TerminationError 记录错误
+
+4. **新增类型**：
+   - `RbfFrameInfo`：轻量帧元信息（Ticket, Tag, PayloadLength, UserMetaLength, IsTombstone）
+   - `TrailerCodewordHelper`：TrailerCodeword 编解码辅助类
+   - `TrailerCodewordData`：解析结果结构体
+
+5. **删除/重构**：
+   - 删除 `FrameStatusHelper.cs`（v0.40 使用 FrameDescriptor 替代 Status）
+   - 删除旧常量（TagOffset, TagSize 等）
+   - `RbfLayout.cs` 重写，新增 PayloadCrcSize, TrailerCodewordSize, MinFrameLength=24
+
+**设计决策**：
+- **Decision 6.A**：Wire format breaking change，不保留向后兼容
+- **Decision 6.B**：TrailerCrc32C 使用 BE 存储（与 PayloadCrc LE 区分）
+- **Decision 6.C**：ScanReverse 只校验 TrailerCrc，不校验 PayloadCrc（职责分离）
+
+**测试覆盖**：197 个测试全部通过
+
+**详细记录**：见 [stage/06/task.md](stage/06/task.md)
 
 ### Stage 05: ReadFrame 重构与 Buffer 外置（2026-01-17）
 
@@ -192,6 +239,7 @@
 
 | 日期 | 变更 |
 |------|------|
+| 2026-01-24 | Stage 06 完成：帧布局 v0.40 + ScanReverse + 197 个测试通过 |
 | 2026-01-17 | Stage 05 完成：ReadFrame 重构 + SizedPtr 简化 + 150 个测试通过 |
 | 2026-01-17 | 设计文档同步：rbf-interface.md v0.30, rbf-type-bone.md v0.5, AteliaResult 文档更新, SizedPtr.md 更新 |
 | 2026-01-15 | Stage 04 完成：ReadFrame 实现 + 146 个测试通过 |

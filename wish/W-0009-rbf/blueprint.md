@@ -39,7 +39,14 @@
 
 ---
 
-### Stage 06: 复杂写入路径（BeginAppend/EndAppend）
+### Stage 06: 帧格式重构 + ScanReverse ✅
+> 已完成（2026-01-24）。详见 `recap.md` 和 `stage/06/task.md`。
+> 关键成果：v0.40 帧布局（TrailerCodeword + 双 CRC）、`RbfFrameInfo`、`ReadTrailerBefore`、`RbfReverseEnumerator`、`ScanReverse`
+> 测试覆盖：197 个测试全部通过
+
+---
+
+### Stage 07: 复杂写入路径（BeginAppend/EndAppend）
 **目标**：实现流式写入 Builder。
 
 **交付物**：
@@ -48,26 +55,7 @@
 - `EndAppend` 提交帧
 - Auto-Abort（Dispose 未 EndAppend 时）
 - 单 Builder 约束
-- 对应的单元测试
-
----
-
-### Stage 07: 逆向扫描（ScanReverse）
-**目标**：实现逆向扫描与 Resync。
-
-**设计方向**（待细化）：
-- `ScanReverse` 返回 `FrameInfo`（或 `RbfFrameHeader`）序列而非 `RbfFrame`
-- `FrameInfo` 包含 `SizedPtr` + `Tag` + `IsTombstone`，不含 Payload
-- `FrameInfo` 可能绑定 `RbfFileImpl` 实例，支持惰性读取
-- ScanReverse 只做 framing 校验，不做 CRC 校验
-- 调用方按需使用 `ReadFrameInto` 获取完整 Payload
-
-**交付物**：
-- `FrameInfo` 类型定义（具体设计待 Stage 05 完成后细化）
-- `ScanReverse(showTombstone)` 实现
-- 逆向遍历（从尾到头）
-- Tombstone 过滤（默认隐藏）
-- Resync 机制（损坏帧跳过）
+- UserMeta 支持
 - 对应的单元测试
 
 ---
@@ -107,6 +95,8 @@
 
 | 日期 | 变更 |
 |------|------|
+| 2026-01-24 | Stage 06 完成：帧布局 v0.40 + ScanReverse + 197 个测试通过 |
+| 2026-01-24 | **Stage 06 重构**：合并帧格式升级（v0.40）与 ScanReverse 实现；原 Stage 07 → Stage 07（BeginAppend）|
 | 2026-01-16 | 插入 Stage 05（ReadFrame 重构），原 Stage 05-08 顺延为 06-09 |
 | 2026-01-16 | 设计决策：移除 ReadFrame 兼容层、简化 CRC 策略、ScanReverse 返回 FrameInfo |
 | 2026-01-15 | Stage 04 完成：ReadFrame 实现 + 146 个测试通过 |
