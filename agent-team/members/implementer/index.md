@@ -29,7 +29,7 @@
 
 | 项目 | 状态 | 最后更新 | 备注 |
 |------|------|----------|------|
-| Rbf | Stage 05 完成 ✅ | 2026-01-17 | ReadFrame/ReadPooled/ValidateAndParse，156 测试 |
+| Rbf | v0.40 重构准备中 🔄 | 2026-01-24 | TrailerCodeword 设计变更，待实现 |
 | DesignDsl | Parser MVP ✅ | 2026-01-14 | 67 测试通过，Term/Clause 节点解析 |
 | Atelia.Data | Phase 3 完成 ✅ | 2026-01-11 | SizedPtr 公开 API 改 long/int，测试架构治理完成 |
 | DocGraph | v0.2 进行中 🔄 | 2026-01-07 | v0.2: Wish 布局迁移 + IssueAggregator Phase 2 |
@@ -156,7 +156,7 @@
     - Clause: `` ^\s*(decision|design|hint)\s+\[([^\]]+)\](?:\s+(.+?))?\s*$ ``
     - 使用 `[GeneratedRegex]` 优化性能
 
-### RBF 实现洞见（2026-01-14 ~ 01-17）
+### RBF 实现洞见（2026-01-14 ~ 01-24）
 
 30. **Facade 集成测试 vs RawOps 单元测试**
     - 两层都测，各司其职
@@ -172,6 +172,85 @@
 32. **Check + Unchecked 分离模式**
     - `CheckReadParams` / `ReadFrameIntoUnchecked`：参数校验与逻辑分离
     - Unchecked 约定：仍保留运行时检查（IOException/FramingError），仅移除参数合法性检查
+
+33. **RBF v0.40 格式变更要点**（2026-01-24）[I-IMP-34]
+
+    **新旧布局对比**：
+    | 旧版 | 新版 (v0.40) |
+    |:-----|:-------------|
+    | `HeadLen(4) + Tag(4) + Payload + Status(1-4) + TailLen(4) + CRC(4)` | `HeadLen(4) + Payload + UserMeta + Padding(0-3) + PayloadCrc(4) + TrailerCodeword(16)` |
+    | Tag 在头部 | Tag 移到 TrailerCodeword |
+    | Status 字节编码 IsTombstone/StatusLen | FrameDescriptor 位字段编码 IsTombstone/PaddingLen/UserMetaLen |
+    | 单 CRC（LE） | 双 CRC：PayloadCrc（LE）+ TrailerCrc（**BE**） |
+
+    **TrailerCodeword 布局**（固定 16B）：
+    ```
+    [0-3]   TrailerCrc32C   (u32 BE)  ← CRC(FrameDescriptor + FrameTag + TailLen)
+    [4-7]   FrameDescriptor (u32 LE)  ← bit31:IsTombstone, bit30-29:PaddingLen, bit15-0:UserMetaLen
+    [8-11]  FrameTag        (u32 LE)
+    [12-15] TailLen         (u32 LE)  ← 等于 HeadLen
+    ```
+
+    **RbfLayout.cs 修改要点**：
+    1. **删除**：`TagOffset`/`TagSize` 从 Header 区移除
+    2. **新增**：`TrailerCodewordSize = 16`，`TrailerCrcSize/FrameDescriptorSize/FrameTagSize/TailLenSize` 各 4
+    3. **重定义 PayloadOffset**：`HeadLenSize`（直接跟在 HeadLen 后面）
+    4. **新增 FrameDescriptor 编解码**：
+       - `EncodeDescriptor(isTombstone, paddingLen, userMetaLen) → uint`
+       - `DecodeDescriptor(uint) → (isTombstone, paddingLen, userMetaLen)`
+    5. **FillTrailer → FillTrailerCodeword**：写入 4 字段，**TrailerCrc 用 BE**
+    6. **ResultFromTrailer → ReadTrailerCodeword**：读 16B，先用 `RollingCrc.CheckCodewordBackward` 校验
+
+    **RollingCrc API 使用**：
+    - `SealCodewordBackward(span)`: CRC 写在 span 开头，BE 存储；Payload 在 CRC 之后
+    - `CheckCodewordBackward(span)`: 验证 span 开头的 BE CRC 是否匹配后续内容
+    - **对齐 TrailerCodeword**：`span[0..16]` 整体作为 codeword 传入
+
+    **ScanReverse 迭代器实现思路**：
+    1. 从文件末尾开始，每次读取 16 字节 TrailerCodeword
+    2. 调用 `CheckCodewordBackward` 校验 TrailerCrc
+    3. 从 TailLen 得知完整 FrameBytes 长度 → 跳到前一帧
+    4. `RbfFrameInfo` 返回：`Ticket(SizedPtr), Tag, PayloadLength, UserMetaLen, IsTombstone`
+    5. **无需读取 HeadLen 或 PayloadCrc**——逆向扫描只关心元信息
+
+    **关键注意事项**：
+    - TrailerCrc 覆盖 **后三个字段**（12 字节），不含自身
+    - PayloadCrc 覆盖 `Payload + UserMeta + Padding`（不含 HeadLen）
+    - PaddingLen 编码在 bit30-29（2 bit），取值 0-3
+    - UserMetaLen 占 bit15-0（16 bit），最大 65535
+
+34. **ScanReverse 实现决策**（2026-01-17）[I-IMP-35]
+
+    | 决策点 | 结论 | 理由 |
+    |:-------|:-----|:-----|
+    | Window 大小 | 64KB 固定 | 匹配系统 I/O 粒度，覆盖常见帧 |
+    | 大帧 buffer | ArrayPool | 可能很大，需复用 |
+    | Window buffer | new byte[] | 生命周期与枚举器绑定，简单优先 |
+    | CRC 校验 | 不校验 PayloadCrc | ScanReverse 是结构迭代，非内容验证 |
+    | 错误报告 | 静默跳过 | MVP 简化，诊断回调后续按需 |
+    | Current 类型 | 完整 RbfFrame | 与 ReadFrame 一致，已读数据不丢弃 |
+
+    **ref struct 枚举器资源管理模式**：
+    - ref struct 无析构函数，必须显式 `Dispose()` 或在 `MoveNext()` 返回 false 时归还
+    - `ArrayPool` buffer 用可空字段 `byte[]?`，`Dispose()` 内 `Interlocked.Exchange` 幂等归还
+    - 支持 duck-typed `using`（foreach 自动调用）
+
+35. **RollingCrc BackwardScanner 语义澄清**（2026-01-23）[I-IMP-36]
+
+    | 概念 | 语义 |
+    |:-----|:-----|
+    | ForwardScanner | 正向扫描流，检测 `[payload][CRC-LE]` 格式的 Forward Codeword |
+    | BackwardScanner | 正向扫描流，检测**字节反转后的 Forward Codeword** |
+
+    **关键**：BackwardScanner **不是**"从末尾扫描"，而是"扫描反转数据"。
+
+    **正逆对称性**：
+    - `CheckCodewordBackward(reversed(ForwardCodeword))` → ✅
+    - `CheckCodewordForward(reversed(BackwardCodeword))` → ✅
+    - BackwardScanner 找到的 `match.Codeword` 是**接收顺序**，非原始格式
+
+    **测试陷阱**：不要直接 Seal 一个 Backward Codeword 然后扫描——应该：
+    1. Seal Forward Codeword → 2. 反转字节 → 3. 用 BackwardScanner 扫描
 
 ### LLM Agent 完工标准差距分析（2026-01-17）[I-IMP-33]
 
@@ -224,7 +303,7 @@
 | 时间 | 项目 | 主要交付 |
 |------|------|----------|
 | 2026-01 | DesignDsl | Parser MVP（INodeBuilder 框架 + Term/Clause 解析），67 测试 |
-| 2026-01 | Atelia.Primitives | 双类型架构重构（AteliaResult ref struct + AteliaAsyncResult），39 测试 |
+| 2026-01 | Atelia.Primitives | 双类型架构重构（AteliaResult ref struct + AsyncAteliaResult），39 测试 |
 | 2026-01 | DocGraph v0.1 | 93 测试通过，validate/fix/generate 命令 |
 | 2025-12 | StateJournal M2 | 659 测试通过，完整二阶段提交 + Recovery |
 | 2025-12 | Atelia.Primitives | AteliaResult/Error 体系，27 测试 |
@@ -277,7 +356,7 @@
 ```
 AteliaError (abstract record)
 ├── AteliaResult<T>      ← ref struct，同步层
-├── AteliaAsyncResult<T> ← readonly struct，异步层
+├── AsyncAteliaResult<T> ← readonly struct，异步层
 └── AteliaException      ← 异常桥接
 ```
 
@@ -309,6 +388,8 @@ agent-team/archive/members/implementer/
 
 > 详细历史见 `archive/members/implementer/`
 
+- **2026-01-24**: RollingCrc BackwardScanner 语义澄清（正逆对称性、测试陷阱）；ScanReverse 实现决策（6 项 + ref struct 资源管理模式）
+- **2026-01-24**: RBF v0.40 格式变更认知更新（TrailerCodeword 16B 固定布局、双 CRC、FrameDescriptor 位字段）
 - **2026-01-17**: RBF Stage 05 完成（ValidateAndParse/ReadRaw/ReadFrameInto/ReadPooledFrame），156 测试；LLM 完工标准差距分析（6 维度）
 - **2026-01-16**: RbfPooledFrame Owner Token 模式实现；DisposableAteliaResult 21 测试；SizedPtr 公开 API 改 long/int
 - **2026-01-14**: RBF 测试架构重构（Facade/RawOps 分离）；DesignDsl Parser MVP 完成（INodeBuilder 框架 + Term/Clause 节点），67 测试
