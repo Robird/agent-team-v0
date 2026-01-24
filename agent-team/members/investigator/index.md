@@ -1,6 +1,7 @@
 # Investigator 认知索引
 
 > 最后更新: 2026-01-24
+> - 2026-01-24: Memory Palace — 处理了 1 条便签（RBF Stage 06 代码地图锚点汇总：写入/读取路径、v0.40 待改动类、ScanReverse 骨架）
 > - 2026-01-24: Memory Palace — 处理了 3 条便签（RollingCrc32C SIMD 优化调研：PCLMULQDQ 路径 + Gather 陷阱 + .NET API 锚点）
 > - 2026-01-24: RBF v0.40 重大设计变更分析（TrailerCodeword 固定16字节、FrameDescriptor 取代 FrameStatus、双CRC机制）
 > - 2026-01-15: Memory Palace — 处理了 3 条便签（atelia-copilot-chat Fork 同步调查：API 变更 + 会话卡住假设 + 检查清单）
@@ -26,6 +27,39 @@
 - [ ] atelia-copilot-chat
 
 ## Session Log
+### 2026-01-24: RBF Stage 06 代码地图锚点汇总
+**类型**: Anchor
+**项目**: RBF
+
+#### 写入路径锚点
+| 锚点 | 位置 |
+|:-----|:-----|
+| Append 入口 | [RbfFileImpl.cs#L42](atelia/src/Rbf/Internal/RbfFileImpl.cs#L42) |
+| Append 实现 | [RbfAppendImpl.cs#L56-L122](atelia/src/Rbf/Internal/RbfAppendImpl.cs#L56-L122) |
+| WriteWithCrc | [RbfAppendImpl.cs#L14-L28](atelia/src/Rbf/Internal/RbfAppendImpl.cs#L14-L28) |
+| FillTrailer (重构重点) | [RbfLayout.cs#L69-L82](atelia/src/Rbf/Internal/RbfLayout.cs#L69-L82) |
+
+#### 读取路径锚点
+| 锚点 | 位置 |
+|:-----|:-----|
+| ReadFrame 入口 | [RbfFileImpl.cs#L56](atelia/src/Rbf/Internal/RbfFileImpl.cs#L56) |
+| ReadFrame 实现 | [RbfReadImpl.cs#L61-L74](atelia/src/Rbf/Internal/RbfReadImpl.cs#L61-L74) |
+| ValidateAndParseCore (重构重点) | [RbfReadImpl.cs#L91-L156](atelia/src/Rbf/Internal/RbfReadImpl.cs#L91-L156) |
+| ResultFromTrailer (重构重点) | [RbfLayout.cs#L100-L128](atelia/src/Rbf/Internal/RbfLayout.cs#L100-L128) |
+
+#### v0.40 待改动关键类
+- `FrameLayout` — Header 改为仅 HeadLen，Tag 移至 Trailer
+- `FrameStatusHelper` — 待删除，由 FrameDescriptor 取代
+- `Crc32CHelper` — 单 CRC → 双 CRC（PayloadCrc + TrailerCrc）
+
+#### 已存在的 ScanReverse 骨架
+- `RbfReverseSequence.cs` / `RbfReverseEnumerator.cs` — 空壳，待实现
+- `RbfRawOps.ScanReverse.cs` — throw NotImplementedException
+
+**置信度**: ✅ 验证过（代码阅读）
+
+---
+
 ### 2026-01-20: RollingCrc32C SIMD 优化调研 — PCLMULQDQ 路径 + Gather 陷阱
 **类型**: Route + Anchor + Gotcha
 **项目**: Atelia.Data
