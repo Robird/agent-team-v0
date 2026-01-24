@@ -1,8 +1,9 @@
 # Investigator 认知索引
 
-> 最后更新: 2026-01-15
+> 最后更新: 2026-01-24
+> - 2026-01-24: Memory Palace — 处理了 3 条便签（RollingCrc32C SIMD 优化调研：PCLMULQDQ 路径 + Gather 陷阱 + .NET API 锚点）
+> - 2026-01-24: RBF v0.40 重大设计变更分析（TrailerCodeword 固定16字节、FrameDescriptor 取代 FrameStatus、双CRC机制）
 > - 2026-01-15: Memory Palace — 处理了 3 条便签（atelia-copilot-chat Fork 同步调查：API 变更 + 会话卡住假设 + 检查清单）
-> - 2026-01-14: Memory Palace — 处理了 3 条便签（AI-Design-DSL/DesignDsl 导航锚点汇总：规范导航 + DocGraph 代码位置 + DSL 关键字识别）
 > - 2026-01-12: Memory Palace — 处理了 6 条便签（RBF 文档版本/条款 ID 导航 + spec-conventions 改名影响 + Gotcha 2 条 + Signal 2 条）
 > - 2026-01-11: Memory Palace — 处理了 12 条便签（测试架构治理、代码去重分析、Gotcha 3 条、Signal 2 条、适配器设计锚点）
 > - 2026-01-11: Memory Maintenance — 归档 2025-12 早期 Session Log（压缩 ~290 行）
@@ -25,6 +26,116 @@
 - [ ] atelia-copilot-chat
 
 ## Session Log
+### 2026-01-20: RollingCrc32C SIMD 优化调研 — PCLMULQDQ 路径 + Gather 陷阱
+**类型**: Route + Anchor + Gotcha
+**项目**: Atelia.Data
+
+#### 1. SIMD 优化路径图（Route）
+- **意图**: "想用 SIMD 加速 RollOut" → 先理解 RollOut 的数学本质
+- **核心洞见**: RollOut 本质上是 `crc ^ remove_effect(outgoing)`，其中 `remove_effect` 是预计算的 "byte → CRC contribution after N shifts"
+- **PCLMULQDQ 路径**: 需要计算 `outgoing * x^(8*(windowSize-1)) mod P`，可用 carryless multiply 实现，需 Barrett reduction
+- **关键常量**: 需预计算 `x^(8*(windowSize-1)) mod P`（每个字节位置一个），然后用 PCLMULQDQ 做 carryless multiply
+- **置信度**: ⚠️ 理论分析，需实验验证
+
+#### 2. .NET PCLMULQDQ 接口锚点（Anchor）
+| 指标 | 值 |
+|:-----|:---|
+| 位置 | `System.Runtime.Intrinsics.X86.Pclmulqdq` |
+| 关键方法 | `Pclmulqdq.CarrylessMultiply(Vector128<long>, Vector128<long>, byte)` |
+| 可用性 | .NET Core 3.0+，需 `Pclmulqdq.IsSupported` 检查 |
+| VPCLMULQDQ (256/512) | .NET 9+ 有 `Pclmulqdq.V256` 和 `Pclmulqdq.V512` |
+
+**置信度**: ✅ 验证过（Microsoft Learn 文档）
+
+#### 3. AVX2 Gather 指令陷阱（Gotcha）
+| 问题 | 后果 | 规避 |
+|:-----|:-----|:-----|
+| `vpgatherdd` 看起来可做 8 路并行表查找 | 实际 latency 17-22 cycles，比 8 次标量 load（各 ~4 cycles，可流水线）更慢 | 对于小表查找（如 256 entry × 4B = 1KB），gather 几乎不可能赢过标量代码。只在表很大且访问模式不规则时才考虑 gather |
+
+---
+
+### 2026-01-24: RBF v0.40 设计变更分析 — TrailerCodeword + FrameDescriptor + 双CRC
+**类型**: Route + Anchor + Gotcha
+**项目**: RBF
+
+#### 1. 新旧设计关键差异
+
+| 维度 | 旧设计 (≤v0.33) | 新设计 (v0.40) |
+|:-----|:----------------|:---------------|
+| **Trailer 结构** | 变长（Status 1-4B + TailLen + CRC） | **固定 16 字节 TrailerCodeword** |
+| **帧类型位置** | Header (`Tag` 在 `HeadLen` 后) | **Trailer** (`FrameTag` 在末尾 16B 中) |
+| **元信息编码** | `FrameStatus` 字节（值含义：padding + tombstone） | `FrameDescriptor` u32（bit 31=Tombstone, bit 30-29=PaddingLen, bit 15-0=UserMetaLen）|
+| **CRC 机制** | 单 CRC（覆盖 Tag+Payload+Status+TailLen） | **双 CRC**：`PayloadCrc32C`(LE) + `TrailerCrc32C`(BE) |
+| **UserMeta** | `PayloadTrailer`（旧名） | 改名 `UserMeta`，语义不变 |
+| **逆向扫描** | 需读 TailLen + 回溯到 HeadLen | 只需读 TrailerCodeword (16B) 即可完成元信息迭代 |
+
+#### 2. 当前实现 (`RbfLayout.cs`) 需调整的地方
+
+| # | 调整项 | 当前代码位置 | 改动说明 |
+|:--|:-------|:-------------|:---------|
+| 1 | **删除 Tag 在 Header 的定义** | `FrameLayout.TagOffset = HeadLenOffset + HeadLenSize` | Tag 移至 TrailerCodeword，Header 只剩 HeadLen |
+| 2 | **新增 TrailerCodeword 常量** | 无 | 新增 `TrailerCodewordSize = 16`、`TrailerCrcOffset`、`FrameDescriptorOffset`、`FrameTagOffset`、`TailLenOffset` |
+| 3 | **删除 FrameStatusHelper 引用** | `FrameLayout.StatusLength`、`FrameStatusHelper.FillStatus()`、`FrameStatusHelper.DecodeStatusByte()` | 改用 `FrameDescriptor` 位操作 |
+| 4 | **重写 `FillTrailer()`** | [RbfLayout.cs#L69-L82](atelia/src/Rbf/Internal/RbfLayout.cs#L69-L82) | 写入顺序：PayloadCrc32C → TrailerCrc32C(BE) → FrameDescriptor → FrameTag → TailLen |
+| 5 | **重写 `ResultFromTrailer()`** | [RbfLayout.cs#L100-L128](atelia/src/Rbf/Internal/RbfLayout.cs#L100-L128) | 从固定 16B TrailerCodeword 解析，用 `RollingCrc.CheckCodewordBackward()` 校验 |
+| 6 | **删除 `ValidateStatusConsistency()`** | [RbfLayout.cs#L87-L97](atelia/src/Rbf/Internal/RbfLayout.cs#L87-L97) | FrameStatus 的"全字节同值"校验不再适用 |
+| 7 | **CRC 覆盖范围调整** | `FrameLayout.CrcCoverageStart/End` | 拆分为 `PayloadCrcCoverage` 和 `TrailerCrcCoverage` |
+| 8 | **Padding 长度计算** | `FrameLayout.StatusLength` | 改为 `PaddingLen = (4 - ((PayloadLen + UserMetaLen) % 4)) % 4` |
+
+#### 3. ScanReverse 迭代器实现建议
+
+**技术方案要点**：
+1. **只读 TrailerCodeword**：每次迭代只需读取文件尾部 16 字节
+2. **使用 `RollingCrc.CheckCodewordBackward()`**：逆向 CRC 校验 `TrailerCrc32C`（见 [RollingCrc.cs#L22](atelia/src/Data/Hashing/RollingCrc.cs#L22)）
+3. **跳转公式**：`prevFrameEnd = currentFrameStart - 4 (Fence)`，`prevFrameStart = prevFrameEnd - TailLen`
+4. **停止条件**：抵达 HeaderFence 或 TrailerCrc32C 校验失败
+
+**伪代码**：
+```csharp
+long pos = fileLength;
+while (pos > HeaderOnlyLength) {
+    // 1. 读 TrailerCodeword (16B)
+    Span<byte> trailer = Read(pos - TrailerCodewordSize, 16);
+    
+    // 2. 校验 TrailerCrc32C (BE)
+    if (!RollingCrc.CheckCodewordBackward(trailer[..12])) break; // 损坏，硬停止
+    
+    // 3. 解析元信息
+    var descriptor = BinaryPrimitives.ReadUInt32LittleEndian(trailer[4..8]);
+    var frameTag = BinaryPrimitives.ReadUInt32LittleEndian(trailer[8..12]);
+    var tailLen = BinaryPrimitives.ReadUInt32LittleEndian(trailer[12..16]);
+    
+    // 4. Yield 帧元信息
+    yield return new FrameMeta(pos - tailLen, tailLen, descriptor, frameTag);
+    
+    // 5. 跳到上一帧
+    pos = pos - tailLen - FenceSize;
+}
+```
+
+#### 4. 关键锚点
+
+| 锚点 | 位置 |
+|:-----|:-----|
+| RBF v0.40 布局定义 | [rbf-format.md#L41-L56](atelia/docs/Rbf/rbf-format.md#L41-L56) @[F-FRAMEBYTES-FIELD-OFFSETS] |
+| FrameDescriptor 位布局 | [rbf-format.md#L58-L68](atelia/docs/Rbf/rbf-format.md#L58-L68) @[F-FRAMEDESCRIPTOR-LAYOUT] |
+| TrailerCrc32C 覆盖范围 | [rbf-format.md#L74-L79](atelia/docs/Rbf/rbf-format.md#L74-L79) @[F-TRAILERCRC-COVERAGE] |
+| 逆向扫描契约 | [rbf-format.md#L104-L114](atelia/docs/Rbf/rbf-format.md#L104-L114) @[R-REVERSE-SCAN-RETURNS-VALID-FRAMES-TAIL-TO-HEAD] |
+| RollingCrc.CheckCodewordBackward | [RollingCrc.cs#L22-L26](atelia/src/Data/Hashing/RollingCrc.cs#L22-L26) |
+| 当前 FrameLayout 实现 | [RbfLayout.cs](atelia/src/Rbf/Internal/RbfLayout.cs) |
+
+#### 5. Gotcha
+
+| 问题 | 后果 | 规避 |
+|:-----|:-----|:-----|
+| TrailerCrc32C 是 **BE** 而 PayloadCrc32C 是 **LE** | 混用端序会导致校验永远失败 | 使用专用 API：`CheckCodewordBackward()` for TrailerCrc32C, `CheckCodewordForward()` for PayloadCrc32C |
+| FrameDescriptor 的 Reserved 位 MUST 为 0 | 若旧代码写入非零值，逆向扫描会拒绝帧 | 写入时显式清零 bit 28-16 |
+| `TailLen == HeadLen` 但逆向扫描 **MUST NOT** 做交叉校验 | 若代码中添加此校验，违反 @[R-REVERSE-SCAN-USES-TRAILERCRC] | 只用 TrailerCrc32C 验证尾部元信息 |
+
+**置信度**: ✅ 设计文档验证过；代码差距分析基于 RbfLayout.cs 当前实现
+
+---
+
 ### 2026-01-15: atelia-copilot-chat Fork 同步调查
 **类型**: Anchor + Signal + Route
 **项目**: atelia-copilot-chat
@@ -332,7 +443,7 @@
 | 问题 | 后果 | 规避 |
 |:-----|:-----|:-----|
 | 即使泛型参数声明 `allows ref struct`，也无法在 `Func<T, TResult>` 中使用 ref struct | `AteliaResult<T>.Map()` 无法支持 ref struct | 使用 `out` 参数模式或创建专用 `ref struct` 结果类型 |
-| `readonly struct` 不能声明 `allows ref struct` | `AteliaAsyncResult<T>` 无法包含 ref struct 值 | 异步场景下 ref struct 必须"物化"为普通类型后传递 |
+| `readonly struct` 不能声明 `allows ref struct` | `AsyncAteliaResult<T>` 无法包含 ref struct 值 | 异步场景下 ref struct 必须"物化"为普通类型后传递 |
 
 **何时使用 `allows ref struct`**：
 - 在泛型约束中添加 `where T : allows ref struct`
@@ -346,7 +457,7 @@
 | 类型 | 路径 | 形态 |
 |:-----|:-----|:-----|
 | 同步 | `atelia/src/Primitives/AteliaResult.cs` | `ref struct` |
-| 异步 | 待实现 `atelia/src/Primitives/AteliaAsyncResult.cs` | `readonly struct` |
+| 异步 | 待实现 `atelia/src/Primitives/AsyncAteliaResult.cs` | `readonly struct` |
 
 - **设计文档**: `agent-team/handoffs/atelia-async-result-design.md`
 - **原因**: ref struct 不能跨 await 边界，故需两种类型
@@ -355,7 +466,7 @@
 #### 3. 从 Task<T> 派生的根本限制（Gotcha）
 | 问题 | 后果 | 规避 |
 |:-----|:-----|:-----|
-| 想通过 `AteliaTask<T> : Task<T>` 避免双重包装 | 无法工作——`TrySetResult`/`TrySetException`/promise 构造函数全是 `internal` | 使用 `Task<AteliaAsyncResult<T>>` 或 `ValueTask<AteliaAsyncResult<T>>` |
+| 想通过 `AteliaTask<T> : Task<T>` 避免双重包装 | 无法工作——`TrySetResult`/`TrySetException`/promise 构造函数全是 `internal` | 使用 `Task<AsyncAteliaResult<T>>` 或 `ValueTask<AsyncAteliaResult<T>>` |
 
 **Task 内部派生类锚点**（仅限 BCL 内部可用）：
 - `WhenAllPromise` — 用于 `Task.WhenAll`
@@ -419,7 +530,7 @@
 3. **Gotcha: DataTail 的"纯位置"假象**：
    - **现象**: DataTail 定义为"地址"，似乎只需位置不需长度
    - **后果**: 如果据此保留 <deleted-place-holder>，会造成 <deleted-place-holder>/SizedPtr 共存的复杂性
-   - **规避**: DataTail 实际语义是"文件 EOF 位置"，`SizedPtr.OffsetBytes` 完全等价
+   - **规避**: DataTail 实际语义是"文件 EOF 位置"，`SizedPtr.Offset` 完全等价
 
 **置信度**: ✅ 验证过
 
