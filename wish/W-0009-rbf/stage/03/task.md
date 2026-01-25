@@ -17,7 +17,7 @@
 
 ## 规范要点摘要
 
-### FrameBytes 布局（来自 rbf-format.md @[F-FRAMEBYTES-FIELD-OFFSETS]）
+### FrameBytes 布局（来自 rbf-format.md @[F-FRAMEBYTES-LAYOUT]）
 
 | 偏移 | 字段 | 类型 | 长度 | 说明 |
 |------|------|------|------|------|
@@ -146,7 +146,7 @@ CRC32C = crc32c(FrameTag + Payload + FrameStatus + TailLen)
 在 `RbfRawOps` 中添加帧序列化辅助方法，用于计算 HeadLen 和序列化完整帧。
 
 **规范引用**：
-- `rbf-format.md` @[F-FRAMEBYTES-FIELD-OFFSETS]
+- `rbf-format.md` @[F-FRAMEBYTES-LAYOUT]
 - `rbf-format.md` @[F-CRC32C-COVERAGE]
 
 **产出**：
@@ -184,7 +184,7 @@ BinaryPrimitives.WriteUInt32LittleEndian(dest[(headLen-4)..], crc);
 - `rbf-interface.md` @[A-RBF-IRBFFILE-SHAPE]
 - `rbf-decisions.md` @[F-FENCE-IS-SEPARATOR-NOT-FRAME] - 帧后写 Fence
 - `rbf-format.md` @[S-RBF-SIZEDPTR-WIRE-MAPPING]
-- `rbf-format.md` @[F-FENCE-VALUE-IS-RBF1-ASCII-4B] - Fence 必须是 ASCII `RBF1`
+- `rbf-format.md` @[F-FENCE-RBF1-ASCII-4B] - Fence 必须是 ASCII `RBF1`
 
 **产出**：
 1. 修改 `atelia/src/Rbf/Internal/RbfFileImpl.cs`，实现 `Append` 方法：
@@ -236,10 +236,10 @@ BinaryPrimitives.WriteUInt32LittleEndian(dest[(headLen-4)..], crc);
 - `SizedPtr.LengthBytes % 4 == 0`（即 HeadLen 是 4 的倍数）
 - `TailOffset % 4 == 0`
 
-**HeadLen/TailLen 对称性断言**（@[F-FRAMEBYTES-FIELD-OFFSETS]）：
+**HeadLen/TailLen 对称性断言**（@[F-FRAMEBYTES-LAYOUT]）：
 - 读取文件字节，验证 HeadLen 字段值 == TailLen 字段值 == SizedPtr.LengthBytes
 
-**Fence 验证**（@[F-FENCE-VALUE-IS-RBF1-ASCII-4B]）：
+**Fence 验证**（@[F-FENCE-RBF1-ASCII-4B]）：
 - 验证 HeaderFence 和每帧后的 Fence 都是 `0x52 0x42 0x46 0x31`
 
 **测试策略**：

@@ -57,7 +57,7 @@ public SizedPtr Append(uint tag, ReadOnlySpan<byte> payload) {
 Facade 只做状态管理，**不需要验证其委托的底层实现细节**。
 
 **RbfRawOps 的职责**：
-- 帧布局序列化（@[F-FRAMEBYTES-FIELD-OFFSETS]）
+- 帧布局序列化（@[F-FRAMEBYTES-LAYOUT]）
 - CRC 计算（@[F-CRC32C-COVERAGE]）
 - 对齐保证（@[S-RBF-DECISION-4B-ALIGNMENT-ROOT]）
 - ArrayPool 租用逻辑
@@ -83,8 +83,8 @@ Facade 只做状态管理，**不需要验证其委托的底层实现细节**。
 
 **Assert 方法**（留在此类中）：
 - `AssertAlignment(ptr, tailOffset)` — @[S-RBF-DECISION-4B-ALIGNMENT-ROOT]
-- `AssertFence(data, offset)` — @[F-FENCE-VALUE-IS-RBF1-ASCII-4B]
-- `AssertHeadTailSymmetry(data, offset, headLen)` — @[F-FRAMEBYTES-FIELD-OFFSETS]
+- `AssertFence(data, offset)` — @[F-FENCE-RBF1-ASCII-4B]
+- `AssertHeadTailSymmetry(data, offset, headLen)` — @[F-FRAMEBYTES-LAYOUT]
 - `AssertCrc(data, offset, headLen)` — @[F-CRC32C-COVERAGE]
 
 **测试模板**：

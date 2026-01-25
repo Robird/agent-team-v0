@@ -96,12 +96,12 @@
 
 1. **帧布局 v0.40**（Breaking Change）：
    - 旧：`[HeadLen][Tag][Payload][Status][TailLen][CRC]`
-   - 新：`[HeadLen][Payload][UserMeta][Padding][PayloadCrc][TrailerCodeword(16B)]`
+   - 新：`[HeadLen][Payload][TailMeta][Padding][PayloadCrc][TrailerCodeword(16B)]`
    - TrailerCodeword = `[TrailerCrc(4)][FrameDescriptor(4)][FrameTag(4)][TailLen(4)]`
    - Tag 从头部移至 TrailerCodeword（支持 ScanReverse 单次读取）
 
 2. **双 CRC 机制**：
-   - PayloadCrc32C：覆盖 Payload + UserMeta + Padding，LE 存储
+   - PayloadCrc32C：覆盖 Payload + TailMeta + Padding，LE 存储
    - TrailerCrc32C：覆盖 FrameDescriptor + FrameTag + TailLen，BE 存储
    - 使用 RollingCrc.SealCodewordBackward 实现后向 CRC
 
@@ -112,7 +112,7 @@
    - 损坏帧硬停止，TerminationError 记录错误
 
 4. **新增类型**：
-   - `RbfFrameInfo`：轻量帧元信息（Ticket, Tag, PayloadLength, UserMetaLength, IsTombstone）
+   - `RbfFrameInfo`：轻量帧元信息（Ticket, Tag, PayloadLength, TailMetaLength, IsTombstone）
    - `TrailerCodewordHelper`：TrailerCodeword 编解码辅助类
    - `TrailerCodewordData`：解析结果结构体
 
@@ -214,8 +214,8 @@
 
 **关键不变量验证**：
 - 4B 对齐根不变量（@[S-RBF-DECISION-4B-ALIGNMENT-ROOT]）
-- HeadLen/TailLen 对称性（@[F-FRAMEBYTES-FIELD-OFFSETS]）
-- Fence 字节验证（@[F-FENCE-VALUE-IS-RBF1-ASCII-4B]）
+- HeadLen/TailLen 对称性（@[F-FRAMEBYTES-LAYOUT]）
+- Fence 字节验证（@[F-FENCE-RBF1-ASCII-4B]）
 - CRC32C 覆盖范围（@[F-CRC32C-COVERAGE]）
 
 ### Stage 02: 常量与 Fence（2026-01-14）

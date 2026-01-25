@@ -16,7 +16,7 @@
 
 ## 规范要点摘要
 
-### Fence 常量（来自 rbf-format.md @[F-FENCE-VALUE-IS-RBF1-ASCII-4B]）
+### Fence 常量（来自 rbf-format.md @[F-FENCE-RBF1-ASCII-4B]）
 - **值**：`RBF1`（ASCII: `0x52 0x42 0x46 0x31`）
 - **长度**：4 字节
 - **编码**：ASCII 字节序列（非 u32 端序）

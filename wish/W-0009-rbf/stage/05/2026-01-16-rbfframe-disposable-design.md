@@ -255,9 +255,7 @@ public readonly ref struct RbfFrame : IDisposable {
 ```csharp
 // atelia/src/Rbf/Internal/RbfReadImpl.cs
 
-/// <summary>
-/// 从 ArrayPool 借缓存读取帧。调用方 MUST 调用 Dispose() 归还 buffer。
-/// </summary>
+/// <summary>从 ArrayPool 借缓存读取帧。调用方 MUST 调用 Dispose() 归还 buffer。</summary>
 public static AteliaResult<RbfFrame> ReadFramePooled(SafeFileHandle file, SizedPtr ptr) {
     // 1. 复用现有校验（不检查 buffer 长度）
     var error = CheckReadParamsWithoutBuffer(ptr);
@@ -630,9 +628,7 @@ public readonly ref struct RbfFrame : IDisposable {
 ```csharp
 // atelia/src/Rbf/Internal/RbfReadImpl.cs
 
-/// <summary>
-/// 从 ArrayPool 借缓存读取帧。调用方 MUST 调用 Dispose() 归还 buffer。
-/// </summary>
+/// <summary>从 ArrayPool 借缓存读取帧。调用方 MUST 调用 Dispose() 归还 buffer。</summary>
 public static AteliaResult<RbfFrame> ReadFramePooled(SafeFileHandle file, SizedPtr ptr) {
     // 1. 参数校验（复用现有逻辑，但不检查 buffer 长度）
     var error = CheckReadParamsWithoutBuffer(ptr);

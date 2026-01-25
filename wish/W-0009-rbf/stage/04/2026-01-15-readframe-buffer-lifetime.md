@@ -14,9 +14,7 @@
 ### 设计文档的意图（rbf-interface.md @[A-RBF-FRAME-STRUCT]）
 
 ```csharp
-/// <summary>
-/// RBF 帧数据结构。
-/// </summary>
+/// <summary>RBF 帧数据结构。</summary>
 /// <remarks>
 /// <para>只读引用结构，生命周期受限于产生它的 Scope（如 ReadFrame 的 buffer）。</para>
 /// </remarks>

@@ -55,7 +55,7 @@
 - `EndAppend` 提交帧
 - Auto-Abort（Dispose 未 EndAppend 时）
 - 单 Builder 约束
-- UserMeta 支持
+- TailMeta 支持
 - 对应的单元测试
 
 ---

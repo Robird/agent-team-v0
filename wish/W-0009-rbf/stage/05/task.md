@@ -94,9 +94,7 @@ internal sealed record RbfBufferTooSmallError(
 
 2. 创建 `atelia/src/Rbf/Internal/RbfRawOps.ValidateAndParse.cs`，实现：
    ```csharp
-   /// <summary>
-   /// 校验并解析已读入 buffer 的帧数据。
-   /// </summary>
+   /// <summary>校验并解析已读入 buffer 的帧数据。</summary>
    /// <param name="ptr">帧位置凭据（用于构造 RbfFrame.Ptr）。</param>
    /// <param name="frameBytes">已读入的帧字节，长度 MUST >= ptr.LengthBytes（只使用前 LengthBytes 字节）。</param>
    /// <returns>校验通过则返回 RbfFrame（Payload 为 frameBytes 的切片），否则返回错误。</returns>
@@ -131,9 +129,7 @@ internal sealed record RbfBufferTooSmallError(
 1. 创建 `atelia/src/Rbf/Internal/RbfRawOps.ReadRaw.cs`
 2. 实现：
    ```csharp
-   /// <summary>
-   /// 原始读取：仅执行 I/O，不校验。
-   /// </summary>
+   /// <summary>原始读取：仅执行 I/O，不校验。</summary>
    /// <param name="file">文件句柄。</param>
    /// <param name="ptr">帧位置凭据。</param>
    /// <param name="buffer">目标 buffer，长度 MUST >= ptr.LengthBytes。</param>
@@ -166,9 +162,7 @@ internal sealed record RbfBufferTooSmallError(
    - 移除旧的 `ReadFrame(SafeFileHandle file, SizedPtr ptr)` 实现
    - 添加新的 `ReadFrameInto`：
    ```csharp
-   /// <summary>
-   /// 将帧读入调用方提供的 buffer，返回解析后的 RbfFrame。
-   /// </summary>
+   /// <summary>将帧读入调用方提供的 buffer，返回解析后的 RbfFrame。</summary>
    /// <param name="file">文件句柄。</param>
    /// <param name="ptr">帧位置凭据。</param>
    /// <param name="buffer">调用方提供的 buffer，长度 MUST >= ptr.LengthBytes。</param>
@@ -210,7 +204,7 @@ internal sealed record RbfBufferTooSmallError(
 | 条款 | 文档 | 要点 |
 |------|------|------|
 | @[A-RBF-FRAME-STRUCT] | rbf-interface.md | RbfFrame 结构定义 |
-| @[F-FRAMEBYTES-FIELD-OFFSETS] | rbf-format.md | FrameBytes 布局 |
+| @[F-FRAMEBYTES-LAYOUT] | rbf-format.md | FrameBytes 布局 |
 | @[F-CRC32C-COVERAGE] | rbf-format.md | CRC 覆盖范围 |
 
 ---

@@ -11,7 +11,7 @@
 |------|------|------|
 | @[A-RBF-IRBFFILE-SHAPE] | rbf-interface.md | `ReadFrame(SizedPtr) → AteliaResult<RbfFrame>` |
 | @[A-RBF-FRAME-STRUCT] | rbf-interface.md | RbfFrame 结构定义 |
-| @[F-FRAMEBYTES-FIELD-OFFSETS] | rbf-format.md | FrameBytes 布局 |
+| @[F-FRAMEBYTES-LAYOUT] | rbf-format.md | FrameBytes 布局 |
 | @[F-CRC32C-COVERAGE] | rbf-format.md | CRC 覆盖范围 |
 | @[F-FRAMING-FAIL-REJECT] | rbf-format.md | Framing 校验失败策略 |
 | @[F-CRC-FAIL-REJECT] | rbf-format.md | CRC 校验失败策略 |
@@ -76,18 +76,14 @@
 1. 修改 `atelia/src/Rbf/Internal/FrameStatusHelper.cs`，添加：
 
 ```csharp
-/// <summary>
-/// 从 FrameStatus 字节解码信息。
-/// </summary>
+/// <summary>从 FrameStatus 字节解码信息。</summary>
 /// <param name="statusByte">FrameStatus 的任意一个字节（@[F-FRAMESTATUS-FILL] 保证全字节同值）。</param>
 /// <param name="isTombstone">输出：是否为墓碑帧（Bit7）。</param>
 /// <param name="statusLen">输出：StatusLen（1-4，来自 Bit1-0 + 1）。</param>
 /// <returns>true 如果解码成功（保留位 Bit6-2 为零），false 如果保留位非零。</returns>
 internal static bool TryDecodeStatusByte(byte statusByte, out bool isTombstone, out int statusLen);
 
-/// <summary>
-/// 验证 FrameStatus 区域的所有字节是否一致（@[F-FRAMESTATUS-FILL]）。
-/// </summary>
+/// <summary>验证 FrameStatus 区域的所有字节是否一致（@[F-FRAMESTATUS-FILL]）。</summary>
 internal static bool ValidateStatusBytesConsistent(ReadOnlySpan<byte> statusRegion);
 ```
 

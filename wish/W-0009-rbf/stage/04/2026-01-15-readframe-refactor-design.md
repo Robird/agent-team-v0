@@ -149,9 +149,7 @@ byte[] payloadArray = new byte[payloadLen];
 
 ```csharp
 // ======================== 公开 API ========================
-/// <summary>
-/// 将帧读入调用方提供的 buffer，返回解析后的 RbfFrame。
-/// </summary>
+/// <summary>将帧读入调用方提供的 buffer，返回解析后的 RbfFrame。</summary>
 /// <remarks>
 /// <para><b>生命周期警告</b>：返回的 RbfFrame.Payload 直接引用 buffer，
 /// 调用方 MUST 确保 buffer 在使用 Payload 期间有效。</para>
