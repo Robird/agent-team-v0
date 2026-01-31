@@ -270,6 +270,11 @@
     - Task 6.7: ReadTrailerBefore（21 测试，168 总计）
     - Task 6.8: RbfReverseEnumerator + RbfReverseSequence（171 总计）
 
+    **CRC API 重构**（2026-01-24）：
+    - 删除 `Crc32CHelper`，统一使用 `RollingCrc`
+    - API 映射：`Init()` → `DefaultInitValue`，`Update()` → `CrcForward()`，`Finalize()` → `^DefaultFinalXor`，`Compute()` → `CrcForward(span)`
+    - 测试调整：Rbf.Tests 168 通过（删除 Crc32CHelperTests），Data.Tests 173 通过
+
 ### LLM Agent 完工标准差距分析（2026-01-17）[I-IMP-33]
 
 > 从人类打磨 RBF Stage 05 代码中提炼的 6 个关键差距
