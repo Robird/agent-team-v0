@@ -1,6 +1,7 @@
 # Investigator 认知索引
 
 > 最后更新: 2026-01-24
+> - 2026-01-24: Memory Palace — 处理了 4 条便签（Session Log 归档周期洞见 + RBF 布局常量锚点 + TrailerCodewordHelper 双写 Gotcha + 最小帧长度导航）
 > - 2026-01-24: Memory Maintenance — 归档 2026-01 早期 Session Log（01-01~01-12，压缩 ~420 行）
 > - 2026-01-24: Memory Palace — 处理了 1 条便签（RBF Stage 06 代码地图锚点汇总：写入/读取路径、v0.40 待改动类、ScanReverse 骨架）
 > - 2026-01-24: Memory Palace — 处理了 3 条便签（RollingCrc32C SIMD 优化调研：PCLMULQDQ 路径 + Gather 陷阱 + .NET API 锚点）
@@ -18,6 +19,36 @@
 - [ ] atelia-copilot-chat
 
 ## Session Log
+
+### 2026-01-24: RBF 布局常量锚点 + 最小帧长度导航
+**类型**: Anchor + Route
+**项目**: RBF
+
+#### 布局常量定义位置锚点
+
+| 常量类别 | 位置 | 备注 |
+|:---------|:-----|:-----|
+| 全局基元 | [RbfLayout.cs#L17-L42](atelia/src/Rbf/Internal/RbfLayout.cs#L17-L42) | Alignment, FenceSize, TrailerCodewordSize, MinFrameLength |
+| 帧计算 | [RbfLayout.cs#L51-L130](atelia/src/Rbf/Internal/RbfLayout.cs#L51-L130) | FrameLayout 结构体，FixedOverhead, Offsets |
+| TrailerCodeword | [TrailerCodewordHelper.cs#L59-L73](atelia/src/Rbf/Internal/TrailerCodewordHelper.cs#L59-L73) | Size, 内部偏移, Masks |
+
+#### "RBF 最小帧长度"导航路径
+
+1. 先看 `RbfLayout.MinFrameLength`（当前值 24，但是魔数）
+2. 理解组成：`HeadLen(4) + PayloadCrc(4) + TrailerCodeword(16) = 24`
+3. 对应 `FrameLayout.FixedOverhead`（正确派生）
+4. 规范来源：@[F-FRAMEBYTES-FIELD-OFFSETS]
+
+#### Gotcha: TrailerCodewordHelper.Size 与 RbfLayout.TrailerCodewordSize 双写
+
+| 问题 | 后果 | 规避 |
+|:-----|:-----|:-----|
+| 两个独立的 `= 16` 定义，无派生关系 | 修改其一忘记另一会导致不一致，代码中混用两者 | `TrailerCodewordHelper.Size` 应改为 `= RbfLayout.TrailerCodewordSize` |
+
+**置信度**: ✅ 验证过
+
+---
+
 ### 2026-01-24: RBF Stage 06 代码地图锚点汇总
 **类型**: Anchor
 **项目**: RBF
@@ -210,5 +241,14 @@ while (pos > HeaderOnlyLength) {
 > **覆盖范围**: 2025-12-09 ~ 2025-12-24
 > **内容概要**: 项目现状核实（PieceTreeSharp/DocUI/PipeMux/atelia-prototypes）、StateJournal 更名迁移、RBF v0.12 变更适配、mvp-design-v2 决策引用分析、DocUI 研讨会发言、畅谈会参与（Tool-As-Command/错误反馈模式/MVP设计/写入路径）
 > **归档原因**: 实例类调查记录，已沉淀为 handoff/wiki，保留指针即可
+
+## 可迁移洞见
+
+### 归档周期建议 (2026-01-24)
+
+**Investigator 的 Session Log 归档周期可设为 ~2 周**，因调查类记录一旦沉淀为 handoff，原始经过记录的复用价值下降。
+
+- 触发信号：行数超过 500 行建议线
+- 本次实践：641 → 223 行（-65%），归档 2026-01-01~01-12
 
 ## Key Deliverables
