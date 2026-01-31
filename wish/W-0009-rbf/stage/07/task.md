@@ -62,25 +62,29 @@ Tombstone Auto-Abort 路径的 I/O 可能失败（磁盘满等）。采用策略
 
 ### Decision 7.E: PayloadCrc 增量计算方案
 
-**结论**：采用 **CRC Skip Bytes** 方案。
+**结论**：采用 **合并 Sink** 方案——将 `RandomAccessByteSink` 和 CRC 计算合并为 `RbfWriteSink`。
+
+**设计理由**：
+1. `RandomAccessByteSink` 和 `Crc32cByteSink` 都是 RBF 内部专用，不独立复用
+2. 在 RBF Builder 场景，"写入文件 + 计算 CRC"是**内聚的单一职责**——"帧数据的可靠持久化"
+3. 分离的 wrapper 模式是**过度设计**，增加了无谓的间接层
+4. 合并后简化类型体系，减少认知负担
 
 **设计要点**：
-1. `Crc32cByteSink` 构造时指定 `skipBytes`（跳过 CRC 累积的前 N 字节）
-2. `Push()` 时：数据完整传递给 `_inner.Push()`，但 CRC 只累积跳过后的部分
-3. HeadLen 作为 reservation 放在帧开头，`skipBytes = HeadLenSize (4)`
+1. `RbfWriteSink` 构造时指定 `crcSkipBytes`（跳过 CRC 累积的前 N 字节）
+2. `Push()` 时：数据写入文件 + 跳过前 N 字节后累积 CRC
+3. HeadLen 作为 reservation 放在帧开头，`crcSkipBytes = HeadLenSize (4)`
 4. CRC 只覆盖 Payload + TailMeta（符合 @[F-PAYLOAD-CRC-COVERAGE]）
 
 **关键特性**：
 - HeadLen reservation 阻塞 `SinkReservableWriter` 的 flush
 - 整帧数据在内存中，支持 **Zero-IO 取消**（无论 Payload 多大）
-- `_inner.Push()` 完全透明，不受 skip 逻辑影响
 - 保留流式写入演进可能性（可逆决策）
 
 **数据流**：
 ```
 SinkReservableWriter
-    → Crc32cByteSink(skipBytes=4)  // CRC 跳过前 4 字节
-        → RandomAccessByteSink(frameStart)
+    → RbfWriteSink(frameStart, crcSkipBytes=4)  // 直接写文件 + CRC 跳过前 4 字节
 
 写入顺序：[HeadLen(reservation)] → [Payload + TailMeta] → [Padding + Tail]
                   ↑                        ↑
@@ -94,7 +98,7 @@ SinkReservableWriter
 **结论**：Builder 写入过程中检查 Payload+TailMeta 上限。
 
 **实现**：
-- `Crc32cByteSink.Push()` 内部累计已写入字节数
+- `RbfWriteSink.Push()` 内部累计已写入字节数
 - 若超过 `MaxPayloadAndMetaLength` 抛出 `InvalidOperationException`
 - 抛出后 Builder 状态变为"已损坏"，`Dispose()` 执行 Auto-Abort
 
@@ -113,38 +117,56 @@ SinkReservableWriter
 
 ### Part A: 核心基础设施
 
-#### Task 7.1: 实现 Crc32cByteSink（CRC 累积 Sink Wrapper）
+#### Task 7.1: 实现 RbfWriteSink（合并 RandomAccessByteSink + CRC 计算）
 
 **执行者**：Implementer
 **依赖**：无
 
 **任务简报**：
-创建 `atelia/src/Rbf/Internal/Crc32cByteSink.cs`，实现带 skip 功能的 CRC 累积 `IByteSink` 包装器。
+将 `atelia/src/Rbf/Internal/RandomAccessByteSink.cs` 重构为 `RbfWriteSink.cs`，合并文件写入和 CRC 计算功能。
 
 **设计说明**：
-- 包装 `RandomAccessByteSink` 作为底层写入
-- 支持 `skipBytes` 参数：前 N 字节不参与 CRC 累积，但仍传递给 `_inner.Push()`
-- `_inner.Push()` 完全透明，数据和调用次数不受 skip 逻辑影响
+- 合并 `RandomAccessByteSink` 和原计划的 `Crc32cByteSink` 为单一类型
+- 支持 `crcSkipBytes` 参数：前 N 字节不参与 CRC 累积，但仍写入文件
+- 实现 `IByteSink` 接口，供 `SinkReservableWriter` 使用
+
+**合并理由**：
+- 两者都是 RBF 内部专用，不独立复用
+- "写入文件 + 计算 CRC"在 RBF 业务语义上是单一职责
+- 减少类型数量和间接层，简化类型体系
 
 **类结构**：
 ```csharp
-internal sealed class Crc32cByteSink : IByteSink {
-    private readonly IByteSink _inner;
-    private readonly int _skipBytes;       // 跳过 CRC 的前 N 字节
+internal sealed class RbfWriteSink : IByteSink {
+    private readonly SafeFileHandle _file;
+    private readonly int _crcSkipBytes;    // 跳过 CRC 的前 N 字节
+    private long _writeOffset;
     private int _skippedSoFar;             // 已跳过的字节数
     private uint _crc = RollingCrc.DefaultInitValue;
     private long _totalWritten;
     
-    public Crc32cByteSink(IByteSink inner, int skipBytes = 0);
+    public RbfWriteSink(SafeFileHandle file, long startOffset, int crcSkipBytes = 0);
+    
+    /// <summary>当前写入位置（byte offset）</summary>
+    public long CurrentOffset => _writeOffset;
+    
+    /// <summary>累计写入字节数（含 skipped 部分）</summary>
+    public long TotalWritten => _totalWritten;
+    
+    /// <summary>参与 CRC 计算的字节数（不含 skipped 部分）</summary>
+    public long CrcCoveredLength => _totalWritten - _crcSkipBytes;
     
     public void Push(ReadOnlySpan<byte> data) {
-        // 1. 数据完整传递给 inner（不受 skip 影响）
-        _inner.Push(data);
+        if (data.IsEmpty) { return; }
+        
+        // 1. 写入文件
+        RandomAccess.Write(_file, data, _writeOffset);
+        _writeOffset += data.Length;
         _totalWritten += data.Length;
         
-        // 2. CRC 累积时跳过前 skipBytes 字节
-        if (_skippedSoFar < _skipBytes) {
-            int toSkip = Math.Min(data.Length, _skipBytes - _skippedSoFar);
+        // 2. CRC 累积（跳过前 crcSkipBytes 字节）
+        if (_skippedSoFar < _crcSkipBytes) {
+            int toSkip = Math.Min(data.Length, _crcSkipBytes - _skippedSoFar);
             _skippedSoFar += toSkip;
             data = data.Slice(toSkip);
         }
@@ -154,16 +176,10 @@ internal sealed class Crc32cByteSink : IByteSink {
         }
     }
     
-    /// <summary>获取当前累积的 CRC（已 Finalize）。</summary>
+    /// <summary>获取当前累积的 CRC（已 Finalize）</summary>
     public uint GetCrc() => _crc ^ RollingCrc.DefaultFinalXor;
     
-    /// <summary>获取累计写入字节数（含 skipped 部分）。</summary>
-    public long GetTotalWritten() => _totalWritten;
-    
-    /// <summary>获取参与 CRC 计算的字节数（不含 skipped 部分）。</summary>
-    public long GetCrcCoveredLength() => _totalWritten - _skipBytes;
-    
-    /// <summary>继续累积 CRC（用于 Padding 等，不经过 inner）。</summary>
+    /// <summary>继续累积 CRC（用于 Padding 等，不写入文件）</summary>
     public void UpdateCrc(ReadOnlySpan<byte> data) {
         _crc = RollingCrc.CrcForward(_crc, data);
     }
@@ -173,13 +189,14 @@ internal sealed class Crc32cByteSink : IByteSink {
 **验收标准**：
 - [ ] 编译通过
 - [ ] 实现 `IByteSink` 接口
-- [ ] `skipBytes=0` 时，行为与普通 CRC wrapper 一致
-- [ ] `skipBytes>0` 时，前 N 字节不参与 CRC，但仍传递给 `_inner`
+- [ ] `crcSkipBytes=0` 时，行为与原 `RandomAccessByteSink` + 全量 CRC 一致
+- [ ] `crcSkipBytes>0` 时，前 N 字节不参与 CRC，但仍写入文件
 - [ ] 跨 `Push()` 调用的 skip 逻辑正确（累积 `_skippedSoFar`）
 - [ ] `GetCrc()` 返回正确的 Finalize 后 CRC
-- [ ] `GetTotalWritten()` 返回总字节数（含 skipped）
-- [ ] `GetCrcCoveredLength()` 返回 CRC 覆盖的字节数
+- [ ] `TotalWritten` 返回总字节数（含 skipped）
+- [ ] `CrcCoveredLength` 返回 CRC 覆盖的字节数
 - [ ] 单元测试：验证 skip 逻辑正确性
+- [ ] 删除旧的 `RandomAccessByteSink.cs`
 
 ---
 
@@ -192,8 +209,7 @@ internal sealed class Crc32cByteSink : IByteSink {
 完善 `atelia/src/Rbf/RbfFrameBuilder.cs`，将其改为 `sealed class` 并直接实现所有逻辑。
 
 **设计说明（关键：HeadLen reservation + CRC skip）**：
-- `RandomAccessByteSink` 的 `startOffset = frameStart`（从帧起点开始）
-- `Crc32cByteSink` 包装它，`skipBytes = HeadLenSize (4)`（CRC 跳过 HeadLen）
+- `RbfWriteSink` 的 `startOffset = frameStart`，`crcSkipBytes = HeadLenSize (4)`
 - HeadLen 作为 **reservation** 放在帧开头（阻塞 flush，支持 Zero-IO 取消）
 - 复用 `SinkReservableWriter`（流式写入 + reservation）
 
@@ -202,8 +218,7 @@ internal sealed class Crc32cByteSink : IByteSink {
 public sealed class RbfFrameBuilder : IDisposable {
     private readonly SafeFileHandle _handle;
     private readonly long _frameStart;
-    private readonly RandomAccessByteSink _rawSink;      // startOffset = _frameStart
-    private readonly Crc32cByteSink _crcSink;            // skipBytes = HeadLenSize
+    private readonly RbfWriteSink _sink;                 // 合并的文件写入 + CRC 计算
     private readonly SinkReservableWriter _writer;
     private readonly int _headLenReservationToken;       // HeadLen 的 reservation token
     private readonly Action<long> _onCommitCallback;     // 通知 RbfFileImpl 更新 TailOffset
@@ -225,10 +240,9 @@ public sealed class RbfFrameBuilder : IDisposable {
 ```
 
 **构造函数逻辑**：
-1. 创建 `RandomAccessByteSink(handle, frameStart)`
-2. 创建 `Crc32cByteSink(rawSink, skipBytes: HeadLenSize)`
-3. 创建 `SinkReservableWriter(crcSink, ...)`
-4. **预留 HeadLen**：`_writer.ReserveSpan(HeadLenSize, out _headLenReservationToken)`
+1. 创建 `RbfWriteSink(handle, frameStart, crcSkipBytes: HeadLenSize)`
+2. 创建 `SinkReservableWriter(_sink, ...)`
+3. **预留 HeadLen**：`_writer.ReserveSpan(HeadLenSize, out _headLenReservationToken)`
 
 **EndAppend 前置条件**（MUST 在写尾部前验证）：
 1. `_writer.PendingReservationCount == 1`（只剩 HeadLen reservation）
@@ -237,10 +251,10 @@ public sealed class RbfFrameBuilder : IDisposable {
 
 **EndAppend 逻辑**（10 步）：
 1. 验证前置条件
-2. 获取 `payloadAndMetaLength = _crcSink.GetCrcCoveredLength()`（不含 HeadLen）
+2. 获取 `payloadAndMetaLength = _sink.CrcCoveredLength`（不含 HeadLen）
 3. 计算 `FrameLayout(payloadAndMetaLength - tailMetaLength, tailMetaLength)`
-4. 写入 Padding（0 字节）到 `_writer`，同时通过 `_crcSink.UpdateCrc()` 累积
-5. 从 `_crcSink.GetCrc()` 获取 PayloadCrc32C
+4. 写入 Padding（0 字节）到 `_writer`，同时通过 `_sink.UpdateCrc()` 累积
+5. 从 `_sink.GetCrc()` 获取 PayloadCrc32C
 6. 构建 Tail buffer（PayloadCrc + Trailer + Fence），写入 `_writer`
 7. **回填 HeadLen**：获取 reservation span，写入 `frameLength`，调用 `Commit(_headLenReservationToken)`
 8. 此时 `SinkReservableWriter` 会 flush 全部数据到磁盘
