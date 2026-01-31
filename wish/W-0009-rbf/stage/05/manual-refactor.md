@@ -110,7 +110,7 @@ public sealed class RbfPooledFrame : IRbfFrame, IDisposable {
 
 **生命周期契约**:
 - 调用方 **MUST** 调用 `Dispose()` 归还 buffer
-- Dispose 后 `Payload` 变为 dangling，访问将抛 `ObjectDisposedException`
+- Dispose 后 `PayloadAndMeta` 变为 dangling，访问将抛 `ObjectDisposedException`
 
 ### RbfReadImpl
 

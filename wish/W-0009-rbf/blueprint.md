@@ -68,7 +68,7 @@
 
 **交付物**：
 - `BeginAppend` 返回 `RbfFrameBuilder`
-- `RbfFrameBuilder.Payload` (IReservableBufferWriter) 集成
+- `RbfFrameBuilder.PayloadAndMeta` (IReservableBufferWriter) 集成
 - `EndAppend` 提交帧
 - Auto-Abort（Dispose 未 EndAppend 时）
 - 单 Builder 约束

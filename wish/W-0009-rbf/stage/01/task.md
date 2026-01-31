@@ -53,7 +53,7 @@
 1. `atelia/src/Rbf/IRbfFile.cs` - 接口定义
 2. `atelia/src/Rbf/RbfFile.cs` - 静态工厂类（`CreateNew`, `OpenExisting`）
 3. `atelia/src/Rbf/RbfFrame.cs` - `readonly ref struct`
-4. `atelia/src/Rbf/RbfFrameBuilder.cs` - `ref struct`，含 `Payload` 属性和 `EndAppend`/`Dispose` 方法
+4. `atelia/src/Rbf/RbfFrameBuilder.cs` - `ref struct`，含 `PayloadAndMeta` 属性和 `EndAppend`/`Dispose` 方法
 5. `atelia/src/Rbf/RbfReverseSequence.cs` - `ref struct`，含 `GetEnumerator`
 6. `atelia/src/Rbf/RbfReverseEnumerator.cs` - `ref struct`，含 `Current`/`MoveNext`
 

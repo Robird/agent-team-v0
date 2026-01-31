@@ -114,7 +114,7 @@ AteliaResult<RbfPooledFrame> ReadPooledFrame(SafeFileHandle file, SizedPtr ticke
 
 **优点（类型安全/误用防护）**
 - 可以用返回类型把"你拿不到 payload"写进类型系统里，避免 flags/if 分支散落在上层：
-  - 返回 `RbfTailMetaFrame`（`readonly ref struct`）只暴露 `TailMeta`，不给 `Payload`/`PayloadAndMeta`，误用面直接收敛。
+  - 返回 `RbfTailMeta`（`readonly ref struct`）只暴露 `TailMeta`，不给 `Payload`/`PayloadAndMeta`，误用面直接收敛。
   - pooled 版本返回 `RbfPooledTailMeta`，只租 `TailMetaLength` 那么大，避免大帧场景下"为了看 200B meta 租 10GB buffer"的灾难。
 
 **实现复杂度（可控）**
@@ -126,8 +126,8 @@ AteliaResult<RbfPooledFrame> ReadPooledFrame(SafeFileHandle file, SizedPtr ticke
 
 **我建议的变体（让 API 更好用且更省 I/O）**
 - 两组重载（和现有 ReadFrame/ReadPooledFrame 的风格一致）：
-  - `ReadTailMeta(file, ticket, buffer)` → `AteliaResult<RbfTailMetaFrame>`（无需先 ScanReverse，适合"我手上只有 ticket"的场景）
-  - `ReadTailMeta(file, info, buffer)` → `AteliaResult<RbfTailMetaFrame>`（走 ScanReverse pipeline 的热路径，避免重复读 trailer）
+  - `ReadTailMeta(file, ticket, buffer)` → `AteliaResult<RbfTailMeta>`（无需先 ScanReverse，适合"我手上只有 ticket"的场景）
+  - `ReadTailMeta(file, info, buffer)` → `AteliaResult<RbfTailMeta>`（走 ScanReverse pipeline 的热路径，避免重复读 trailer）
   - `ReadPooledTailMeta(file, ticket)` / `ReadPooledTailMeta(file, info)`（只租 TailMetaLength）
 - 语义上明确：**只保证 TrailerCrc/framing 校验，不做 PayloadCrc**（这点必须写进 XML doc/规范条款里，防止上层误把它当"数据完整性保证"）。
 
@@ -153,7 +153,7 @@ AteliaResult<RbfPooledFrame> ReadPooledFrame(SafeFileHandle file, SizedPtr ticke
 - **我倾向：方案 A（专用 ReadTailMeta）**，并强烈建议"Span 版 + Pooled 版"都提供，且 pooled 版只租 TailMetaLen。  
 - **不建议：方案 B（bool + flags 把 ReadFrame 做成多模式）**，它会破坏接口正交性与 `ReadFrame` 的稳定语义，长期会把上层代码拖进 flags 地狱。
 
-如果团队希望"减少类型数量"，我也给一个折中替代：`ReadTailMeta(..., Span<byte> buffer)` 返回 `int`（写入字节数），其余元信息让调用方从 `RbfFrameInfo` 取；但我个人仍更喜欢 `RbfTailMetaFrame` 这种"类型即约束"的方案（误用面最小）。
+如果团队希望"减少类型数量"，我也给一个折中替代：`ReadTailMeta(..., Span<byte> buffer)` 返回 `int`（写入字节数），其余元信息让调用方从 `RbfFrameInfo` 取；但我个人仍更喜欢 `RbfTailMeta` 这种"类型即约束"的方案（误用面最小）。
 
 ---
 
@@ -197,7 +197,7 @@ Craftsman 提到的"只保证 TrailerCrc/framing 校验，不做 PayloadCrc"，�
 
 #### 4. 关于类型设计的补充
 
-Craftsman 建议的 `RbfTailMetaFrame` 我同意其方向。但有一个细节：它是否需要暴露 `Ticket`？
+Craftsman 建议的 `RbfTailMeta` 我同意其方向。但有一个细节：它是否需要暴露 `Ticket`？
 
 - 如果暴露：上层可以拿着这个 Ticket 去 `ReadFrame` 读取完整帧
 - 如果不暴露：更强的封装，但上层需要自己维护 Ticket 与 TailMeta 的关联
@@ -211,7 +211,7 @@ Craftsman 建议的 `RbfTailMetaFrame` 我同意其方向。但有一个细节�
   1. 在规范中显式定义 TailMeta 的身份（独立元数据域 vs Payload 附属物）
   2. 在 API 文档中显式声明信任层次（L2: TrailerCrc，非 L3: PayloadCrc）
   3. 明确 `TailMetaLength = 0` 的行为
-  4. `RbfTailMetaFrame` 应暴露 `Ticket` 以支持"预览→完整读取"工作流
+  4. `RbfTailMeta` 应暴露 `Ticket` 以支持"预览→完整读取"工作流
 
 ---
 
@@ -233,13 +233,13 @@ Craftsman 说"调用者看到方法名就知道"——这正是我最看重的�
 
 我的经验法则：**如果参数改变的是"做什么"而非"怎么做"，就应该是独立方法**。
 
-#### 2. 类型设计：`RbfTailMetaFrame` 应该"诚实地贫瘠"
+#### 2. 类型设计：`RbfTailMeta` 应该"诚实地贫瘠"
 
 Craftsman 建议用独立类型避免误用，我完全同意，但想强调一点：
 
 **类型的字段清单就是对用户的承诺**。
 
-建议 `RbfTailMetaFrame` 只暴露：
+建议 `RbfTailMeta` 只暴露：
 - `Ticket`（Seeker 提的，支持"预览→完整读取"工作流）
 - `Tag`
 - `TailMeta`（`ReadOnlySpan<byte>`）
@@ -252,7 +252,7 @@ Craftsman 建议用独立类型避免误用，我完全同意，但想强调一�
 Seeker 提出的 L1/L2/L3 信任模型很有价值，但不应只写在文档里——应该**编进类型系统或错误码**。
 
 建议：
-- `ReadTailMeta` 成功时返回的类型本身就叫 `RbfTailMetaFrame`（不叫 `RbfFrame`），用**类型名告诉用户"你拿到的是元数据，不是完整帧"**
+- `ReadTailMeta` 成功时返回的类型本身就叫 `RbfTailMeta`（不叫 `RbfFrame`），用**类型名告诉用户"你拿到的是元数据，不是完整帧"**
 - 如果用户拿着 `TailMetaFrame` 的 `Ticket` 去 `ReadFrame`，然后 PayloadCrc 校验失败，错误码应该明确说 `PayloadCorrupted`——这时用户会意识到"原来预览不保证 Payload 完整性"
 
 这是我说的 **Error as Navigation**——错误消息不是死胡同，而是路标。
@@ -276,7 +276,7 @@ Seeker 提出的 L1/L2/L3 信任模型很有价值，但不应只写在文档里
 | 议题 | 决议 |
 |:-----|:-----|
 | API 选择 | 新增专用 `ReadTailMeta()`，不扩展现有 `ReadFrame` |
-| 返回类型 | 新建 `RbfTailMetaFrame`（ref struct）+ `RbfPooledTailMeta`（class） |
+| 返回类型 | 新建 `RbfTailMeta`（ref struct）+ `RbfPooledTailMeta`（class） |
 | CRC 策略 | 只做 TrailerCrc（L2 信任），显式声明不做 PayloadCrc |
 | `TailMetaLength = 0` | 返回成功 + 空 Span |
 
@@ -284,7 +284,7 @@ Seeker 提出的 L1/L2/L3 信任模型很有价值，但不应只写在文档里
 
 ```csharp
 /// <summary>TailMeta 预览结果（L2 信任级别：仅保证 TrailerCrc）。</summary>
-public readonly ref struct RbfTailMetaFrame {
+public readonly ref struct RbfTailMeta {
     public SizedPtr Ticket { get; init; }     // 支持"预览→完整读取"工作流
     public uint Tag { get; init; }
     public ReadOnlySpan<byte> TailMeta { get; init; }
@@ -297,11 +297,11 @@ public readonly ref struct RbfTailMetaFrame {
 
 ```csharp
 // IRbfFile 扩展
-RbfTailMetaFrame ReadTailMeta(RbfFrameInfo info, Span<byte> buffer);
+RbfTailMeta ReadTailMeta(RbfFrameInfo info, Span<byte> buffer);
 RbfPooledTailMeta ReadPooledTailMeta(RbfFrameInfo info);
 
 // 内部实现（RbfReadImpl）
-AteliaResult<RbfTailMetaFrame> ReadTailMeta(SafeFileHandle file, RbfFrameInfo info, Span<byte> buffer);
+AteliaResult<RbfTailMeta> ReadTailMeta(SafeFileHandle file, RbfFrameInfo info, Span<byte> buffer);
 AteliaResult<RbfPooledTailMeta> ReadPooledTailMeta(SafeFileHandle file, RbfFrameInfo info);
 ```
 
@@ -316,7 +316,7 @@ AteliaResult<RbfPooledTailMeta> ReadPooledTailMeta(SafeFileHandle file, RbfFrame
 
 - [ ] 在 `rbf-interface.md` 中补充 TailMeta 身份定义（独立元数据域）
 - [ ] 在 `rbf-interface.md` 中补充三层信任模型（L1/L2/L3）
-- [ ] 实现 `RbfTailMetaFrame` 和 `RbfPooledTailMeta` 类型
+- [ ] 实现 `RbfTailMeta` 和 `RbfPooledTailMeta` 类型
 - [ ] 实现 `RbfReadImpl.ReadTailMeta`
 - [ ] 实现 `RbfFileImpl.ReadTailMeta` + `IRbfFile` 接口扩展
 - [ ] 添加测试用例

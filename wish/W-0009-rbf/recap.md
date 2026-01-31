@@ -47,7 +47,7 @@
 | 文件 | 职责 |
 |------|------|
 | `IRbfFile.cs` | 文件门面接口（含 ScanReverse） |
-| `IRbfFrame.cs` | 帧公共属性契约（`Ticket`, `Tag`, `Payload`, `IsTombstone`） |
+| `IRbfFrame.cs` | 帧公共属性契约（`Ticket`, `Tag`, `PayloadAndMeta`, `IsTombstone`） |
 | `RbfFrame.cs` | ref struct 帧实现（生命周期受限于 buffer） |
 | `RbfPooledFrame.cs` | class 帧实现（持有 ArrayPool buffer，需 Dispose） |
 | `RbfFrameInfo.cs` | 帧元信息句柄（含成员方法 `ReadTailMeta`/`ReadFrame`） |

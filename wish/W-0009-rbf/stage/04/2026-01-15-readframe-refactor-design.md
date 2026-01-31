@@ -49,7 +49,7 @@
 ### 问题
 
 - 步骤 2 和 3 强耦合：buffer 在 try-finally 中分配和归还，无法复用
-- 返回 `AteliaResult<RbfFrame>` 时 `RbfFrame.Payload` 必须是 owned（堆数组），违背 zero-copy 初衷
+- 返回 `AteliaResult<RbfFrame>` 时 `RbfFrame.PayloadAndMeta` 必须是 owned（堆数组），违背 zero-copy 初衷
 
 ---
 

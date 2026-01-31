@@ -299,7 +299,7 @@ private static AteliaError? CheckReadParamsWithoutBuffer(SizedPtr ptr) {
 **实现要点**：
 - 失败路径必须归还 buffer，避免泄漏
 - 成功时重建 `RbfFrame` 以附加 `Owner`（值类型特性）
-- `Payload` 继续指向 `rentedBuffer` 的切片，生命周期由 owner 管理
+- `PayloadAndMeta` 继续指向 `rentedBuffer` 的切片，生命周期由 owner 管理
 
 #### 4. 与 ReadFrameInto 的关系
 
@@ -787,7 +787,7 @@ RbfPooledFrame (ref struct)
 ```
 
 **问题**：
-- `Payload` 只是 `Owner._buffer` 的切片
+- `PayloadAndMeta` 只是 `Owner._buffer` 的切片
 - `Owner` 已经堆分配，ref struct 带来的限制（不能存储、不能跨 await）反而是负担
 - `PooledBufferOwner` 用 `Interlocked.Exchange` 防止 double-return，是为了应对 struct 复制问题
 - 但如果 `RbfPooledFrame` 本身是 class，就不存在复制问题！

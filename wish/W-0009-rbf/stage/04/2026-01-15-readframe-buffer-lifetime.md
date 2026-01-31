@@ -26,7 +26,7 @@ public readonly ref struct RbfFrame {
 }
 ```
 
-设计意图：zero-copy，`Payload` 直接引用读取 buffer，生命周期受限于 scope。
+设计意图：zero-copy，`PayloadAndMeta` 直接引用读取 buffer，生命周期受限于 scope。
 
 ### 当前实现的问题（RbfRawOps.ReadFrame.cs L194-201）
 
@@ -55,7 +55,7 @@ if (payloadLen > 0) {
 | ArrayPool.Rent | 池 | 函数返回前必须 Return，span 悬垂 |
 | new byte[] | 堆 | 可以返回，但每次都分配 ← 当前方案 |
 
-`AteliaResult<RbfFrame>` 是值类型，返回时会复制。但 `RbfFrame.Payload` 是 `ReadOnlySpan<byte>`，它只是指针+长度，指向的内存必须在使用时有效。
+`AteliaResult<RbfFrame>` 是值类型，返回时会复制。但 `RbfFrame.PayloadAndMeta` 是 `ReadOnlySpan<byte>`，它只是指针+长度，指向的内存必须在使用时有效。
 
 ---
 
@@ -147,7 +147,7 @@ if (payloadLen > 0) {
 
 3. **文档 SSOT 的生命周期条款**：
    - 建议把 Scoped 的精确定义写成与 ScanReverse 同风格的规范语句：
-     - “`RbfFrame.Payload` 仅在 visitor 调用期间有效（或直到下一次读取覆盖同一 buffer）”。
+     - “`RbfFrame.PayloadAndMeta` 仅在 visitor 调用期间有效（或直到下一次读取覆盖同一 buffer）”。
    - 并明确：Scoped API **MUST NOT** 允许 async/await 边界（签名层面就不提供 `Task` 版本）。
 
 4. **性能目标的量化**：
@@ -231,7 +231,7 @@ Craftsman 的分析框架和 Tradeoff 表非常扎实。我想从**概念边界*
 
 那 `RbfFrame` 还需要是 ref struct 吗？
 
-- 如果 `Payload` 是 `byte[]` 而非 `ReadOnlySpan<byte>`，整个 `RbfFrame` 就可以是普通 `readonly struct`
+- 如果 `PayloadAndMeta` 是 `byte[]` 而非 `ReadOnlySpan<byte>`，整个 `RbfFrame` 就可以是普通 `readonly struct`
 - 这会让 API 更简单、更直观，但放弃了 zero-copy 可能性
 
 **假设 B：如果我们坚持 zero-copy 的设计初衷**
@@ -305,7 +305,7 @@ Seeker 的追问点到了要害：
 
 > **`ref struct` 在类型系统层面说"我不能逃逸"，而 `ReadFrame` 的签名在 API 层面要求它逃逸。**
 
-这是设计文档的内在矛盾。当时写 `@[A-RBF-FRAME-STRUCT]` 定义 `RbfFrame` 为 `ref struct` + `ReadOnlySpan<byte> Payload`，是为了 zero-copy 的可能性。但同时 `@[A-RBF-IRBFFILE-SHAPE]` 定义的 `ReadFrame` 返回 `AteliaResult<RbfFrame>`，隐含了"返回值可在函数外使用"的语义承诺。
+这是设计文档的内在矛盾。当时写 `@[A-RBF-FRAME-STRUCT]` 定义 `RbfFrame` 为 `ref struct` + `ReadOnlySpan<byte> PayloadAndMeta`，是为了 zero-copy 的可能性。但同时 `@[A-RBF-IRBFFILE-SHAPE]` 定义的 `ReadFrame` 返回 `AteliaResult<RbfFrame>`，隐含了"返回值可在函数外使用"的语义承诺。
 
 两者不可兼得——这正是当前实现被迫堆分配+复制的根因。
 
