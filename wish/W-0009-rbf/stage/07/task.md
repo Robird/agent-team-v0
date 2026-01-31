@@ -7,9 +7,18 @@
 
 ## 设计决策
 
-### Decision 7.A: Builder 状态管理
+### Decision 7.A: Builder 类型设计
 
-**结论**：`RbfFrameBuilder` 是 `ref struct`，生命周期受限于栈帧。
+**结论**：`RbfFrameBuilder` 是 `sealed class`，直接包含所有实现逻辑（无 Impl 套娃）。
+
+**设计理由**：
+- 内部组件（`SinkReservableWriter`、`Crc32cByteSink` 等）本就是堆分配
+- `ref struct` 外壳无实际收益，只增加复杂度
+- `sealed class` 更简单，且支持未来 Reset 复用优化
+
+**演进可能**：
+- 由于 @[S-RBF-BUILDER-SINGLE-OPEN] 约束，每个 `IRbfFile` 同时最多 1 个 Builder
+- 未来可通过 `Reset()` 复用同一个实例，避免重复分配（相当于 per-file Builder 单例）
 
 **状态机**：
 ```
@@ -174,13 +183,13 @@ internal sealed class Crc32cByteSink : IByteSink {
 
 ---
 
-#### Task 7.2: 实现 RbfFrameBuilderImpl（内部实现类）
+#### Task 7.2: 实现 RbfFrameBuilder（sealed class，无套娃）
 
 **执行者**：Implementer
 **依赖**：Task 7.1
 
 **任务简报**：
-创建 `atelia/src/Rbf/Internal/RbfFrameBuilderImpl.cs`，封装 Builder 的核心逻辑。
+完善 `atelia/src/Rbf/RbfFrameBuilder.cs`，将其改为 `sealed class` 并直接实现所有逻辑。
 
 **设计说明（关键：HeadLen reservation + CRC skip）**：
 - `RandomAccessByteSink` 的 `startOffset = frameStart`（从帧起点开始）
@@ -190,20 +199,27 @@ internal sealed class Crc32cByteSink : IByteSink {
 
 **类结构**：
 ```csharp
-internal sealed class RbfFrameBuilderImpl : IDisposable {
+public sealed class RbfFrameBuilder : IDisposable {
     private readonly SafeFileHandle _handle;
     private readonly long _frameStart;
-    private readonly RandomAccessByteSink _rawSink;  // startOffset = _frameStart
-    private readonly Crc32cByteSink _crcSink;        // skipBytes = HeadLenSize
+    private readonly RandomAccessByteSink _rawSink;      // startOffset = _frameStart
+    private readonly Crc32cByteSink _crcSink;            // skipBytes = HeadLenSize
     private readonly SinkReservableWriter _writer;
-    private readonly int _headLenReservationToken;   // HeadLen 的 reservation token
-    private readonly Action<long> _onCommitCallback;
+    private readonly int _headLenReservationToken;       // HeadLen 的 reservation token
+    private readonly Action<long> _onCommitCallback;     // 通知 RbfFileImpl 更新 TailOffset
+    private readonly Action _clearBuilderFlag;           // 通知 RbfFileImpl 清除 active builder 标志
     private bool _committed;
     private bool _disposed;
 
+    internal RbfFrameBuilder(
+        SafeFileHandle handle,
+        long frameStart,
+        Action<long> onCommitCallback,
+        Action clearBuilderFlag);
+
     public IReservableBufferWriter PayloadAndMeta => _writer;
     
-    public SizedPtr EndAppend(uint tag, int tailMetaLength);
+    public SizedPtr EndAppend(uint tag, int tailMetaLength = 0);
     public void Dispose();
 }
 ```
@@ -231,49 +247,34 @@ internal sealed class RbfFrameBuilderImpl : IDisposable {
 9. 调用 `_onCommitCallback(endOffset)` 通知更新 TailOffset
 10. 返回 `SizedPtr(_frameStart, frameLength)`
 
+**Dispose 逻辑**：
+1. 若已 disposed，直接返回
+2. 若未 committed，执行 Auto-Abort（`_writer.Reset()`，Zero I/O）
+3. 调用 `_clearBuilderFlag()` 清除 RbfFileImpl 的 active builder 标志
+4. 设置 `_disposed = true`
+
 **Zero-IO 取消**：
 - HeadLen reservation 阻塞 `SinkReservableWriter` 的 flush
 - Dispose 时若未 commit：直接 `_writer.Reset()`，无任何磁盘 I/O
 
 **验收标准**：
 - [ ] 编译通过
+- [ ] `sealed class` 类型（非 ref struct）
+- [ ] 支持 `using var builder = file.BeginAppend()` 语法
 - [ ] `PayloadAndMeta` 返回 `IReservableBufferWriter`
 - [ ] `EndAppend` 正确完成帧尾部
 - [ ] 前置条件校验：未提交 reservation 时抛出 `InvalidOperationException`
+- [ ] 重复调用 `EndAppend` 抛出 `InvalidOperationException`
+- [ ] 重复调用 `Dispose` 幂等
 - [ ] `Dispose` 未 commit 时执行 Auto-Abort
 - [ ] 提交的帧通过 `ReadFrame` L3 完整校验
 - [ ] `ScanReverse` 能枚举到该帧
 
 ---
 
-#### Task 7.3: 完善 RbfFrameBuilder（ref struct 外壳）
-
-**执行者**：Implementer
-**依赖**：Task 7.2
-
-**任务简报**：
-实现 `atelia/src/Rbf/RbfFrameBuilder.cs` 的完整逻辑。
-
-**当前状态**：已有骨架代码（stub），需要连接到 `RbfFrameBuilderImpl`。
-
-**变更要点**：
-1. 添加 `internal RbfFrameBuilderImpl? _impl` 字段
-2. 添加 `internal Action _clearBuilderFlag` 回调
-3. 实现 `PayloadAndMeta` 属性委托到 `_impl.PayloadAndMeta`
-4. 实现 `EndAppend` 委托到 `_impl.EndAppend`
-5. 实现 `Dispose`：委托到 `_impl.Dispose()` 并调用 `_clearBuilderFlag()`
-
-**验收标准**：
-- [ ] 编译通过
-- [ ] 支持 `using var builder = file.BeginAppend()` 语法
-- [ ] 重复调用 `EndAppend` 抛出 `InvalidOperationException`
-- [ ] 重复调用 `Dispose` 幂等
-
----
-
 ### Part B: 门面集成
 
-#### Task 7.4: 实现 RbfFileImpl.BeginAppend 和 Append 互斥
+#### Task 7.3: 实现 RbfFileImpl.BeginAppend 和 Append 互斥
 
 **执行者**：Implementer
 **依赖**：Task 7.3
@@ -285,11 +286,10 @@ internal sealed class RbfFrameBuilderImpl : IDisposable {
 1. 添加 `_hasActiveBuilder` 字段
 2. `BeginAppend` 检查 `_hasActiveBuilder`，若为 true 抛出 `InvalidOperationException`
 3. `BeginAppend` 检查 Disposed、TailOffset 4B 对齐、MaxFileOffset
-4. 创建 `RbfFrameBuilderImpl` 实例（传入回调）
-5. 创建 `RbfFrameBuilder`（传入 impl 和清除标志的回调）
-6. 设置 `_hasActiveBuilder = true`
-7. 返回 builder
-8. **修改 `Append()` 方法**：在开头检查 `_hasActiveBuilder`，若为 true 抛出 `InvalidOperationException`
+4. 创建 `RbfFrameBuilder` 实例（传入 handle、frameStart、回调等）
+5. 设置 `_hasActiveBuilder = true`
+6. 返回 builder
+7. **修改 `Append()` 方法**：在开头检查 `_hasActiveBuilder`，若为 true 抛出 `InvalidOperationException`
 
 **并发约束（@[S-RBF-BUILDER-SINGLE-OPEN] 升级版）**：
 - `BeginAppend()` 在 active builder 存在时抛出异常
@@ -304,16 +304,16 @@ internal sealed class RbfFrameBuilderImpl : IDisposable {
 
 ---
 
-#### Task 7.5: 实现 TailOffset 更新机制
+#### Task 7.4: 实现 TailOffset 更新机制
 
 **执行者**：Implementer
-**依赖**：Task 7.4
+**依赖**：Task 7.3
 
 **任务简报**：
 确保 `TailOffset` 在 `EndAppend` 成功后正确更新。
 
 **变更要点**：
-1. `RbfFrameBuilderImpl.EndAppend` 成功后，调用回调 `_onCommitCallback(endOffset)`
+1. `RbfFrameBuilder.EndAppend` 成功后，调用回调 `_onCommitCallback(endOffset)`
 2. `RbfFileImpl` 在回调中更新 `_tailOffset = endOffset`
 3. Auto-Abort 路径也调用回调（Tombstone 也占用空间）
 
@@ -332,10 +332,10 @@ endOffset = startOffset + frameLength + FenceSize
 
 ### Part C: Auto-Abort 实现
 
-#### Task 7.6: 实现 Zero I/O Auto-Abort 路径
+#### Task 7.5: 实现 Zero I/O Auto-Abort 路径
 
 **执行者**：Implementer
-**依赖**：Task 7.5
+**依赖**：Task 7.4
 
 **任务简报**：
 由于 HeadLen reservation 阻塞 flush，所有数据都在内存中，`Dispose` 直接丢弃即可实现 Zero I/O。
@@ -358,10 +358,10 @@ endOffset = startOffset + frameLength + FenceSize
 
 ---
 
-#### Task 7.7: Tombstone 路径（保留但简化）
+#### Task 7.6: Tombstone 路径（保留但简化）
 
 **执行者**：Implementer
-**依赖**：Task 7.6
+**依赖**：Task 7.5
 
 **任务简报**：
 在方案 B 下，由于 HeadLen reservation 阻塞 flush，**正常情况下不会触发 Tombstone 路径**。
@@ -395,10 +395,10 @@ endOffset = startOffset + frameLength + FenceSize
 
 ### Part D: 测试覆盖
 
-#### Task 7.8: RbfFrameBuilder 基本功能测试
+#### Task 7.7: RbfFrameBuilder 基本功能测试
 
 **执行者**：Implementer
-**依赖**：Task 7.5
+**依赖**：Task 7.4
 
 **任务简报**：
 创建 `tests/Rbf.Tests/RbfFrameBuilderTests.cs`。
@@ -420,10 +420,10 @@ endOffset = startOffset + frameLength + FenceSize
 
 ---
 
-#### Task 7.9: Auto-Abort 测试
+#### Task 7.8: Auto-Abort 测试
 
 **执行者**：Implementer
-**依赖**：Task 7.7
+**依赖**：Task 7.6
 
 **任务简报**：
 在 `RbfFrameBuilderTests.cs` 中添加 Auto-Abort 测试。
@@ -447,10 +447,10 @@ endOffset = startOffset + frameLength + FenceSize
 
 ---
 
-#### Task 7.10: 单 Builder 约束与 Append 互斥测试
+#### Task 7.9: 单 Builder 约束与 Append 互斥测试
 
 **执行者**：Implementer
-**依赖**：Task 7.4
+**依赖**：Task 7.3
 
 **任务简报**：
 在 `RbfFrameBuilderTests.cs` 中添加并发约束测试。
@@ -469,10 +469,10 @@ endOffset = startOffset + frameLength + FenceSize
 
 ---
 
-#### Task 7.11: 与 ScanReverse 集成测试
+#### Task 7.10: 与 ScanReverse 集成测试
 
 **执行者**：Implementer
-**依赖**：Task 7.9
+**依赖**：Task 7.8
 
 **任务简报**：
 验证 Builder 写入的帧可被 ScanReverse 正确扫描。
