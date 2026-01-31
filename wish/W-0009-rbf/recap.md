@@ -7,11 +7,11 @@
 
 ## 当前状态
 
-**阶段**：Stage 06.5 - RbfFrameInfo 成员方法 + TailMeta API ✅ **已完成**
+**阶段**：Stage 07 - BeginAppend/EndAppend（复杂写入路径）✅ **已完成**
 
-**下一阶段**：Stage 07 - 复杂写入路径（BeginAppend/EndAppend）
+**下一阶段**：Stage 08 - 待规划
 
-**测试覆盖**：197 个 RBF 测试 + 60 个 Primitives 测试 + 117 个 Data 测试（全部通过）
+**测试覆盖**：221 个 RBF 测试 + 60 个 Primitives 测试 + 117 个 Data 测试（全部通过）
 
 **基础条件**：
 - 设计文档已就绪：`atelia/docs/Rbf/` 目录下 7 个文档（已同步至 v0.40）
@@ -19,7 +19,7 @@
   - `SizedPtr.cs` - 帧位置凭据（v2: `Offset`/`Length` 使用 `long`/`int`）
   - `IByteSink.cs` - 推式写入接口
   - `IReservableBufferWriter.cs` - 可预留的 BufferWriter 接口
-  - `SinkReservableWriter.cs` - 基于 IByteSink 的 IReservableBufferWriter 实现
+  - `SinkReservableWriter.cs` - 基于 IByteSink 的 IReservableBufferWriter 实现（含 `GetCrcSinceReservationEnd`）
   - `RollingCrc.cs` - Codeword 保护（SealCodewordBackward/CheckCodewordBackward）
 - `Atelia.Primitives` 中的结果类型家族：
   - `AteliaResult<T>` - 标准结果类型（ref struct）
@@ -50,6 +50,7 @@
 | `IRbfFrame.cs` | 帧公共属性契约（`Ticket`, `Tag`, `PayloadAndMeta`, `IsTombstone`） |
 | `RbfFrame.cs` | ref struct 帧实现（生命周期受限于 buffer） |
 | `RbfPooledFrame.cs` | class 帧实现（持有 ArrayPool buffer，需 Dispose） |
+| `RbfFrameBuilder.cs` | 帧构建器（流式写入 + EndAppend 提交） |
 | `RbfFrameInfo.cs` | 帧元信息句柄（含成员方法 `ReadTailMeta`/`ReadFrame`） |
 | `IRbfTailMeta.cs` | TailMeta 公共属性契约（`Ticket`, `Tag`, `TailMeta`, `IsTombstone`） |
 | `RbfTailMeta.cs` | ref struct TailMeta 实现（生命周期受限于 buffer） |
@@ -85,6 +86,7 @@
 | `RbfScanReverseTests.cs` | ScanReverse 集成测试 | 逆向遍历/Tombstone过滤/损坏停止 |
 | `TrailerCodewordHelperTests.cs` | TrailerCodeword 测试 | 端序/位布局/CRC |
 | `RbfPooledFrameTests.cs` | RbfPooledFrame 生命周期 | Dispose 行为/异常后资源释放 |
+| `RbfFrameBuilderTests.cs` | RbfFrameBuilder 测试 | 基本功能/Auto-Abort/单Builder约束/ScanReverse集成 |
 | `RbfFileFactoryTests.cs` | 工厂方法测试 | CreateNew/OpenExisting |
 | `Crc32CHelperTests.cs` | CRC 工具测试 | RFC 向量 + baseline 对比 |
 
@@ -95,6 +97,47 @@
 ---
 
 ## 已完成的交付成果
+
+### Stage 07: BeginAppend/EndAppend（复杂写入路径）（2026-02-01）
+
+**核心变更**：
+
+1. **SinkReservableWriter.GetCrcSinceReservationEnd()**：
+   - 新增方法：从 reservation 末尾计算 CRC
+   - 前置条件：只能有 1 个 pending reservation
+   - 用于 EndAppend 时计算 PayloadCrc（覆盖 Payload + TailMeta + Padding）
+
+2. **RbfFrameBuilder 实现**（sealed class）：
+   - 流式写入：`PayloadAndMeta` 返回 `IReservableBufferWriter`
+   - HeadLen reservation 阻塞 flush：实现 Zero-IO 取消
+   - EndAppend 10 步逻辑：验证 → CRC → Tail → 回填 → Commit
+   - Auto-Abort：Dispose 未 commit 时 `_writer.Reset()`
+
+3. **RbfFileImpl.BeginAppend()**：
+   - 创建 RbfFrameBuilder 实例
+   - Append/BeginAppend 互斥（`_hasActiveBuilder` 标志）
+   - 回调机制：onCommitCallback（更新 TailOffset）、clearBuilderFlag
+
+4. **测试覆盖**（33 个新测试）：
+   - Task 7.7: 基本功能（14 个）：正常路径、空 Payload、TailMeta、Reservation、边界条件
+   - Task 7.8: Auto-Abort（6 个）：Zero I/O（小/大 Payload）、Abort 后继续操作
+   - Task 7.9: 单 Builder 约束（6 个）：互斥检查、Dispose/EndAppend 后恢复
+   - Task 7.10: ScanReverse 集成（6 个）：混合写入、大帧、TailMeta、多帧序列
+
+**设计演进**：
+- 原方案（RbfWriteSink 合并）存在设计冲突：HeadLen reservation 阻塞 flush 导致 CRC 无法在 Push 时计算
+- 新方案：CRC 计算在 EndAppend 时通过 `GetCrcSinceReservationEnd()` 一次性完成
+
+**设计决策**：
+- **Decision 7.E**（修订）：PayloadCrc 通过 `SinkReservableWriter.GetCrcSinceReservationEnd()` 计算
+- **Decision 7.F**：EndAppend 中校验 `payloadAndMetaLength > MaxPayloadAndMetaLength`
+- **Decision 7.G**：TailOffset 公式 = startOffset + frameLength + FenceSize
+
+**测试覆盖**：221 个测试全部通过
+
+**详细记录**：见 [stage/07/task.md](stage/07/task.md)
+
+---
 
 ### Stage 06.5: RbfFrameInfo 成员方法 + TailMeta API（2026-01-29）
 
@@ -280,6 +323,7 @@
 
 | 日期 | 变更 |
 |------|------|
+| 2026-02-01 | Stage 07 完成：BeginAppend/EndAppend + SinkReservableWriter.GetCrcSinceReservationEnd + 221 个测试通过 |
 | 2026-01-29 | Stage 06.5 完成：RbfFrameInfo 成员方法 + TailMeta API（API 外观重构） |
 | 2026-01-24 | Stage 06 完成：帧布局 v0.40 + ScanReverse + 197 个测试通过 |
 | 2026-01-17 | Stage 05 完成：ReadFrame 重构 + SizedPtr 简化 + 150 个测试通过 |

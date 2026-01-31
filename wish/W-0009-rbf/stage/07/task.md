@@ -60,47 +60,47 @@ Tombstone Auto-Abort 路径的 I/O 可能失败（磁盘满等）。采用策略
 - **`Append()` 在 `_hasActiveBuilder == true` 时也抛出 `InvalidOperationException`**（与 BeginAppend 一致）
 - Builder `Dispose()` 时清除标志
 
-### Decision 7.E: PayloadCrc 增量计算方案
+### Decision 7.E: PayloadCrc 计算方案
 
-**结论**：采用 **合并 Sink** 方案——将 `RandomAccessByteSink` 和 CRC 计算合并为 `RbfWriteSink`。
+**结论**：采用 **SinkReservableWriter.GetCrcSinceReservationEnd()** 方案——在 Data 层添加从 reservation 末尾计算 CRC 的能力。
 
-**设计理由**：
-1. `RandomAccessByteSink` 和 `Crc32cByteSink` 都是 RBF 内部专用，不独立复用
-2. 在 RBF Builder 场景，"写入文件 + 计算 CRC"是**内聚的单一职责**——"帧数据的可靠持久化"
-3. 分离的 wrapper 模式是**过度设计**，增加了无谓的间接层
-4. 合并后简化类型体系，减少认知负担
+**设计演进**：
+- 原方案（RbfWriteSink 合并方案）存在设计冲突：HeadLen reservation 阻塞 flush 导致 CRC 无法在 Push 时计算
+- 新方案：CRC 计算在 EndAppend 时一次性完成，遍历 `SinkReservableWriter` 内部 buffer 计算
 
 **设计要点**：
-1. `RbfWriteSink` 构造时指定 `crcSkipBytes`（跳过 CRC 累积的前 N 字节）
-2. `Push()` 时：数据写入文件 + 跳过前 N 字节后累积 CRC
-3. HeadLen 作为 reservation 放在帧开头，`crcSkipBytes = HeadLenSize (4)`
-4. CRC 只覆盖 Payload + TailMeta（符合 @[F-PAYLOAD-CRC-COVERAGE]）
+1. `SinkReservableWriter` 新增 `GetCrcSinceReservationEnd(token)` 方法
+2. 从 reservation 末尾（HeadLen 之后）扫描到当前写入末尾
+3. CRC 覆盖 Payload + TailMeta + Padding（符合 @[F-PAYLOAD-CRC-COVERAGE]）
+4. 前置条件：只能有 1 个 pending reservation（HeadLen）
 
 **关键特性**：
 - HeadLen reservation 阻塞 `SinkReservableWriter` 的 flush
 - 整帧数据在内存中，支持 **Zero-IO 取消**（无论 Payload 多大）
-- 保留流式写入演进可能性（可逆决策）
+- CRC 计算不依赖 flush 时机，在 EndAppend 时统一计算
 
 **数据流**：
 ```
 SinkReservableWriter
-    → RbfWriteSink(frameStart, crcSkipBytes=4)  // 直接写文件 + CRC 跳过前 4 字节
+    → RandomAccessByteSink(frameStart)  // 纯文件写入，无 CRC
 
-写入顺序：[HeadLen(reservation)] → [Payload + TailMeta] → [Padding + Tail]
-                  ↑                        ↑
-             CRC 跳过                  CRC 覆盖
+写入顺序：[HeadLen(reservation)] → [Payload + TailMeta] → [Padding]
+                                           ↓
+                        EndAppend 时：GetCrcSinceReservationEnd(headLenToken)
+                                           ↓
+                                      写入 [Tail]
 ```
 
-**不修改 Data 层**：`SinkReservableWriter` 保持通用，RBF 语义不渗透。
+**Data 层扩展**：`SinkReservableWriter.GetCrcSinceReservationEnd()` 是通用能力，适用于任何需要"对 reservation 之后的数据计算 CRC"的场景。
 
 ### Decision 7.F: 资源上限控制
 
-**结论**：Builder 写入过程中检查 Payload+TailMeta 上限。
+**结论**：在 EndAppend 中检查 Payload+TailMeta 上限。
 
 **实现**：
-- `RbfWriteSink.Push()` 内部累计已写入字节数
-- 若超过 `MaxPayloadAndMetaLength` 抛出 `InvalidOperationException`
-- 抛出后 Builder 状态变为"已损坏"，`Dispose()` 执行 Auto-Abort
+- `RbfFrameBuilder.EndAppend()` 中校验 `payloadAndMetaLength > MaxPayloadAndMetaLength`
+- 若超过抛出 `InvalidOperationException`
+- 校验位置在 `long -> int` 转换之前，防止溢出
 
 ### Decision 7.G: TailOffset 推进公式
 
@@ -117,178 +117,91 @@ SinkReservableWriter
 
 ### Part A: 核心基础设施
 
-#### Task 7.1: 实现 RbfWriteSink（合并 RandomAccessByteSink + CRC 计算）
+#### Task 7.1: ✅ 已完成 — SinkReservableWriter.GetCrcSinceReservationEnd()
 
-**执行者**：Implementer
-**依赖**：无
+**执行者**：Implementer（由监护人直接调度完成）
+**状态**：已完成
 
 **任务简报**：
-将 `atelia/src/Rbf/Internal/RandomAccessByteSink.cs` 重构为 `RbfWriteSink.cs`，合并文件写入和 CRC 计算功能。
+为 `SinkReservableWriter` 添加 `GetCrcSinceReservationEnd()` 方法，支持从 reservation 末尾计算 CRC。
 
-**设计说明**：
-- 合并 `RandomAccessByteSink` 和原计划的 `Crc32cByteSink` 为单一类型
-- 支持 `crcSkipBytes` 参数：前 N 字节不参与 CRC 累积，但仍写入文件
-- 实现 `IByteSink` 接口，供 `SinkReservableWriter` 使用
-
-**合并理由**：
-- 两者都是 RBF 内部专用，不独立复用
-- "写入文件 + 计算 CRC"在 RBF 业务语义上是单一职责
-- 减少类型数量和间接层，简化类型体系
-
-**类结构**：
-```csharp
-internal sealed class RbfWriteSink : IByteSink {
-    private readonly SafeFileHandle _file;
-    private readonly int _crcSkipBytes;    // 跳过 CRC 的前 N 字节
-    private long _writeOffset;
-    private int _skippedSoFar;             // 已跳过的字节数
-    private uint _crc = RollingCrc.DefaultInitValue;
-    private long _totalWritten;
-    
-    public RbfWriteSink(SafeFileHandle file, long startOffset, int crcSkipBytes = 0);
-    
-    /// <summary>当前写入位置（byte offset）</summary>
-    public long CurrentOffset => _writeOffset;
-    
-    /// <summary>累计写入字节数（含 skipped 部分）</summary>
-    public long TotalWritten => _totalWritten;
-    
-    /// <summary>参与 CRC 计算的字节数（不含 skipped 部分）</summary>
-    /// <remarks>使用 _skippedSoFar 而非 _crcSkipBytes，以处理 _totalWritten &lt; _crcSkipBytes 的边界情况</remarks>
-    public long CrcCoveredLength => _totalWritten - _skippedSoFar;
-    
-    public void Push(ReadOnlySpan<byte> data) {
-        if (data.IsEmpty) { return; }
-        
-        // 1. 写入文件
-        RandomAccess.Write(_file, data, _writeOffset);
-        _writeOffset += data.Length;
-        _totalWritten += data.Length;
-        
-        // 2. CRC 累积（跳过前 crcSkipBytes 字节）
-        if (_skippedSoFar < _crcSkipBytes) {
-            int toSkip = Math.Min(data.Length, _crcSkipBytes - _skippedSoFar);
-            _skippedSoFar += toSkip;
-            data = data.Slice(toSkip);
-        }
-        
-        if (!data.IsEmpty) {
-            _crc = RollingCrc.CrcForward(_crc, data);
-        }
-    }
-    
-    /// <summary>获取当前累积的 CRC（已 Finalize）</summary>
-    public uint GetCrc() => _crc ^ RollingCrc.DefaultFinalXor;
-}
-```
+**实现说明**：
+- 新增方法签名：`uint GetCrcSinceReservationEnd(int token, uint initValue = ..., uint finalXor = ...)`
+- 从 reservation 末尾遍历到当前写入末尾，计算 CRC
+- 前置条件：只能有 1 个 pending reservation
+- 文件位置：`atelia/src/Data/SinkReservableWriter.cs`
 
 **验收标准**：
-- [ ] 编译通过
-- [ ] 实现 `IByteSink` 接口
-- [ ] 构造函数验证 `crcSkipBytes >= 0`
-- [ ] `crcSkipBytes=0` 时，行为与原 `RandomAccessByteSink` + 全量 CRC 一致
-- [ ] `crcSkipBytes>0` 时，前 N 字节不参与 CRC，但仍写入文件
-- [ ] 跨 `Push()` 调用的 skip 逻辑正确（累积 `_skippedSoFar`）
-- [ ] `GetCrc()` 返回正确的 Finalize 后 CRC
-- [ ] `TotalWritten` 返回总字节数（含 skipped）
-- [ ] `CrcCoveredLength` 返回 CRC 覆盖的字节数（边界情况正确）
-- [ ] 单元测试：验证 skip 逻辑正确性
-- [ ] 单元测试：当 `_totalWritten < _crcSkipBytes` 时，`CrcCoveredLength` 返回 0
-- [ ] 删除旧的 `RandomAccessByteSink.cs`
+- [x] 编译通过
+- [x] 从 reservation 末尾正确计算 CRC
+- [x] 前置条件校验（1 个 pending reservation）
 
 ---
 
-#### Task 7.2: 实现 RbfFrameBuilder（sealed class，无套娃）
+#### Task 7.2: ✅ 已完成 — RbfFrameBuilder（sealed class）
 
-**执行者**：Implementer
-**依赖**：Task 7.1
+**执行者**：Implementer（由监护人直接调度完成）
+**状态**：已完成
 
 **任务简报**：
-完善 `atelia/src/Rbf/RbfFrameBuilder.cs`，将其改为 `sealed class` 并直接实现所有逻辑。
+实现 `RbfFrameBuilder`，支持流式写入 payload 并提交帧。
 
-**设计说明（关键：HeadLen reservation + CRC skip）**：
-- `RbfWriteSink` 的 `startOffset = frameStart`，`crcSkipBytes = HeadLenSize (4)`
-- HeadLen 作为 **reservation** 放在帧开头（阻塞 flush，支持 Zero-IO 取消）
-- 复用 `SinkReservableWriter`（流式写入 + reservation）
+**实现说明**：
+- `sealed class` 类型，使用 `RandomAccessByteSink` + `SinkReservableWriter`
+- 构造时预留 HeadLen（阻塞 flush，支持 Zero-IO 取消）
+- `EndAppend()` 使用 `GetCrcSinceReservationEnd()` 计算 PayloadCrc
+- `Dispose()` 未 commit 时执行 Auto-Abort（`_writer.Reset()`）
 
-**类结构**：
+**类结构**（实际实现）：
 ```csharp
 public sealed class RbfFrameBuilder : IDisposable {
     private readonly long _frameStart;
-    private readonly RbfWriteSink _sink;                 // 合并的文件写入 + CRC 计算
+    private readonly RandomAccessByteSink _sink;         // 纯文件写入
     private readonly SinkReservableWriter _writer;
-    private readonly int _headLenReservationToken;       // HeadLen 的 reservation token
-    private readonly Action<long> _onCommitCallback;     // 通知 RbfFileImpl 更新 TailOffset
-    private readonly Action _clearBuilderFlag;           // 通知 RbfFileImpl 清除 active builder 标志
+    private readonly int _headLenReservationToken;
+    private readonly Action<long> _onCommitCallback;
+    private readonly Action _clearBuilderFlag;
     private bool _committed;
     private bool _disposed;
-
-    internal RbfFrameBuilder(
-        SafeFileHandle handle,
-        long frameStart,
-        Action<long> onCommitCallback,
-        Action clearBuilderFlag);
-
-    public IReservableBufferWriter PayloadAndMeta => _writer;
     
+    public IReservableBufferWriter PayloadAndMeta => _writer;
     public SizedPtr EndAppend(uint tag, int tailMetaLength = 0);
     public void Dispose();
 }
 ```
 
-**构造函数逻辑**：
-1. 创建 `RbfWriteSink(handle, frameStart, crcSkipBytes: HeadLenSize)`
-2. 创建 `SinkReservableWriter(_sink, ...)`
-3. **预留 HeadLen**：`_writer.ReserveSpan(HeadLenSize, out _headLenReservationToken)`
-
-**EndAppend 前置条件**（MUST 在写尾部前验证）：
-1. `_writer.PendingReservationCount == 1`（只剩 HeadLen reservation）
-2. `tailMetaLength <= payloadAndMetaLength`
-3. `tailMetaLength <= MaxTailMetaLength` (64KB)
-
-**EndAppend 逻辑**（10 步）：
-1. 验证前置条件
-2. 获取 `payloadAndMetaLength = _sink.CrcCoveredLength`（不含 HeadLen，**在写 Padding 前获取**）
-3. 计算 `FrameLayout(payloadAndMetaLength - tailMetaLength, tailMetaLength)`
-4. 写入 Padding：`var span = _writer.GetSpan(paddingLength); span.Fill(0); _writer.Advance(paddingLength)`（Padding 通过 _writer 写入，CRC 自动累积）
-5. 从 `_sink.GetCrc()` 获取 PayloadCrc32C（**在写 Padding 后获取**，确保覆盖 Payload + TailMeta + Padding）
-6. 构建 Tail buffer（PayloadCrc + Trailer + Fence），写入 `_writer`
-7. **回填 HeadLen**：获取 reservation span，写入 `frameLength`，调用 `Commit(_headLenReservationToken)`
-8. 此时 `SinkReservableWriter` 会 flush 全部数据到磁盘
-9. 调用 `_onCommitCallback(endOffset)` 通知更新 TailOffset
-10. 返回 `SizedPtr(_frameStart, frameLength)`
-
-**Dispose 逻辑**：
-1. 若已 disposed，直接返回
-2. 若未 committed，执行 Auto-Abort（`_writer.Reset()`，Zero I/O）
-3. 调用 `_clearBuilderFlag()` 清除 RbfFileImpl 的 active builder 标志
-4. 设置 `_disposed = true`
-
-**Zero-IO 取消**：
-- HeadLen reservation 阻塞 `SinkReservableWriter` 的 flush
-- Dispose 时若未 commit：直接 `_writer.Reset()`，无任何磁盘 I/O
+**EndAppend 逻辑**（实际实现）：
+1. 验证前置条件（disposed、committed、PendingReservationCount == 1）
+2. 获取 `payloadAndMetaLength = _writer.WrittenLength - HeadLenSize`
+3. 资源上限校验（Decision 7.F）
+4. 验证 tailMetaLength 约束
+5. 计算 FrameLayout
+6. 写入 Padding（0 字节填充）
+7. 获取 PayloadCrc：`_writer.GetCrcSinceReservationEnd(_headLenReservationToken)`
+8. 构建并写入 Tail buffer（PayloadCrc + Trailer + Fence）
+9. 回填 HeadLen，调用 Commit（触发 flush）
+10. 调用 `_onCommitCallback(endOffset)`
+11. 返回 `SizedPtr(_frameStart, layout.FrameLength)`
 
 **验收标准**：
-- [ ] 编译通过
-- [ ] `sealed class` 类型（非 ref struct）
-- [ ] 支持 `using var builder = file.BeginAppend()` 语法
-- [ ] `PayloadAndMeta` 返回 `IReservableBufferWriter`
-- [ ] `EndAppend` 正确完成帧尾部
-- [ ] 前置条件校验：未提交 reservation 时抛出 `InvalidOperationException`
-- [ ] 重复调用 `EndAppend` 抛出 `InvalidOperationException`
-- [ ] 重复调用 `Dispose` 幂等
-- [ ] `Dispose` 未 commit 时执行 Auto-Abort
-- [ ] 提交的帧通过 `ReadFrame` L3 完整校验
-- [ ] `ScanReverse` 能枚举到该帧
+- [x] 编译通过
+- [x] `sealed class` 类型
+- [x] `PayloadAndMeta` 返回 `IReservableBufferWriter`
+- [x] `EndAppend` 正确完成帧尾部
+- [x] 前置条件校验
+- [x] `Dispose` 未 commit 时执行 Auto-Abort
+- [ ] 提交的帧通过 `ReadFrame` L3 完整校验（需集成测试）
+- [ ] `ScanReverse` 能枚举到该帧（需集成测试）
 
 ---
 
 ### Part B: 门面集成
 
-#### Task 7.3: 实现 RbfFileImpl.BeginAppend 和 Append 互斥
+#### Task 7.3: ✅ 已完成 — RbfFileImpl.BeginAppend 和 Append 互斥
 
 **执行者**：Implementer
-**依赖**：Task 7.2
+**依赖**：Task 7.2 ✅
+**状态**：已完成
 
 **任务简报**：
 实现 `RbfFileImpl.BeginAppend()` 并添加 Append/BeginAppend 互斥约束。
@@ -315,10 +228,11 @@ public sealed class RbfFrameBuilder : IDisposable {
 
 ---
 
-#### Task 7.4: 实现 TailOffset 更新机制
+#### Task 7.4: ✅ 已完成 — TailOffset 更新机制
 
 **执行者**：Implementer
-**依赖**：Task 7.3
+**依赖**：Task 7.3 ✅
+**状态**：已完成（逻辑在 Task 7.2 中实现，测试在 Task 7.7 中覆盖）
 
 **任务简报**：
 确保 `TailOffset` 在 `EndAppend` 成功后正确更新。
@@ -343,10 +257,11 @@ endOffset = startOffset + frameLength + FenceSize
 
 ### Part C: Auto-Abort 实现
 
-#### Task 7.5: 实现 Zero I/O Auto-Abort 路径
+#### Task 7.5: ✅ 已完成 — Zero I/O Auto-Abort 路径
 
 **执行者**：Implementer
-**依赖**：Task 7.4
+**依赖**：Task 7.4 ✅
+**状态**：已完成（逻辑在 Task 7.2 中实现，测试在 Task 7.8 中覆盖）
 
 **任务简报**：
 由于 HeadLen reservation 阻塞 flush，所有数据都在内存中，`Dispose` 直接丢弃即可实现 Zero I/O。
@@ -369,10 +284,11 @@ endOffset = startOffset + frameLength + FenceSize
 
 ---
 
-#### Task 7.6: Tombstone 路径（保留但简化）
+#### Task 7.6: ✅ 已完成（防御性保留）— Tombstone 路径
 
 **执行者**：Implementer
-**依赖**：Task 7.5
+**依赖**：Task 7.5 ✅
+**状态**：已完成（在当前设计下不会触发，作为防御性代码保留）
 
 **任务简报**：
 在方案 B 下，由于 HeadLen reservation 阻塞 flush，**正常情况下不会触发 Tombstone 路径**。
@@ -406,10 +322,11 @@ endOffset = startOffset + frameLength + FenceSize
 
 ### Part D: 测试覆盖
 
-#### Task 7.7: RbfFrameBuilder 基本功能测试
+#### Task 7.7: ✅ 已完成 — RbfFrameBuilder 基本功能测试
 
 **执行者**：Implementer
-**依赖**：Task 7.4
+**依赖**：Task 7.4 ✅
+**状态**：已完成（14 个测试用例）
 
 **任务简报**：
 创建 `tests/Rbf.Tests/RbfFrameBuilderTests.cs`。
@@ -431,10 +348,11 @@ endOffset = startOffset + frameLength + FenceSize
 
 ---
 
-#### Task 7.8: Auto-Abort 测试
+#### Task 7.8: ✅ 已完成 — Auto-Abort 测试
 
 **执行者**：Implementer
-**依赖**：Task 7.6
+**依赖**：Task 7.6 ✅
+**状态**：已完成（6 个测试用例）
 
 **任务简报**：
 在 `RbfFrameBuilderTests.cs` 中添加 Auto-Abort 测试。
@@ -458,10 +376,11 @@ endOffset = startOffset + frameLength + FenceSize
 
 ---
 
-#### Task 7.9: 单 Builder 约束与 Append 互斥测试
+#### Task 7.9: ✅ 已完成 — 单 Builder 约束与 Append 互斥测试
 
 **执行者**：Implementer
-**依赖**：Task 7.3
+**依赖**：Task 7.3 ✅
+**状态**：已完成（6 个测试用例）
 
 **任务简报**：
 在 `RbfFrameBuilderTests.cs` 中添加并发约束测试。
@@ -480,10 +399,11 @@ endOffset = startOffset + frameLength + FenceSize
 
 ---
 
-#### Task 7.10: 与 ScanReverse 集成测试
+#### Task 7.10: ✅ 已完成 — 与 ScanReverse 集成测试
 
 **执行者**：Implementer
-**依赖**：Task 7.8
+**依赖**：Task 7.8 ✅
+**状态**：已完成（6 个测试用例）
 
 **任务简报**：
 验证 Builder 写入的帧可被 ScanReverse 正确扫描。

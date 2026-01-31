@@ -63,17 +63,20 @@
 
 ---
 
-### Stage 07: 复杂写入路径（BeginAppend/EndAppend）
-**目标**：实现流式写入 Builder。
-
-**交付物**：
-- `BeginAppend` 返回 `RbfFrameBuilder`
-- `RbfFrameBuilder.PayloadAndMeta` (IReservableBufferWriter) 集成
-- `EndAppend` 提交帧
-- Auto-Abort（Dispose 未 EndAppend 时）
-- 单 Builder 约束
-- TailMeta 支持
-- 对应的单元测试
+### Stage 07: 复杂写入路径（BeginAppend/EndAppend）✅
+> 已完成（2026-02-01）。详见 `recap.md` 和 `stage/07/task.md`。
+> 
+> **关键成果**：
+> - `SinkReservableWriter.GetCrcSinceReservationEnd()` — CRC 计算从 reservation 末尾
+> - `RbfFrameBuilder`（sealed class）— 流式写入 + EndAppend 提交
+> - `RbfFileImpl.BeginAppend()` — 创建 Builder + Append 互斥
+> - Zero-IO Auto-Abort — HeadLen reservation 阻塞 flush
+> 
+> **设计演进**：
+> - 原方案（RbfWriteSink 合并）存在冲突：HeadLen reservation 阻塞 flush 导致 CRC 无法在 Push 时计算
+> - 新方案：CRC 在 EndAppend 时通过 `GetCrcSinceReservationEnd()` 一次性计算
+> 
+> **测试覆盖**：221 个测试全部通过（新增 33 个 RbfFrameBuilderTests）
 
 ---
 
@@ -112,6 +115,7 @@
 
 | 日期 | 变更 |
 |------|------|
+| 2026-02-01 | Stage 07 完成：BeginAppend/EndAppend + SinkReservableWriter.GetCrcSinceReservationEnd + 221 个测试通过 |
 | 2026-01-29 | Stage 06.5 完成：RbfFrameInfo 成员方法 + TailMeta API（API 外观重构） |
 | 2026-01-24 | Stage 06 完成：帧布局 v0.40 + ScanReverse + 197 个测试通过 |
 | 2026-01-24 | **Stage 06 重构**：合并帧格式升级（v0.40）与 ScanReverse 实现；原 Stage 07 → Stage 07（BeginAppend）|
