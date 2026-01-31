@@ -61,6 +61,12 @@
 - [I-002] **可判定性优先**：凡会影响实现/测试分岔的语义（失败通道、未知值策略、增长语义、并发语义）必须被钉死为可验收条款。
 - [I-003] **强类型不是注释**：wrapper 的约束必须进入类型的可判定面（Create/TryCreate/验证方法）；否则只是“注释型别名”。
 
+### [I-004] RBF v0.40 双 CRC + 尾部导向：避免“术语歧义”与“隐式上限”
+
+- **术语歧义红旗**：接口文档里写“ScanReverse 不做 CRC”，但格式文档要求校验 `TrailerCrc32C`。应显式区分“Payload CRC”与“Trailer CRC”，否则实现者很容易跳过尾部校验，破坏尾部导向逆向扫描的可靠性。
+- **隐式上限红旗**：wire-format 用 `u32 HeadLen/TailLen`，但接口层 `SizedPtr.Length`/`RbfFrameInfo.*Length` 是 `int`，意味着帧大小存在隐式上限（≤ `int.MaxValue` 且 4B 对齐）。这种跨层上限必须被写成 SSOT 条款，否则会出现“格式允许但接口/实现无法表达”的分岔。
+- **可复用落地法**：把“由 Trailer 推导 PayloadLength 的公式”写成规范条款（而不是留在实现里猜），并为其补 2-3 个边界例子（0 payload / 有 UserMeta / 不同 PaddingLen）。
+
 ---
 
 ## 洞见库（精选，保留活性知识；过程记录见归档）
@@ -140,6 +146,12 @@
 ### Design-DSL 实现
 
 - [I-074] **term 定义的反引号语法与 Markdig 解析陷阱**：Design-DSL 的 term 定义依赖反引号语法 `term \`Term-ID\``，但 Markdig AST 会把反引号解析为 `CodeInline` 并在"纯文本提取"时丢失反引号，导致基于 regex 的 matcher 误判。解法：(1) matcher 直接基于 Inline 结构匹配（关键字 + CodeInline(TermId)），或 (2) 先把 Inline 规范化回带反引号的 DSL 文本再匹配；并把"headingText 的定义"写进验收标准。`[2026-01-12]`
+
+### RBF 实现审阅（续）
+
+- [I-075] **RbfAppendImpl 写入分支逻辑隐式条件**：`Append(v0.40)` 的 2/3 次写入分支判定依赖 `totalWriteLen <= 2*MaxBufferSize`，但实际可行性取决于 "tail buffer 能否容纳 remainingPayload + userMeta + padding + (payloadCrc+trailer+fence)"；当前用 `userMeta <= 4000` 间接兜底，逻辑不够 self-explanatory。重构时应把容量判定显式化或扩展为 4+ 次写入。`[2026-01-24]`
+
+- [I-076] **ArrayPool 持有型对象的 Dispose 并发安全**：`RbfPooledFrame`/`RbfPooledTailMeta` 等对象若 `Dispose()` 用"读字段→判空→写 null→Return"模式，并发 Dispose 可能 double-return；getter 若两次读字段，竞态下可能从 `ObjectDisposedException` 变为 `NullReferenceException`。**推荐模式**：getter 先捕获局部 `var buffer = _buffer;`，Dispose 用 `Interlocked.Exchange(ref _buffer, null)`。`[2026-01-26]`
 
 ---
 
