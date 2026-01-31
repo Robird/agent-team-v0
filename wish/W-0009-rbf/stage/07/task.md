@@ -154,7 +154,8 @@ internal sealed class RbfWriteSink : IByteSink {
     public long TotalWritten => _totalWritten;
     
     /// <summary>参与 CRC 计算的字节数（不含 skipped 部分）</summary>
-    public long CrcCoveredLength => _totalWritten - _crcSkipBytes;
+    /// <remarks>使用 _skippedSoFar 而非 _crcSkipBytes，以处理 _totalWritten &lt; _crcSkipBytes 的边界情况</remarks>
+    public long CrcCoveredLength => _totalWritten - _skippedSoFar;
     
     public void Push(ReadOnlySpan<byte> data) {
         if (data.IsEmpty) { return; }
@@ -178,24 +179,21 @@ internal sealed class RbfWriteSink : IByteSink {
     
     /// <summary>获取当前累积的 CRC（已 Finalize）</summary>
     public uint GetCrc() => _crc ^ RollingCrc.DefaultFinalXor;
-    
-    /// <summary>继续累积 CRC（用于 Padding 等，不写入文件）</summary>
-    public void UpdateCrc(ReadOnlySpan<byte> data) {
-        _crc = RollingCrc.CrcForward(_crc, data);
-    }
 }
 ```
 
 **验收标准**：
 - [ ] 编译通过
 - [ ] 实现 `IByteSink` 接口
+- [ ] 构造函数验证 `crcSkipBytes >= 0`
 - [ ] `crcSkipBytes=0` 时，行为与原 `RandomAccessByteSink` + 全量 CRC 一致
 - [ ] `crcSkipBytes>0` 时，前 N 字节不参与 CRC，但仍写入文件
 - [ ] 跨 `Push()` 调用的 skip 逻辑正确（累积 `_skippedSoFar`）
 - [ ] `GetCrc()` 返回正确的 Finalize 后 CRC
 - [ ] `TotalWritten` 返回总字节数（含 skipped）
-- [ ] `CrcCoveredLength` 返回 CRC 覆盖的字节数
+- [ ] `CrcCoveredLength` 返回 CRC 覆盖的字节数（边界情况正确）
 - [ ] 单元测试：验证 skip 逻辑正确性
+- [ ] 单元测试：当 `_totalWritten < _crcSkipBytes` 时，`CrcCoveredLength` 返回 0
 - [ ] 删除旧的 `RandomAccessByteSink.cs`
 
 ---
@@ -216,7 +214,6 @@ internal sealed class RbfWriteSink : IByteSink {
 **类结构**：
 ```csharp
 public sealed class RbfFrameBuilder : IDisposable {
-    private readonly SafeFileHandle _handle;
     private readonly long _frameStart;
     private readonly RbfWriteSink _sink;                 // 合并的文件写入 + CRC 计算
     private readonly SinkReservableWriter _writer;
@@ -251,10 +248,10 @@ public sealed class RbfFrameBuilder : IDisposable {
 
 **EndAppend 逻辑**（10 步）：
 1. 验证前置条件
-2. 获取 `payloadAndMetaLength = _sink.CrcCoveredLength`（不含 HeadLen）
+2. 获取 `payloadAndMetaLength = _sink.CrcCoveredLength`（不含 HeadLen，**在写 Padding 前获取**）
 3. 计算 `FrameLayout(payloadAndMetaLength - tailMetaLength, tailMetaLength)`
-4. 写入 Padding（0 字节）到 `_writer`，同时通过 `_sink.UpdateCrc()` 累积
-5. 从 `_sink.GetCrc()` 获取 PayloadCrc32C
+4. 写入 Padding：`var span = _writer.GetSpan(paddingLength); span.Fill(0); _writer.Advance(paddingLength)`（Padding 通过 _writer 写入，CRC 自动累积）
+5. 从 `_sink.GetCrc()` 获取 PayloadCrc32C（**在写 Padding 后获取**，确保覆盖 Payload + TailMeta + Padding）
 6. 构建 Tail buffer（PayloadCrc + Trailer + Fence），写入 `_writer`
 7. **回填 HeadLen**：获取 reservation span，写入 `frameLength`，调用 `Commit(_headLenReservationToken)`
 8. 此时 `SinkReservableWriter` 会 flush 全部数据到磁盘
@@ -291,7 +288,7 @@ public sealed class RbfFrameBuilder : IDisposable {
 #### Task 7.3: 实现 RbfFileImpl.BeginAppend 和 Append 互斥
 
 **执行者**：Implementer
-**依赖**：Task 7.3
+**依赖**：Task 7.2
 
 **任务简报**：
 实现 `RbfFileImpl.BeginAppend()` 并添加 Append/BeginAppend 互斥约束。
