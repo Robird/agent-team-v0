@@ -135,8 +135,8 @@ internal sealed record RbfBufferTooSmallError(
    /// <param name="buffer">目标 buffer，长度 MUST >= ptr.LengthBytes。</param>
    /// <returns>实际读取的字节数。</returns>
    /// <remarks>
-   /// <para>短读时返回实际读取字节数（由 ReadFrameInto 检测并报错）。</para>
-   /// <para>I/O 异常传播给调用方（不在此层处理）。</para>
+   /// 短读时返回实际读取字节数（由 ReadFrameInto 检测并报错）。
+   /// I/O 异常传播给调用方（不在此层处理）。
    /// </remarks>
    internal static int ReadRaw(SafeFileHandle file, SizedPtr ptr, Span<byte> buffer);
    ```
@@ -168,8 +168,8 @@ internal sealed record RbfBufferTooSmallError(
    /// <param name="buffer">调用方提供的 buffer，长度 MUST >= ptr.LengthBytes。</param>
    /// <returns>成功时返回 RbfFrame（Payload 指向 buffer 子区间），失败时返回错误。</returns>
    /// <remarks>
-   /// <para><b>生命周期警告</b>：返回的 RbfFrame.Payload 直接引用 buffer，
-   /// 调用方 MUST 确保 buffer 在使用 Payload 期间有效。</para>
+   /// 生命周期警告：返回的 RbfFrame.Payload 直接引用 buffer，
+   /// 调用方 MUST 确保 buffer 在使用 Payload 期间有效。
    /// </remarks>
    public static AteliaResult<RbfFrame> ReadFrameInto(
        SafeFileHandle file, 

@@ -16,7 +16,7 @@
 ```csharp
 /// <summary>RBF 帧数据结构。</summary>
 /// <remarks>
-/// <para>只读引用结构，生命周期受限于产生它的 Scope（如 ReadFrame 的 buffer）。</para>
+/// 只读引用结构，生命周期受限于产生它的 Scope（如 ReadFrame 的 buffer）。
 /// </remarks>
 public readonly ref struct RbfFrame {
     public SizedPtr Ptr { get; init; }

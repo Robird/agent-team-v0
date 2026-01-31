@@ -151,8 +151,8 @@ byte[] payloadArray = new byte[payloadLen];
 // ======================== 公开 API ========================
 /// <summary>将帧读入调用方提供的 buffer，返回解析后的 RbfFrame。</summary>
 /// <remarks>
-/// <para><b>生命周期警告</b>：返回的 RbfFrame.Payload 直接引用 buffer，
-/// 调用方 MUST 确保 buffer 在使用 Payload 期间有效。</para>
+/// 生命周期警告：返回的 RbfFrame.Payload 直接引用 buffer，
+/// 调用方 MUST 确保 buffer 在使用 Payload 期间有效。
 /// </remarks>
 public static AteliaResult<RbfFrame> ReadFrameInto(
     SafeFileHandle file, 
@@ -185,8 +185,8 @@ internal static partial class RbfRawOps {
 ```csharp
 /// <summary>帧头信息（不含 Payload）。</summary>
 /// <remarks>
-/// <para>用于 ScanReverse 场景的轻量迭代。</para>
-/// <para>注意：这是 readonly struct（非 ref struct），可以装箱/存储。</para>
+/// 用于 ScanReverse 场景的轻量迭代。
+/// 注意：这是 readonly struct（非 ref struct），可以装箱/存储。
 /// </remarks>
 public readonly struct RbfFrameHeader {
     public SizedPtr Ptr { get; init; }

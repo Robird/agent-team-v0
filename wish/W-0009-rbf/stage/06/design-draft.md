@@ -79,8 +79,8 @@ TrailerCodeword (固定 16 字节):
 ```csharp
 /// <summary>帧元信息（不含 Payload）。</summary>
 /// <remarks>
-/// <para>用于 ScanReverse 产出，支持不读取 payload 的元信息迭代。</para>
-/// <para>PayloadLength 与 TailMetaLength 从 TrailerCodeword 解码得出。</para>
+/// 用于 ScanReverse 产出，支持不读取 payload 的元信息迭代。
+/// PayloadLength 与 TailMetaLength 从 TrailerCodeword 解码得出。
 /// </remarks>
 public readonly record struct RbfFrameInfo(
     SizedPtr Ticket,
@@ -96,8 +96,8 @@ public readonly record struct RbfFrameInfo(
 ```csharp
 /// <summary>TrailerCodeword 解析结果（值类型，统一解码一次）。</summary>
 /// <remarks>
-/// <para>调用 <c>Parse()</c> 一次即可获得所有字段，无需再调用 DecodeDescriptor。</para>
-/// <para>FrameDescriptor 的位字段已展开为只读属性，避免重复解码。</para>
+/// 调用 <c>Parse()</c> 一次即可获得所有字段，无需再调用 DecodeDescriptor。
+/// FrameDescriptor 的位字段已展开为只读属性，避免重复解码。
 /// </remarks>
 internal readonly struct TrailerCodewordData {
     public uint TrailerCrc32C { get; init; }  // 已从 BE 解码
@@ -143,8 +143,8 @@ public interface IRbfFile : IDisposable {
     /// <summary>逆向扫描，返回帧元信息序列。</summary>
     /// <param name="showTombstone">是否包含墓碑帧。默认 false。</param>
     /// <remarks>
-    /// <para><b>CRC 职责分离</b>：ScanReverse 只校验 TrailerCrc32C，不校验 PayloadCrc32C。</para>
-    /// <para>如需完整校验，请对返回的 Ticket 调用 ReadFrame/ReadPooledFrame。</para>
+    /// CRC 职责分离：ScanReverse 只校验 TrailerCrc32C，不校验 PayloadCrc32C。
+    /// 如需完整校验，请对返回的 Ticket 调用 ReadFrame/ReadPooledFrame。
     /// </remarks>
     RbfReverseSequence ScanReverse(bool showTombstone = false);
 }

@@ -46,6 +46,23 @@
 
 ---
 
+### Stage 06.5: RbfFrameInfo 成员方法 + TailMeta API ✅
+> 已完成（2026-01-29）。详见 `recap.md`。
+> 关键成果：
+> - `RbfFrameInfo` 成员方法（`ReadTailMeta`/`ReadPooledTailMeta`/`ReadFrame`/`ReadPooledFrame`）
+> - `RbfReadImpl.ReadFrameInfo`/`ReadTailMeta`/`ReadPooledTailMeta`
+> - 新类型：`IRbfTailMeta`、`RbfTailMeta`、`RbfPooledTailMeta`
+> - `IRbfFile` 门面扩展（`ReadFrameInfo`/`ReadTailMeta`/`ReadPooledTailMeta`）
+> 
+> 设计要点：
+> - 句柄语义：`RbfFrameInfo` 构造时完成所有结构性验证，成员方法只做 I/O 级校验
+> - 安全跳过重复检查：从 `RbfFrameInfo` 调用比从 `IRbfFile` 调用更高效
+> - 并发安全：`RbfPooledTailMeta.Dispose()` 使用 `Interlocked.Exchange`
+> 
+> 测试覆盖：197 个测试全部通过
+
+---
+
 ### Stage 07: 复杂写入路径（BeginAppend/EndAppend）
 **目标**：实现流式写入 Builder。
 
@@ -95,6 +112,7 @@
 
 | 日期 | 变更 |
 |------|------|
+| 2026-01-29 | Stage 06.5 完成：RbfFrameInfo 成员方法 + TailMeta API（API 外观重构） |
 | 2026-01-24 | Stage 06 完成：帧布局 v0.40 + ScanReverse + 197 个测试通过 |
 | 2026-01-24 | **Stage 06 重构**：合并帧格式升级（v0.40）与 ScanReverse 实现；原 Stage 07 → Stage 07（BeginAppend）|
 | 2026-01-16 | 插入 Stage 05（ReadFrame 重构），原 Stage 05-08 顺延为 06-09 |

@@ -7,7 +7,7 @@
 
 ## 当前状态
 
-**阶段**：Stage 06 - 帧布局 v0.40 + ScanReverse ✅ **已完成**
+**阶段**：Stage 06.5 - RbfFrameInfo 成员方法 + TailMeta API ✅ **已完成**
 
 **下一阶段**：Stage 07 - 复杂写入路径（BeginAppend/EndAppend）
 
@@ -50,7 +50,10 @@
 | `IRbfFrame.cs` | 帧公共属性契约（`Ticket`, `Tag`, `Payload`, `IsTombstone`） |
 | `RbfFrame.cs` | ref struct 帧实现（生命周期受限于 buffer） |
 | `RbfPooledFrame.cs` | class 帧实现（持有 ArrayPool buffer，需 Dispose） |
-| `RbfFrameInfo.cs` | 帧元信息（ScanReverse 返回的轻量描述符） |
+| `RbfFrameInfo.cs` | 帧元信息句柄（含成员方法 `ReadTailMeta`/`ReadFrame`） |
+| `IRbfTailMeta.cs` | TailMeta 公共属性契约（`Ticket`, `Tag`, `TailMeta`, `IsTombstone`） |
+| `RbfTailMeta.cs` | ref struct TailMeta 实现（生命周期受限于 buffer） |
+| `RbfPooledTailMeta.cs` | class TailMeta 实现（持有 ArrayPool buffer，需 Dispose） |
 | `RbfReverseEnumerator.cs` | 逆向扫描枚举器 |
 | `RbfReverseSequence.cs` | 逆向扫描序列（支持 foreach） |
 | `RbfFile.cs` | 工厂方法（CreateNew/OpenExisting） |
@@ -62,7 +65,10 @@
 | `RbfLayout.cs` | 布局常量 + FrameLayout 计算 + ResultFromTrailer |
 | `RbfFileImpl.cs` | `IRbfFile` Facade 实现（状态管理） |
 | `RbfAppendImpl.cs` | Append 核心实现（v0.40: 双 CRC, Tag 在 Trailer） |
-| `RbfReadImpl.cs` | ReadFrame + ReadTrailerBefore 核心实现 |
+| `RbfReadImpl.cs` | ReadFrame 核心实现（partial class 入口） |
+| `RbfReadImpl.ReadFrameInfo.cs` | 从 SizedPtr 读取 RbfFrameInfo（L2 验证） |
+| `RbfReadImpl.ReadTailMeta.cs` | 从 SizedPtr 读取 TailMeta（L2 信任） |
+| `RbfReadImpl.ReadTrailerBefore.cs` | ReadTrailerBefore 实现 |
 | `TrailerCodewordHelper.cs` | TrailerCodeword 编解码（v0.40 新增） |
 | `Crc32CHelper.cs` | CRC32C 计算（Init/Update/Finalize） |
 | `RbfErrors.cs` | 错误码定义（含 `RbfBufferTooSmallError`） |
@@ -89,6 +95,41 @@
 ---
 
 ## 已完成的交付成果
+
+### Stage 06.5: RbfFrameInfo 成员方法 + TailMeta API（2026-01-29）
+
+**核心变更**：
+
+1. **RbfFrameInfo 成员方法**（API 外观重构）：
+   - `ReadTailMeta(buffer)`：读取 TailMeta 到调用方 buffer（L2 信任）
+   - `ReadPooledTailMeta()`：读取 TailMeta，自动租用 buffer
+   - `ReadFrame(buffer)`：读取完整帧到调用方 buffer（L3 信任）
+   - `ReadPooledFrame()`：读取完整帧，自动租用 buffer
+   - 句柄语义：构造时已完成所有结构性验证，成员方法只做 I/O 级校验
+
+2. **新增 RbfReadImpl 入口**：
+   - `ReadFrameInfo(file, ticket)`：从 SizedPtr 读取帧元信息（16B I/O + L2 验证）
+   - `ReadTailMeta(file, ticket, buffer)`：组合 ReadFrameInfo + 实例方法
+   - `ReadPooledTailMeta(file, ticket)`：组合 ReadFrameInfo + 实例方法
+
+3. **新增 TailMeta 类型家族**：
+   - `IRbfTailMeta`：公共属性契约（`Ticket`, `Tag`, `TailMeta`, `IsTombstone`）
+   - `RbfTailMeta`：ref struct 实现（生命周期受限于 buffer）
+   - `RbfPooledTailMeta`：class 实现（持有 ArrayPool buffer，需 Dispose）
+
+4. **IRbfFile 门面扩展**：
+   - `ReadFrameInfo(ticket)`：从持久化的 SizedPtr 恢复帧元信息
+   - `ReadTailMeta(ticket, buffer)`：预览 TailMeta（L2 信任）
+   - `ReadPooledTailMeta(ticket)`：预览 TailMeta（自动租用 buffer）
+
+**设计决策**：
+- **Decision 6.5.A**：RbfFrameInfo 持有 File 句柄（非拥有引用），支持成员方法链式调用
+- **Decision 6.5.B**：TailMetaLength = 0 时不租 buffer，返回空 Span
+- **Decision 6.5.C**：Pooled 版本使用 `Interlocked.Exchange` 实现并发安全 Dispose
+
+**测试覆盖**：197 个测试全部通过
+
+---
 
 ### Stage 06: 帧布局 v0.40 + ScanReverse（2026-01-24）
 
@@ -239,6 +280,7 @@
 
 | 日期 | 变更 |
 |------|------|
+| 2026-01-29 | Stage 06.5 完成：RbfFrameInfo 成员方法 + TailMeta API（API 外观重构） |
 | 2026-01-24 | Stage 06 完成：帧布局 v0.40 + ScanReverse + 197 个测试通过 |
 | 2026-01-17 | Stage 05 完成：ReadFrame 重构 + SizedPtr 简化 + 150 个测试通过 |
 | 2026-01-17 | 设计文档同步：rbf-interface.md v0.30, rbf-type-bone.md v0.5, AteliaResult 文档更新, SizedPtr.md 更新 |
