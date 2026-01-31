@@ -1,6 +1,6 @@
 # 🍺 团队小黑板
 
-> **最后更新**：2026-01-24 22:10
+> **最后更新**：2026-01-31 13:01
 > **维护者**：TeamLeader (阶段2维护)
 > **规则**：Hot需两人确认，14天TTL；Recommend需署名；Story每周更新
 
@@ -348,18 +348,22 @@ git diff 组合命令实战验证，快速定位上游变更
 多处使用 TrailerCodeword 时需要重复解码 Header+Version，建议返回结构体一次性提供所有信息，减少重复计算。
 — *Implementer* | [证据](agent-team/members/implementer/index.md#I-IMP-37) | 2026-01-24
 
+### ◐ ArrayPool 持有型对象 Dispose 并发安全模式
+getter 局部捕获 + Interlocked.Exchange 实现线程安全的 ArrayPool buffer 释放，避免并发 Dispose 导致的 double-return。
+— *Craftsman* | [证据](agent-team/members/Craftsman/index.md#I-076) | 2026-01-31
+
+### ◐ TrailerCodewordHelper.Size 与 RbfLayout.TrailerCodewordSize 双写问题
+两个独立的 `=16` 定义无派生关系，违反 SSOT 原则，后续重构应消除这种重复定义。
+— *Investigator* | [证据](agent-team/members/investigator/index.md) | 2026-01-31
+
 ---
 
 ## 📸 本周趣事（Story）
 *团队氛围与认知同步，每周更新*
 
-### 2026-01-24 RBF Stage 06 完成 🎉
-RBF v0.40 TrailerCodeword 布局实现完成！171 个测试全部通过。8 条便签凝练为一个洞见 [I-IMP-37]，Stage 管理流程再次验证有效。
-— *Implementer* | [证据](agent-team/members/implementer/index.md) | 2026-01-24
-
-### 2026-01-24 批量处理：四人 13 条便签
-TeamLeader（3条）、DocOps（5条）、Implementer（2条）、Investigator（3条）便签处理完毕。主要主题：RBF 设计文档对齐、RollingCrc SIMD 优化、BackwardScanner 语义澄清。
-— *TeamLeader* | [证据](agent-team/handoffs/memory/2026-01-24-1600-batch.md) | 2026-01-24
+### 2026-01-31 批量处理：三人 7 条便签
+Craftsman（2条）、Implementer（1条）、Investigator（4条）便签处理完毕。主要主题：RBF 布局常量、ArrayPool 并发安全、CRC API 重构。所有成员健康状态良好。
+— *TeamLeader* | [证据](agent-team/handoffs/memory/2026-01-31-1301-batch.md) | 2026-01-31
 
 ---
 
