@@ -29,7 +29,7 @@
 
 | 项目 | 状态 | 最后更新 | 备注 |
 |------|------|----------|------|
-| Rbf | Stage 06 完成 ✅ | 2026-01-25 | v0.40 TrailerCodeword 布局，171 测试通过 |
+| Rbf | Stage 07 进行中 🔄 | 2026-02-01 | Task 7.2 完成（RbfFrameBuilder），Data 层扩展 |
 | DesignDsl | Parser MVP ✅ | 2026-01-14 | 67 测试通过，Term/Clause 节点解析 |
 | Atelia.Data | Phase 3 完成 ✅ | 2026-01-11 | SizedPtr 公开 API 改 long/int，测试架构治理完成 |
 | DocGraph | v0.2 进行中 🔄 | 2026-01-07 | v0.2: Wish 布局迁移 + IssueAggregator Phase 2 |
@@ -275,6 +275,31 @@
     - API 映射：`Init()` → `DefaultInitValue`，`Update()` → `CrcForward()`，`Finalize()` → `^DefaultFinalXor`，`Compute()` → `CrcForward(span)`
     - 测试调整：Rbf.Tests 168 通过（删除 Crc32CHelperTests），Data.Tests 173 通过
 
+37. **Stage 07 RbfFrameBuilder 实现**（2026-02-01）[I-IMP-38]
+
+    **RbfFrameBuilder 架构**（Task 7.2）：
+    - `sealed class`，包含完整帧构建逻辑
+    - 构造函数：创建 `RbfWriteSink`（crcSkipBytes=4）+ `SinkReservableWriter`，预留 HeadLen
+    - `EndAppend` 10 步逻辑：验证→计算布局→写Padding→获取CRC→写Tail→回填HeadLen→Commit→回调→返回
+    - `Dispose` 支持 Auto-Abort（Zero I/O）通过 `_writer.Reset()`
+
+    **Data 层扩展点**：
+    | 位置 | 新增内容 | 原因 |
+    |:-----|:---------|:-----|
+    | `ReservationTracker.cs` | `TryPeek(token, out entry)` | 不移除查询 |
+    | `SinkReservableWriter.cs` | `TryGetReservationSpan(token, out span)` | token 重新获取 span |
+    | `SinkReservableWriter.cs` | `GetCrcSinceReservationEnd(token, init, xor)` | 计算 reservation 后的 CRC |
+
+    **GetCrcSinceReservationEnd 实现要点**：
+    - **约束**（强约束/早失败）：writer 未 Dispose、无借用 span、token 有效且 pending、PendingReservationCount==1
+    - **算法**：从 entry 所在 chunk 遍历 active chunks，累积 `RollingCrc.CrcForward`
+    - **RbfFrameBuilder 用法**：`payloadCrc = _writer.GetCrcSinceReservationEnd(_headLenReservationToken)`
+
+    **测试覆盖**（SinkReservableWriterCrcTests.cs）：
+    - 正确性：单一 pending + payload、空 payload、大 payload 跨 chunk、自定义 init/xor
+    - 失败路径：GetSpan 后未 Advance、2 个 pending、已 commit token、Reset 后旧 token、已 Dispose
+    - 状态不变性：调用不修改 WrittenLength/PushedLength/PendingCount
+
 ### LLM Agent 完工标准差距分析（2026-01-17）[I-IMP-33]
 
 > 从人类打磨 RBF Stage 05 代码中提炼的 6 个关键差距
@@ -411,8 +436,8 @@ agent-team/archive/members/implementer/
 
 > 详细历史见 `archive/members/implementer/`
 
+- **2026-02-01**: Stage 07 Task 7.2 完成（RbfFrameBuilder + Data 层扩展：TryPeek/TryGetReservationSpan/GetCrcSinceReservationEnd）[I-IMP-38]
 - **2026-01-25**: Stage 06 完成（Task 6.1-6.8），171 测试通过；Stage 06 审阅要点归档 [I-IMP-37]
-- **2026-01-24**: RollingCrc BackwardScanner 语义澄清（正逆对称性、测试陷阱）；ScanReverse 实现决策（6 项 + ref struct 资源管理模式）
 - **2026-01-24**: RBF v0.40 格式变更认知更新（TrailerCodeword 16B 固定布局、双 CRC、FrameDescriptor 位字段）
 - **2026-01-17**: RBF Stage 05 完成（ValidateAndParse/ReadRaw/ReadFrameInto/ReadPooledFrame），156 测试；LLM 完工标准差距分析（6 维度）
 - **2026-01-16**: RbfPooledFrame Owner Token 模式实现；DisposableAteliaResult 21 测试；SizedPtr 公开 API 改 long/int
