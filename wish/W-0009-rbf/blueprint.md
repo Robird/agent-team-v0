@@ -95,13 +95,19 @@
 
 ---
 
-### Stage 09: 测试向量与集成验证
-**目标**：对照 `rbf-test-vectors.md` 完成集成测试。
-
-**交付物**：
-- 测试向量用例实现
-- 端到端场景覆盖
-- 代码 Review
+### Stage 09: 测试向量与集成验证 ✅
+> 已完成（2026-02-01）。详见 `recap.md` 和 `stage/09/task.md`。
+> 
+> **关键成果**：
+> - 帧长度计算测试（RBF_LEN_001/002/003）
+> - FrameDescriptor 位域测试（RBF_DESCRIPTOR_001/002）
+> - CRC 职责分离测试（READFRAME_CRC_001/002）
+> - 端到端集成测试（E2E_WriteReadRoundtrip 等 5 个）
+> - 损坏帧检测覆盖映射（RBF-BAD-* 全部覆盖）
+> 
+> **测试覆盖**：290 个测试全部通过（新增 49 个）
+> 
+> **里程碑**：**RBF Layer 0 MVP 完成！**
 
 ---
 
@@ -120,6 +126,7 @@
 
 | 日期 | 变更 |
 |------|------|
+| 2026-02-01 | Stage 09 完成：测试向量与集成验证 + 290 个测试通过（**MVP 完成！**）|
 | 2026-02-01 | Stage 08 完成：DurableFlush + Truncate + 241 个测试通过 |
 | 2026-02-01 | Stage 07 完成：BeginAppend/EndAppend + SinkReservableWriter.GetCrcSinceReservationEnd + 221 个测试通过 |
 | 2026-01-29 | Stage 06.5 完成：RbfFrameInfo 成员方法 + TailMeta API（API 外观重构） |

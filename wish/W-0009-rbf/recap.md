@@ -7,11 +7,11 @@
 
 ## 当前状态
 
-**阶段**：Stage 08 - DurableFlush 与 Truncate ✅ **已完成**
+**阶段**：Stage 09 - 测试向量与集成验证 ✅ **已完成**
 
-**下一阶段**：Stage 09 - 测试向量与集成验证
+**下一阶段**：MVP 完成！（可进入 Backlog 演进阶段）
 
-**测试覆盖**：241 个 RBF 测试 + 60 个 Primitives 测试 + 117 个 Data 测试（全部通过）
+**测试覆盖**：290 个 RBF 测试 + 60 个 Primitives 测试 + 117 个 Data 测试（全部通过）
 
 **基础条件**：
 - 设计文档已就绪：`atelia/docs/Rbf/` 目录下 7 个文档（已同步至 v0.40）
@@ -89,6 +89,7 @@
 | `RbfFrameBuilderTests.cs` | RbfFrameBuilder 测试 | 基本功能/Auto-Abort/单Builder约束/ScanReverse集成 |
 | `RbfDurableFlushTests.cs` | DurableFlush 测试 | 正常路径/异常路径/Builder期间 |
 | `RbfTruncateTests.cs` | Truncate 测试 | 参数校验/状态检查/功能验证/恢复场景 |
+| `RbfTestVectorTests.cs` | 测试向量验证 | 帧长度/位域/CRC职责分离/端到端/损坏检测 |
 | `RbfFileFactoryTests.cs` | 工厂方法测试 | CreateNew/OpenExisting |
 | `Crc32CHelperTests.cs` | CRC 工具测试 | RFC 向量 + baseline 对比 |
 
@@ -99,6 +100,45 @@
 ---
 
 ## 已完成的交付成果
+
+### Stage 09: 测试向量与集成验证（2026-02-01）
+
+**核心变更**：
+
+1. **帧长度计算测试**（Task 9.1）：
+   - RBF_LEN_001：PayloadLen=0,1,2,3,4 → PaddingLen + FrameLength
+   - RBF_LEN_002：(PayloadLen+TailMetaLen)%4 与 PaddingLen 映射
+   - RBF_LEN_003：PayloadLen=10, TailMetaLen=5 → FrameLength=40
+
+2. **FrameDescriptor 位域测试**（Task 9.2）：
+   - RBF_DESCRIPTOR_001：MVP 有效值枚举（8 个值）
+   - RBF_DESCRIPTOR_002：无效值（Reserved bits 非零）
+
+3. **CRC 职责分离测试**（Task 9.3）：
+   - READFRAME_CRC_001：TrailerCrc 正确 + PayloadCrc 错误 → ReadFrame 失败
+   - READFRAME_CRC_002：TrailerCrc 正确 + PayloadCrc 错误 → ScanReverse 仍返回帧
+
+4. **端到端集成测试**（Task 9.4）：
+   - E2E_WriteReadRoundtrip：写入多帧 → ScanReverse → ReadFrame → 验证
+   - E2E_TailMetaRoundtrip：BeginAppend 写入带 TailMeta → ReadTailMeta → 验证
+   - E2E_TombstoneFilter：Valid + Tombstone + Valid → 验证过滤行为
+   - E2E_TruncateRecovery：写入 3 帧 → Truncate → 验证只剩前 N 帧
+   - E2E_DurableFlushReopen：写入 → DurableFlush → 重新打开 → 验证
+
+5. **损坏帧检测覆盖映射**（Task 9.5）：
+   - RBF-BAD-001: ReadTrailerBeforeTests, RbfReadImplTests（已覆盖）
+   - RBF-BAD-002: READFRAME_CRC_001（已覆盖）
+   - RBF-BAD-003: SizedPtr 类型系统保证（隐式覆盖）
+   - RBF-BAD-004: ReadTrailerBeforeTests（已覆盖）
+   - RBF-BAD-005: RBF_DESCRIPTOR_002（已覆盖）
+   - RBF-BAD-006: ReadTrailerBeforeTests（已覆盖）
+   - RBF-BAD-007: RBF_BAD_007_PaddingLenMismatch（新增）
+
+**测试覆盖**：290 个测试全部通过（新增 49 个）
+
+**详细记录**：见 [stage/09/task.md](stage/09/task.md)
+
+---
 
 ### Stage 08: DurableFlush 与 Truncate（2026-02-01）
 
@@ -355,6 +395,7 @@
 
 | 日期 | 变更 |
 |------|------|
+| 2026-02-01 | Stage 09 完成：测试向量与集成验证 + 290 个测试通过（MVP 完成！）|
 | 2026-02-01 | Stage 08 完成：DurableFlush + Truncate + 241 个测试通过 |
 | 2026-02-01 | Stage 07 完成：BeginAppend/EndAppend + SinkReservableWriter.GetCrcSinceReservationEnd + 221 个测试通过 |
 | 2026-01-29 | Stage 06.5 完成：RbfFrameInfo 成员方法 + TailMeta API（API 外观重构） |
