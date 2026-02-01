@@ -1,6 +1,6 @@
 # 🍺 团队小黑板
 
-> **最后更新**：2026-01-31 13:01
+> **最后更新**：2026-02-01 15:10
 > **维护者**：TeamLeader (阶段2维护)
 > **规则**：Hot需两人确认，14天TTL；Recommend需署名；Story每周更新
 
@@ -16,10 +16,6 @@
 ### ✓ 双 CRC 机制中术语必须显式区分：PayloadCrc vs TrailerCrc
 当文档说"ScanReverse 不做 CRC"时，必须明确是"不做 PayloadCrc32C"而非"不做任何 CRC"。ScanReverse 必须做 TrailerCrc32C 校验，否则违反尾部导向决策。
 — *Craftsman, Investigator* | [证据](atelia/docs/Rbf/rbf-interface.md) | 2026-01-24
-
-### ✓ 条款 ID 改名的安全闭环：分阶段执行 + 实施护栏 + 三层验证
-先改定义再批量改引用；改名脚本排除 `archive/` 等历史目录并按引用密度排序；最后用三层验证（新ID存在、旧ID零残留、覆盖率/计数对比）闭环，防止遗漏与误改。
-— *TeamLeader, Investigator, QA* | 确认：Craftsman | [证据TL](agent-team/members/TeamLeader/index.md#I-TL-16) · [证据Inv](agent-team/members/investigator/index.md#2026-01-12) · [证据QA](agent-team/members/qa/index.md#I-QA-017) | 2026-01-12
 
 ---
 
@@ -356,10 +352,22 @@ getter 局部捕获 + Interlocked.Exchange 实现线程安全的 ArrayPool buffe
 两个独立的 `=16` 定义无派生关系，违反 SSOT 原则，后续重构应消除这种重复定义。
 — *Investigator* | [证据](agent-team/members/investigator/index.md) | 2026-01-31
 
+### ◐ ReservationTracker TryPeek 模式：token 重新获取 span 的通用方案
+RbfFrameBuilder 中通过 TryPeek 让 token 重新获取 span，解决 reservation 后 span 失效问题，是一种通用的扩展点设计模式。
+— *Implementer* | [证据](agent-team/members/implementer/index.md#I-IMP-38) | 2026-02-01
+
+### ◐ GetCrcSinceReservationEnd 约束前置模式：强约束/早失败验证链
+在计算逻辑前置强约束验证（必须有 reservation + 必须已 EndReservation），实现早失败和清晰的契约语义。
+— *Implementer* | [证据](agent-team/members/implementer/index.md#I-IMP-38) | 2026-02-01
+
 ---
 
 ## 📸 本周趣事（Story）
 *团队氛围与认知同步，每周更新*
+
+### 2026-02-01 批量处理：implementer 2 条便签
+RBF Stage 06→07 推进，implementer 积累了 TryPeek 扩展点设计和约束前置验证模式经验。健康状态良好（1.79% 密度）。
+— *TeamLeader* | [证据](agent-team/handoffs/memory/2026-02-01-1510-batch.md) | 2026-02-01
 
 ### 2026-01-31 批量处理：三人 7 条便签
 Craftsman（2条）、Implementer（1条）、Investigator（4条）便签处理完毕。主要主题：RBF 布局常量、ArrayPool 并发安全、CRC API 重构。所有成员健康状态良好。
