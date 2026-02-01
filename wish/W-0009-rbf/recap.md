@@ -7,11 +7,11 @@
 
 ## 当前状态
 
-**阶段**：Stage 07 - BeginAppend/EndAppend（复杂写入路径）✅ **已完成**
+**阶段**：Stage 08 - DurableFlush 与 Truncate ✅ **已完成**
 
-**下一阶段**：Stage 08 - 待规划
+**下一阶段**：Stage 09 - 测试向量与集成验证
 
-**测试覆盖**：221 个 RBF 测试 + 60 个 Primitives 测试 + 117 个 Data 测试（全部通过）
+**测试覆盖**：241 个 RBF 测试 + 60 个 Primitives 测试 + 117 个 Data 测试（全部通过）
 
 **基础条件**：
 - 设计文档已就绪：`atelia/docs/Rbf/` 目录下 7 个文档（已同步至 v0.40）
@@ -87,6 +87,8 @@
 | `TrailerCodewordHelperTests.cs` | TrailerCodeword 测试 | 端序/位布局/CRC |
 | `RbfPooledFrameTests.cs` | RbfPooledFrame 生命周期 | Dispose 行为/异常后资源释放 |
 | `RbfFrameBuilderTests.cs` | RbfFrameBuilder 测试 | 基本功能/Auto-Abort/单Builder约束/ScanReverse集成 |
+| `RbfDurableFlushTests.cs` | DurableFlush 测试 | 正常路径/异常路径/Builder期间 |
+| `RbfTruncateTests.cs` | Truncate 测试 | 参数校验/状态检查/功能验证/恢复场景 |
 | `RbfFileFactoryTests.cs` | 工厂方法测试 | CreateNew/OpenExisting |
 | `Crc32CHelperTests.cs` | CRC 工具测试 | RFC 向量 + baseline 对比 |
 
@@ -97,6 +99,36 @@
 ---
 
 ## 已完成的交付成果
+
+### Stage 08: DurableFlush 与 Truncate（2026-02-01）
+
+**核心变更**：
+
+1. **DurableFlush 实现**：
+   - 委托 `RandomAccess.FlushToDisk(_handle)`
+   - 检查 `_disposed` 状态
+   - 允许在 active builder 期间调用（只 flush 已提交数据）
+
+2. **Truncate 实现**：
+   - 校验顺序：Disposed → Active builder → 负数 → 4B 对齐
+   - 委托 `RandomAccess.SetLength(_handle, newLengthBytes)`
+   - 同步更新 `_tailOffset`
+   - 禁止在 active builder 期间调用
+
+3. **测试覆盖**（20 个新测试）：
+   - DurableFlush 测试（5 个）：正常路径、空文件、多次调用、Disposed、Builder期间
+   - Truncate 测试（15 个）：参数校验（5个）+ 状态检查（3个）+ 功能验证（4个）+ 恢复场景（3个）
+
+**设计决策**：
+- **Decision 8.A**：DurableFlush 直接委托 `RandomAccess.FlushToDisk`
+- **Decision 8.B**：Truncate = 参数校验 + `RandomAccess.SetLength` + 更新 `_tailOffset`
+- **Decision 8.C**：DurableFlush 允许在 builder 期间调用，Truncate 禁止
+
+**测试覆盖**：241 个测试全部通过
+
+**详细记录**：见 [stage/08/task.md](stage/08/task.md)
+
+---
 
 ### Stage 07: BeginAppend/EndAppend（复杂写入路径）（2026-02-01）
 
@@ -323,6 +355,7 @@
 
 | 日期 | 变更 |
 |------|------|
+| 2026-02-01 | Stage 08 完成：DurableFlush + Truncate + 241 个测试通过 |
 | 2026-02-01 | Stage 07 完成：BeginAppend/EndAppend + SinkReservableWriter.GetCrcSinceReservationEnd + 221 个测试通过 |
 | 2026-01-29 | Stage 06.5 完成：RbfFrameInfo 成员方法 + TailMeta API（API 外观重构） |
 | 2026-01-24 | Stage 06 完成：帧布局 v0.40 + ScanReverse + 197 个测试通过 |

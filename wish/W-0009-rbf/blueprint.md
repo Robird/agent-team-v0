@@ -80,13 +80,18 @@
 
 ---
 
-### Stage 08: DurableFlush 与 Truncate
-**目标**：实现持久化和恢复能力。
-
-**交付物**：
-- `DurableFlush` 落盘
-- `Truncate` 截断（4B 对齐验证）
-- 对应的单元测试
+### Stage 08: DurableFlush 与 Truncate ✅
+> 已完成（2026-02-01）。详见 `recap.md` 和 `stage/08/task.md`。
+> 
+> **关键成果**：
+> - `RbfFileImpl.DurableFlush()` — 委托 `RandomAccess.FlushToDisk`
+> - `RbfFileImpl.Truncate()` — 参数校验 + `RandomAccess.SetLength` + 更新 TailOffset
+> 
+> **设计决策**：
+> - DurableFlush 允许在 active builder 期间调用（只 flush 已提交数据）
+> - Truncate 禁止在 active builder 期间调用（会导致数据不一致）
+> 
+> **测试覆盖**：241 个测试全部通过（新增 20 个）
 
 ---
 
@@ -115,6 +120,7 @@
 
 | 日期 | 变更 |
 |------|------|
+| 2026-02-01 | Stage 08 完成：DurableFlush + Truncate + 241 个测试通过 |
 | 2026-02-01 | Stage 07 完成：BeginAppend/EndAppend + SinkReservableWriter.GetCrcSinceReservationEnd + 221 个测试通过 |
 | 2026-01-29 | Stage 06.5 完成：RbfFrameInfo 成员方法 + TailMeta API（API 外观重构） |
 | 2026-01-24 | Stage 06 完成：帧布局 v0.40 + ScanReverse + 197 个测试通过 |
