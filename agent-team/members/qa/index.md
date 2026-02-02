@@ -1,6 +1,6 @@
 # Qa 认知索引
 
-> 最后更新: 2026-01-12 — 批量条款ID改名的验证策略[I-QA-017]
+> 最后更新: 2026-02-02 — RBF 测试相关洞见 [I-QA-018~020]
 
 ## 我是谁
 测试验证专家，负责 E2E 测试、回归检测和基线跟踪。
@@ -485,6 +485,50 @@
 - **验证技巧**：
   - 使用脚本化验证（for loop）一次性检查所有改名
   - 区分"grep 匹配数"和"实际需替换数"，用元文件类型过滤
+
+#### [I-QA-018] Per-file Builder 复用导致的测试陷阱（2026-02-02）
+
+> 来源：RBF Builder epoch 防误用测试
+
+- **场景**：测试 epoch 防误用时，`builder1` 和 `builder2` 实际指向同一个 `_reusableBuilder` 实例
+- **陷阱**：Dispose 后 Reset 会覆盖状态，导致"旧 Builder"和"新 Builder"是同一对象
+- **洞见**：在 per-file 复用架构下，"旧 Builder 引用"测试需要换一种方式验证：
+  - 测试重复 EndAppend（Committed 状态再调用）
+  - 测试 Dispose 后 EndAppend（Disposed 状态）
+  - 测试 File Dispose 后 Builder 操作
+- **验证技巧**：先确认复用机制再设计 epoch 测试，避免测试自证
+
+#### [I-QA-019] AteliaResult 模式测试策略（2026-02-02）
+
+> 来源：RBF API AteliaResult 返回值测试实践
+
+- **Error 属性**：使用 `ErrorCode` 而非 `Code`（AteliaResult.Error 的属性名）
+- **失败路径验证**：
+  ```csharp
+  Assert.False(result.IsSuccess);
+  Assert.Equal("Rbf.StateError", result.Error!.ErrorCode);
+  Assert.Contains("keyword", result.Error.Message);
+  ```
+- **成功路径验证**：
+  ```csharp
+  Assert.True(result.IsSuccess, $"Expected success: {result.Error}");
+  var value = result.Value;
+  ```
+- **验证技巧**：成功断言时附带错误信息，失败时可直接看到原因
+
+#### [I-QA-020] EndAppend 返回 AteliaResult 后的测试适配模式（2026-02-02）
+
+> 来源：RBF API 返回值类型变更测试适配
+
+- **原有模式**：`SizedPtr ptr = builder.EndAppend(tag);`
+- **新模式（解包）**：
+  ```csharp
+  var result = builder.EndAppend(tag);
+  Assert.True(result.IsSuccess, $"EndAppend failed: {result.Error}");
+  SizedPtr ptr = result.Value;
+  ```
+- **变量冲突**：当同一 scope 有多个 result 时，需重命名（`endResult`, `readResult` 等）
+- **验证技巧**：API 返回值类型从 T 改为 `AteliaResult<T>` 时，测试改造按此模式批量适配
 
 ### 协作模式
 
