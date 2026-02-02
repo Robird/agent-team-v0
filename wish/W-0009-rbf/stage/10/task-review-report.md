@@ -322,7 +322,7 @@ public void Reset_WithNewSink_ClearsAllState()
     // 验证状态清空
     Assert.Equal(0, writer.WrittenLength);
     Assert.Equal(0, writer.PendingReservationCount);
-    Assert.False(writer.TryGetReservationSpan(token, out _)); // 旧 token 失效
+    Assert.False(writer.TryGetReservedSpan(token, out _)); // 旧 token 失效
 }
 
 [Fact]

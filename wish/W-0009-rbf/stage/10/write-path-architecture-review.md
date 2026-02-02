@@ -58,8 +58,8 @@
 
 ### P2（中优先级：更多是接口/抽象成本与 DX 的取舍）
 
-6) **`IReservableBufferWriter` 缺少 “TryGetReservationSpan” 会让 codec 侧难以写出无歧义的回填代码**
-- 现状：`SinkReservableWriter` 自己提供了 `TryGetReservationSpan()`，但接口层没暴露。
+6) **`IReservableBufferWriter` 缺少 “TryGetReservedSpan” 会让 codec 侧难以写出无歧义的回填代码**
+- 现状：`SinkReservableWriter` 自己提供了 `TryGetReservedSpan()`，但接口层没暴露。
 - 影响：上层如果只拿到 `IReservableBufferWriter`，要么必须保存原始 span（容易被调用顺序限制困扰），要么只能向下转型，破坏抽象。
 - 评价：这不是性能点，但属于“接口抽象代价”：抽象如果不覆盖真实用法，最终会以转型/泄漏实现细节的方式付费。
 
@@ -274,7 +274,7 @@ Implementer 建议将 `ReservationEntry` 改为 struct。我同意方向，但�
 |:-----|:-----|
 | **职责边界** | ✅ 清晰，IByteSink 推式接口是亮点 |
 | **生命周期** | ⚠️ 三元组绑定但未复用，每帧 ~150B + ~48B delegate 分配 |
-| **接口抽象代价** | ✅ IByteSink 是轻量适配，IReservableBufferWriter 可补充 TryGetReservationSpan |
+| **接口抽象代价** | ✅ IByteSink 是轻量适配，IReservableBufferWriter 可补充 TryGetReservedSpan |
 | **池化/复用可行性** | ✅ per-file 复用是最优解，不需要全局 ObjectPool |
 
 **核心洞见**：当前架构"职责清晰，生命周期未复用"，演进方向是 **per-file 单 builder 复用 + delegate 缓存**，而非引入全局池。这是约束驱动的自然结论，风险可控。

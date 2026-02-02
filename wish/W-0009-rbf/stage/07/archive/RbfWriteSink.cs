@@ -8,16 +8,13 @@ namespace Atelia.Rbf.Internal;
 /// <summary>合并文件写入和 CRC 计算的 IByteSink 实现</summary>
 /// <remarks>
 /// 职责边界：Push → RandomAccess.Write + CRC 累积（跳过前 N 字节）。
-///
 /// 设计背景（参见 @[Decision 7.E]）：
 /// - 将 <c>RandomAccessByteSink</c> 和 CRC 计算合并为单一类型
 /// - 在 RBF Builder 场景，"写入文件 + 计算 CRC"是内聚的单一职责
 /// - 支持 <c>crcSkipBytes</c> 参数：前 N 字节不参与 CRC 累积，但仍写入文件
-///
 /// 用法（HeadLen reservation）：
 /// - <c>RbfWriteSink(handle, frameStart, crcSkipBytes: 4)</c>
 /// - HeadLen 放在帧开头，CRC 只覆盖 Payload + TailMeta + Padding
-///
 /// 并发：非线程安全，依赖 <c>[S-RBF-BUILDER-SINGLE-OPEN]</c> 契约
 /// （同一时刻只有一个活跃 Builder）。
 /// </remarks>
@@ -63,8 +60,7 @@ internal sealed class RbfWriteSink : IByteSink {
     /// <remarks>
     /// 1. 调用 <see cref="RandomAccess.Write(SafeFileHandle, ReadOnlySpan{byte}, long)"/> 写入数据
     /// 2. 跳过前 <c>crcSkipBytes</c> 字节后累积 CRC
-    ///
-    /// 错误处理：I/O 异常直接抛出（符合 Infra Fault 策略）。
+        /// 错误处理：I/O 异常直接抛出（符合 Infra Fault 策略）。
     /// </remarks>
     public void Push(ReadOnlySpan<byte> data) {
         if (data.IsEmpty) { return; }
