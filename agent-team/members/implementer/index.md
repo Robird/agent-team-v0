@@ -29,7 +29,7 @@
 
 | 项目 | 状态 | 最后更新 | 备注 |
 |------|------|----------|------|
-| Rbf | Stage 07 进行中 🔄 | 2026-02-01 | Task 7.2 完成（RbfFrameBuilder），Data 层扩展 |
+| Rbf | Stage 11 进行中 🔄 | 2026-02-02 | Task 11.1-03 完成（状态机+结果模型+写入核心），测试向量全覆盖 |
 | DesignDsl | Parser MVP ✅ | 2026-01-14 | 67 测试通过，Term/Clause 节点解析 |
 | Atelia.Data | Phase 3 完成 ✅ | 2026-01-11 | SizedPtr 公开 API 改 long/int，测试架构治理完成 |
 | DocGraph | v0.2 进行中 🔄 | 2026-01-07 | v0.2: Wish 布局迁移 + IssueAggregator Phase 2 |
@@ -300,6 +300,77 @@
     - 失败路径：GetSpan 后未 Advance、2 个 pending、已 commit token、Reset 后旧 token、已 Dispose
     - 状态不变性：调用不修改 WrittenLength/PushedLength/PendingCount
 
+38. **Stage 11 实现模式汇总**（2026-02-02）[I-IMP-39]
+
+    **Task 11.1: B 变体状态机 + A 生命周期修复**
+    | 变更 | 说明 |
+    |:-----|:-----|
+    | `FileState` 枚举 | `Idle` / `Building`，取代布尔标志 |
+    | `BuilderState` 枚举 | `Active` / `Committed` / `Disposed` |
+    | Epoch Token | `_builderEpoch` 防止旧 Builder 误用 |
+    | 回调移除 | `_onCommitCallback` 被 `CommitFromBuilder` / `AbortBuilder` 替代 |
+
+    **Task 11.2: 方案 D 结果模型**
+    - `EndAppend` 返回 `AteliaResult<SizedPtr>`（非 `SizedPtr`）
+    - 新增 `RbfStateError` / `RbfArgumentError` 映射 8 种失败场景
+    - I/O 异常保持抛出，不捕获
+
+    **Task 11.3: 方案 C 写入核心统一**
+    - 新文件 `RbfFrameWriteCore.cs` 提供 `ValidateEndOffset` / `WriteTail` / `WriteTrailerAndFence`
+    - 常量：`TailSize=24`（PayloadCrc+TrailerCodeword+Fence）、`TrailerAndFenceSize=20`
+    - 调用关系：`RbfAppendImpl.Append` → `WriteTrailerAndFence`；`RbfFrameBuilder.EndAppend` → `WriteTail`
+
+39. **RBF-BAD 测试向量覆盖映射**（2026-02-02）[I-IMP-40]
+
+    | 用例 | 描述 | 覆盖位置 |
+    |:-----|:-----|:---------|
+    | RBF-BAD-001 | TrailerCrc 不匹配 | `ReadTrailerBeforeTests.cs`、`RbfReadImplTests.cs` |
+    | RBF-BAD-002 | PayloadCrc 不匹配 | `RbfTestVectorTests.cs` READFRAME_CRC_001/002 |
+    | RBF-BAD-003 | Frame 起点非 4B 对齐 | SizedPtr 类型系统保证（隐式覆盖） |
+    | RBF-BAD-004 | TailLen 超界/不足 | `ReadTrailerBeforeTests.cs`（4 种变体） |
+    | RBF-BAD-005 | Reserved bits 非零 | `RbfTestVectorTests.cs` RBF_DESCRIPTOR_002 |
+    | RBF-BAD-006 | TailLen != HeadLen | `RbfReadImplTests.cs`（HeadLen/TailLen Mismatch） |
+    | RBF-BAD-007 | PaddingLen 与实际不符 | `RbfTestVectorTests.cs` RBF_BAD_007 |
+
+    **关键洞见**：SizedPtr 类型系统天然保证 4B 对齐，RBF-BAD-003 是隐式覆盖。
+
+40. **CRC 职责分离测试模式**（2026-02-02）[I-IMP-41]
+
+    **篡改 PayloadCrc 的标准方法**：
+    ```csharp
+    var layout = new FrameLayout(payload.Length);
+    long payloadCrcAbsOffset = framePtr.Offset + layout.PayloadCrcOffset;
+    using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
+    stream.Seek(payloadCrcAbsOffset, SeekOrigin.Begin);
+    int originalByte = stream.ReadByte();
+    stream.Seek(-1, SeekOrigin.Current);
+    stream.WriteByte((byte)(originalByte ^ 0xFF));
+    ```
+    **要点**：`RbfReverseSequence` 是 `ref struct`，不能用 LINQ 扩展方法。
+
+41. **RBF 写入路径堆分配分析**（2026-02-02）[I-IMP-42]
+
+    **调用链层级**：RbfFrameBuilder → RandomAccessByteSink → SinkReservableWriter → (ChunkSizingStrategy + SlidingQueue + ReservationTracker)
+
+    **每帧固定分配**：~150-200B（Builder 56-72B + Sink 24-32B + Writer 80-100B）
+
+    **已优化项**：`byte[]` 通过 ArrayPool 池化；Layout 类型是 readonly struct
+
+    **高优先级优化建议**：
+    1. RbfFrameBuilder 池化（ObjectPool + Reset）
+    2. SinkReservableWriter 添加 `Reset(IByteSink)` 支持复用
+    3. RandomAccessByteSink 嵌入 Builder 作为字段
+
+    **完整报告**：[write-path-allocation-analysis.md](../../wish/W-0009-rbf/stage/10/write-path-allocation-analysis.md)
+
+42. **Builder 复用扩展点**（2026-02-02）[I-IMP-43]
+
+    **Reset 方法关键步骤**：验证状态 → 重置位置 → 重置状态标记 → 重置 Sink/Writer → 重新预留 HeadLen
+
+    **Dispose 行为变化**：旧版释放 ArrayPool buffer；新版仅 `_writer.Reset()` 清空状态
+
+    **DisposeInternal**：仅供 `RbfFileImpl.Dispose()` 调用，先确保 builder disposed 再释放 buffer
+
 ### LLM Agent 完工标准差距分析（2026-01-17）[I-IMP-33]
 
 > 从人类打磨 RBF Stage 05 代码中提炼的 6 个关键差距
@@ -436,6 +507,7 @@ agent-team/archive/members/implementer/
 
 > 详细历史见 `archive/members/implementer/`
 
+- **2026-02-02**: Stage 11 Task 11.1-03 完成（B变体状态机+A生命周期+D结果模型+C写入核心）；RBF-BAD 7个测试向量全覆盖；Builder 复用扩展点 [I-IMP-39~43]
 - **2026-02-01**: Stage 07 Task 7.2 完成（RbfFrameBuilder + Data 层扩展：TryPeek/TryGetReservationSpan/GetCrcSinceReservationEnd）[I-IMP-38]
 - **2026-01-25**: Stage 06 完成（Task 6.1-6.8），171 测试通过；Stage 06 审阅要点归档 [I-IMP-37]
 - **2026-01-24**: RBF v0.40 格式变更认知更新（TrailerCodeword 16B 固定布局、双 CRC、FrameDescriptor 位字段）
