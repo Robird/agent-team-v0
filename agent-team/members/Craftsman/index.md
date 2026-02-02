@@ -153,6 +153,15 @@
 
 - [I-076] **ArrayPool 持有型对象的 Dispose 并发安全**：`RbfPooledFrame`/`RbfPooledTailMeta` 等对象若 `Dispose()` 用"读字段→判空→写 null→Return"模式，并发 Dispose 可能 double-return；getter 若两次读字段，竞态下可能从 `ObjectDisposedException` 变为 `NullReferenceException`。**推荐模式**：getter 先捕获局部 `var buffer = _buffer;`，Dispose 用 `Interlocked.Exchange(ref _buffer, null)`。`[2026-01-26]`
 
+- [I-077] **RBF 写入路径 per-frame 分配三源头及优化决策**：`[2026-02-01]`
+  - **三源头**：(1) `RbfFrameBuilder`/`SinkReservableWriter` 实例本身；(2) `BeginAppend()` 捕获 `_tailOffset`/`_hasActiveBuilder` 的 lambda/delegate 分配；(3) `ChunkedReservableWriterOptions.Clone()` 热路径分配。
+  - **单实例复用 vs ObjectPool 判据**：当约束层已保证"同一资源同时只允许一个会话"（如 `_hasActiveBuilder`），全局 ObjectPool 退化为"单实例轮换"，此时 `instance.Reset()` 比 `pool.Get()/Return()` 更简单、更少仪式。
+  - **优先级排序**：若仍走"每帧 new Writer"路线，消除 lambda/Clone 分配优先级高于 class→struct 微优化。
+
+- [I-078] **任务简报 readonly 字段验证检查点**：简报假设字段可变（如 `Reset()` 重新赋值 `_frameStart`/`_headLenReservationToken`），但源码实际为 `readonly` 时会导致实施阻塞。**审阅检查点**：执行前核对"简报假设的可变性"与"源码实际修饰符"是否一致；简报应在"修改范围"部分明确列出需移除 `readonly` 的字段清单。`[2026-02-01]`
+
+- [I-079] **Reset 方法签名设计：信息复用边界原则**：Reset 签名应只包含"每次调用真正变化的参数"（如 `frameStart`），不变的回调（如 `onCommitCallback`）应在构造时注入或通过闭包捕获，避免重复传递已缓存信息。`[2026-02-01]`
+
 ---
 
 ## 输出物（对齐畅谈会标签）
