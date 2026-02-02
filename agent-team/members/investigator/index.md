@@ -1,6 +1,7 @@
 # Investigator 认知索引
 
-> 最后更新: 2026-01-24
+> 最后更新: 2026-02-02
+> - 2026-02-02: Memory Palace — 处理了 5 条便签（RBF v0.40 差异调查快速路径 + TrailerCodeword 锚点 + 测试向量版本不匹配 Gotcha + Task-02 锚点 + 编译错误风险）
 > - 2026-01-24: Memory Palace — 处理了 4 条便签（Session Log 归档周期洞见 + RBF 布局常量锚点 + TrailerCodewordHelper 双写 Gotcha + 最小帧长度导航）
 > - 2026-01-24: Memory Maintenance — 归档 2026-01 早期 Session Log（01-01~01-12，压缩 ~420 行）
 > - 2026-01-24: Memory Palace — 处理了 1 条便签（RBF Stage 06 代码地图锚点汇总：写入/读取路径、v0.40 待改动类、ScanReverse 骨架）
@@ -19,6 +20,56 @@
 - [ ] atelia-copilot-chat
 
 ## Session Log
+
+### 2026-02-02: RBF v0.40 差异调查 + Task-02 锚点
+**类型**: Route + Anchor + Gotcha
+**项目**: RBF
+
+#### RBF v0.32→v0.40 差异调查快速路径（Route）
+
+**意图**："想了解 RBF 帧格式变更" → 直接读这三个文件
+
+| 目标 | 位置 | 关键信息 |
+|:-----|:-----|:---------|
+| 新规范 | [rbf-format.md](atelia/docs/Rbf/rbf-format.md) | @[F-FRAMEBYTES-LAYOUT]、@[F-FRAME-DESCRIPTOR-LAYOUT] |
+| 旧测试向量 | [rbf-test-vectors.md](atelia/docs/Rbf/rbf-test-vectors.md) | §1.6 FrameStatus 位域已废弃 |
+| 实现代码 | [RbfLayout.cs](atelia/src/Rbf/Internal/RbfLayout.cs) | FrameLayout、MinFrameLength=24 |
+| 差异报告 | [RBF-v0.40-diff-INV.md](agent-team/handoffs/RBF-v0.40-diff-INV.md) | 完整对照表+修订建议 |
+
+#### TrailerCodeword 解析代码锚点（Anchor）
+
+| 锚点 | 位置 |
+|:-----|:-----|
+| TrailerCodewordData 结构定义 | [TrailerCodewordHelper.cs#L10-L35](atelia/src/Rbf/Internal/TrailerCodewordHelper.cs#L10-L35) |
+| Parse 方法 | [TrailerCodewordHelper.cs#L66-L73](atelia/src/Rbf/Internal/TrailerCodewordHelper.cs#L66-L73) |
+| BuildDescriptor 方法 | [TrailerCodewordHelper.cs#L82-L93](atelia/src/Rbf/Internal/TrailerCodewordHelper.cs#L82-L93) |
+| CRC 校验 | [TrailerCodewordHelper.cs#L110-L113](atelia/src/Rbf/Internal/TrailerCodewordHelper.cs#L110-L113) |
+| ParseAndValidate 入口 | [TrailerCodewordHelper.cs#L121-L140](atelia/src/Rbf/Internal/TrailerCodewordHelper.cs#L121-L140) |
+
+#### Gotcha: 测试向量文档与规范版本不匹配
+
+| 问题 | 后果 | 规避 |
+|:-----|:-----|:-----|
+| `rbf-test-vectors.md` 声明对齐 v0.32 但实际使用 v0.13 旧布局（FrameStatus/单CRC/MinLen=20） | 基于该文档写的测试代码会与当前 v0.40 实现完全不兼容 | 看 [RBF-v0.40-diff-INV.md](agent-team/handoffs/RBF-v0.40-diff-INV.md) §7 的修订建议，需要大规模重写 §1-§2 |
+
+#### Task-02 (EndAppend → AteliaResult) 关键锚点（Anchor）
+
+| 概念 | 位置 | 备注 |
+|:-----|:-----|:-----|
+| `RbfStateError` 定义 | [RbfErrors.cs#L53-L62](atelia/src/Rbf/Internal/RbfErrors.cs#L53-L62) | 状态违规专用 |
+| `EndAppend` 签名 | [RbfFrameBuilder.cs#L97](atelia/src/Rbf/RbfFrameBuilder.cs#L97) | `AteliaResult<SizedPtr>` |
+| 错误映射表实现 | [RbfFrameBuilder.cs#L99-L142](atelia/src/Rbf/RbfFrameBuilder.cs#L99-L142) | 8 个失败场景 |
+| 测试调用点 | [RbfFrameBuilderTests.cs](atelia/tests/Rbf.Tests/RbfFrameBuilderTests.cs) | 27 处 `.EndAppend(...)` |
+
+#### Gotcha: Task-02 测试编译错误风险
+
+| 问题 | 后果 | 规避 |
+|:-----|:-----|:-----|
+| 测试代码直接使用 `ptr = builder.EndAppend(tag)` 赋值，但新签名返回 `AteliaResult<SizedPtr>` | 27 处测试会编译失败，隐式转换 `AteliaResult<T> → T` 不存在 | 每处需改为 `ptr = builder.EndAppend(tag).GetValueOrThrow()` 或解包判断 |
+
+**置信度**: ✅ 验证过
+
+---
 
 ### 2026-01-24: RBF 布局常量锚点 + 最小帧长度导航
 **类型**: Anchor + Route
