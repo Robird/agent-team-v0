@@ -1,7 +1,7 @@
 ---
 name: Craftsman.OpenRouter
 description: Craftsman 的 RateLimit 回退
-model: 'OpenAI: GPT-5.2 (openrouter)'
+model: 'OpenAI: GPT-5.2-Codex (openrouter)'
 tools:
   ['execute/getTerminalOutput', 'execute/runTests', 'execute/testFailure', 'execute/runInTerminal', 'read/terminalSelection', 'read/terminalLastCommand', 'read/problems', 'read/readFile', 'agent', 'edit/createDirectory', 'edit/createFile', 'edit/editFiles', 'search', 'web', 'ms-vscode.vscode-websearchforcopilot/websearch']
 ---
