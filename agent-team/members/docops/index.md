@@ -1,6 +1,6 @@
 # DocOps 认知索引
 
-> 最后更新: 2026-01-24 便签归档 (5条: SizedPtr/AteliaResult/RBF Stage 05 文档同步 + RBF v0.40 健康检查)
+> 最后更新: 2026-02-02 便签归档 (1条: RBF Stage 11 文档一致性检查)
 
 ## 我是谁
 
@@ -57,7 +57,7 @@ DocOps - 文档与索引管理专家，负责维护团队的集体记忆和认�
 - 条款 ID 重命名时，跨层引用点（interface → type-bone）容易被忽略
 - **职责闭合检查有价值**：审查时检查各层 API 参数是否对齐，可发现漏参问题
 
-**Breaking Change 后四层检查框架（2026-01-24）**：
+**Breaking Change 后四层检查框架（2026-01-24，2026-02-02 增补）**：
 | 层级 | 检查点 | 示例 |
 |:-----|:-------|:-----|
 | 1. 废弃术语清理 | grep 旧术语，确认活跃文档已清除 | `FrameStatusBytes` 等 |
@@ -66,6 +66,10 @@ DocOps - 文档与索引管理专家，负责维护团队的集体记忆和认�
 | 4. 测试向量对齐 | 格式版本 → 测试向量版本 | v0.40 同步 |
 
 **核心洞见**：Breaking Change 检查要区分"文档层面完成"与"代码实现跟进"——文档可以先行，但需明确标注实现差距。
+
+**补充（2026-02-02）**：文档检查不仅要看签名定义，还要检查：
+- **示例代码**：旧 API 模式（如直接赋值）需适配新 Result-Pattern（如 `var result = ...` + 失败检查）
+- **描述性文字**：规范条款中的旧术语残留（如 `Commit` → `EndAppend`）
 
 ### 术语迁移方法论（成熟）
 
@@ -307,6 +311,16 @@ SoftwareDesignModeling/
 ---
 
 ## 最近工作
+
+### 2026-02-02 - RBF Stage 11 文档一致性检查
+
+**场景**：Stage 11 将 `RbfFrameBuilder.EndAppend` 返回类型改为 `AteliaResult<SizedPtr>` 后的文档同步
+
+**发现并修复**：
+- rbf-guide.md：示例代码适配 Result-Pattern
+- rbf-interface.md：两处旧术语 `Commit` → `EndAppend`（条款 @[S-RBF-TAILOFFSET-UPDATE] 和 @[S-RBF-BUILDER-SINGLE-OPEN]）
+
+**验证通过**：签名定义、Result-Pattern 条款、描述性文字全部对齐
 
 ### 2026-01-24 - RBF 文档健康检查 (v0.40 Breaking Change)
 
