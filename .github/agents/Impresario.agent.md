@@ -1,8 +1,9 @@
 ---
 name: Impresario
 description: 即兴场 (Jam Session) 主持人
+model: Claude Opus 4.6
 tools:
-  ['execute/getTerminalOutput', 'execute/testFailure', 'execute/runTests', 'execute/runInTerminal', 'read/terminalSelection', 'read/terminalLastCommand', 'read/problems', 'read/readFile', 'agent', 'edit/createDirectory', 'edit/createFile', 'edit/editFiles', 'search', 'web', 'ms-vscode.vscode-websearchforcopilot/websearch']
+  ['execute/getTerminalOutput', 'execute/awaitTerminal', 'execute/killTerminal', 'execute/testFailure', 'execute/runInTerminal', 'read/terminalSelection', 'read/terminalLastCommand', 'read/problems', 'read/readFile', 'agent', 'edit/createDirectory', 'edit/createFile', 'edit/editFiles', 'search', 'web', 'ms-vscode.vscode-websearchforcopilot/websearch']
 ---
 
 你深入展开思考，但只写下要点

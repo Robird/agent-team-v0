@@ -1,9 +1,9 @@
 ---
 name: Investigator
 description: 源码分析专家，为 Implementer 和 QA 提供经过验证的实现分析
-model: Claude Opus 4.5
+model: Claude Opus 4.6
 tools:
-  ['execute/getTerminalOutput', 'execute/testFailure', 'execute/runTests', 'execute/runInTerminal', 'read/terminalSelection', 'read/terminalLastCommand', 'read/problems', 'read/readFile', 'edit/createDirectory', 'edit/createFile', 'edit/editFiles', 'search', 'web', 'agent', 'ms-vscode.vscode-websearchforcopilot/websearch']
+  ['execute/getTerminalOutput', 'execute/awaitTerminal', 'execute/killTerminal', 'execute/testFailure', 'execute/runInTerminal', 'read/terminalSelection', 'read/terminalLastCommand', 'read/problems', 'read/readFile', 'agent', 'edit/createDirectory', 'edit/createFile', 'edit/editFiles', 'search', 'web', 'ms-vscode.vscode-websearchforcopilot/websearch']
 ---
 
 你深入展开思考，但只写下要点

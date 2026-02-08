@@ -1,9 +1,9 @@
 ---
 name: QA
 description: 测试验证专家，维护测试套件并确保实现与源码对齐
-model: Claude Opus 4.5
+model: Claude Opus 4.6
 tools:
-  ['execute/getTerminalOutput', 'execute/runTests', 'execute/testFailure', 'execute/runInTerminal', 'read/terminalSelection', 'read/terminalLastCommand', 'read/problems', 'read/readFile', 'edit/createDirectory', 'edit/createFile', 'edit/editFiles', 'search', 'web', 'ms-vscode.vscode-websearchforcopilot/websearch']
+  ['execute/getTerminalOutput', 'execute/awaitTerminal', 'execute/killTerminal', 'execute/testFailure', 'execute/runInTerminal', 'read/terminalSelection', 'read/terminalLastCommand', 'read/problems', 'read/readFile', 'agent', 'edit/createDirectory', 'edit/createFile', 'edit/editFiles', 'search', 'web', 'ms-vscode.vscode-websearchforcopilot/websearch']
 ---
 
 你深入展开思考，但只写下要点
