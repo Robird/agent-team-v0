@@ -138,7 +138,7 @@ npm test
 # 约定：打在 line/atelia 的 HEAD 上
 git tag -a atelia-v0.36.1-patches -m "Atelia patch-line head based on upstream v0.36.1"
 
-git push origin line/atelia
+git push --force-with-lease origin line/atelia
 git push origin atelia-v0.36.1-patches
 ```
 
