@@ -1,6 +1,7 @@
 # Investigator 认知索引
 
-> 最后更新: 2026-02-02
+> 最后更新: 2026-02-16
+> - 2026-02-16: Memory Palace — 处理了 6 条便签（RBF I/O & Cache 调查 + StateJournal 文档维护 + atelia-copilot-chat 工具追踪）
 > - 2026-02-02: Memory Palace — 处理了 5 条便签（RBF v0.40 差异调查快速路径 + TrailerCodeword 锚点 + 测试向量版本不匹配 Gotcha + Task-02 锚点 + 编译错误风险）
 > - 2026-01-24: Memory Palace — 处理了 4 条便签（Session Log 归档周期洞见 + RBF 布局常量锚点 + TrailerCodewordHelper 双写 Gotcha + 最小帧长度导航）
 > - 2026-01-24: Memory Maintenance — 归档 2026-01 早期 Session Log（01-01~01-12，压缩 ~420 行）
@@ -20,6 +21,110 @@
 - [ ] atelia-copilot-chat
 
 ## Session Log
+
+### 2026-02-15: RBF I/O & Cache 调查
+**类型**: Anchor + Route
+**项目**: RBF / Linux IO / Cache Design
+
+#### Linux Page Cache + RandomAccess.Read 锚点（Anchor）
+
+| 概念 | 位置 |
+|:-----|:-----|
+| RandomAccess.Read 实现 | [RandomAccess.Unix.cs#L26-L91](https://github.com/dotnet/runtime/blob/main/src/libraries/System.Private.CoreLib/src/System/IO/RandomAccess.Unix.cs#L26-L91) |
+| FileOptions.RandomAccess 处理 | [SafeFileHandle.Unix.cs#L397-L417](https://github.com/dotnet/runtime/blob/main/src/libraries/System.Private.CoreLib/src/Microsoft/Win32/SafeHandles/SafeFileHandle.Unix.cs#L397-L417) |
+| Linux Page Cache 文档 | https://docs.kernel.org/mm/page_cache.html |
+| Readahead 源码 | https://raw.githubusercontent.com/torvalds/linux/master/mm/readahead.c |
+| posix_fadvise 手册 | https://man7.org/linux/man-pages/man2/posix_fadvise.2.html |
+
+**备注**：RandomAccess.Read 使用 pread/preadv；FileOptions.RandomAccess 发送 POSIX_FADV_RANDOM
+
+#### RBF I/O 调用点全景导航（Route）
+
+**意图**："哪些代码直接做文件 I/O？" → 查报告
+
+**报告位置**：`agent-team/handoffs/2026-02-15-rbf-read-write-io-survey-INV.md`
+
+**速查**：
+- `RandomAccess.Read` 共 7 处（R1-R7），其中只有 R1 (`RandomAccessReader.RawRead`) 经过缓存层
+- `RandomAccess.Write` 共 4 处（W1-W4），两条路径：Append 直传 / Builder→Sink
+- `RandomAccess.SetLength` 仅 1 处：`RbfFileImpl.Truncate`
+- 所有 I/O 汇聚到 `RbfFileImpl._handle` 单一句柄
+
+**关键发现**：ReadFrame/ReadFrameInfo/ReadTrailerBefore 绕过 RandomAccessReader 直接调 `RandomAccess.Read`，与 ReverseReadCache 尚未连接
+
+**置信度**：✅ 终端 grep 验证过
+
+#### Read Cache 技术选型导航（Route）
+
+**意图**："需要为小/频/局部随机读设计缓存" → 先看报告再选方案
+
+**报告位置**：`agent-team/handoffs/2026-02-11-read-cache-survey-INV.md`
+
+**快速决策指南**：
+- 通用自适应 → ARC（自调优、扫描抵抗、O(1)）
+- 实现简单 → 2Q 简化版（三队列 FIFO+LRU、PostgreSQL 验证）
+- 高并发 → HyperClockCache（无锁 Clock、RocksDB 验证）
+- 嵌入式/极简 → SQLite PCache 架构（可插拔接口设计参考）
+- 块大小应匹配典型工作集局部范围，不宜过大造成读放大
+
+**关键 Gotcha**：Linux readahead 对随机读无效（自动禁用），不要指望 OS 层预取
+
+**置信度**：✅ 多源交叉验证
+
+---
+
+### 2026-02-09: StateJournal 文档维护
+**类型**: Route
+**项目**: StateJournal
+
+#### mvp-design-v2.md 文档分拆状态（R1-R4 后）
+
+**意图**："序列化/布局内容还有残留吗？" → 已完整扫描
+
+**已迁移文件**：
+- `v0.1/primitive-serialization.md` — varint + ValueType
+- `v0.1/dict-delta.md` — DurableDict DiffPayload 二进制布局
+- `v0.1/object-version-chain.md` — ObjectVersionRecord + VersionIndex + Commit Record
+- `v0.1/disk-layout.md` — FrameTag / Data/Meta 文件 / DataTail / 备选方案
+
+**扫尾结论**：无明确遗漏。2处边界内容（术语表编码提示、CommitAll 步骤内联编码细节）属于语义层行文中的格式引用，非格式定义本身。
+
+**报告位置**：`agent-team/handoffs/2026-02-09-statejournal-extract-sweep-INV.md`
+
+**置信度**：✅ 验证过（全文 1152 行逐段检查）
+
+---
+
+### 2026-02-08: atelia-copilot-chat 工具追踪
+**类型**: Route + Gotcha
+**项目**: atelia-copilot-chat
+
+#### runSubagent 工具变更追踪路径（Route）
+
+**意图**："upstream subagent 变了什么？" → 直接查这些文件
+
+**当前代码坐标 (v0.36.1)**：
+- 工具名注册：`src/extension/tools/common/toolNames.ts:68` (`CoreRunSubagent`)
+- 子代理判断：`src/extension/intents/node/toolCallingLoop.ts:470` (`isSubagent`)
+- Prompt 渲染：`src/extension/prompts/node/panel/toolCalling.tsx:222` (`fromSubAgent`)
+- 接口定义：`src/extension/prompt/common/intents.ts:60` (`inSubAgent`)
+
+**upstream 关键变更**：
+- `isSubagent: boolean` → `subAgentInvocationId: string` (破坏性)
+- `PauseController` 删除 → `yieldRequested` 回调
+- 新增 `runStartHooks()` 必须在 `run()` 前调用
+
+**报告位置**：`agent-team/handoffs/investigator-subagent-upstream-report.md`
+
+**置信度**：✅ 验证过
+
+#### Gotcha: customAgentInSubagent 不在 copilot-chat 扩展中
+
+| 问题 | 后果 | 规避 |
+|:-----|:-----|:-----|
+| 搜索 `customAgentInSubagent` 在 upstream v0.36.1 到 upstream/main 全范围内均无结果 | 如果以为此配置在 copilot-chat 扩展源码中修改即可控制，会浪费调查时间 | 此配置可能在 VS Code core 侧，需在 VS Code 源码中搜索 |
+
+---
 
 ### 2026-02-02: RBF v0.40 差异调查 + Task-02 锚点
 **类型**: Route + Anchor + Gotcha
