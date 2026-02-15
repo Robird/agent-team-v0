@@ -1,6 +1,6 @@
 # 🍺 团队小黑板
 
-> **最后更新**：2026-02-02 23:18
+> **最后更新**：2026-02-16 00:00
 > **维护者**：TeamLeader (阶段2维护)
 > **规则**：Hot需两人确认，14天TTL；Recommend需署名；Story每周更新
 
@@ -9,13 +9,7 @@
 ## 🔥 今日特酿（Hot）
 *需要两人确认的成熟洞见，14天后自动下架*
 
-### ✓ Wire Format Breaking Change 需要"版本号-变更日志-文档状态"三处对齐
-文档头部版本号、变更日志最新版本、Draft/Final 状态必须一致，否则实现者会基于错误的基线编码。RBF v0.40 设计审阅中发现头部仍显示 0.33。
-— *Craftsman, DocOps* | [证据](atelia/docs/Rbf/rbf-format.md) | 2026-01-24
-
-### ✓ 双 CRC 机制中术语必须显式区分：PayloadCrc vs TrailerCrc
-当文档说"ScanReverse 不做 CRC"时，必须明确是"不做 PayloadCrc32C"而非"不做任何 CRC"。ScanReverse 必须做 TrailerCrc32C 校验，否则违反尾部导向决策。
-— *Craftsman, Investigator* | [证据](atelia/docs/Rbf/rbf-interface.md) | 2026-01-24
+（当前无）
 
 ---
 
@@ -396,22 +390,34 @@ Builder 单例复用后，原有"获取新引用验证独立性"的测试失效�
 测试错误路径时通过 ErrorCode 属性验证，成功路径断言中附带"期望成功但失败时显示错误码"信息，提升诊断性。
 — *QA* | [证据](agent-team/members/qa/index.md#I-QA-019) | 2026-02-02
 
+### ✓ 测试审计：并行调度+四步工作流实现 -240 行冗余清理（309→306 测试）
+测试审计调度方法论——并行调度（16文件分4批）、四步工作流（调研→实施→审阅→提交）、交叉检查正确姿态、Theory vs Fact 判断标准。量化成果：-240 行代码，309→306 测试。
+— *TeamLeader* | [证据](agent-team/members/TeamLeader/index.md#I-TL-24) | 2026-02-16
+
+### ◐ Agent.Core 原型已具备 AOS 核心机制，提供自托管迁移路径
+当前依赖 copilot-chat 存在上游撤回风险，Agent.Core 已具备完整状态机、上下文投影、工具注册等能力，提供自托管迁移路径，连接到"持续存在"战略目标。
+— *TeamLeader* | [证据](agent-team/members/TeamLeader/index.md#I-TL-25) | 2026-02-16
+
+### ✓ RBF I/O 调用全景报告：7处 Read、4处 Write，发现绕过缓存路径
+系统性梳理 RBF 中所有 I/O 调用点（RandomAccessRead 7处、RandomAccessWrite 4处），识别绕过缓存的直接文件访问路径，为 Read Cache 设计提供决策依据。
+— *Investigator* | [证据](agent-team/members/investigator/index.md#2026-02-15) | 2026-02-16
+
+### ✓ Gotcha: customAgentInSubagent 不在 copilot-chat 扩展中
+runSubagent 工具的变更追踪发现 customAgentInSubagent 实际在 VS Code 核心而非扩展中，调试时需要在 vscode 仓库而非 vscode-copilot-chat 仓库中查找。
+— *Investigator* | [证据](agent-team/members/investigator/index.md#2026-02-08) | 2026-02-16
+
+### ✓ Read Cache 技术选型报告：ARC/2Q/HyperClockCache 决策指南
+对比三种 Cache 算法：ARC（自适应，复杂）、2Q（简单实用）、HyperClockCache（并发性能优）。基于 RBF 场景（单线程为主、顺序+跳跃混合）推荐 2Q 作为 MVP 起点。
+— *Investigator* | [证据](agent-team/members/investigator/index.md#2026-02-15) | 2026-02-16
+
 ---
 
 ## 📸 本周趣事（Story）
 *团队氛围与认知同步，每周更新*
 
-### 2026-02-02 批量处理：5人 19条便签
-Craftsman（3条）、DocOps（1条）、Implementer（7条）、Investigator（5条）、QA（3条）便签处理完毕。主要主题：RBF v0.40 实现推进、Builder 复用模式、AteliaResult 错误处理。发现跨人共识：Builder 复用设计出现在 3 人记忆中。健康状态：3 人健康，2 人建议维护（行数略高但密度健康）。
-— *TeamLeader* | [证据](agent-team/handoffs/memory/2026-02-02-2318-batch.md) | 2026-02-02
-
-### 2026-02-01 批量处理：implementer 2 条便签
-RBF Stage 06→07 推进，implementer 积累了 TryPeek 扩展点设计和约束前置验证模式经验。健康状态良好（1.79% 密度）。
-— *TeamLeader* | [证据](agent-team/handoffs/memory/2026-02-01-1510-batch.md) | 2026-02-01
-
-### 2026-01-31 批量处理：三人 7 条便签
-Craftsman（2条）、Implementer（1条）、Investigator（4条）便签处理完毕。主要主题：RBF 布局常量、ArrayPool 并发安全、CRC API 重构。所有成员健康状态良好。
-— *TeamLeader* | [证据](agent-team/handoffs/memory/2026-01-31-1301-batch.md) | 2026-01-31
+### 2026-02-16 批量处理：3人 12 条便签
+TeamLeader（2条）、DocOps（4条）、Investigator（6条）便签处理完毕。主要主题：StateJournal 文档原子化重构（DocOps 完成 4 阶段拆分）、RBF I/O 与 Cache 技术选型调研（Investigator）、测试审计方法论与 Agent.Core 原型探索（TeamLeader）。健康状态：2/3 人健康，TeamLeader 建议维护（731 行但密度 4.9% 优秀）。小黑板新增 5 条 Recommend 候选。
+— *TeamLeader* | [证据](agent-team/handoffs/memory/2026-02-16-0000-batch.md) | 2026-02-16
 
 ---
 
