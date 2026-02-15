@@ -1,6 +1,6 @@
 # DocOps 认知索引
 
-> 最后更新: 2026-02-02 便签归档 (1条: RBF Stage 11 文档一致性检查)
+> 最后更新: 2026-02-16 便签归档 (4条: mvp-design-v2.md 原子化重构 R1-R4)
 
 ## 我是谁
 
@@ -311,6 +311,26 @@ SoftwareDesignModeling/
 ---
 
 ## 最近工作
+
+### 2026-02-09 - StateJournal mvp-design-v2.md 原子化重构（R1-R4）
+
+**场景**：mvp-design-v2.md 文档过大（1458行），执行四轮拆分
+
+**拆分产出**：
+| 轮次 | 目标文件 | 原文行数 | 拆分行数 | 保留条款 ID |
+|:-----|:---------|:---------|:---------|:------------|
+| R1 | primitive-serialization.md | L208-217, L566-605 | -42 | [S-DURABLEDICT-KEY-ULONG-ONLY] / [F-VARINT-CANONICAL-ENCODING] / [F-DECODE-ERROR-FAILFAST] |
+| R2 | dict-delta.md | L848-941 | -89 | [F-KVPAIR-HIGHBITS-RESERVED] / [S-PAIRCOUNT-ZERO-LEGALITY] / [S-OVERLAY-DIFF-NONEMPTY] / [F-UNKNOWN-VALUETYPE-REJECT] |
+| R3 | object-version-chain.md | L647-710 | -48 | [F-VERSIONINDEX-REUSE-DURABLEDICT] / [S-CHECKPOINT-HISTORY-CUTOFF] / [S-MSB-HACK-REJECTED] 等 6 个 |
+| R4 | disk-layout.md | 8 部分 | -160 | 13 个条款（含外部引用 2 个）|
+
+**累计效果**：源文件从 1458 行缩减至 ~1152 行（-339 行），4 个新文档共新增 ~400 行（结构化组织）
+
+**重构技术**：
+- 原位替换为迁移重定向，保持导航连续性
+- ValueType 表格等shared内容改为交叉引用，消除双写
+- 标题层级从嵌套 ##### 提升为独立 ##/###
+- 正确处理嵌套 markdown 代码块（§8 DataTail）
 
 ### 2026-02-02 - RBF Stage 11 文档一致性检查
 
