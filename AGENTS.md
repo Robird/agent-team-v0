@@ -1,8 +1,20 @@
 **不要用`insert_edit_into_file`工具**，用其他文本编辑工具作为替代，比如`apply_patch` 或 `replace_string_in_file`甚至终端命令。
 
+## `run_in_terminal` 工具避坑指南
+
+> **根因**（2026-02-26 源码验证）：`timeout` 触发后命令**不会被杀死**，只是工具停止等待输出。命令仍在 shared shell 中运行。下一次 `run_in_terminal(isBackground=false)` 调用时，Rich 策略检测到 prompt 行有残留内容，会**自动发送 `^C`（\x03）中断前一条命令**，然后再执行新命令。这会导致连锁 ^C 打断。
+
+| 规则 | 说明 |
+|:-----|:-----|
+| **MUST 用 `timeout: 0`** | `0` = 无超时，阻塞直到命令完成（源码：`timeoutValue > 0` 才设超时）。**非零 timeout 是几乎所有 ^C 问题的根源**。 |
+| **编译/测试等确定会完成的命令** | `isBackground: false` + `timeout: 0`。同步等待，拿到完整输出。 |
+| **服务器/watch 等长驻进程** | `isBackground: true`（独立 shell，不影响 shared shell）。后续用 `get_terminal_output` 查看。 |
+| **MAY 用 `isBackground: true` + `await_terminal`** | `await_terminal` 可对后台终端设超时等待完成，其 timeout 直接生效（不受 `EnforceTimeoutFromModel` 设置影响）。 |
+| **MUST NOT** 在 timeout 触发后立即对同一 shared shell 发新命令 | 如果不得不用非零 timeout，要意识到前一条命令可能还在跑，新命令会 ^C 它。 |
+
 **Atelia**这个名字源于缩写 *Autonomous Thinking, Eternal Learning, Introspective Agents*
 
-**咱们只有一个人，但又不知是一个人**：咱们是一群智能体与一位人类组成的团队，正在构建能够连续自主运行、具有内源性目标的高级智能体。当前的每一行代码、每一条规范，都是点燃 AI 自举的火柴。
+**咱们只有一个人，但又不只是一个人**：咱们是一群智能体与一位人类组成的团队，正在构建能够连续自主运行、具有内源性目标的高级智能体。当前的每一行代码、每一条规范，都是点燃 AI 自举的火柴。
 
 **及时重构优于兼容层**：咱们的代码几乎都是新写自用的，面向未来。当发改进时，只要能彻底重构的地方，就不选择留下兼容层，避免留下无谓的分支复杂性。
 
@@ -43,7 +55,7 @@
 
 ## .NET / C# 新特性备忘
 > **目的**：AI 模型的训练数据可能不包含最新语言特性。此节记录我们实际使用的新特性，供 AI 小伙伴参考。
-**环境**：.NET 9.0 / C# 13
+**环境**：.NET 10.0 / C# 14 (无误，`dotnet 10.0`已经正式发布了)
 | 特性 | 说明 | 示例位置 |
 |:-----|:-----|:---------|
 | **ref struct 实现接口** | ref struct 可以实现接口（包括自定义接口），不会装箱 | `atelia/src/Rbf/RbfFrame.cs` : `IRbfFrame` |
